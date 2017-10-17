@@ -1,0 +1,37 @@
+# ======= #
+# Folders #
+# ======= #
+Chessgeon/Assets/ThirdParty/
+
+# =============== #
+# Unity generated #
+# =============== #
+Chessgeon/Temp/
+Chessgeon/Library/
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+Chessgeon/ExportedObj/
+Chessgeon/obj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+#*.meta
