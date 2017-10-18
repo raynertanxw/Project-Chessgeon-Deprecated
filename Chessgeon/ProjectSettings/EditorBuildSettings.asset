@@ -9,8 +9,5 @@ EditorBuildSettings:
     path: Assets/_Game/Scenes/SCENE_LoadingScreen.unity
     guid: 19079307560ff4944a05a46502f23ea5
   - enabled: 1
-    path: Assets/_Game/Scenes/SCENE_Menu.unity
-    guid: 9f5dc4e0254a844c5829eb28a098573a
-  - enabled: 1
     path: Assets/_Game/Scenes/SCENE_Dungeon.unity
     guid: 61cff12e58f594e7697100b23f4c7ad8
