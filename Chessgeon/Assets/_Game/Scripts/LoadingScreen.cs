@@ -27,7 +27,7 @@ public class LoadingScreen : MonoBehaviour
 
 	IEnumerator LoadMenuSceneAsync()
 	{
-		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_MENU, LoadSceneMode.Additive);
+		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_DUNGEON, LoadSceneMode.Additive);
 		asyncLoad.allowSceneActivation = false; // Stops scene load at 0.9 and prevents it from being activated immediately when ready.
 
 		yield return new WaitForSeconds(5.0f); // TODO: Artificial wait loading time.
@@ -41,14 +41,14 @@ public class LoadingScreen : MonoBehaviour
 			yield return null;
 		}
 
-		Scene menuScene = SceneManager.GetSceneByName(Constants.SCENE_NAME_MENU);
+		Scene menuScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_DUNGEON);
 		SceneManager.MoveGameObjectToScene(this.gameObject, menuScene);
 		StartCoroutine(UnloadLoadingScreenSceneAsync());
 	}
 
 	IEnumerator UnloadLoadingScreenSceneAsync()
 	{
-		Scene loadingScreenScene = SceneManager.GetSceneByName(Constants.SCENE_NAME_LOADINGSCREEN);
+		Scene loadingScreenScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_LOADINGSCREEN);
 		AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(loadingScreenScene);
 
 		while (!asyncUnload.isDone)
