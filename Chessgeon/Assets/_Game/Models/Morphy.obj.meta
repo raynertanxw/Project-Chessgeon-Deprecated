@@ -1,25 +1,25 @@
 fileFormatVersion: 2
-guid: f92f38e26cc8a9442a607f010350bdc4
-timeCreated: 1508312427
+guid: 4a2c387a55bee504ba7d9a309fb6506e
+timeCreated: 1509759629
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Morphy
-    7400000: Default Take
-    9500000: //RootNode
+    100000: default
+    100002: //RootNode
+    400000: default
+    400002: //RootNode
+    2300000: default
+    3300000: default
+    4300000: default
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: b25c5f09ae5c49e4a8198c7324330c3d, type: 2}
+      name: defaultMat
+    second: {fileID: 2100000, guid: 59f60bb5b74aa684397609a08b81dcb4, type: 2}
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 0
@@ -51,7 +51,7 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     importVisibility: 0
-    importBlendShapes: 0
+    importBlendShapes: 1
     importCameras: 0
     importLights: 0
     swapUVChannels: 0
