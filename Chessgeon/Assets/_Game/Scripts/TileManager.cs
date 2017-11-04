@@ -49,6 +49,19 @@ public class TileManager : MonoBehaviour
 					_dungeonTiles[x, y] = newDungeonTile;
 				}
 			}
+
+			HideAllTiles();
+		}
+	}
+
+	private void HideAllTiles()
+	{
+		for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
+		{
+			for (int y = 0; y < _dungeonTiles.GetLength(1); y++)
+			{
+				_dungeonTiles[x, y].SetVisible(false);
+			}
 		}
 	}
 
@@ -57,13 +70,7 @@ public class TileManager : MonoBehaviour
 		Debug.Log("Generating Floor Terrain of size: (" + inFloorX + ", " + inFloorY + ")");
 
 		// Hide ALL tiles.
-		for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
-		{
-			for (int y = 0; y < _dungeonTiles.GetLength(1); y++)
-			{
-				_dungeonTiles[x, y].SetVisible(false);
-			}
-		}
+		HideAllTiles();
 
 		// Set up the boundary.
 		for (int y = 0; y < (inFloorY + 2); y++)

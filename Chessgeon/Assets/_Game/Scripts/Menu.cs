@@ -5,8 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class Menu : MonoBehaviour
 {
-	public void LoadDungeon()
+	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private MenuCanvas _menuCanvas = null;
+
+	private void Awake()
 	{
-		Debug.Log("Load Dungeon");
+		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
+		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
+	}
+
+	public void StartGame()
+	{
+		Debug.Log("Start Dungeon");
+		_dungeon.StartGame();
+		_menuCanvas.SetVisible(false);
 	}
 }

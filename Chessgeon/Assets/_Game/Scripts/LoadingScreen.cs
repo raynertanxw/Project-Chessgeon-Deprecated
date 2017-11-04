@@ -30,7 +30,6 @@ public class LoadingScreen : MonoBehaviour
 		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_DUNGEON, LoadSceneMode.Additive);
 		asyncLoad.allowSceneActivation = false; // Stops scene load at 0.9 and prevents it from being activated immediately when ready.
 
-		yield return new WaitForSeconds(5.0f); // TODO: Artificial wait loading time.
 		while (!asyncLoad.isDone)
 		{
 			// TODO: Insert checks to see if all the scripts have been loaded, like dungeon.
@@ -42,6 +41,7 @@ public class LoadingScreen : MonoBehaviour
 			}
 			yield return null;
 		}
+		yield return new WaitForSeconds(5.0f); // TODO: Artificial wait loading time.
 
 		Scene menuScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_DUNGEON);
 		SceneManager.MoveGameObjectToScene(this.gameObject, menuScene);

@@ -21,11 +21,6 @@ public class Dungeon : MonoBehaviour
 		_tileManager.Initialise(DUNGEON_MAX_X, DUNGEON_MAX_Y);
 	}
 
-	private void Start()
-	{
-		GenerateFloor();
-	}
-
 	private void GenerateFloor()
 	{
 		_floorSizeX = Random.Range(DUNGEON_MIN_X, DUNGEON_MAX_X);
@@ -33,5 +28,11 @@ public class Dungeon : MonoBehaviour
 
 		_tileManager.GenerateFloorTerrain(_floorSizeX, _floorSizeY);
 		// TODO: Generate Enemy spawns?
+	}
+
+	public void StartGame()
+	{
+		// Reset everything and generate the new 1st floor.
+		GenerateFloor();
 	}
 }
