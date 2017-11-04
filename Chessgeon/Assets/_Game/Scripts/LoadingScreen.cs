@@ -33,6 +33,8 @@ public class LoadingScreen : MonoBehaviour
 		yield return new WaitForSeconds(5.0f); // TODO: Artificial wait loading time.
 		while (!asyncLoad.isDone)
 		{
+			// TODO: Insert checks to see if all the scripts have been loaded, like dungeon.
+
 			if (asyncLoad.progress >= 0.9f) // If ready to be activated.
 			{
 				_loadingScreenAudioListener.enabled = false;
@@ -55,6 +57,8 @@ public class LoadingScreen : MonoBehaviour
 		{
 			yield return null;
 		}
+
+		// TODO: Insert GC.Collect() force here?
 
 		// Once unloading is done, can destroy itself.
 		GameObject.Destroy(this.gameObject);
