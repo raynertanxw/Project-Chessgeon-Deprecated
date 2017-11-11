@@ -11,14 +11,19 @@ public class DungeonCamera : MonoBehaviour
 	private readonly Quaternion _cameraYRotOffset = Quaternion.AngleAxis(30.0f, Vector3.up);
 
 	// TODO: Make this a scroll sensitivity in options.
-	private float _dragSpeed = 0.5f;
+	private float _dragSpeed = 0.75f;
 	private Vector3 _dragOrigin;
+	private float _camMinX;
+	private float _camMaxX;
+	private float _camMinZ;
+	private float _camMaxZ;
 
 	private void Awake()
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 		_dungeonCamera = this.GetComponent<Camera>();
+		_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);
 	}
 
 	private void Update()
@@ -36,9 +41,30 @@ public class DungeonCamera : MonoBehaviour
 			Vector3 pos = _dungeonCamera.ScreenToViewportPoint(Input.mousePosition - _dragOrigin);
 			Vector3 move = new Vector3(pos.x * _dragSpeed, 0.0f, pos.y * _dragSpeed);
 			move = _cameraYRotOffset * move;
-			// TODO: Restrict the camera movement based on the dungeon size.
-
 			transform.Translate(move, Space.World);
+			// TODO: Restrict the camera movement based on the dungeon size.
+			RestrictCameraPosition();
 		}
+	}
+
+	private void RestrictCameraPosition()
+	{
+		Vector3 restrictedCamPos = transform.position;
+		if (transform.position.x > _camMaxX) restrictedCamPos.x = _camMaxX;
+		else if (transform.position.x < _camMinX) restrictedCamPos.x = _camMinX;
+
+		if (transform.position.z > _camMaxZ) restrictedCamPos.z = _camMaxZ;
+		else if (transform.position.z < _camMinZ) restrictedCamPos.z = _camMinZ;
+
+		transform.position = restrictedCamPos;
+	}
+
+	private void CalcCameraBounds()
+	{
+		_camMinX = -2.5f;
+		_camMinZ = -2.5f;
+
+		_camMaxX = _dungeon.FloorSizeX - 2.5f;
+		_camMaxZ = _dungeon.FloorSizeY - 7.5f;
 	}
 }

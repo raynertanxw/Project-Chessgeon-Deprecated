@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Dungeon : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class Dungeon : MonoBehaviour
 
 	private int _floorSizeX = -1;
 	private int _floorSizeY = -1;
+	public int FloorSizeX { get { return _floorSizeX; } }
+	public int FloorSizeY { get { return _floorSizeY; } }
+
+	public UnityEvent OnFloorGenerated;
 
 	private void Awake()
 	{
@@ -28,6 +33,8 @@ public class Dungeon : MonoBehaviour
 
 		_tileManager.GenerateFloorTerrain(_floorSizeX, _floorSizeY);
 		// TODO: Generate Enemy spawns?
+
+		OnFloorGenerated.Invoke();
 	}
 
 	public void StartGame()
