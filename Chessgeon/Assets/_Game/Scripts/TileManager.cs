@@ -18,6 +18,7 @@ public class TileManager : MonoBehaviour
 
 	private bool _isInitialised = false;
 	private DungeonTile[,] _dungeonTiles = null;
+	private Dungeon _dungeon = null;
 
 	private void Awake()
 	{
@@ -27,7 +28,7 @@ public class TileManager : MonoBehaviour
 		_isInitialised = false;
 	}
 
-	public void Initialise(int inMaxX, int inMaxY)
+	public void Initialise(int inMaxX, int inMaxY, Dungeon inDungeon)
 	{
 		// If initialised, don't do anything.
 		if (_isInitialised)
@@ -36,6 +37,8 @@ public class TileManager : MonoBehaviour
 		}
 		else
 		{
+			_dungeon = inDungeon;
+
 			_dungeonTiles = new DungeonTile[inMaxX + 2, inMaxY + 2]; // +2 cause of the bounding edges.
 			for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
 			{
@@ -100,10 +103,16 @@ public class TileManager : MonoBehaviour
 			}
 		}
 
-		// TODO: Stairs. Also save the stairs position.
+		// Set the stairs tile.
+		GetTileByPos(_dungeon.StairsPosX, _dungeon.StairsPosY).SetTileType(DungeonTile.eType.Stairs);
 
 		// TODO: Obstalces (if any)
 
 		// TODO: Special tiles (if any)
+	}
+
+	private DungeonTile GetTileByPos(int inPosX, int inPosY)
+	{
+		return _dungeonTiles[inPosX + 1, inPosY + 1];
 	}
 }

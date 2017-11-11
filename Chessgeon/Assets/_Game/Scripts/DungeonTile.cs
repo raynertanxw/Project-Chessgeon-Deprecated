@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class DungeonTile : MonoBehaviour
 {
-	public enum eType { Basic, Wall };
+	public enum eType { Basic, Wall, Stairs };
 	public enum eZone { Classic };
 
 	[SerializeField] private Mesh _meshTileBasic = null;
 	[SerializeField] private Mesh _meshTileWall = null;
+	[SerializeField] private Mesh _meshTileStairs = null;
 
 	private MeshFilter _meshFilter = null;
 	private MeshRenderer _meshRenderer = null;
@@ -77,6 +78,12 @@ public class DungeonTile : MonoBehaviour
 				_meshFilter.mesh = _meshTileWall;
 				if (IsWhiteTile) _meshRenderer.material.SetColor("_Color", new Color(0.6f, 0.6f, 0.6f));
 				else _meshRenderer.material.SetColor("_Color", new Color(0.4f, 0.4f, 0.4f));
+				break;
+			}
+			case eType.Stairs:
+			{
+				_meshFilter.mesh = _meshTileStairs;
+				_meshRenderer.material.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
 				break;
 			}
 			default:

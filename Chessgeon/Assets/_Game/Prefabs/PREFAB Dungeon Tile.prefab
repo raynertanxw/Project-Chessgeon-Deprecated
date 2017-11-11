@@ -96,3 +96,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _meshTileBasic: {fileID: 4300000, guid: 46ba5be0da3395547988b113ed249fc7, type: 3}
   _meshTileWall: {fileID: 4300000, guid: 34182e7a46f8bb9438dd9caa27582a99, type: 3}
+  _meshTileStairs: {fileID: 4300000, guid: 7b25d8c50bda8ab41bfcdc02d343be10, type: 3}
