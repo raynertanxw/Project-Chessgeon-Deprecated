@@ -337,7 +337,6 @@ GameObject:
   m_Component:
   - component: {fileID: 771743580}
   - component: {fileID: 771743579}
-  - component: {fileID: 771743578}
   - component: {fileID: 771743577}
   - component: {fileID: 771743581}
   m_Layer: 0
@@ -354,13 +353,6 @@ AudioListener:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 771743576}
   m_Enabled: 1
---- !u!124 &771743578
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 771743576}
-  m_Enabled: 1
 --- !u!20 &771743579
 Camera:
   m_ObjectHideFlags: 0
@@ -369,8 +361,8 @@ Camera:
   m_GameObject: {fileID: 771743576}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.6445178, g: 0.9632353, b: 0.80497557, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -619,8 +611,8 @@ MonoBehaviour:
   OnFloorGenerated:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+    m_TypeName: FloorGeneratedEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!1 &1798507098
 GameObject:
   m_ObjectHideFlags: 0
