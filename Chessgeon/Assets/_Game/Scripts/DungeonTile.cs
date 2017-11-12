@@ -31,12 +31,10 @@ public class DungeonTile : MonoBehaviour
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
-		_isInitialised = false;
 	}
 
 	public void Initialise(TileManager inTileManager, int inIndexX, int inIndexY)
 	{
-		// If initialised, don't do anything.
 		if (_isInitialised)
 		{
 			Debug.LogWarning("Trying to initialise DungeonTile when it is already initialised");
@@ -64,19 +62,21 @@ public class DungeonTile : MonoBehaviour
 	// TODO: Remember to change the material based on the zone!
 	public void SetTileType(eType inType)
 	{
+		_type = inType;
+
 		switch (inType)
 		{
 			case eType.Basic:
 			{
 				_meshFilter.mesh = _meshTileBasic;
-				if (IsWhiteTile) _meshRenderer.material.SetColor("_Color", Color.white);
+				if (Floor.IsTileWhite(_indexX, _indexY)) _meshRenderer.material.SetColor("_Color", Color.white);
 				else _meshRenderer.material.SetColor("_Color", Color.black);
 				break;
 			}
 			case eType.Wall:
 			{
 				_meshFilter.mesh = _meshTileWall;
-				if (IsWhiteTile) _meshRenderer.material.SetColor("_Color", new Color(0.6f, 0.6f, 0.6f));
+				if (Floor.IsTileWhite(_indexX, _indexY)) _meshRenderer.material.SetColor("_Color", new Color(0.6f, 0.6f, 0.6f));
 				else _meshRenderer.material.SetColor("_Color", new Color(0.4f, 0.4f, 0.4f));
 				break;
 			}
@@ -96,6 +96,8 @@ public class DungeonTile : MonoBehaviour
 
 	public void SetTileZone(eZone inZone)
 	{
+		_zone = inZone;
+
 		switch (inZone)
 		{
 			case eZone.Classic:
@@ -107,16 +109,6 @@ public class DungeonTile : MonoBehaviour
 				Debug.LogWarning("case: " + inZone.ToString() + "has not been handled.");
 				break;
 			}
-		}
-	}
-
-	private bool IsWhiteTile
-	{
-		get
-		{
-			Debug.Assert(_indexX != -1 && _indexY != -1, "_indexX or _indexY has not been intialised!");
-			if (_indexX % 2 == 0) return (_indexY % 2 == 0) ? true : false;
-			else return (_indexY % 2 == 0) ? false : true;
 		}
 	}
 

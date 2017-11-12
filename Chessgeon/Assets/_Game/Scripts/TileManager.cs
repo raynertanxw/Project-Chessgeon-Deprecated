@@ -25,12 +25,10 @@ public class TileManager : MonoBehaviour
 		Debug.Assert(_prefabDungeonTile != null, "_prefabDungeonTile is not assigned.");
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
-		_isInitialised = false;
 	}
 
 	public void Initialise(int inMaxX, int inMaxY, Dungeon inDungeon)
 	{
-		// If initialised, don't do anything.
 		if (_isInitialised)
 		{
 			Debug.LogWarning("Trying to initialise TileManager when it is already initialised");
@@ -39,7 +37,7 @@ public class TileManager : MonoBehaviour
 		{
 			_dungeon = inDungeon;
 
-			_dungeonTiles = new DungeonTile[inMaxX + 2, inMaxY + 2]; // +2 cause of the bounding edges.
+			_dungeonTiles = new DungeonTile[inMaxX, inMaxY];
 			for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
 			{
 				for (int y = 0; y < _dungeonTiles.GetLength(1); y++)
@@ -68,35 +66,17 @@ public class TileManager : MonoBehaviour
 		}
 	}
 
-	public void GenerateFloorTerrain(int inFloorX, int inFloorY)
+	public void GenerateFloorTerrain(Floor inFloor)
 	{
-		Debug.Log("Generating Floor Terrain of size: (" + inFloorX + ", " + inFloorY + ")");
+		Debug.Log("Generating Floor Terrain of size: (" + inFloor.Size.x + ", " + inFloor.Size.y + ")");
 
 		// Hide ALL tiles.
 		HideAllTiles();
 
-		// Set up the boundary.
-		for (int y = 0; y < (inFloorY + 2); y++)
-		{
-			_dungeonTiles[0, y].SetTileType(DungeonTile.eType.Wall);
-			_dungeonTiles[0, y].SetVisible(true);
-
-			_dungeonTiles[inFloorX + 1, y].SetTileType(DungeonTile.eType.Wall);
-			_dungeonTiles[inFloorX + 1, y].SetVisible(true);
-		}
-		for (int x = 1; x < (inFloorX + 1); x++)
-		{
-			_dungeonTiles[x, 0].SetTileType(DungeonTile.eType.Wall);
-			_dungeonTiles[x, 0].SetVisible(true);
-
-			_dungeonTiles[x, inFloorY + 1].SetTileType(DungeonTile.eType.Wall);
-			_dungeonTiles[x, inFloorY + 1].SetVisible(true);
-		}
-
 		// Set all others as basic tiles.
-		for (int y = 1; y < (inFloorY + 1); y++)
+		for (int y = 0; y < (inFloor.Size.y); y++)
 		{
-			for (int x = 1; x < (inFloorX + 1); x++)
+			for (int x = 0; x < (inFloor.Size.x); x++)
 			{
 				_dungeonTiles[x, y].SetTileType(DungeonTile.eType.Basic);
 				_dungeonTiles[x, y].SetVisible(true);
@@ -104,15 +84,16 @@ public class TileManager : MonoBehaviour
 		}
 
 		// Set the stairs tile.
-		GetTileByPos(_dungeon.StairsPosX, _dungeon.StairsPosY).SetTileType(DungeonTile.eType.Stairs);
+		_dungeonTiles[inFloor.StairsPos.x, inFloor.StairsPos.y].SetTileType(DungeonTile.eType.Stairs);
 
 		// TODO: Obstalces (if any)
 
 		// TODO: Special tiles (if any)
 	}
 
-	private DungeonTile GetTileByPos(int inPosX, int inPosY)
+	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
 	{
-		return _dungeonTiles[inPosX + 1, inPosY + 1];
+		// + 1 to x and y cause of the boundary tiles.
+		return _dungeonTiles[inPosX, inPosY].transform.position;
 	}
 }

@@ -42,7 +42,6 @@ public class DungeonCamera : MonoBehaviour
 			Vector3 move = new Vector3(pos.x * _dragSpeed, 0.0f, pos.y * _dragSpeed);
 			move = _cameraYRotOffset * move;
 			transform.Translate(move, Space.World);
-			// TODO: Restrict the camera movement based on the dungeon size.
 			RestrictCameraPosition();
 		}
 	}
@@ -59,12 +58,12 @@ public class DungeonCamera : MonoBehaviour
 		transform.position = restrictedCamPos;
 	}
 
-	private void CalcCameraBounds()
+	private void CalcCameraBounds(Floor inFloor)
 	{
 		_camMinX = -2.5f;
 		_camMinZ = -2.5f;
 
-		_camMaxX = _dungeon.FloorSizeX - 2.5f;
-		_camMaxZ = _dungeon.FloorSizeY - 7.5f;
+		_camMaxX = inFloor.Size.x - 2.5f;
+		_camMaxZ = inFloor.Size.y - 7.5f;
 	}
 }
