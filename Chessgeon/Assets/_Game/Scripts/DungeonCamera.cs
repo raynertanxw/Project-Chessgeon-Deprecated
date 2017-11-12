@@ -63,7 +63,7 @@ public class DungeonCamera : MonoBehaviour
 		_camMinX = -2.5f;
 		_camMinZ = -2.5f;
 
-		_camMaxX = inFloor.Size.x - 2.5f;
-		_camMaxZ = inFloor.Size.y - 7.5f;
+		_camMaxX = inFloor.Size.x - 4.5f;
+		_camMaxZ = inFloor.Size.y - 9.5f;
 	}
 }
