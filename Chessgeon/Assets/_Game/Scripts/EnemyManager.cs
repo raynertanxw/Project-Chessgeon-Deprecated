@@ -57,7 +57,7 @@ public class EnemyManager : MonoBehaviour
 			Vector2Int newEnemyPos = new Vector2Int(Random.Range(0, inFloor.Size.x), Random.Range(0, inFloor.Size.y));
 			if (inFloor.IsTileEmpty(newEnemyPos.x, newEnemyPos.y))
 			{
-				Enemy.eType enemyType = (Enemy.eType)Random.Range(0, 4);
+				Enemy.eType enemyType = (Enemy.eType)Random.Range(0, 4 + 1);
 				SpawnEnemyAt(newEnemyPos.x, newEnemyPos.y, enemyType, Enemy.eElement.Basic);
 
 				numEnemies++;

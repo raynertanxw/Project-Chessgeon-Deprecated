@@ -16,7 +16,8 @@ public class Floor
 
 	public Floor(int inMinX, int inMaxX, int inMinY, int inMaxY, DungeonTile.eZone inZone)
 	{
-		_size = new Vector2Int(Random.Range(inMinX, inMaxX), Random.Range(inMinY, inMaxY));
+		// Here we + 1 the max becasue Random.Range(int) is inclusive exclusive.
+		_size = new Vector2Int(Random.Range(inMinX, inMaxX + 1), Random.Range(inMinY, inMaxY + 1));
 
 		_tileStates = new eTileState[Size.x, Size.y];
 		for (int x = 0; x < Size.x; x++)
@@ -27,7 +28,8 @@ public class Floor
 			}
 		}
 
-		_stairsPos = new Vector2Int(Random.Range(1, Size.x - 2), Random.Range(1, Size.y - 2));
+		// Here it's -1 and not -2 becasue the max for Random.Range(int) is exclusive.
+		_stairsPos = new Vector2Int(Random.Range(1, Size.x - 1), Random.Range(1, Size.y - 1));
 		_tileStates[StairsPos.x, StairsPos.y] = eTileState.Stairs;
 
 		// TODO: Obstalces (if any)

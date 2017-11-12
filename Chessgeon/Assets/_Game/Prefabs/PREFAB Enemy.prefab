@@ -96,6 +96,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _meshPiecePawn: {fileID: 4300000, guid: 453e22ae0db9f4a44bc84c13c7a5d425, type: 3}
   _meshPieceRook: {fileID: 4300000, guid: 4bee2b03ae3a1cd4ca2da63941539f37, type: 3}
-  _meshPieceBishop: {fileID: 4300000, guid: 4a2c387a55bee504ba7d9a309fb6506e, type: 3}
+  _meshPieceBishop: {fileID: 4300000, guid: fa5a89d5273091b408a4f10550e2fd4f, type: 3}
   _meshPieceKnight: {fileID: 4300000, guid: 6c84511b969d0e84eb187504e6d7ce30, type: 3}
   _meshPieceKing: {fileID: 4300000, guid: 3f7991990a3402f4690013ba553c5a53, type: 3}
