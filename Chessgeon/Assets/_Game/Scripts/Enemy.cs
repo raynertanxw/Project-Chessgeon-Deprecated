@@ -16,7 +16,6 @@ public class Enemy : MonoBehaviour
 	private MeshFilter _meshFilter = null;
 	private MeshRenderer _meshRenderer = null;
 	private EnemyManager _enemyManager = null;
-	private Dungeon _dungeon = null;
 
 	private bool _isInitialised = false;
 	private bool _isAlive = false;
@@ -42,7 +41,7 @@ public class Enemy : MonoBehaviour
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
 	}
 
-	public void Initialise(EnemyManager inEnemyManager, Dungeon inDungeon)
+	public void Initialise(EnemyManager inEnemyManager)
 	{
 		if (_isInitialised)
 		{
@@ -51,7 +50,6 @@ public class Enemy : MonoBehaviour
 		else
 		{
 			_enemyManager = inEnemyManager;
-			_dungeon = inDungeon;
 			// TODO: Next time all the set up for particle systems and such? If any and all, needing to turn them off, etc.
 		}
 	}
@@ -118,7 +116,7 @@ public class Enemy : MonoBehaviour
 	{
 		_isAlive = true;
 		_pos = inSpawnPos;
-		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
+		transform.position = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
 
 		// TODO: Reset the health and all that stuff.

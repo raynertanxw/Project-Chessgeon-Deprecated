@@ -8,6 +8,7 @@ public class TileManager : MonoBehaviour
 	[SerializeField] private GameObject _prefabDungeonTile = null;
 	[SerializeField] private GameObject _prefabSelectableTile = null;
 	[SerializeField] private Dungeon _dungeon = null;
+	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private const float TILE_WIDTH = 1.0f;
 	private const float TILE_HALF_WIDTH = TILE_WIDTH / 2.0f;

@@ -6,6 +6,7 @@ public class MorphyController : MonoBehaviour
 {
 	[SerializeField] private GameObject _prefabMorphy = null;
 	[SerializeField] private Dungeon _dungeon = null;
+	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private Morphy _morphy = null;
 	private Floor _floor = null;
@@ -22,7 +23,7 @@ public class MorphyController : MonoBehaviour
 		_morphy.transform.SetParent(this.transform);
 		_morphy.transform.position = Vector3.zero;
 		_morphy.transform.rotation = Quaternion.identity;
-		_morphy.Initialise(this, _dungeon);
+		_morphy.Initialise(this);
 
 		_morphy.Hide();
 

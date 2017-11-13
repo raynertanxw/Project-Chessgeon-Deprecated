@@ -15,7 +15,6 @@ public class Morphy : MonoBehaviour
 
 	private bool _isInitialised = false;
 	private MorphyController _morphyController = null;
-	private Dungeon _dungeon = null;
 	private MeshFilter _meshFilter = null;
 	private MeshRenderer _meshRenderer = null;
 
@@ -44,7 +43,7 @@ public class Morphy : MonoBehaviour
 		SetType(eType.Morphy);
 	}
 
-	public void Initialise(MorphyController inMorphyController, Dungeon inDungeon)
+	public void Initialise(MorphyController inMorphyController)
 	{
 		if (_isInitialised)
 		{
@@ -53,7 +52,6 @@ public class Morphy : MonoBehaviour
 		else
 		{
 			_morphyController = inMorphyController;
-			_dungeon = inDungeon;
 			// TODO: Next time all the set up for particle systems and such? If any and all, needing to turn them off, etc.
 		}
 	}
@@ -113,7 +111,7 @@ public class Morphy : MonoBehaviour
 	{
 		_isAlive = true;
 		_pos = inSpawnPos;
-		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
+		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
 
 		SetType(eType.Morphy);
@@ -123,6 +121,6 @@ public class Morphy : MonoBehaviour
 	public void MoveTo(Vector2Int inTargetPos)
 	{
 		_pos = inTargetPos;
-		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
+		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
 	}
 }

@@ -6,6 +6,7 @@ public class EnemyManager : MonoBehaviour
 {
 	[SerializeField] private GameObject _prefabEnemy = null;
 	[SerializeField] private Dungeon _dungeon = null;
+	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private Enemy[] _enemies = null;
 	private Floor _floor = null;
@@ -20,7 +21,7 @@ public class EnemyManager : MonoBehaviour
 		{
 			Enemy newEnemy = GameObject.Instantiate(_prefabEnemy).GetComponent<Enemy>();
 			newEnemy.transform.SetParent(this.transform);
-			newEnemy.Initialise(this, _dungeon);
+			newEnemy.Initialise(this);
 
 			_enemies[iEnemy] = newEnemy;
 		}
