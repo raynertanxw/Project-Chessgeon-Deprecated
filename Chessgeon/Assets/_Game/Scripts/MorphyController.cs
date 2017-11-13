@@ -51,11 +51,19 @@ public class MorphyController : MonoBehaviour
 		Vector2Int[] possibleMoves = _morphy.CalcPossibleMoves(_floor);
 		if (possibleMoves.Length > 0)
 		{
-			// TODO: Show the options of the possible spaces to move to.
+			_dungeon.ShowPossibleMoves(possibleMoves, MoveTo);
 		}
 		else
 		{
 			// TODO: Deal with case when there are no possible spaces to move.
 		}
+	}
+
+	private void MoveTo(Vector2Int inTargetPos)
+	{
+		Debug.Assert(_floor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
+		_floor.SetTileState(_morphy.Pos, Floor.eTileState.Empty);
+		_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
+		_morphy.MoveTo(inTargetPos);
 	}
 }

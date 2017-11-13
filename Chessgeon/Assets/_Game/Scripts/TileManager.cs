@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TileManager : MonoBehaviour
 {
 	[SerializeField] private GameObject _prefabDungeonTile = null;
+	[SerializeField] private GameObject _prefabSelectableTile = null;
 	[SerializeField] private Dungeon _dungeon = null;
 
 	private const float TILE_WIDTH = 1.0f;
@@ -18,10 +20,12 @@ public class TileManager : MonoBehaviour
 	public float OriginY { get { return ORIGIN_Y; } }
 
 	private DungeonTile[,] _dungeonTiles = null;
+	private SelectableTile[] _selectableTiles = null;
 
 	private void Awake()
 	{
 		Debug.Assert(_prefabDungeonTile != null, "_prefabDungeonTile is not assigned.");
+		Debug.Assert(_prefabSelectableTile != null, "_prefabSelectableTile is not assigned.");
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 		_dungeonTiles = new DungeonTile[_dungeon.MaxX, _dungeon.MaxY];
@@ -38,6 +42,15 @@ public class TileManager : MonoBehaviour
 			}
 		}
 
+		_selectableTiles = new SelectableTile[8];
+		for (int iSelectable = 0; iSelectable < _selectableTiles.Length; iSelectable++)
+		{
+			SelectableTile newSelectableTile = GameObject.Instantiate(_prefabSelectableTile).GetComponent<SelectableTile>();
+			newSelectableTile.transform.SetParent(this.transform);
+
+			_selectableTiles[iSelectable] = newSelectableTile;
+		}
+
 		HideAllTiles();
 	}
 
@@ -49,6 +62,16 @@ public class TileManager : MonoBehaviour
 			{
 				_dungeonTiles[x, y].SetVisible(false);
 			}
+		}
+
+		HideAllSelectableTiles();
+	}
+
+	private void HideAllSelectableTiles()
+	{
+		for (int iSelectable = 0; iSelectable < _selectableTiles.Length; iSelectable++)
+		{
+			_selectableTiles[iSelectable].Hide();
 		}
 	}
 
@@ -77,8 +100,23 @@ public class TileManager : MonoBehaviour
 		// TODO: Special tiles (if any)
 	}
 
+	private Vector3 GetTileTransformPosition(Vector2Int inPos) { return GetTileTransformPosition(inPos.x, inPos.y); }
 	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
 	{
 		return _dungeonTiles[inPosX, inPosY].transform.position;
+	}
+
+	public void ShowPossibleMoves(Vector2Int[] inPossibleMoves, UnityAction<Vector2Int> inTileSelectedAction)
+	{
+		HideAllSelectableTiles();
+
+		for (int iMove = 0; iMove < inPossibleMoves.Length; iMove++)
+		{
+			_selectableTiles[iMove].SetAt(
+				inPossibleMoves[iMove],
+				GetTileTransformPosition(inPossibleMoves[iMove]),
+				inTileSelectedAction);
+			_selectableTiles[iMove].OnTileSelected.AddListener(new UnityAction<Vector2Int>((Vector2Int) => { HideAllSelectableTiles(); }));
+		}
 	}
 }

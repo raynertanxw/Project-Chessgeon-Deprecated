@@ -498,6 +498,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefabDungeonTile: {fileID: 1221138819492650, guid: ae729c34c3c3d0b40bc315156f90ffaf,
     type: 2}
+  _prefabSelectableTile: {fileID: 1221138819492650, guid: 83cd114983efaa849bbfc544e1e84f89,
+    type: 2}
   _dungeon: {fileID: 1426320895}
 --- !u!1 &1015196345
 GameObject:

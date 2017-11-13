@@ -1,6 +1,6 @@
 # Blender v2.76 (sub 0) OBJ File: 'Tile_Stairs.blend'
 # www.blender.org
-o Cube
+o Tile_Stairs_Cube
 v -0.500000 0.000000 -0.500000
 v 0.500000 0.000000 -0.500000
 v 0.500000 0.000000 0.500000

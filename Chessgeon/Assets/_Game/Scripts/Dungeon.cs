@@ -39,6 +39,14 @@ public class Dungeon : MonoBehaviour
 	private void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.R)) StartGame(); // TODO: Remove this temp debug functionality.
+
+		// TODO: Remove this temp debug functionality.
+		if (Input.GetKeyDown(KeyCode.Alpha0)) _morphyController.MorphTo(Morphy.eType.Morphy);
+		else if (Input.GetKeyDown(KeyCode.Alpha1)) _morphyController.MorphTo(Morphy.eType.Pawn);
+		else if (Input.GetKeyDown(KeyCode.Alpha2)) _morphyController.MorphTo(Morphy.eType.Rook);
+		else if (Input.GetKeyDown(KeyCode.Alpha3)) _morphyController.MorphTo(Morphy.eType.Bishop);
+		else if (Input.GetKeyDown(KeyCode.Alpha4)) _morphyController.MorphTo(Morphy.eType.Knight);
+		else if (Input.GetKeyDown(KeyCode.Alpha5)) _morphyController.MorphTo(Morphy.eType.King);
 	}
 
 	private void GenerateFloor()
@@ -62,5 +70,10 @@ public class Dungeon : MonoBehaviour
 	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
 	{
 		return _tileManager.GetTileTransformPosition(inPosX, inPosY);
+	}
+
+	public void ShowPossibleMoves(Vector2Int[] inPossibleMoves, UnityEngine.Events.UnityAction<Vector2Int> inTileSelectedAction)
+	{
+		_tileManager.ShowPossibleMoves(inPossibleMoves, inTileSelectedAction);
 	}
 }

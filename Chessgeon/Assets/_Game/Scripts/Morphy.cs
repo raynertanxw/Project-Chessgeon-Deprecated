@@ -126,6 +126,12 @@ public class Morphy : MonoBehaviour
 		// TODO: Set all the health, stats, etc here?
 	}
 
+	public void MoveTo(Vector2Int inTargetPos)
+	{
+		_pos = inTargetPos;
+		transform.position = _dungeon.GetTileTransformPosition(Pos);
+	}
+
 	public Vector2Int[] CalcPossibleMoves(Floor inFloor)
 	{
 		return _currentStratergy.CalcPossibleMoves(Pos, _currentType, inFloor);
