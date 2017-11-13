@@ -20,7 +20,7 @@ public class EnemyManager : MonoBehaviour
 		{
 			Enemy newEnemy = GameObject.Instantiate(_prefabEnemy).GetComponent<Enemy>();
 			newEnemy.transform.SetParent(this.transform);
-			newEnemy.Initialise(this);
+			newEnemy.Initialise(this, _dungeon);
 
 			_enemies[iEnemy] = newEnemy;
 		}
@@ -42,28 +42,23 @@ public class EnemyManager : MonoBehaviour
 			if (inFloor.IsTileEmpty(newEnemyPos))
 			{
 				Enemy.eType enemyType = (Enemy.eType)Random.Range(0, 4 + 1);
-				SpawnEnemyAt(newEnemyPos, enemyType, Enemy.eElement.Basic);
+
+				Enemy currentEnemy = null;
+				for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
+				{
+					if (!_enemies[iEnemy].IsAlive) currentEnemy = _enemies[iEnemy];
+				}
+				Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
+
+				Debug.Assert(_floor.TileStates[newEnemyPos.x, newEnemyPos.y] == Floor.eTileState.Empty);
+				_floor.TileStates[newEnemyPos.x, newEnemyPos.y] = Floor.eTileState.Enemy;
+
+				currentEnemy.SetEnemy(enemyType, Enemy.eElement.Basic);
+				currentEnemy.SpawnAt(newEnemyPos);
 
 				numEnemies++;
 			}
 		}
-	}
-
-	public void SpawnEnemyAt(Vector2Int inSpawnPos, Enemy.eType inEnemyType, Enemy.eElement inEnemyElement)
-	{
-		Enemy currentEnemy = null;
-		for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
-		{
-			if (!_enemies[iEnemy].IsAlive) currentEnemy = _enemies[iEnemy];
-		}
-
-		Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
-
-		Debug.Assert(_floor.TileStates[inSpawnPos.x, inSpawnPos.y] == Floor.eTileState.Empty);
-		_floor.TileStates[inSpawnPos.x, inSpawnPos.y] = Floor.eTileState.Enemy;
-
-		currentEnemy.SetEnemy(inEnemyType, inEnemyElement);
-		currentEnemy.SpawnAt(_dungeon.GetTileTransformPosition(inSpawnPos));
 	}
 
 	private void HideAllEnemies()

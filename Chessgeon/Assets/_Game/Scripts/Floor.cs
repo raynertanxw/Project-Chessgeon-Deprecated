@@ -37,14 +37,60 @@ public class Floor
 		// TODO: Special tiles (if any)
 	}
 
+	public bool IsTileEmpty(Vector2Int inPos) { return IsTileEmpty(inPos.x, inPos.y); }
 	public bool IsTileEmpty(int inX, int inY)
 	{
 		return (TileStates[inX, inY] == eTileState.Empty);
 	}
 
-	public bool IsTileEmpty(Vector2Int inPos)
+	public bool IsValidEnemyMove(Vector2Int inPos) { return IsValidEnemyMove(inPos.x, inPos.y); }
+	public bool IsValidEnemyMove(int inX, int inY)
 	{
-		return IsTileEmpty(inPos.x, inPos.y);
+		if (IsValidPos(inX, inY))
+		{
+			eTileState tileState = TileStates[inX, inY];
+			// TODO: Can ememy step on hidden tiles???
+			return (tileState == eTileState.Empty
+				|| tileState == eTileState.Morphy);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public bool IsValidMorphyMove(Vector2Int inPos) { return IsValidMorphyMove(inPos.x, inPos.y); }
+	public bool IsValidMorphyMove(int inX, int inY)
+	{
+		if (IsValidPos(inX, inY))
+		{
+			eTileState tileState = TileStates[inX, inY];
+			// TODO: Handle hidden tiles case, if we decide that it is another eTileState.
+			return (tileState == eTileState.Empty
+				|| tileState == eTileState.Enemy
+				|| tileState == eTileState.Stairs);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public bool IsValidPos(Vector2Int inPos) { return IsValidPos(inPos.x, inPos.y); }
+	public bool IsValidPos(int inX, int inY)
+	{
+		return ((inX >= 0 && inX < Size.x) && (inY >= 0 && inY < Size.y));
+	}
+
+	public bool IsTileOfState(Vector2Int inPos, params eTileState[] inTileStates) { return IsTileOfState(inPos.x, inPos.y, inTileStates); }
+	public bool IsTileOfState(int inX, int inY, params eTileState[] inTileStates)
+	{
+		for (int iState = 0; iState < inTileStates.Length; iState++)
+		{
+			if (TileStates[inX, inY] == inTileStates[iState]) return true;
+		}
+
+		return false;
 	}
 
 	public static bool IsTileWhite(int inX, int inY)

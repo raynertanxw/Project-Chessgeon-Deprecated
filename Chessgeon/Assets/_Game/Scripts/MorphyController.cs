@@ -9,8 +9,6 @@ public class MorphyController : MonoBehaviour
 
 	private Morphy _morphy = null;
 	private Floor _floor = null;
-	private Vector2Int _pos;
-	public Vector2Int Pos { get { return _pos; } }
 
 	private void Awake()
 	{
@@ -21,6 +19,7 @@ public class MorphyController : MonoBehaviour
 		_morphy.transform.SetParent(this.transform);
 		_morphy.transform.position = Vector3.zero;
 		_morphy.transform.rotation = Quaternion.identity;
+		_morphy.Initialise(this, _dungeon);
 
 		_morphy.Hide();
 	}
@@ -35,12 +34,28 @@ public class MorphyController : MonoBehaviour
 			Vector2Int spawnPos = new Vector2Int(Random.Range(0, inFloor.Size.x), Random.Range(0, inFloor.Size.y));
 			if (inFloor.IsTileEmpty(spawnPos))
 			{
-				_pos = spawnPos;
-				_morphy.SpawnAt(_dungeon.GetTileTransformPosition(Pos));
-				Debug.Assert(_floor.TileStates[Pos.x, Pos.y] == Floor.eTileState.Empty);
-				_floor.TileStates[Pos.x, Pos.y] = Floor.eTileState.Morphy;
+				_morphy.SpawnAt(spawnPos);
+				Debug.Assert(_floor.TileStates[spawnPos.x, spawnPos.y] == Floor.eTileState.Empty);
+				_floor.TileStates[spawnPos.x, spawnPos.y] = Floor.eTileState.Morphy;
 				break;
 			}
+		}
+	}
+
+	public void MorphTo(Morphy.eType inType)
+	{
+		_morphy.SetType(inType);
+
+		// TODO: Disable scrolling and other UI stuff.
+
+		Vector2Int[] possibleMoves = _morphy.CalcPossibleMoves(_floor);
+		if (possibleMoves.Length > 0)
+		{
+			// TODO: Show the options of the possible spaces to move to.
+		}
+		else
+		{
+			// TODO: Deal with case when there are no possible spaces to move.
 		}
 	}
 }

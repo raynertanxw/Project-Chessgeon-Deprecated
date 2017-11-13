@@ -13,11 +13,18 @@ public class Morphy : MonoBehaviour
 	[SerializeField] private Mesh _meshPieceKnight = null;
 	[SerializeField] private Mesh _meshPieceKing = null;
 
+	private bool _isInitialised = false;
+	private MorphyController _morphyController = null;
+	private Dungeon _dungeon = null;
 	private MeshFilter _meshFilter = null;
 	private MeshRenderer _meshRenderer = null;
 	private eType _currentType;
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
+	private Vector2Int _pos;
+	public Vector2Int Pos { get { return _pos; } }
+	private MorphyStratergy[] _stratergies = null;
+	private MorphyStratergy _currentStratergy = null;
 
 	private void Awake()
 	{
@@ -30,11 +37,37 @@ public class Morphy : MonoBehaviour
 
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+
+		_stratergies = new MorphyStratergy[6];
+		_stratergies[0] = new MorphyStratergyPawn();
+		_stratergies[1] = new MorphyStratergyRook();
+		_stratergies[2] = new MorphyStratergyBishop();
+		_stratergies[3] = new MorphyStratergyKnight();
+		_stratergies[4] = new MorphyStratergyKing();
+		_stratergies[5] = new MorphyStratergyMorphy();
+
+		SetType(eType.Morphy);
+	}
+
+	public void Initialise(MorphyController inMorphyController, Dungeon inDungeon)
+	{
+		if (_isInitialised)
+		{
+			Debug.LogWarning("Trying to intialise Enemy when it is already initialised");
+		}
+		else
+		{
+			_morphyController = inMorphyController;
+			_dungeon = inDungeon;
+			// TODO: Next time all the set up for particle systems and such? If any and all, needing to turn them off, etc.
+		}
 	}
 
 	public void SetType(eType inType)
 	{
 		_meshRenderer.material.SetColor("_Color", Color.green);
+		_currentType = inType;
+		_currentStratergy = _stratergies[(int)_currentType];
 
 		switch(inType)
 		{
@@ -82,13 +115,19 @@ public class Morphy : MonoBehaviour
 		_meshRenderer.enabled = false;
 	}
 
-	public void SpawnAt(Vector3 inSpawnPos)
+	public void SpawnAt(Vector2Int inSpawnPos)
 	{
 		_isAlive = true;
-		transform.position = inSpawnPos;
+		_pos = inSpawnPos;
+		transform.position = _dungeon.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
 
 		SetType(eType.Morphy);
 		// TODO: Set all the health, stats, etc here?
+	}
+
+	public Vector2Int[] CalcPossibleMoves(Floor inFloor)
+	{
+		return _currentStratergy.CalcPossibleMoves(Pos, _currentType, inFloor);
 	}
 }

@@ -58,13 +58,9 @@ public class Dungeon : MonoBehaviour
 		GenerateFloor();
 	}
 
+	public Vector3 GetTileTransformPosition(Vector2Int inPos) { return _tileManager.GetTileTransformPosition(inPos.x, inPos.y); }
 	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
 	{
 		return _tileManager.GetTileTransformPosition(inPosX, inPosY);
-	}
-
-	public Vector3 GetTileTransformPosition(Vector2Int inPos)
-	{
-		return _tileManager.GetTileTransformPosition(inPos.x, inPos.y);
 	}
 }
