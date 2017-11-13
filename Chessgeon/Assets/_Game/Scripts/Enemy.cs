@@ -22,7 +22,9 @@ public class Enemy : MonoBehaviour
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
 	private eType _type = eType.Pawn;
+	public eType Type { get { return _type; } }
 	private eElement _element = eElement.Basic;
+	public eElement Element { get { return _element; } }
 	private Vector2Int _pos;
 	private Vector2Int Pos { get { return _pos; } }
 
@@ -69,31 +71,26 @@ public class Enemy : MonoBehaviour
 			case eType.Pawn:
 			{
 				_meshFilter.mesh = _meshPiecePawn;
-				// TODO: Set the movement strategies here.
 				break;
 			}
 			case eType.Rook:
 			{
 				_meshFilter.mesh = _meshPieceRook;
-				// TODO: Set the movement strategies here.
 				break;
 			}
 			case eType.Bishop:
 			{
 				_meshFilter.mesh = _meshPieceBishop;
-				// TODO: Set the movement strategies here.
 				break;
 			}
 			case eType.Knight:
 			{
 				_meshFilter.mesh = _meshPieceKnight;
-				// TODO: Set the movement strategies here.
 				break;
 			}
 			case eType.King:
 			{
 				_meshFilter.mesh = _meshPieceKing;
-				// TODO: Set the movement strategies here.
 				break;
 			}
 			default:

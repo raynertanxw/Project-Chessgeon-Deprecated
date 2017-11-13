@@ -39,6 +39,8 @@ public class Morphy : MonoBehaviour
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
+		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
+
 		SetType(eType.Morphy);
 	}
 
