@@ -51,7 +51,7 @@ public class MorphyController : MonoBehaviour
 		Vector2Int[] possibleMoves = _morphy.CalcPossibleMoves(_floor);
 		if (possibleMoves.Length > 0)
 		{
-			_dungeon.ShowPossibleMoves(possibleMoves, MoveTo);
+			_dungeon.TileManager.ShowPossibleMoves(possibleMoves, MoveTo);
 		}
 		else
 		{

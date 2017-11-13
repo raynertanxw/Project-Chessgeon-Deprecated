@@ -119,7 +119,7 @@ public class Morphy : MonoBehaviour
 	{
 		_isAlive = true;
 		_pos = inSpawnPos;
-		transform.position = _dungeon.GetTileTransformPosition(Pos);
+		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
 
 		SetType(eType.Morphy);
@@ -129,7 +129,7 @@ public class Morphy : MonoBehaviour
 	public void MoveTo(Vector2Int inTargetPos)
 	{
 		_pos = inTargetPos;
-		transform.position = _dungeon.GetTileTransformPosition(Pos);
+		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
 	}
 
 	public Vector2Int[] CalcPossibleMoves(Floor inFloor)

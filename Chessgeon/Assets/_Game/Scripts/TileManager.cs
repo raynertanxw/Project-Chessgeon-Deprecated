@@ -100,7 +100,7 @@ public class TileManager : MonoBehaviour
 		// TODO: Special tiles (if any)
 	}
 
-	private Vector3 GetTileTransformPosition(Vector2Int inPos) { return GetTileTransformPosition(inPos.x, inPos.y); }
+	public Vector3 GetTileTransformPosition(Vector2Int inPos) { return GetTileTransformPosition(inPos.x, inPos.y); }
 	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
 	{
 		return _dungeonTiles[inPosX, inPosY].transform.position;

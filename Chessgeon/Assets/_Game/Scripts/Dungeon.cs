@@ -13,6 +13,9 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private TileManager _tileManager = null;
 	[SerializeField] private EnemyManager _enemyManager = null;
 	[SerializeField] private MorphyController _morphyController = null;
+	public TileManager TileManager { get { return _tileManager; } }
+	public EnemyManager EnemyManager { get { return _enemyManager; } }
+	public MorphyController MorphyController { get { return _morphyController; } }
 
 	private const int DUNGEON_MIN_X = 5;
 	private const int DUNGEON_MAX_X = 15;
@@ -64,16 +67,5 @@ public class Dungeon : MonoBehaviour
 	{
 		// Reset everything and generate the new 1st floor.
 		GenerateFloor();
-	}
-
-	public Vector3 GetTileTransformPosition(Vector2Int inPos) { return _tileManager.GetTileTransformPosition(inPos.x, inPos.y); }
-	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
-	{
-		return _tileManager.GetTileTransformPosition(inPosX, inPosY);
-	}
-
-	public void ShowPossibleMoves(Vector2Int[] inPossibleMoves, UnityEngine.Events.UnityAction<Vector2Int> inTileSelectedAction)
-	{
-		_tileManager.ShowPossibleMoves(inPossibleMoves, inTileSelectedAction);
 	}
 }

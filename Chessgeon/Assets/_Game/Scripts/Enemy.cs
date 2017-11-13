@@ -121,7 +121,7 @@ public class Enemy : MonoBehaviour
 	{
 		_isAlive = true;
 		_pos = inSpawnPos;
-		transform.position = _dungeon.GetTileTransformPosition(Pos);
+		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
 
 		// TODO: Reset the health and all that stuff.
