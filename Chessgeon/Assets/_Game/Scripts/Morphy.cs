@@ -18,13 +18,14 @@ public class Morphy : MonoBehaviour
 	private Dungeon _dungeon = null;
 	private MeshFilter _meshFilter = null;
 	private MeshRenderer _meshRenderer = null;
-	private eType _currentType;
+
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
+	private eType _currentType;
+	public eType CurrentType { get { return _currentType; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
-	private MorphyStratergy[] _stratergies = null;
-	private MorphyStratergy _currentStratergy = null;
+
 
 	private void Awake()
 	{
@@ -37,14 +38,6 @@ public class Morphy : MonoBehaviour
 
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
-
-		_stratergies = new MorphyStratergy[6];
-		_stratergies[0] = new MorphyStratergyPawn();
-		_stratergies[1] = new MorphyStratergyRook();
-		_stratergies[2] = new MorphyStratergyBishop();
-		_stratergies[3] = new MorphyStratergyKnight();
-		_stratergies[4] = new MorphyStratergyKing();
-		_stratergies[5] = new MorphyStratergyMorphy();
 
 		SetType(eType.Morphy);
 	}
@@ -67,7 +60,6 @@ public class Morphy : MonoBehaviour
 	{
 		_meshRenderer.material.SetColor("_Color", Color.green);
 		_currentType = inType;
-		_currentStratergy = _stratergies[(int)_currentType];
 
 		switch(inType)
 		{
@@ -130,10 +122,5 @@ public class Morphy : MonoBehaviour
 	{
 		_pos = inTargetPos;
 		transform.position = _dungeon.TileManager.GetTileTransformPosition(Pos);
-	}
-
-	public Vector2Int[] CalcPossibleMoves(Floor inFloor)
-	{
-		return _currentStratergy.CalcPossibleMoves(Pos, _currentType, inFloor);
 	}
 }

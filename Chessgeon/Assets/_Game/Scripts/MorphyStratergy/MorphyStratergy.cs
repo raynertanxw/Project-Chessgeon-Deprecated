@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class MorphyStratergy
 {
-	public abstract Vector2Int[] CalcPossibleMoves(Vector2Int inPos, Morphy.eType inType, Floor inFloor);
+	public abstract Vector2Int[] CalcPossibleMoves(Vector2Int inPos, Floor inFloor);
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MorphyStratergyPawn : MorphyStratergy
 {
-	public override Vector2Int[] CalcPossibleMoves(Vector2Int inPos, Morphy.eType inType, Floor inFloor)
+	public override Vector2Int[] CalcPossibleMoves(Vector2Int inPos, Floor inFloor)
 	{
 		List<Vector2Int> possibleMoves = new List<Vector2Int>();
 

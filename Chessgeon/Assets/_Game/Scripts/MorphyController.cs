@@ -10,6 +10,9 @@ public class MorphyController : MonoBehaviour
 	private Morphy _morphy = null;
 	private Floor _floor = null;
 
+	private MorphyStratergy[] _stratergies = null;
+	private MorphyStratergy _currentStratergy = null;
+
 	private void Awake()
 	{
 		Debug.Assert(_prefabMorphy != null, "_prefabMorphy is not assigned.");
@@ -22,6 +25,14 @@ public class MorphyController : MonoBehaviour
 		_morphy.Initialise(this, _dungeon);
 
 		_morphy.Hide();
+
+		_stratergies = new MorphyStratergy[6];
+		_stratergies[0] = new MorphyStratergyPawn();
+		_stratergies[1] = new MorphyStratergyRook();
+		_stratergies[2] = new MorphyStratergyBishop();
+		_stratergies[3] = new MorphyStratergyKnight();
+		_stratergies[4] = new MorphyStratergyKing();
+		_stratergies[5] = new MorphyStratergyMorphy();
 	}
 
 	public void SetUpPlayer(Floor inFloor)
@@ -44,11 +55,10 @@ public class MorphyController : MonoBehaviour
 
 	public void MorphTo(Morphy.eType inType)
 	{
+		_currentStratergy = _stratergies[(int)inType];
 		_morphy.SetType(inType);
 
-		// TODO: Disable scrolling and other UI stuff.
-
-		Vector2Int[] possibleMoves = _morphy.CalcPossibleMoves(_floor);
+		Vector2Int[] possibleMoves = _currentStratergy.CalcPossibleMoves(_morphy.Pos, _floor);
 		if (possibleMoves.Length > 0)
 		{
 			_dungeon.TileManager.ShowPossibleMoves(possibleMoves, MoveTo);
