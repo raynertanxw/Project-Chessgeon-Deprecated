@@ -48,6 +48,7 @@ public class TileManager : MonoBehaviour
 		{
 			SelectableTile newSelectableTile = GameObject.Instantiate(_prefabSelectableTile).GetComponent<SelectableTile>();
 			newSelectableTile.transform.SetParent(this.transform);
+			newSelectableTile.Initialise(this);
 
 			_selectableTiles[iSelectable] = newSelectableTile;
 		}
@@ -68,7 +69,7 @@ public class TileManager : MonoBehaviour
 		HideAllSelectableTiles();
 	}
 
-	private void HideAllSelectableTiles()
+	public void HideAllSelectableTiles()
 	{
 		for (int iSelectable = 0; iSelectable < _selectableTiles.Length; iSelectable++)
 		{
@@ -113,11 +114,7 @@ public class TileManager : MonoBehaviour
 
 		for (int iMove = 0; iMove < inPossibleMoves.Length; iMove++)
 		{
-			_selectableTiles[iMove].SetAt(
-				inPossibleMoves[iMove],
-				GetTileTransformPosition(inPossibleMoves[iMove]),
-				inTileSelectedAction);
-			_selectableTiles[iMove].OnTileSelected.AddListener(new UnityAction<Vector2Int>((Vector2Int) => { HideAllSelectableTiles(); }));
+			_selectableTiles[iMove].SetAt(inPossibleMoves[iMove], inTileSelectedAction);
 		}
 	}
 }

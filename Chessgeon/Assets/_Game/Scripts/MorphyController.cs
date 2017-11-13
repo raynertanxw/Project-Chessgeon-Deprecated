@@ -58,6 +58,7 @@ public class MorphyController : MonoBehaviour
 		_currentStratergy = _stratergies[(int)inType];
 		_morphy.SetType(inType);
 
+		_dungeon.TileManager.HideAllSelectableTiles();
 		Vector2Int[] possibleMoves = _currentStratergy.CalcPossibleMoves(_morphy.Pos, _floor);
 		if (possibleMoves.Length > 0)
 		{
