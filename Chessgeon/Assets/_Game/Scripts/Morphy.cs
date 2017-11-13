@@ -123,4 +123,13 @@ public class Morphy : MonoBehaviour
 		_pos = inTargetPos;
 		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
 	}
+
+	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy)
+	{
+		_pos = inTargetPos;
+		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
+
+		// TODO: kill enemy here casue here is where we'll likely need to hide the enemy for animaiton purposes.
+		inTargetEnemy.Kill();
+	}
 }

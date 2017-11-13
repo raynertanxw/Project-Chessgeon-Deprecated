@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour
 	private eElement _element = eElement.Basic;
 	public eElement Element { get { return _element; } }
 	private Vector2Int _pos;
-	private Vector2Int Pos { get { return _pos; } }
+	public Vector2Int Pos { get { return _pos; } }
 
 	private void Awake()
 	{
@@ -104,6 +104,13 @@ public class Enemy : MonoBehaviour
 		_element = inElement;
 
 		// TODO: Implement this!
+	}
+
+	public void Kill()
+	{
+		_isAlive = false;
+		// TODO: Points and stuff.
+		_meshRenderer.enabled = false;
 	}
 
 	public void Hide()

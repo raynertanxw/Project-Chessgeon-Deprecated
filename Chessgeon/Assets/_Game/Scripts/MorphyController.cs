@@ -79,10 +79,17 @@ public class MorphyController : MonoBehaviour
 		{
 			_dungeon.ProgressToNextFloor();
 		}
+		else if (_floor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
+		{
+			Enemy targetEnemy = _dungeon.EnemyManager.GetEnemyAt(inTargetPos);
+			Debug.Assert(targetEnemy != null, "There is no enemy at " + inTargetPos);
+			_morphy.MoveAndAttack(inTargetPos, targetEnemy);
+			_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
+		}
 		else
 		{
-			_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
 			_morphy.MoveTo(inTargetPos);
+			_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
 		}
 	}
 }
