@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaburuTools;
+using DaburuTools.Action;
 
 public class Morphy : MonoBehaviour
 {
@@ -121,15 +123,27 @@ public class Morphy : MonoBehaviour
 	public void MoveTo(Vector2Int inTargetPos)
 	{
 		_pos = inTargetPos;
-		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
+		Vector3 targetTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
+		MoveToAction moveToTarget = new MoveToAction(this.transform, Graph.SmoothStep, targetTransformPos, 0.6f);
+		ActionHandler.RunAction(moveToTarget);
 	}
 
 	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy)
 	{
 		_pos = inTargetPos;
-		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
-
-		// TODO: kill enemy here casue here is where we'll likely need to hide the enemy for animaiton purposes.
-		inTargetEnemy.Kill();
+		Vector3 enemyTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
+		MoveToAction moveUp = new MoveToAction(
+			this.transform,
+			Graph.InverseExponential,
+			transform.position + new Vector3(0.0f, 2.5f, 0.0f),
+			0.4f);
+		MoveToAction slamDown = new MoveToAction(
+			this.transform,
+			Graph.Exponential,
+			enemyTransformPos,
+			0.1f);
+		ActionSequence attackSeq = new ActionSequence(moveUp, new DelayAction(0.15f), slamDown);
+		attackSeq.OnActionFinish += inTargetEnemy.Kill;
+		ActionHandler.RunAction(attackSeq);
 	}
 }
