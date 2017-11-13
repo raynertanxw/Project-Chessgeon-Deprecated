@@ -28,6 +28,7 @@ public class Dungeon : MonoBehaviour
 	public int MaxY { get { return DUNGEON_MAX_Y; } }
 	public int MaxNumEnemies { get { return DUNGEON_MAX_ENEMIES; } }
 
+	private int _floorNum = -1;
 	private Floor _floor = null;
 
 	public FloorGeneratedEvent OnFloorGenerated;
@@ -54,7 +55,7 @@ public class Dungeon : MonoBehaviour
 
 	private void GenerateFloor()
 	{
-		_floor = new Floor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic);
+		_floor = new Floor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
 
 		_tileManager.GenerateFloorTerrain(_floor);
 		_enemyManager.GenerateAndSpawnEnemies(_floor); // TODO: Can pass in difficulty settings here.
@@ -65,7 +66,14 @@ public class Dungeon : MonoBehaviour
 
 	public void StartGame()
 	{
+		_floorNum = 1;
 		// Reset everything and generate the new 1st floor.
+		GenerateFloor();
+	}
+
+	public void ProgressToNextFloor()
+	{
+		_floorNum++;
 		GenerateFloor();
 	}
 }

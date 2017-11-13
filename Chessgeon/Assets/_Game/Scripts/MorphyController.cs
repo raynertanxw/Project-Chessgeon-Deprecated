@@ -74,7 +74,15 @@ public class MorphyController : MonoBehaviour
 	{
 		Debug.Assert(_floor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
 		_floor.SetTileState(_morphy.Pos, Floor.eTileState.Empty);
-		_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
-		_morphy.MoveTo(inTargetPos);
+
+		if (_floor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
+		{
+			_dungeon.ProgressToNextFloor();
+		}
+		else
+		{
+			_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
+			_morphy.MoveTo(inTargetPos);
+		}
 	}
 }

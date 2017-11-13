@@ -9,12 +9,16 @@ public class Floor
 	private eTileState[,] _tileStates;
 	private Vector2Int _size;
 	private Vector2Int _stairsPos;
+	private int _floorNum;
 
 	public Vector2Int Size { get { return _size; } }
 	public Vector2Int StairsPos { get { return _stairsPos; } }
+	public int FloorNum { get { return _floorNum; } }
 
-	public Floor(int inMinX, int inMaxX, int inMinY, int inMaxY, DungeonTile.eZone inZone)
+	public Floor(int inMinX, int inMaxX, int inMinY, int inMaxY, DungeonTile.eZone inZone, int inFloorNum)
 	{
+		_floorNum = inFloorNum;
+
 		// Here we + 1 the max becasue Random.Range(int) is inclusive exclusive.
 		_size = new Vector2Int(Random.Range(inMinX, inMaxX + 1), Random.Range(inMinY, inMaxY + 1));
 
