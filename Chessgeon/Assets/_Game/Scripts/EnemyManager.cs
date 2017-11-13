@@ -5,20 +5,21 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
 	[SerializeField] private GameObject _prefabEnemy = null;
+	[SerializeField] private Dungeon _dungeon = null;
 
 	private bool _isInitialised = false;
 	private Enemy[] _enemies = null;
-	private Dungeon _dungeon = null;
 	private Floor _floor = null;
 
 	private void Awake()
 	{
 		Debug.Assert(_prefabEnemy != null, "_prefabEnemy is not assigned.");
+		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
 	}
 
-	public void Initialise(int inMaxEnemies, Dungeon inDungeon)
+	public void Initialise(int inMaxEnemies)
 	{
 		if (_isInitialised)
 		{
@@ -26,8 +27,6 @@ public class EnemyManager : MonoBehaviour
 		}
 		else
 		{
-			_dungeon = inDungeon;
-
 			_enemies = new Enemy[inMaxEnemies];
 			for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
 			{

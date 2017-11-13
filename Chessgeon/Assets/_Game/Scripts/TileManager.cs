@@ -5,6 +5,7 @@ using UnityEngine;
 public class TileManager : MonoBehaviour
 {
 	[SerializeField] private GameObject _prefabDungeonTile = null;
+	[SerializeField] private Dungeon _dungeon = null;
 
 	private const float TILE_WIDTH = 1.0f;
 	private const float TILE_HALF_WIDTH = TILE_WIDTH / 2.0f;
@@ -18,16 +19,16 @@ public class TileManager : MonoBehaviour
 
 	private bool _isInitialised = false;
 	private DungeonTile[,] _dungeonTiles = null;
-	private Dungeon _dungeon = null;
 
 	private void Awake()
 	{
 		Debug.Assert(_prefabDungeonTile != null, "_prefabDungeonTile is not assigned.");
+		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
 	}
 
-	public void Initialise(int inMaxX, int inMaxY, Dungeon inDungeon)
+	public void Initialise(int inMaxX, int inMaxY)
 	{
 		if (_isInitialised)
 		{
@@ -35,8 +36,6 @@ public class TileManager : MonoBehaviour
 		}
 		else
 		{
-			_dungeon = inDungeon;
-
 			_dungeonTiles = new DungeonTile[inMaxX, inMaxY];
 			for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
 			{

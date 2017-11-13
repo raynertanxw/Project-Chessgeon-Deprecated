@@ -30,8 +30,8 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 
-		_tileManager.Initialise(DUNGEON_MAX_X, DUNGEON_MAX_Y, this);
-		_enemyManager.Initialise(DUNGEON_MAX_ENEMIES, this);
+		_tileManager.Initialise(DUNGEON_MAX_X, DUNGEON_MAX_Y);
+		_enemyManager.Initialise(DUNGEON_MAX_ENEMIES);
 	}
 
 	private void Update()
