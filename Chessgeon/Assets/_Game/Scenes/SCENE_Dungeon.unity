@@ -112,6 +112,49 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &180215240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 180215241}
+  - component: {fileID: 180215242}
+  m_Layer: 0
+  m_Name: Morphy Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &180215241
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 180215240}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1426320894}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &180215242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 180215240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e1db791a6e76fa4f8873118bb53b71f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefabMorphy: {fileID: 1221138819492650, guid: d00bbc87c8229674ab057b228f3fedc7,
+    type: 2}
+  _dungeon: {fileID: 1426320895}
 --- !u!1 &228503333
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,7 +197,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefabEnemy: {fileID: 1221138819492650, guid: a72273ae8fdf4314e80f5764d17e3491,
     type: 2}
-  _tileManager: {fileID: 974361323}
 --- !u!1 &580929944
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,6 +634,7 @@ Transform:
   m_Children:
   - {fileID: 974361322}
   - {fileID: 228503334}
+  - {fileID: 180215241}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -608,6 +651,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tileManager: {fileID: 974361323}
   _enemyManager: {fileID: 228503335}
+  _morphyController: {fileID: 180215242}
   OnFloorGenerated:
     m_PersistentCalls:
       m_Calls: []
@@ -696,7 +740,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1798507098}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 197.5, y: 351, z: 0}
+  m_LocalPosition: {x: 196.5, y: 349, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 580929945}

@@ -93,7 +93,6 @@ public class TileManager : MonoBehaviour
 
 	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
 	{
-		// + 1 to x and y cause of the boundary tiles.
 		return _dungeonTiles[inPosX, inPosY].transform.position;
 	}
 }

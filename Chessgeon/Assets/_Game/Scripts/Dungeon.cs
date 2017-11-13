@@ -12,6 +12,7 @@ public class Dungeon : MonoBehaviour
 {
 	[SerializeField] private TileManager _tileManager = null;
 	[SerializeField] private EnemyManager _enemyManager = null;
+	[SerializeField] private MorphyController _morphyController = null;
 
 	private const int DUNGEON_MAX_X = 15;
 	private const int DUNGEON_MAX_Y = 15;
@@ -27,6 +28,7 @@ public class Dungeon : MonoBehaviour
 	{
 		Debug.Assert(_tileManager != null, "_tileManager is not assigned.");
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
+		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 
 		_tileManager.Initialise(DUNGEON_MAX_X, DUNGEON_MAX_Y, this);
 		_enemyManager.Initialise(DUNGEON_MAX_ENEMIES, this);
@@ -43,6 +45,7 @@ public class Dungeon : MonoBehaviour
 
 		_tileManager.GenerateFloorTerrain(_floor);
 		_enemyManager.GenerateAndSpawnEnemies(_floor); // TODO: Can pass in difficulty settings here.
+		_morphyController.SetUpPlayer(_floor);
 
 		OnFloorGenerated.Invoke(_floor);
 	}
@@ -51,5 +54,15 @@ public class Dungeon : MonoBehaviour
 	{
 		// Reset everything and generate the new 1st floor.
 		GenerateFloor();
+	}
+
+	public Vector3 GetTileTransformPosition(int inPosX, int inPosY)
+	{
+		return _tileManager.GetTileTransformPosition(inPosX, inPosY);
+	}
+
+	public Vector3 GetTileTransformPosition(Vector2Int inPos)
+	{
+		return _tileManager.GetTileTransformPosition(inPos.x, inPos.y);
 	}
 }

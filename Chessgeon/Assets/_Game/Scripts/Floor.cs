@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Floor
 {
-	public enum eTileState { Empty, Stairs, Blocked, Enemy };
+	public enum eTileState { Empty, Stairs, Blocked, Enemy, Morphy };
 
 	private eTileState[,] _tileStates;
 	private Vector2Int _size;
@@ -40,6 +40,11 @@ public class Floor
 	public bool IsTileEmpty(int inX, int inY)
 	{
 		return (TileStates[inX, inY] == eTileState.Empty);
+	}
+
+	public bool IsTileEmpty(Vector2Int inPos)
+	{
+		return IsTileEmpty(inPos.x, inPos.y);
 	}
 
 	public static bool IsTileWhite(int inX, int inY)
