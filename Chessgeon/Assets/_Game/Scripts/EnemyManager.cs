@@ -50,8 +50,8 @@ public class EnemyManager : MonoBehaviour
 				}
 				Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
 
-				Debug.Assert(_floor.TileStates[newEnemyPos.x, newEnemyPos.y] == Floor.eTileState.Empty);
-				_floor.TileStates[newEnemyPos.x, newEnemyPos.y] = Floor.eTileState.Enemy;
+				Debug.Assert(_floor.IsTileEmpty(newEnemyPos), "Tile " + newEnemyPos + " is not empty!");
+				_floor.SetTileState(newEnemyPos, Floor.eTileState.Enemy);
 
 				currentEnemy.SetEnemy(enemyType, Enemy.eElement.Basic);
 				currentEnemy.SpawnAt(newEnemyPos);

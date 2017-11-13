@@ -35,8 +35,8 @@ public class MorphyController : MonoBehaviour
 			if (inFloor.IsTileEmpty(spawnPos))
 			{
 				_morphy.SpawnAt(spawnPos);
-				Debug.Assert(_floor.TileStates[spawnPos.x, spawnPos.y] == Floor.eTileState.Empty);
-				_floor.TileStates[spawnPos.x, spawnPos.y] = Floor.eTileState.Morphy;
+				Debug.Assert(_floor.IsTileEmpty(spawnPos), "Tile " + spawnPos + " is not empty!");
+				_floor.SetTileState(spawnPos, Floor.eTileState.Morphy);
 				break;
 			}
 		}

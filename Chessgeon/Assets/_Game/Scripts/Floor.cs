@@ -10,7 +10,6 @@ public class Floor
 	private Vector2Int _size;
 	private Vector2Int _stairsPos;
 
-	public eTileState[,] TileStates { get { return _tileStates; } }
 	public Vector2Int Size { get { return _size; } }
 	public Vector2Int StairsPos { get { return _stairsPos; } }
 
@@ -37,10 +36,16 @@ public class Floor
 		// TODO: Special tiles (if any)
 	}
 
+	public void SetTileState(Vector2Int inPos, eTileState inTileState) { SetTileState(inPos.x, inPos.y, inTileState); }
+	public void SetTileState(int inX, int inY, eTileState inTileState)
+	{
+		_tileStates[inX, inY] = inTileState;
+	}
+
 	public bool IsTileEmpty(Vector2Int inPos) { return IsTileEmpty(inPos.x, inPos.y); }
 	public bool IsTileEmpty(int inX, int inY)
 	{
-		return (TileStates[inX, inY] == eTileState.Empty);
+		return (_tileStates[inX, inY] == eTileState.Empty);
 	}
 
 	public bool IsValidEnemyMove(Vector2Int inPos) { return IsValidEnemyMove(inPos.x, inPos.y); }
@@ -48,7 +53,7 @@ public class Floor
 	{
 		if (IsValidPos(inX, inY))
 		{
-			eTileState tileState = TileStates[inX, inY];
+			eTileState tileState = _tileStates[inX, inY];
 			// TODO: Can ememy step on hidden tiles???
 			return (tileState == eTileState.Empty
 				|| tileState == eTileState.Morphy);
@@ -64,7 +69,7 @@ public class Floor
 	{
 		if (IsValidPos(inX, inY))
 		{
-			eTileState tileState = TileStates[inX, inY];
+			eTileState tileState = _tileStates[inX, inY];
 			// TODO: Handle hidden tiles case, if we decide that it is another eTileState.
 			return (tileState == eTileState.Empty
 				|| tileState == eTileState.Enemy
@@ -87,7 +92,7 @@ public class Floor
 	{
 		for (int iState = 0; iState < inTileStates.Length; iState++)
 		{
-			if (TileStates[inX, inY] == inTileStates[iState]) return true;
+			if (_tileStates[inX, inY] == inTileStates[iState]) return true;
 		}
 
 		return false;
