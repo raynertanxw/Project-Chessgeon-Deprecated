@@ -7,7 +7,6 @@ public class EnemyManager : MonoBehaviour
 	[SerializeField] private GameObject _prefabEnemy = null;
 	[SerializeField] private Dungeon _dungeon = null;
 
-	private bool _isInitialised = false;
 	private Enemy[] _enemies = null;
 	private Floor _floor = null;
 
@@ -16,29 +15,17 @@ public class EnemyManager : MonoBehaviour
 		Debug.Assert(_prefabEnemy != null, "_prefabEnemy is not assigned.");
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
-		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
-	}
-
-	public void Initialise(int inMaxEnemies)
-	{
-		if (_isInitialised)
+		_enemies = new Enemy[_dungeon.MaxNumEnemies];
+		for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
 		{
-			Debug.LogWarning("Trying to initialise EnemyManager when it is already initialised");
-		}
-		else
-		{
-			_enemies = new Enemy[inMaxEnemies];
-			for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
-			{
-				Enemy newEnemy = GameObject.Instantiate(_prefabEnemy).GetComponent<Enemy>();
-				newEnemy.transform.SetParent(this.transform);
-				newEnemy.Initialise(this);
+			Enemy newEnemy = GameObject.Instantiate(_prefabEnemy).GetComponent<Enemy>();
+			newEnemy.transform.SetParent(this.transform);
+			newEnemy.Initialise(this);
 
-				_enemies[iEnemy] = newEnemy;
-			}
-
-			HideAllEnemies();
+			_enemies[iEnemy] = newEnemy;
 		}
+
+		HideAllEnemies();
 	}
 
 	public void GenerateAndSpawnEnemies(Floor inFloor)

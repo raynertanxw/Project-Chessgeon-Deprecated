@@ -17,7 +17,6 @@ public class TileManager : MonoBehaviour
 	public float OriginX { get { return ORIGIN_X; } }
 	public float OriginY { get { return ORIGIN_Y; } }
 
-	private bool _isInitialised = false;
 	private DungeonTile[,] _dungeonTiles = null;
 
 	private void Awake()
@@ -25,33 +24,21 @@ public class TileManager : MonoBehaviour
 		Debug.Assert(_prefabDungeonTile != null, "_prefabDungeonTile is not assigned.");
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
-		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
-	}
-
-	public void Initialise(int inMaxX, int inMaxY)
-	{
-		if (_isInitialised)
+		_dungeonTiles = new DungeonTile[_dungeon.MaxX, _dungeon.MaxY];
+		for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
 		{
-			Debug.LogWarning("Trying to initialise TileManager when it is already initialised");
-		}
-		else
-		{
-			_dungeonTiles = new DungeonTile[inMaxX, inMaxY];
-			for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
+			for (int y = 0; y < _dungeonTiles.GetLength(1); y++)
 			{
-				for (int y = 0; y < _dungeonTiles.GetLength(1); y++)
-				{
-					DungeonTile newDungeonTile = GameObject.Instantiate(_prefabDungeonTile).GetComponent<DungeonTile>();
-					newDungeonTile.transform.SetParent(this.transform);
-					newDungeonTile.Initialise(this, x, y);
-					newDungeonTile.SetTile(DungeonTile.eType.Basic, DungeonTile.eZone.Classic);
+				DungeonTile newDungeonTile = GameObject.Instantiate(_prefabDungeonTile).GetComponent<DungeonTile>();
+				newDungeonTile.transform.SetParent(this.transform);
+				newDungeonTile.Initialise(this, x, y);
+				newDungeonTile.SetTile(DungeonTile.eType.Basic, DungeonTile.eZone.Classic);
 
-					_dungeonTiles[x, y] = newDungeonTile;
-				}
+				_dungeonTiles[x, y] = newDungeonTile;
 			}
-
-			HideAllTiles();
 		}
+
+		HideAllTiles();
 	}
 
 	private void HideAllTiles()

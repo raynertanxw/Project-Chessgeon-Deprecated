@@ -14,11 +14,16 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private EnemyManager _enemyManager = null;
 	[SerializeField] private MorphyController _morphyController = null;
 
-	private const int DUNGEON_MAX_X = 15;
-	private const int DUNGEON_MAX_Y = 15;
 	private const int DUNGEON_MIN_X = 5;
+	private const int DUNGEON_MAX_X = 15;
 	private const int DUNGEON_MIN_Y = 5;
+	private const int DUNGEON_MAX_Y = 15;
 	private const int DUNGEON_MAX_ENEMIES = 50;
+	public int MinX { get { return DUNGEON_MIN_X; } }
+	public int MaxX { get { return DUNGEON_MAX_X; } }
+	public int MinY { get { return DUNGEON_MIN_Y; } }
+	public int MaxY { get { return DUNGEON_MAX_Y; } }
+	public int MaxNumEnemies { get { return DUNGEON_MAX_ENEMIES; } }
 
 	private Floor _floor = null;
 
@@ -29,9 +34,6 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_tileManager != null, "_tileManager is not assigned.");
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
-
-		_tileManager.Initialise(DUNGEON_MAX_X, DUNGEON_MAX_Y);
-		_enemyManager.Initialise(DUNGEON_MAX_ENEMIES);
 	}
 
 	private void Update()
