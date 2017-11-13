@@ -40,7 +40,6 @@ public class MorphyController : MonoBehaviour
 	{
 		_floor = inFloor;
 
-		// TODO: Determine position of morphy.
 		while (true)
 		{
 			Vector2Int spawnPos = new Vector2Int(Random.Range(0, inFloor.Size.x), Random.Range(0, inFloor.Size.y));
