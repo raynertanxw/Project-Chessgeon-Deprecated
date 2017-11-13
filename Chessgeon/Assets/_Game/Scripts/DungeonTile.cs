@@ -20,7 +20,9 @@ public class DungeonTile : MonoBehaviour
 	private int _indexX = -1;
 	private int _indexY = -1;
 	private eType _type = eType.Basic;
+	public eType Type { get { return _type; } }
 	private eZone _zone = eZone.Classic;
+	public eZone Zone { get { return _zone; } }
 
 	private void Awake()
 	{
