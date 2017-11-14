@@ -36,6 +36,8 @@ public class Dungeon : MonoBehaviour
 
 	private int _floorNum = -1;
 	private Floor _floor = null;
+	public Vector2Int StairsPos { get { return _floor.StairsPos; } } // TODO: Decide if this is btr or make Floor publically accessible.
+	public int FloorNum { get { return _floor.FloorNum; } }
 
 	private DungeonFSM _dungeonFSM = null;
 
@@ -85,11 +87,10 @@ public class Dungeon : MonoBehaviour
 	public void StartGame()
 	{
 		_hasGameStarted = true;
-		_dungeonFSM = new DungeonFSM(this);
 
 		_floorNum = 1;
-		// Reset everything and generate the new 1st floor.
 		GenerateFloor();
+		_dungeonFSM = new DungeonFSM(this);
 	}
 
 	public void EndGame()
@@ -168,6 +169,7 @@ public class Dungeon : MonoBehaviour
 			{
 				// TODO: MoveTo the camera to the player's location.
 				//		 Then move to the stairs, and then move back to player?
+				DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.StairsPos, 2.0f);
 			}
 
 			public override void ExitState()

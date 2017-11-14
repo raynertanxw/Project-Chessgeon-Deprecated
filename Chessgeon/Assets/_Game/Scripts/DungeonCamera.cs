@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaburuTools;
 
 public class DungeonCamera : MonoBehaviour
 {
+	private static DungeonCamera _instance = null;
+
 	[SerializeField] private Dungeon _dungeon = null;
 
 	private Camera _dungeonCamera = null;
@@ -22,8 +25,24 @@ public class DungeonCamera : MonoBehaviour
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
-		_dungeonCamera = this.GetComponent<Camera>();
-		_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);
+		if (_instance == null)
+		{
+			_instance = this;
+			_dungeonCamera = this.GetComponent<Camera>();
+			_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);
+		}
+		else if (_instance != this)
+		{
+			GameObject.Destroy(this.gameObject);
+		}
+	}
+
+	private void OnDestroy()
+	{
+		if (_instance == this)
+		{
+			_instance = null;
+		}
 	}
 
 	private void Update()
@@ -47,16 +66,21 @@ public class DungeonCamera : MonoBehaviour
 		}
 	}
 
-	private void RestrictCameraPosition()
+	private Vector3 RestrictToCameraBounds(Vector3 inPos)
 	{
-		Vector3 restrictedCamPos = transform.position;
+		Vector3 restrictedCamPos = inPos;
 		if (transform.position.x > _camMaxX) restrictedCamPos.x = _camMaxX;
 		else if (transform.position.x < _camMinX) restrictedCamPos.x = _camMinX;
 
 		if (transform.position.z > _camMaxZ) restrictedCamPos.z = _camMaxZ;
 		else if (transform.position.z < _camMinZ) restrictedCamPos.z = _camMinZ;
 
-		transform.position = restrictedCamPos;
+		return restrictedCamPos;
+	}
+
+	private void RestrictCameraPosition()
+	{
+		transform.position = RestrictToCameraBounds(transform.position);
 	}
 
 	private void CalcCameraBounds(Floor inFloor)
@@ -66,5 +90,23 @@ public class DungeonCamera : MonoBehaviour
 
 		_camMaxX = inFloor.Size.x - 4.5f;
 		_camMaxZ = inFloor.Size.y - 9.5f;
+	}
+
+	public static void FocusCameraToTile(Vector2Int inPos, float inDuration) { FocusCameraToTile(inPos.x, inPos.y, inDuration); }
+	public static void FocusCameraToTile(int inX, int inY, float inDuration)
+	{
+		// Note: Assumes that the y and x euler degrees are acute angles.
+		Vector3 tileTransformPos = _instance._dungeon.TileManager.GetTileTransformPosition(inX, inY);
+		float hyp = (_instance.transform.position.y - tileTransformPos.y) / Mathf.Tan(_instance.transform.eulerAngles.x * Mathf.Deg2Rad);
+		float diffX = hyp * Mathf.Sin(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
+		float diffZ = hyp * Mathf.Cos(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
+		Vector3 targetPos = new Vector3(
+			tileTransformPos.x - diffX,
+			_instance.transform.position.y,
+			tileTransformPos.z - diffZ);
+		targetPos = _instance.RestrictToCameraBounds(targetPos);
+
+		MoveToAction moveToFocus = new MoveToAction(_instance.transform, Graph.SmoothStep, targetPos, inDuration);
+		ActionHandler.RunAction(moveToFocus);
 	}
 }
