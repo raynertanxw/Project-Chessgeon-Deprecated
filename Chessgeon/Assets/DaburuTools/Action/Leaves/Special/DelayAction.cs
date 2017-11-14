@@ -3,82 +3,79 @@ using System.Collections.Generic;
 
 namespace DaburuTools
 {
-	namespace Action
+	public class DelayAction : Action
 	{
-		public class DelayAction : Action
+		float mfActionDuration;
+
+		float mfElapsedDuration;
+
+		public DelayAction()
 		{
-			float mfActionDuration;
+			SetAction(0f);
 
-			float mfElapsedDuration;
+			SetupAction();
+		}
+		public DelayAction(float _actionDuration)
+		{
+			SetAction(_actionDuration);
 
-			public DelayAction()
+			SetupAction();
+		}
+
+		public void SetAction(float _actionDuration)
+		{
+			mfActionDuration = _actionDuration;
+		}
+		private void SetupAction()
+		{
+			mfElapsedDuration = 0f;
+		}
+		protected override void OnActionBegin()
+		{
+			base.OnActionBegin();
+
+			SetupAction();
+		}
+
+
+
+		public override void RunAction()
+		{
+			base.RunAction();
+
+			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+
+			// Remove self after action is finished.
+			if (mfElapsedDuration >= mfActionDuration)
 			{
-				SetAction(0f);
-
-				SetupAction();
-			}
-			public DelayAction(float _actionDuration)
-			{
-				SetAction(_actionDuration);
-
-				SetupAction();
-			}
-
-			public void SetAction(float _actionDuration)
-			{
-				mfActionDuration = _actionDuration;
-			}
-			private void SetupAction()
-			{
-				mfElapsedDuration = 0f;
-			}
-			protected override void OnActionBegin()
-			{
-				base.OnActionBegin();
-
-				SetupAction(); 
-			}
-
-
-
-			public override void RunAction()
-			{
-				base.RunAction();
-
-				mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
-
-				// Remove self after action is finished.
-				if (mfElapsedDuration >= mfActionDuration)
-				{
-					OnActionEnd();
-					mParent.Remove(this);
-				}
-			}
-			public override void MakeResettable(bool _bIsResettable)
-			{
-				base.MakeResettable(_bIsResettable);
-			}
-			public override void Reset()
-			{
-				SetupAction();
-			}
-			public override void StopAction(bool _bSnapToDesired)
-			{
-				if (!mbIsRunning)
-					return;
-
-				// Prevent it from Resetting.
-				MakeResettable(false);
-
-				// Simulate the action has ended. Does not really matter by how much.
-				mfElapsedDuration = mfActionDuration;
-
-				// No need for snap to desired, true same effect as false.
-				// Only delays time, will simply run the next Action either ways.
-
 				OnActionEnd();
 				mParent.Remove(this);
 			}
+		}
+		public override void MakeResettable(bool _bIsResettable)
+		{
+			base.MakeResettable(_bIsResettable);
+		}
+		public override void Reset()
+		{
+			SetupAction();
+		}
+		public override void StopAction(bool _bSnapToDesired)
+		{
+			if (!mbIsRunning)
+				return;
+
+			// Prevent it from Resetting.
+			MakeResettable(false);
+
+			// Simulate the action has ended. Does not really matter by how much.
+			mfElapsedDuration = mfActionDuration;
+
+			// No need for snap to desired, true same effect as false.
+			// Only delays time, will simply run the next Action either ways.
+
+			OnActionEnd();
+			mParent.Remove(this);
 		}
 	}
 }
