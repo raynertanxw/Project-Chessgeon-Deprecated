@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -28,8 +29,15 @@ public class Dungeon : MonoBehaviour
 	public int MaxY { get { return DUNGEON_MAX_Y; } }
 	public int MaxNumEnemies { get { return DUNGEON_MAX_ENEMIES; } }
 
+	private bool _morphyHasReachedStairs = false;
+	public bool MorphyHasReachedStairs { get { return _morphyHasReachedStairs; } }
+	private bool _hasGameStarted = false;
+	public bool HasGameStarted { get { return _hasGameStarted; } }
+
 	private int _floorNum = -1;
 	private Floor _floor = null;
+
+	private DungeonFSM _dungeonFSM = null;
 
 	public FloorGeneratedEvent OnFloorGenerated;
 
@@ -38,6 +46,8 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_tileManager != null, "_tileManager is not assigned.");
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
+
+		_morphyController.OnMorphyReachStairs.AddListener(OnMorphyReachStairs);
 	}
 
 	private void Update()
@@ -51,10 +61,18 @@ public class Dungeon : MonoBehaviour
 		else if (Input.GetKeyDown(KeyCode.Alpha3)) _morphyController.MorphTo(Morphy.eType.Bishop);
 		else if (Input.GetKeyDown(KeyCode.Alpha4)) _morphyController.MorphTo(Morphy.eType.Knight);
 		else if (Input.GetKeyDown(KeyCode.Alpha5)) _morphyController.MorphTo(Morphy.eType.King);
+
+		if (HasGameStarted)
+		{
+			_dungeonFSM.Execute();
+		}
 	}
 
 	private void GenerateFloor()
 	{
+		// Do resetting.
+		_morphyHasReachedStairs = false;
+
 		_floor = new Floor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
 
 		_tileManager.GenerateFloorTerrain(_floor);
@@ -66,9 +84,25 @@ public class Dungeon : MonoBehaviour
 
 	public void StartGame()
 	{
+		_hasGameStarted = true;
+		_dungeonFSM = new DungeonFSM(this);
+
 		_floorNum = 1;
 		// Reset everything and generate the new 1st floor.
 		GenerateFloor();
+	}
+
+	public void EndGame()
+	{
+		_hasGameStarted = false;
+
+		// TODO: Disable some UI and stuff?
+		//		 Present GameOver panel and such
+	}
+
+	private void OnMorphyReachStairs()
+	{
+		_morphyHasReachedStairs = true;
 	}
 
 	public void ProgressToNextFloor()
@@ -76,4 +110,179 @@ public class Dungeon : MonoBehaviour
 		_floorNum++;
 		GenerateFloor();
 	}
+
+	#region DungeonFSM
+	private class DungeonFSM
+	{
+		private Dungeon _dungeon = null;
+		public Dungeon Dungeon { get { return _dungeon; } }
+		private DungeonState _currentState = null;
+		private Dictionary<eDungeonState, DungeonState> _dungeonStates = null;
+
+		public DungeonFSM(Dungeon inDungeon)
+		{
+			_dungeon = inDungeon;
+
+			_dungeonStates = new Dictionary<eDungeonState, DungeonState>();
+			_dungeonStates.Add(eDungeonState.StartFloor, new DungeonStateStartFloor(this));
+			_dungeonStates.Add(eDungeonState.EndFloor, new DungeonStateEndFloor(this));
+			_dungeonStates.Add(eDungeonState.PlayerPhase, new DungeonStatePlayerPhase(this));
+			_dungeonStates.Add(eDungeonState.EnemyPhase, new DungeonStateEnemyPhase(this));
+			_dungeonStates.Add(eDungeonState.GameOver, new DungeonStateGameOver(this));
+
+			ChangeState(eDungeonState.StartFloor);
+		}
+
+		public void Execute()
+		{
+			_currentState.ExecuteState();
+		}
+
+		private void ChangeState(eDungeonState inNewState)
+		{
+			Debug.Log("Changing State from: " + _currentState + " to " + inNewState.ToString());
+			if (_currentState != null) _currentState.ExitState();
+			_currentState = _dungeonStates[inNewState];
+			_currentState.OnEnterState();
+		}
+
+		#region DungeonStates
+		private enum eDungeonState { StartFloor, EndFloor, PlayerPhase, EnemyPhase, GameOver }
+		private abstract class DungeonState
+		{
+			protected DungeonFSM _dungeonFSM = null;
+
+			public abstract void OnEnterState();
+			public abstract void ExitState();
+			public abstract void ExecuteState();
+		}
+
+		private class DungeonStateStartFloor : DungeonState
+		{
+			public DungeonStateStartFloor(DungeonFSM inDungeonFSM)
+			{
+				_dungeonFSM = inDungeonFSM;
+			}
+
+			public override void OnEnterState()
+			{
+				// TODO: MoveTo the camera to the player's location.
+				//		 Then move to the stairs, and then move back to player?
+			}
+
+			public override void ExitState()
+			{
+				// TODO: Any cleanup needed?
+			}
+
+			public override void ExecuteState()
+			{
+				// TODO: Check if above animation is done already, once done can transition.
+				_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+			}
+		}
+
+		private class DungeonStateEndFloor : DungeonState
+		{
+			public DungeonStateEndFloor(DungeonFSM inDungeonFSM)
+			{
+				_dungeonFSM = inDungeonFSM;
+			}
+
+			public override void OnEnterState()
+			{
+				// TODO: Display stats and all that.
+			}
+
+			public override void ExitState()
+			{
+				// TODO: Any cleanup needed?
+			}
+
+			public override void ExecuteState()
+			{
+				// TODO: Wait for the player to click the okay button, then set black fade.
+				//		 and hand over to dungeon to generate the next floor.
+				//		 once generated, then lift the black fade and then switch to start floor.
+				_dungeonFSM.Dungeon.ProgressToNextFloor();
+				_dungeonFSM.ChangeState(eDungeonState.StartFloor);
+			}
+		}
+		private class DungeonStatePlayerPhase : DungeonState
+		{
+			public DungeonStatePlayerPhase(DungeonFSM inDungeonFSM)
+			{
+				_dungeonFSM = inDungeonFSM;
+			}
+
+			public override void OnEnterState()
+			{
+				// TODO: Do the animation for indicating start of player phase.
+				//		 And draw cards for the player.
+			}
+
+			public override void ExitState()
+			{
+				// TODO: Any cleanup needed?
+			}
+
+			public override void ExecuteState()
+			{
+				if (_dungeonFSM.Dungeon.MorphyHasReachedStairs) _dungeonFSM.ChangeState(eDungeonState.EndFloor);
+				// TODO: Essentially doing a lot of waiting. Just waiting for the player to hit "end turn".
+				//else if (???) _dungeonFSM.ChangeState(eDungeonState.EnemyPhase);
+			}
+		}
+		private class DungeonStateEnemyPhase : DungeonState
+		{
+			public DungeonStateEnemyPhase(DungeonFSM inDungeonFSM)
+			{
+				_dungeonFSM = inDungeonFSM;
+			}
+
+			public override void OnEnterState()
+			{
+				// TODO: Do the animation for indicating start of enemy phase.
+			}
+
+			public override void ExitState()
+			{
+				// TODO: Any cleanup needed?
+			}
+
+			public override void ExecuteState()
+			{
+				// TODO: Iterate through all enemies and process each of their turns.
+				//		 Prob just call on EnemyManager.processNextEnemy or smt like that.
+				//		 Prefably have the waiting be done on this FSM side and not EnemyManager.
+				_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+				
+				// TODO: If the player is killed, immediately transition to the GameOverState.
+			}
+		}
+		private class DungeonStateGameOver : DungeonState
+		{
+			public DungeonStateGameOver(DungeonFSM inDungeonFSM)
+			{
+				_dungeonFSM = inDungeonFSM;
+			}
+
+			public override void OnEnterState()
+			{
+				_dungeonFSM.Dungeon.EndGame();
+			}
+
+			public override void ExitState()
+			{
+				// TODO: Any cleanup needed?
+			}
+
+			public override void ExecuteState()
+			{
+				if (_dungeonFSM.Dungeon.HasGameStarted) _dungeonFSM.ChangeState(eDungeonState.StartFloor);
+			}
+		}
+		#endregion
+	}
+	#endregion
 }

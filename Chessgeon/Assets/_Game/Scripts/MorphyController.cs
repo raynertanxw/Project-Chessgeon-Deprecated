@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MorphyController : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class MorphyController : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 	public Dungeon Dungeon { get { return _dungeon; } }
 
+	public UnityEvent OnMorphyReachStairs = new UnityEvent();
 	private Morphy _morphy = null;
 	private Floor _floor = null;
 
@@ -77,7 +79,7 @@ public class MorphyController : MonoBehaviour
 
 		if (_floor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
 		{
-			_dungeon.ProgressToNextFloor();
+			OnMorphyReachStairs.Invoke();
 		}
 		else if (_floor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
 		{
