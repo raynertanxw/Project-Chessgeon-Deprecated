@@ -21,6 +21,8 @@ public class DungeonCamera : MonoBehaviour
 	private float _camMinZ;
 	private float _camMaxZ;
 
+	private bool _isDragEnabled = true;
+
 	private void Awake()
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
@@ -55,10 +57,13 @@ public class DungeonCamera : MonoBehaviour
 			Vector3 diff = _prevFramPos - pos;
 			_prevFramPos = pos;
 
-			Vector3 move = new Vector3(diff.x * _dragSpeed, 0.0f, diff.y * _dragSpeed);
-			move = _cameraYRotOffset * move;
-			transform.Translate(move, Space.World);
-			RestrictCameraPosition();
+			if (_isDragEnabled)
+			{
+				Vector3 move = new Vector3(diff.x * _dragSpeed, 0.0f, diff.y * _dragSpeed);
+				move = _cameraYRotOffset * move;
+				transform.Translate(move, Space.World);
+				RestrictCameraPosition();
+			}
 		}
 		else
 		{
@@ -107,6 +112,8 @@ public class DungeonCamera : MonoBehaviour
 		targetPos = _instance.RestrictToCameraBounds(targetPos);
 
 		MoveToAction moveToFocus = new MoveToAction(_instance.transform, Graph.SmoothStep, targetPos, inDuration);
+		moveToFocus.OnActionStart += () => { _instance._isDragEnabled = false; };
+		moveToFocus.OnActionFinish += () => { _instance._isDragEnabled = true; };
 		ActionHandler.RunAction(moveToFocus);
 	}
 }
