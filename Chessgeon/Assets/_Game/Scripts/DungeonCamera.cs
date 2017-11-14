@@ -11,8 +11,8 @@ public class DungeonCamera : MonoBehaviour
 	private readonly Quaternion _cameraYRotOffset = Quaternion.AngleAxis(30.0f, Vector3.up);
 
 	// TODO: Make this a scroll sensitivity in options.
-	private float _dragSpeed = 0.75f;
-	private Vector3 _dragOrigin;
+	private float _dragSpeed = 10.0f;
+	private Vector3 _prevFramPos;
 	private float _camMinX;
 	private float _camMaxX;
 	private float _camMinZ;
@@ -28,21 +28,22 @@ public class DungeonCamera : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButton(0))
 		{
-			_dragOrigin = Input.mousePosition;
-		}
-		else if (!Input.GetMouseButton(0))
-		{
-			return;
-		}
-		else
-		{
-			Vector3 pos = _dungeonCamera.ScreenToViewportPoint(Input.mousePosition - _dragOrigin);
-			Vector3 move = new Vector3(pos.x * _dragSpeed, 0.0f, pos.y * _dragSpeed);
+			Vector3 pos = _dungeonCamera.ScreenToViewportPoint(Input.mousePosition);
+			if (Input.GetMouseButtonDown(0)) _prevFramPos = pos;
+
+			Vector3 diff = _prevFramPos - pos;
+			_prevFramPos = pos;
+
+			Vector3 move = new Vector3(diff.x * _dragSpeed, 0.0f, diff.y * _dragSpeed);
 			move = _cameraYRotOffset * move;
 			transform.Translate(move, Space.World);
 			RestrictCameraPosition();
+		}
+		else
+		{
+			return;
 		}
 	}
 
@@ -60,8 +61,8 @@ public class DungeonCamera : MonoBehaviour
 
 	private void CalcCameraBounds(Floor inFloor)
 	{
-		_camMinX = -2.5f;
-		_camMinZ = -2.5f;
+		_camMinX = -5.5f;
+		_camMinZ = -5.5f;
 
 		_camMaxX = inFloor.Size.x - 4.5f;
 		_camMaxZ = inFloor.Size.y - 9.5f;
