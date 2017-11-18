@@ -75,11 +75,11 @@ public class DungeonCamera : MonoBehaviour
 	private Vector3 RestrictToCameraBounds(Vector3 inPos)
 	{
 		Vector3 restrictedCamPos = inPos;
-		if (transform.position.x > _camMaxX) restrictedCamPos.x = _camMaxX;
-		else if (transform.position.x < _camMinX) restrictedCamPos.x = _camMinX;
+		if (restrictedCamPos.x > _camMaxX) restrictedCamPos.x = _camMaxX;
+		else if (restrictedCamPos.x < _camMinX) restrictedCamPos.x = _camMinX;
 
-		if (transform.position.z > _camMaxZ) restrictedCamPos.z = _camMaxZ;
-		else if (transform.position.z < _camMinZ) restrictedCamPos.z = _camMinZ;
+		if (restrictedCamPos.z > _camMaxZ) restrictedCamPos.z = _camMaxZ;
+		else if (restrictedCamPos.z < _camMinZ) restrictedCamPos.z = _camMinZ;
 
 		return restrictedCamPos;
 	}
