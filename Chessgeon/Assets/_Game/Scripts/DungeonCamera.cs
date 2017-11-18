@@ -21,7 +21,8 @@ public class DungeonCamera : MonoBehaviour
 	private float _camMinZ;
 	private float _camMaxZ;
 
-	private bool _isDragEnabled = true;
+	private bool _isFocusingOnTile = false;
+	private bool _isShaking = false;
 
 	private void Awake()
 	{
@@ -57,7 +58,7 @@ public class DungeonCamera : MonoBehaviour
 			Vector3 diff = _prevFramPos - pos;
 			_prevFramPos = pos;
 
-			if (_isDragEnabled)
+			if (!_isFocusingOnTile && !_isShaking)
 			{
 				Vector3 move = new Vector3(diff.x * _dragSpeed, 0.0f, diff.y * _dragSpeed);
 				move = _cameraYRotOffset * move;
@@ -112,8 +113,17 @@ public class DungeonCamera : MonoBehaviour
 		targetPos = _instance.RestrictToCameraBounds(targetPos);
 
 		MoveToAction moveToFocus = new MoveToAction(_instance.transform, Graph.SmoothStep, targetPos, inDuration);
-		moveToFocus.OnActionStart += () => { _instance._isDragEnabled = false; };
-		moveToFocus.OnActionFinish += () => { _instance._isDragEnabled = true; };
+		moveToFocus.OnActionStart += () => { _instance._isFocusingOnTile = true; };
+		moveToFocus.OnActionFinish += () => { _instance._isFocusingOnTile = false; };
 		ActionHandler.RunAction(moveToFocus);
+	}
+
+	public static void CameraShake(int inNumShakes, float inIntensity, float inDuration)
+	{
+		ShakeAction camShake = new ShakeAction(_instance.transform, inNumShakes, inIntensity, Graph.InverseLinear);
+		camShake.SetShakeByDuration(inDuration, inNumShakes);
+		camShake.OnActionStart += () => { _instance._isShaking = true; };
+		camShake.OnActionFinish += () => { _instance._isShaking = false; };
+		ActionHandler.RunAction(camShake);
 	}
 }
