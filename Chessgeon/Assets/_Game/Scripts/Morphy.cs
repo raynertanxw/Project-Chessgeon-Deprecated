@@ -125,8 +125,9 @@ public class Morphy : MonoBehaviour
 		Vector3 targetTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
 		float moveDuration = 0.6f;
 		MoveToAction moveToTarget = new MoveToAction(this.transform, Graph.SmoothStep, targetTransformPos, moveDuration);
-		moveToTarget.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveDuration); };
-		ActionHandler.RunAction(moveToTarget);
+		ActionAfterDelay moveAfterDelay = new ActionAfterDelay(moveToTarget, 0.1f);
+		moveAfterDelay.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveDuration); };
+		ActionHandler.RunAction(moveAfterDelay);
 	}
 
 	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy)
