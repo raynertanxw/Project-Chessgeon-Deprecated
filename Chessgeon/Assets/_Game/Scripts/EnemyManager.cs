@@ -9,7 +9,6 @@ public class EnemyManager : MonoBehaviour
 	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private Enemy[] _enemies = null;
-	private Floor _floor = null;
 
 	private void Awake()
 	{
@@ -26,41 +25,28 @@ public class EnemyManager : MonoBehaviour
 			_enemies[iEnemy] = newEnemy;
 		}
 
+		_dungeon.MorphyController.OnMorphyReachStairs.AddListener(HideAllEnemies);
+
 		HideAllEnemies();
 	}
 
-	public void GenerateAndSpawnEnemies(Floor inFloor)
-	{
-		_floor = inFloor;
-		HideAllEnemies();
+	public Enemy SpawnEnemyAt(Vector2Int inSpawnPos)
+    {
+        Enemy.eType enemyType = (Enemy.eType)Random.Range(0, 5);
 
-		int numEnemiesToSpawn = inFloor.Size.x * inFloor.Size.y / 10;
-		int numEnemies = 0;
+        Enemy currentEnemy = null;
+        for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
+        {
+            if (!_enemies[iEnemy].IsAlive) currentEnemy = _enemies[iEnemy];
+        }
+        Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
 
-		while (numEnemies < numEnemiesToSpawn)
-		{
-			Vector2Int newEnemyPos = new Vector2Int(Random.Range(0, inFloor.Size.x), Random.Range(0, inFloor.Size.y));
-			if (inFloor.IsTileEmpty(newEnemyPos))
-			{
-				Enemy.eType enemyType = (Enemy.eType)Random.Range(0, 4 + 1);
+        Debug.Assert(_dungeon.CurrentFloor.IsTileEmpty(inSpawnPos), "Tile " + inSpawnPos + " is not empty!");
+        currentEnemy.SetEnemy(enemyType, Enemy.eElement.Basic);
+        currentEnemy.SpawnAt(inSpawnPos);
 
-				Enemy currentEnemy = null;
-				for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
-				{
-					if (!_enemies[iEnemy].IsAlive) currentEnemy = _enemies[iEnemy];
-				}
-				Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
-
-				Debug.Assert(_floor.IsTileEmpty(newEnemyPos), "Tile " + newEnemyPos + " is not empty!");
-				_floor.SetTileState(newEnemyPos, Floor.eTileState.Enemy);
-
-				currentEnemy.SetEnemy(enemyType, Enemy.eElement.Basic);
-				currentEnemy.SpawnAt(newEnemyPos);
-
-				numEnemies++;
-			}
-		}
-	}
+		return currentEnemy;
+    }
 
 	private void HideAllEnemies()
 	{

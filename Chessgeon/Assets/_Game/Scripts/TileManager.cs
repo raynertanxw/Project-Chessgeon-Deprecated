@@ -77,17 +77,17 @@ public class TileManager : MonoBehaviour
 		}
 	}
 
-	public void GenerateFloorTerrain(Floor inFloor)
+	public void SetUpFloorTerrain()
 	{
-		Debug.Log("Generating Floor Terrain of size: (" + inFloor.Size.x + ", " + inFloor.Size.y + ")");
+		Debug.Log("Setting up Floor Terrain of size: (" + _dungeon.CurrentFloor.Size.x + ", " + _dungeon.CurrentFloor.Size.y + ")");
 
 		// Hide ALL tiles.
 		HideAllTiles();
 
 		// Set all others as basic tiles.
-		for (int y = 0; y < (inFloor.Size.y); y++)
+		for (int y = 0; y < (_dungeon.CurrentFloor.Size.y); y++)
 		{
-			for (int x = 0; x < (inFloor.Size.x); x++)
+			for (int x = 0; x < (_dungeon.CurrentFloor.Size.x); x++)
 			{
 				_dungeonTiles[x, y].SetTileType(DungeonTile.eType.Basic);
 				_dungeonTiles[x, y].SetVisible(true);
@@ -95,7 +95,7 @@ public class TileManager : MonoBehaviour
 		}
 
 		// Set the stairs tile.
-		_dungeonTiles[inFloor.StairsPos.x, inFloor.StairsPos.y].SetTileType(DungeonTile.eType.Stairs);
+		_dungeonTiles[_dungeon.CurrentFloor.StairsPos.x, _dungeon.CurrentFloor.StairsPos.y].SetTileType(DungeonTile.eType.Stairs);
 
 		// TODO: Obstalces (if any)
 

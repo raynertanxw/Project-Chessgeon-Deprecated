@@ -88,13 +88,13 @@ public class DungeonCamera : MonoBehaviour
 		transform.position = RestrictToCameraBounds(transform.position);
 	}
 
-	private void CalcCameraBounds(Floor inFloor)
+	private void CalcCameraBounds()
 	{
 		_camMinX = -5.5f;
 		_camMinZ = -5.5f;
 
-		_camMaxX = inFloor.Size.x - 4.5f;
-		_camMaxZ = inFloor.Size.y - 9.5f;
+		_camMaxX = _dungeon.CurrentFloor.Size.x - 4.5f;
+		_camMaxZ = _dungeon.CurrentFloor.Size.y - 9.5f;
 	}
 
 	public static void FocusCameraToTile(Vector2Int inPos, float inDuration) { FocusCameraToTile(inPos.x, inPos.y, inDuration); }

@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[System.Serializable]
-public class FloorGeneratedEvent : UnityEvent<Floor>
-{
-}
-
 public class Dungeon : MonoBehaviour
 {
 	[SerializeField] private TileManager _tileManager = null;
@@ -38,12 +33,13 @@ public class Dungeon : MonoBehaviour
 
 	private int _floorNum = -1;
 	private Floor _floor = null;
+	public Floor CurrentFloor { get { return _floor; } }
 	public Vector2Int StairsPos { get { return _floor.StairsPos; } } // TODO: Decide if this is btr or make Floor publically accessible.
 	public int FloorNum { get { return _floor.FloorNum; } }
 
 	private DungeonFSM _dungeonFSM = null;
 
-	public FloorGeneratedEvent OnFloorGenerated;
+	public UnityEvent OnFloorGenerated;
 
 	private void Awake()
 	{
@@ -52,6 +48,7 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 
 		_morphyController.OnMorphyReachStairs.AddListener(OnMorphyReachStairs);
+		_floor = new Floor(this);
 	}
 
 	private void Update()
@@ -77,13 +74,9 @@ public class Dungeon : MonoBehaviour
 		// Do resetting.
 		_morphyHasReachedStairs = false;
 
-		_floor = new Floor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
+		_floor.GenerateAndSetupNewFloor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
 
-		_tileManager.GenerateFloorTerrain(_floor);
-		_enemyManager.GenerateAndSpawnEnemies(_floor); // TODO: Can pass in difficulty settings here.
-		_morphyController.SetUpPlayer(_floor);
-
-		OnFloorGenerated.Invoke(_floor);
+		OnFloorGenerated.Invoke();
 	}
 
 	public void StartGame()

@@ -11,7 +11,6 @@ public class MorphyController : MonoBehaviour
 
 	public UnityEvent OnMorphyReachStairs = new UnityEvent();
 	private Morphy _morphy = null;
-	private Floor _floor = null;
 
 	private MorphyStratergy[] _stratergies = null;
 	private MorphyStratergy _currentStratergy = null;
@@ -38,21 +37,9 @@ public class MorphyController : MonoBehaviour
 		_stratergies[5] = new MorphyStratergyMorphy();
 	}
 
-	public void SetUpPlayer(Floor inFloor)
+	public void SetUpPlayer()
 	{
-		_floor = inFloor;
-
-		while (true)
-		{
-			Vector2Int spawnPos = new Vector2Int(Random.Range(0, inFloor.Size.x), Random.Range(0, inFloor.Size.y));
-			if (inFloor.IsTileEmpty(spawnPos))
-			{
-				_morphy.SpawnAt(spawnPos);
-				Debug.Assert(_floor.IsTileEmpty(spawnPos), "Tile " + spawnPos + " is not empty!");
-				_floor.SetTileState(spawnPos, Floor.eTileState.Morphy);
-				break;
-			}
-		}
+		_morphy.SpawnAt(_dungeon.CurrentFloor.MorphyPos);
 	}
 
 	public void MorphTo(Morphy.eType inType)
@@ -61,7 +48,7 @@ public class MorphyController : MonoBehaviour
 		_morphy.SetType(inType);
 
 		_dungeon.TileManager.HideAllSelectableTiles();
-		Vector2Int[] possibleMoves = _currentStratergy.CalcPossibleMoves(_morphy.Pos, _floor);
+		Vector2Int[] possibleMoves = _currentStratergy.CalcPossibleMoves(_morphy.Pos, _dungeon.CurrentFloor);
 		if (possibleMoves.Length > 0)
 		{
 			_dungeon.TileManager.ShowPossibleMoves(possibleMoves, MoveTo);
@@ -74,24 +61,24 @@ public class MorphyController : MonoBehaviour
 
 	private void MoveTo(Vector2Int inTargetPos)
 	{
-		Debug.Assert(_floor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
-		_floor.SetTileState(_morphy.Pos, Floor.eTileState.Empty);
+		Debug.Assert(_dungeon.CurrentFloor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
+		_dungeon.CurrentFloor.SetTileState(_morphy.Pos, Floor.eTileState.Empty);
 
-		if (_floor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
+		if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
 		{
 			OnMorphyReachStairs.Invoke();
 		}
-		else if (_floor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
+		else if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
 		{
 			Enemy targetEnemy = _dungeon.EnemyManager.GetEnemyAt(inTargetPos);
 			Debug.Assert(targetEnemy != null, "There is no enemy at " + inTargetPos);
 			_morphy.MoveAndAttack(inTargetPos, targetEnemy);
-			_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
+			_dungeon.CurrentFloor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
 		}
 		else
 		{
 			_morphy.MoveTo(inTargetPos);
-			_floor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
+			_dungeon.CurrentFloor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
 		}
 	}
 }

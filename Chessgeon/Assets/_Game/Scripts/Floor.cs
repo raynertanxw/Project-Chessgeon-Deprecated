@@ -6,16 +6,26 @@ public class Floor
 {
 	public enum eTileState { Empty, Stairs, Blocked, Enemy, Morphy };
 
+	private Dungeon _dungeon = null;
+
 	private eTileState[,] _tileStates;
+	private Enemy[,] _enemies; // TODO: Next time.
 	private Vector2Int _size;
 	private Vector2Int _stairsPos;
+	private Vector2Int _morphyPos;
 	private int _floorNum;
 
 	public Vector2Int Size { get { return _size; } }
 	public Vector2Int StairsPos { get { return _stairsPos; } }
+	public Vector2Int MorphyPos { get {return _morphyPos; } }
 	public int FloorNum { get { return _floorNum; } }
 
-	public Floor(int inMinX, int inMaxX, int inMinY, int inMaxY, DungeonTile.eZone inZone, int inFloorNum)
+	public Floor(Dungeon inDungeon)
+	{
+		_dungeon = inDungeon;
+	}
+
+	public void GenerateAndSetupNewFloor(int inMinX, int inMaxX, int inMinY, int inMaxY, DungeonTile.eZone inZone, int inFloorNum)
 	{
 		_floorNum = inFloorNum;
 
@@ -34,6 +44,38 @@ public class Floor
 		// Here it's -1 and not -2 becasue the max for Random.Range(int) is exclusive.
 		_stairsPos = new Vector2Int(Random.Range(1, Size.x - 1), Random.Range(1, Size.y - 1));
 		_tileStates[StairsPos.x, StairsPos.y] = eTileState.Stairs;
+
+		_dungeon.TileManager.SetUpFloorTerrain();
+
+        // Spawn the enemies.
+		_enemies = new Enemy[Size.x, Size.y];
+        int numEnemiesToSpawn = Size.x * Size.y / 10;
+        int numEnemies = 0;
+
+        while (numEnemies < numEnemiesToSpawn)
+        {
+            Vector2Int newEnemyPos = new Vector2Int(Random.Range(0, Size.x), Random.Range(0, Size.y));
+            if (IsTileEmpty(newEnemyPos))
+			{
+				_enemies[newEnemyPos.x, newEnemyPos.y] = _dungeon.EnemyManager.SpawnEnemyAt(newEnemyPos);
+				SetTileState(newEnemyPos, Floor.eTileState.Enemy);
+
+				numEnemies++;
+			}
+		}
+
+        // Spawn the player.
+        while (true)
+		{
+            Vector2Int morphySpawnPos = new Vector2Int(Random.Range(0, Size.x), Random.Range(0, Size.y));
+            if (IsTileEmpty(morphySpawnPos))
+            {
+                SetTileState(morphySpawnPos, Floor.eTileState.Morphy);
+				_morphyPos = morphySpawnPos;
+                break;
+            }
+        }
+		_dungeon.MorphyController.SetUpPlayer();
 
 		// TODO: Obstalces (if any)
 
