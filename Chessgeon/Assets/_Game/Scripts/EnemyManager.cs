@@ -55,20 +55,4 @@ public class EnemyManager : MonoBehaviour
 			_enemies[iEnemy].Hide();
 		}
 	}
-
-	// TODO: Improve this system, maybe a lookup against a grid or smt?
-	public Enemy GetEnemyAt(Vector2Int inPos)
-	{
-		Enemy enemy = null;
-		for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
-		{
-			enemy = _enemies[iEnemy];
-			if (enemy.IsAlive && enemy.Pos == inPos)
-			{
-				return enemy;
-			}
-		}
-
-		return null;
-	}
 }

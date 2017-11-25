@@ -62,7 +62,6 @@ public class MorphyController : MonoBehaviour
 	private void MoveTo(Vector2Int inTargetPos)
 	{
 		Debug.Assert(_dungeon.CurrentFloor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
-		_dungeon.CurrentFloor.SetTileState(_morphy.Pos, Floor.eTileState.Empty);
 
 		if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
 		{
@@ -70,15 +69,15 @@ public class MorphyController : MonoBehaviour
 		}
 		else if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
 		{
-			Enemy targetEnemy = _dungeon.EnemyManager.GetEnemyAt(inTargetPos);
+			Enemy targetEnemy = _dungeon.CurrentFloor.GetEnemyAt(inTargetPos);
 			Debug.Assert(targetEnemy != null, "There is no enemy at " + inTargetPos);
 			_morphy.MoveAndAttack(inTargetPos, targetEnemy);
-			_dungeon.CurrentFloor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
 		}
 		else
 		{
 			_morphy.MoveTo(inTargetPos);
-			_dungeon.CurrentFloor.SetTileState(inTargetPos, Floor.eTileState.Morphy);
 		}
+
+		_dungeon.CurrentFloor.MoveMorphyTo(inTargetPos);
 	}
 }

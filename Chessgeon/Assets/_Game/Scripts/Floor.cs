@@ -82,11 +82,41 @@ public class Floor
 		// TODO: Special tiles (if any)
 	}
 
-	public void SetTileState(Vector2Int inPos, eTileState inTileState) { SetTileState(inPos.x, inPos.y, inTileState); }
-	public void SetTileState(int inX, int inY, eTileState inTileState)
+	private void SetTileState(Vector2Int inPos, eTileState inTileState) { SetTileState(inPos.x, inPos.y, inTileState); }
+	private void SetTileState(int inX, int inY, eTileState inTileState)
 	{
 		_tileStates[inX, inY] = inTileState;
 	}
+
+	public Enemy GetEnemyAt(Vector2Int inPos) { return GetEnemyAt(inPos.x, inPos.y); }
+	public Enemy GetEnemyAt(int inX, int inY)
+	{
+		Enemy enemyAtPos = _enemies[inX, inY];
+		Debug.Assert(enemyAtPos != null, "There is no enemy at pos: (" + inX + ", " + inY + ")");
+
+		return enemyAtPos;
+	}
+
+	public void MoveMorphyTo(Vector2Int inTargetPos)
+    {
+        Debug.Assert(IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
+
+        if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
+        {
+            // TODO: Anything for Floor to do when Morphy reaches stairs?	
+        }
+        else
+        {
+            if (IsTileOfState(inTargetPos, Floor.eTileState.Enemy)) // Player killed enemy.
+            {
+				_enemies[inTargetPos.x, inTargetPos.y] = null;
+            }
+
+            SetTileState(inTargetPos, Floor.eTileState.Morphy);
+            SetTileState(MorphyPos, Floor.eTileState.Empty);
+			_morphyPos = inTargetPos;
+        }
+    }
 
 	public bool IsTileEmpty(Vector2Int inPos) { return IsTileEmpty(inPos.x, inPos.y); }
 	public bool IsTileEmpty(int inX, int inY)
@@ -123,6 +153,7 @@ public class Floor
 		}
 		else
 		{
+			if (IsValidPos(inX, inY)) Debug.Log(inX + ", " + inY + " is of state: " + _tileStates[inX, inY].ToString());
 			return false;
 		}
 	}
