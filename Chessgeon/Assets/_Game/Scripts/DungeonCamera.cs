@@ -26,10 +26,9 @@ public class DungeonCamera : MonoBehaviour
 
 	private void Awake()
 	{
-		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
-
 		if (_instance == null)
 		{
+			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 			_instance = this;
 			_dungeonCamera = this.GetComponent<Camera>();
 			_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);

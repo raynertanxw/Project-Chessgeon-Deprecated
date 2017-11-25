@@ -33,6 +33,8 @@ public class Dungeon : MonoBehaviour
 	public bool MorphyHasReachedStairs { get { return _morphyHasReachedStairs; } }
 	private bool _hasGameStarted = false;
 	public bool HasGameStarted { get { return _hasGameStarted; } }
+	private bool _isPlayersTurn = false;
+	public bool IsPlayersTurn { get { return _isPlayersTurn; } }
 
 	private int _floorNum = -1;
 	private Floor _floor = null;
@@ -87,6 +89,7 @@ public class Dungeon : MonoBehaviour
 	public void StartGame()
 	{
 		_hasGameStarted = true;
+		_isPlayersTurn = false;
 
 		_floorNum = 1;
 		GenerateFloor();
@@ -96,6 +99,7 @@ public class Dungeon : MonoBehaviour
 	public void EndGame()
 	{
 		_hasGameStarted = false;
+		_isPlayersTurn = false;
 
 		// TODO: Disable some UI and stuff?
 		//		 Present GameOver panel and such
@@ -175,12 +179,15 @@ public class Dungeon : MonoBehaviour
 			public override void ExitState()
 			{
 				// TODO: Any cleanup needed?
+				delayTimer = 0.0f;
 			}
 
+			float delayTimer = 0.0f;
 			public override void ExecuteState()
 			{
+				delayTimer += Time.deltaTime;
 				// TODO: Check if above animation is done already, once done can transition.
-				_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+				if (delayTimer >= 2.0f) _dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
 			}
 		}
 
@@ -221,11 +228,14 @@ public class Dungeon : MonoBehaviour
 			{
 				// TODO: Do the animation for indicating start of player phase.
 				//		 And draw cards for the player.
+				_dungeonFSM._dungeon._isPlayersTurn = true;
+				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn);
 			}
 
 			public override void ExitState()
 			{
 				// TODO: Any cleanup needed?
+				_dungeonFSM._dungeon._isPlayersTurn = false;
 			}
 
 			public override void ExecuteState()
@@ -245,6 +255,7 @@ public class Dungeon : MonoBehaviour
 			public override void OnEnterState()
 			{
 				// TODO: Do the animation for indicating start of enemy phase.
+				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn);
 			}
 
 			public override void ExitState()
