@@ -12,14 +12,10 @@ public class DungeonDisplay : MonoBehaviour
 
 	[Header("Canvas UI Elements")]
 	[SerializeField] private Image _darkOverlay = null;
-	[SerializeField] private Image _phaseBannerTop = null;
-	[SerializeField] private Image _phaseBannerBtm = null;
-
-	[Header("Sprite Assets")]
-	[SerializeField] private Sprite _phaseBannerPlayerTop = null;
-	[SerializeField] private Sprite _phaseBannerPlayerBtm = null;
-	[SerializeField] private Sprite _phaseBannerEnemyTop = null;
-	[SerializeField] private Sprite _phaseBannerEnemyBtm = null;
+	[SerializeField] private RectTransform _phaseBannerTop = null;
+	[SerializeField] private RectTransform _phaseBannerBtm = null;
+	[SerializeField] private Text _phaseBannerTextTop = null;
+	[SerializeField] private Text _phaseBannerTextBtm = null;
 
 	Graph InverseSmoothStep;
 
@@ -37,13 +33,8 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_darkOverlay != null, "_darkOverlay is not assigned.");
 			Debug.Assert(_phaseBannerTop != null, "_phaseBannerTop is not assigned.");
 			Debug.Assert(_phaseBannerBtm != null, "_phaseBannerBtm is not assigned.");
-
-			Debug.Assert(
-				_phaseBannerPlayerTop != null
-				&& _phaseBannerPlayerBtm != null
-				&& _phaseBannerEnemyTop != null
-				&& _phaseBannerEnemyBtm != null,
-				"One or more Phase Banner sprites is not assigned.");
+			Debug.Assert(_phaseBannerTextTop != null, "_phaseBannerTextTop is not assigned.");
+			Debug.Assert(_phaseBannerTextBtm != null, "_phaseBannerTextBtm is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
@@ -102,17 +93,19 @@ public class DungeonDisplay : MonoBehaviour
 
 			if (inIsPlayersTurn)
 			{
-				_instance._phaseBannerTop.sprite = _instance._phaseBannerPlayerTop;
-				_instance._phaseBannerBtm.sprite = _instance._phaseBannerPlayerBtm;
+				const string txtPlayersTurn = "Player's Turn";
+				_instance._phaseBannerTextTop.text = txtPlayersTurn;
+				_instance._phaseBannerTextBtm.text = txtPlayersTurn;
 			}
 			else
 			{
-				_instance._phaseBannerTop.sprite = _instance._phaseBannerEnemyTop;
-				_instance._phaseBannerBtm.sprite = _instance._phaseBannerEnemyBtm;
+				const string txtEnemysTurn = "Enemy's Turn";
+				_instance._phaseBannerTextTop.text = txtEnemysTurn;
+				_instance._phaseBannerTextBtm.text = txtEnemysTurn;
 			}
 
-			_instance._phaseBannerTop.rectTransform.localEulerAngles = Vector3.forward * 90.0f;
-			_instance._phaseBannerBtm.rectTransform.localEulerAngles = Vector3.forward * 90.0f;
+			_instance._phaseBannerTop.localEulerAngles = Vector3.forward * -90.0f;
+			_instance._phaseBannerBtm.localEulerAngles = Vector3.forward * 90.0f;
 
 			LocalRotateByAction2D topRotIn = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, Graph.InverseExponential, -86.0f, 0.6f);
 			LocalRotateByAction2D bottomRotIn = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, Graph.InverseExponential, -86.0f, 0.6f);
