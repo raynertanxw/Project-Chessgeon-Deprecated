@@ -31,6 +31,8 @@ public class DungeonCamera : MonoBehaviour
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 			_instance = this;
 			_dungeonCamera = this.GetComponent<Camera>();
+			int cullMaskANDLayerUI = (_dungeonCamera.cullingMask & (1 << LayerMask.NameToLayer(Constants.LAYER_NAME_UI)));
+			Debug.Assert(cullMaskANDLayerUI == 0, "Dungeon Cam should not have UI in it's culling mask.");
 			_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);
 		}
 		else if (_instance != this)

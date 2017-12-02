@@ -8,4 +8,6 @@ public static class Constants
 	public const int SCENE_DUNGEON = 1;
 	public const string SCENE_NAME_LOADINGSCREEN = "SCENE_LoadingScreen";
 	public const string SCENE_NAME_DUNGEON = "SCENE_Dungeon";
+
+	public const string LAYER_NAME_UI = "UI";
 }

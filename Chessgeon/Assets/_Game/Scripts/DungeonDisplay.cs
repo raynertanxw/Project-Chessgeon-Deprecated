@@ -30,6 +30,7 @@ public class DungeonDisplay : MonoBehaviour
 			_instance = this;
 
 			Debug.Assert(gameObject.GetComponent<GraphicRaycaster>() == null, "There is a GraphicRaycaster component on Dungeon Display Canvas. Remove it.");
+			Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
@@ -43,6 +44,8 @@ public class DungeonDisplay : MonoBehaviour
 				&& _phaseBannerEnemyTop != null
 				&& _phaseBannerEnemyBtm != null,
 				"One or more Phase Banner sprites is not assigned.");
+
+			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
 			SetDarkOverlayVisible(false);
 
@@ -111,15 +114,15 @@ public class DungeonDisplay : MonoBehaviour
 			_instance._phaseBannerTop.rectTransform.localEulerAngles = Vector3.forward * 90.0f;
 			_instance._phaseBannerBtm.rectTransform.localEulerAngles = Vector3.forward * 90.0f;
 
-			RotateByAction2D topRotIn = new RotateByAction2D(_instance._phaseBannerTop.transform, Graph.InverseExponential, -86.0f, 0.6f);
-			RotateByAction2D bottomRotIn = new RotateByAction2D(_instance._phaseBannerBtm.transform, Graph.InverseExponential, -86.0f, 0.6f);
+			LocalRotateByAction2D topRotIn = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, Graph.InverseExponential, -86.0f, 0.6f);
+			LocalRotateByAction2D bottomRotIn = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, Graph.InverseExponential, -86.0f, 0.6f);
 			ActionParallel rotateIn = new ActionParallel(topRotIn, bottomRotIn);
 			rotateIn.OnActionStart += () => { /*TODO: Play the shing shing sound.*/ };
 
 			DelayAction rotInOutDelay = new DelayAction(0.6f);
 
-			RotateByAction2D topRotOut = new RotateByAction2D(_instance._phaseBannerTop.transform, Graph.Exponential, -86.0f, 0.6f);
-			RotateByAction2D bottomRotOut = new RotateByAction2D(_instance._phaseBannerBtm.transform, Graph.Exponential, -86.0f, 0.6f);
+			LocalRotateByAction2D topRotOut = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, Graph.Exponential, -86.0f, 0.6f);
+			LocalRotateByAction2D bottomRotOut = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, Graph.Exponential, -86.0f, 0.6f);
 			ActionParallel rotateOut = new ActionParallel(topRotOut, bottomRotOut);
 			rotateOut.OnActionStart += () => { /*TODO: Play the shing shing sound.*/ };
 
@@ -132,8 +135,8 @@ public class DungeonDisplay : MonoBehaviour
 			DelayAction stallFrontDelay = new DelayAction(0.5f);
 			DelayAction stallEndDelay = new DelayAction(0.5f);
 
-			RotateByAction2D topRotStall = new RotateByAction2D(_instance._phaseBannerTop.transform, _instance.InverseSmoothStep, -8.0f, 0.8f);
-			RotateByAction2D bottomRotStall = new RotateByAction2D(_instance._phaseBannerBtm.transform, _instance.InverseSmoothStep, -8.0f, 0.8f);
+			LocalRotateByAction2D topRotStall = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, _instance.InverseSmoothStep, -8.0f, 0.8f);
+			LocalRotateByAction2D bottomRotStall = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, _instance.InverseSmoothStep, -8.0f, 0.8f);
 			ActionParallel rotateStall = new ActionParallel(topRotStall, bottomRotStall);
 
 			ActionSequence rotStallSeq = new ActionSequence(stallFrontDelay, rotateStall, stallEndDelay);
