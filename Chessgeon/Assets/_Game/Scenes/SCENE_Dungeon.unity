@@ -1062,6 +1062,54 @@ MonoBehaviour:
   _phaseBannerTextTop: {fileID: 97684578}
   _phaseBannerTextBtm: {fileID: 694653734}
   _cardDrawer: {fileID: 2020999239}
+  _cardDrawerBobber:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.6343877
+      value: 1.0528615
+      inSlope: 0.017891359
+      outSlope: 0.017891359
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0.010322206
+      outSlope: 0.010322206
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  _cardDrawerDipper:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: -0.5392291
+      outSlope: -0.5392291
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.2602217
+      value: -0.046950713
+      inSlope: 0.19544736
+      outSlope: 0.19544736
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &1443654488
 MonoBehaviour:
   m_ObjectHideFlags: 0

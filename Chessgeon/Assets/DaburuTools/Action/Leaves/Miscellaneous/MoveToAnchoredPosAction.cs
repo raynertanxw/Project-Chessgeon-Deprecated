@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class MoveToAnchoredPosAction : Action
 	{
 		RectTransform mTransform;
-		Graph mGraph;
+		AnimationCurve _animCurve;
 		Vector2 mvecDesiredAnchoredPos;
 		float mfActionDuration;
 
 		Vector2 mvecInitialAnchoredPos;
 		float mfElapsedDuration;
 
-		public MoveToAnchoredPosAction(RectTransform _transform, Graph _graph, Vector2 _desiredAnchoredPos, float _actionDuration)
+		public MoveToAnchoredPosAction(RectTransform _transform, Vector2 _desiredAnchoredPos, float _actionDuration, AnimationCurve inAnimCurve)
 		{
 			mTransform = _transform;
-			SetGraph(_graph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredAnchoredPos(_desiredAnchoredPos);
 			SetActionDuration(_actionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public MoveToAnchoredPosAction(RectTransform _transform, Vector2 _desiredAnchoredPos, float _actionDuration)
 		{
 			mTransform = _transform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredAnchoredPos(_desiredAnchoredPos);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph _newGraph)
+		public void SetAnimCurve(AnimationCurve inAnimCurve)
 		{
-			mGraph = _newGraph;
+			_animCurve = inAnimCurve;
 		}
 		public void SetDesiredAnchoredPos(Vector2 _newDesiredAnchoredPos)
 		{
@@ -70,7 +70,9 @@ namespace DaburuTools
 
 			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(mfElapsedDuration / mfActionDuration);
+			else t = _animCurve.Evaluate(mfElapsedDuration / mfActionDuration);
 			mTransform.anchoredPosition = Vector2.LerpUnclamped(mvecInitialAnchoredPos, mvecDesiredAnchoredPos, t);
 
 			// Remove self after action is finished.

@@ -223,6 +223,7 @@ public class Dungeon : MonoBehaviour
 				//		 And draw cards for the player.
 				_dungeonFSM._dungeon._isPlayersTurn = true;
 				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn);
+				DungeonDisplay.EnableCardDrawer(true);
 			}
 
 			public override void ExitState()

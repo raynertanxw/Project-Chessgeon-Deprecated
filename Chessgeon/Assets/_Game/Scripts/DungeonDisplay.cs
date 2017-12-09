@@ -19,6 +19,10 @@ public class DungeonDisplay : MonoBehaviour
 
 	[SerializeField] private RectTransform _cardDrawer = null;
 
+	[Header("Animation Graphs")]
+	[SerializeField] private AnimationCurve _cardDrawerBobber = null;
+	[SerializeField] private AnimationCurve _cardDrawerDipper = null;
+
 	Graph InverseSmoothStep;
 
 	private void Awake()
@@ -164,7 +168,7 @@ public class DungeonDisplay : MonoBehaviour
 				if (inIsAnimated)
 				{
 					_instance._cardDrawerAnimPlaying = true;
-					MoveToAnchoredPosAction openDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, Graph.Bobber, newAnchorPos, 0.6f);
+					MoveToAnchoredPosAction openDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerBobber);
 					openDrawer.OnActionFinish += () => { _instance._cardDrawerAnimPlaying = false; };
 					ActionHandler.RunAction(openDrawer);
 				}
@@ -176,7 +180,7 @@ public class DungeonDisplay : MonoBehaviour
 				if (inIsAnimated)
 				{
 					_instance._cardDrawerAnimPlaying = true;
-					MoveToAnchoredPosAction closeDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, Graph.Dipper, newAnchorPos, 0.6f);
+					MoveToAnchoredPosAction closeDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerDipper);
 					closeDrawer.OnActionFinish += () => { _instance._cardDrawerAnimPlaying = false; };
 					ActionHandler.RunAction(closeDrawer);
 				}
