@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class PulseAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Vector3 mvecMinScale;
 		Vector3 mvecMaxScale;
 		int mnNumCycles;
@@ -16,21 +16,21 @@ namespace DaburuTools
 		int mnCurrentCycle;
 
 		public PulseAction(
-			Transform _transform, int _numCycles,
+			Transform inTransform, int _numCycles,
 			Graph _expandGraph, Graph _shrinkGraph,
 			float _expandDuration, float _shrinkDuration,
 			Vector3 _minScale, Vector3 _maxScale)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetNumCycles(_numCycles);
 			SetExpandShrinkGraphs(_expandGraph, _shrinkGraph);
 			SetExpandShrinkDuration(_expandDuration, _shrinkDuration);
 			SetMinMaxScale(_minScale, _maxScale);
 		}
-		public PulseAction(Transform _transform, int _numCycles, Graph _expandShrinkGraph, float _cycleDuration,
+		public PulseAction(Transform inTransform, int _numCycles, Graph _expandShrinkGraph, float _cycleDuration,
 			Vector3 _minScale, Vector3 _maxScale)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetNumCycles(_numCycles);
 			SetExpandShrinkGraphs(_expandShrinkGraph, _expandShrinkGraph);
 			SetExpandShrinkDuration(_cycleDuration / 2.0f, _cycleDuration / 2.0f);
@@ -75,9 +75,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -87,12 +87,12 @@ namespace DaburuTools
 			if (mfCycleElapsed < mfExpandDuration) // Expand
 			{
 				float t = mExpandGraph.Read(mfCycleElapsed / mfExpandDuration);
-				mTransform.localScale = Vector3.LerpUnclamped(mvecMinScale, mvecMaxScale, t);
+				_transform.localScale = Vector3.LerpUnclamped(mvecMinScale, mvecMaxScale, t);
 			}
 			else if (mfCycleElapsed < mfCycleDuration) // Shrink
 			{
 				float t = mShrinkGraph.Read((mfCycleElapsed - mfExpandDuration) / mfShrinkDuration);
-				mTransform.localScale = Vector3.LerpUnclamped(mvecMaxScale, mvecMinScale, t);
+				_transform.localScale = Vector3.LerpUnclamped(mvecMaxScale, mvecMinScale, t);
 			}
 			else
 			{
@@ -100,7 +100,7 @@ namespace DaburuTools
 				// Remove self after action is finished.
 				if (mnCurrentCycle >= mnNumCycles)
 				{
-					mTransform.localScale = mvecMinScale;   // Force it to be the exact scale that it wants.
+					_transform.localScale = mvecMinScale;   // Force it to be the exact scale that it wants.
 					OnActionEnd();
 					_parent.Remove(this);
 				}
@@ -108,7 +108,7 @@ namespace DaburuTools
 				{
 					// Do the interpolation for the beginning of the next cycle.
 					float t = mExpandGraph.Read((mfCycleElapsed - mfCycleDuration) / mfExpandDuration);
-					mTransform.localScale = Vector3.LerpUnclamped(mvecMinScale, mvecMaxScale, t);
+					_transform.localScale = Vector3.LerpUnclamped(mvecMinScale, mvecMaxScale, t);
 				}
 			}
 		}
@@ -133,7 +133,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.localScale = mvecMinScale;   // Force it to be the exact position that it wants.
+				_transform.localScale = mvecMinScale;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

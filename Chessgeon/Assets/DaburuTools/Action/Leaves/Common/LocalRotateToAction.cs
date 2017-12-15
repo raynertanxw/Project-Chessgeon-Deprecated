@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class LocalRotateToAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Graph mGraph;
 		Vector3 mvecDesiredLocalRotation;
 		float mfActionDuration;
@@ -13,18 +13,18 @@ namespace DaburuTools
 		Vector3 mvecInitialLocalRotation;
 		float mfElapsedDuration;
 
-		public LocalRotateToAction(Transform _transform, Graph _graph, Vector3 _desiredLocalRotation, float _actionDuration)
+		public LocalRotateToAction(Transform inTransform, Graph _graph, Vector3 _desiredLocalRotation, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(_graph);
 			SetDesiredLocalRotation(_desiredLocalRotation);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public LocalRotateToAction(Transform _transform, Vector3 _desiredLocalRotation, float _actionDuration)
+		public LocalRotateToAction(Transform inTransform, Vector3 _desiredLocalRotation, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredLocalRotation(_desiredLocalRotation);
 			SetActionDuration(_actionDuration);
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialLocalRotation = mTransform.localEulerAngles;
+			mvecInitialLocalRotation = _transform.localEulerAngles;
 			mfElapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -61,9 +61,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -71,12 +71,12 @@ namespace DaburuTools
 			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
-			mTransform.localEulerAngles = Vector3.LerpUnclamped(mvecInitialLocalRotation, mvecDesiredLocalRotation, t);
+			_transform.localEulerAngles = Vector3.LerpUnclamped(mvecInitialLocalRotation, mvecDesiredLocalRotation, t);
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
-				mTransform.localEulerAngles = mvecDesiredLocalRotation; // Force it to be the exact local rotation that it wants.
+				_transform.localEulerAngles = mvecDesiredLocalRotation; // Force it to be the exact local rotation that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.localEulerAngles = mvecDesiredLocalRotation; // Force it to be the exact position that it wants.
+				_transform.localEulerAngles = mvecDesiredLocalRotation; // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

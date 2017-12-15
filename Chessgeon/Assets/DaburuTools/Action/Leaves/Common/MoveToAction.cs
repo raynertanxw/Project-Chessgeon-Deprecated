@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class MoveToAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Graph mGraph;
 		Vector3 mvecDesiredPos;
 		float mfActionDuration;
@@ -13,18 +13,18 @@ namespace DaburuTools
 		Vector3 mvecInitialPos;
 		float mfElapsedDuration;
 
-		public MoveToAction(Transform _transform, Graph _graph, Vector3 _desiredPosition, float _actionDuration)
+		public MoveToAction(Transform inTransform, Graph _graph, Vector3 _desiredPosition, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(_graph);
 			SetDesiredPosition(_desiredPosition);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public MoveToAction(Transform _transform, Vector3 _desiredPosition, float _actionDuration)
+		public MoveToAction(Transform inTransform, Vector3 _desiredPosition, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredPosition(_desiredPosition);
 			SetActionDuration(_actionDuration);
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialPos = mTransform.position;
+			mvecInitialPos = _transform.position;
 			mfElapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -61,9 +61,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -71,12 +71,12 @@ namespace DaburuTools
 			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
-			mTransform.position = Vector3.LerpUnclamped(mvecInitialPos, mvecDesiredPos, t);
+			_transform.position = Vector3.LerpUnclamped(mvecInitialPos, mvecDesiredPos, t);
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
-				mTransform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
+				_transform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
+				_transform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

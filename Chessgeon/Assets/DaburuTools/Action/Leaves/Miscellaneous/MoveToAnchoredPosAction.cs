@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class MoveToAnchoredPosAction : Action
 	{
-		RectTransform mTransform;
+		RectTransform _transform;
 		AnimationCurve _animCurve;
 		Vector2 mvecDesiredAnchoredPos;
 		float mfActionDuration;
@@ -13,18 +13,18 @@ namespace DaburuTools
 		Vector2 mvecInitialAnchoredPos;
 		float mfElapsedDuration;
 
-		public MoveToAnchoredPosAction(RectTransform _transform, Vector2 _desiredAnchoredPos, float _actionDuration, AnimationCurve inAnimCurve)
+		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float _actionDuration, AnimationCurve inAnimCurve)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetAnimCurve(inAnimCurve);
 			SetDesiredAnchoredPos(_desiredAnchoredPos);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public MoveToAnchoredPosAction(RectTransform _transform, Vector2 _desiredAnchoredPos, float _actionDuration)
+		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetAnimCurve(null);
 			SetDesiredAnchoredPos(_desiredAnchoredPos);
 			SetActionDuration(_actionDuration);
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialAnchoredPos = mTransform.anchoredPosition;
+			mvecInitialAnchoredPos = _transform.anchoredPosition;
 			mfElapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -61,9 +61,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -73,12 +73,12 @@ namespace DaburuTools
 			float t;
 			if (_animCurve == null) t = Mathf.Clamp01(mfElapsedDuration / mfActionDuration);
 			else t = _animCurve.Evaluate(mfElapsedDuration / mfActionDuration);
-			mTransform.anchoredPosition = Vector2.LerpUnclamped(mvecInitialAnchoredPos, mvecDesiredAnchoredPos, t);
+			_transform.anchoredPosition = Vector2.LerpUnclamped(mvecInitialAnchoredPos, mvecDesiredAnchoredPos, t);
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
-				mTransform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact anchored position that it wants.
+				_transform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact anchored position that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -104,7 +104,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact position that it wants.
+				_transform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

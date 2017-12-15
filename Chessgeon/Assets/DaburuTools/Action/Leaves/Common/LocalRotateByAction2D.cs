@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class LocalRotateByAction2D : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Graph mGraph;
 		float mfDesiredTotalZEulerAngle;
 		float mfActionDuration;
@@ -13,18 +13,18 @@ namespace DaburuTools
 		float mfAccumulatedZEulerAngle;
 		float mfElapsedDuration;
 
-		public LocalRotateByAction2D(Transform _transform, Graph _graph, float _desiredZEulerAngle, float _actionDuration)
+		public LocalRotateByAction2D(Transform inTransform, Graph _graph, float _desiredZEulerAngle, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(_graph);
 			SetDesiredZEulerAngle(_desiredZEulerAngle);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public LocalRotateByAction2D(Transform _transform, float _desiredZEulerAngle, float _actionDuration)
+		public LocalRotateByAction2D(Transform inTransform, float _desiredZEulerAngle, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredZEulerAngle(_desiredZEulerAngle);
 			SetActionDuration(_actionDuration);
@@ -61,9 +61,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -74,7 +74,7 @@ namespace DaburuTools
 				0.0f,
 				0.0f,
 				mfAccumulatedZEulerAngle);
-			mTransform.Rotate(-previousDeltaRot, Space.Self);   // Reverse the previous frame's rotation.
+			_transform.Rotate(-previousDeltaRot, Space.Self);   // Reverse the previous frame's rotation.
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
 			mfAccumulatedZEulerAngle = Mathf.LerpUnclamped(0.0f, mfDesiredTotalZEulerAngle, t);
@@ -83,13 +83,13 @@ namespace DaburuTools
 				0.0f,
 				0.0f,
 				mfAccumulatedZEulerAngle);
-			mTransform.Rotate(newDeltaRot, Space.Self); // Apply the new delta rotation.
+			_transform.Rotate(newDeltaRot, Space.Self); // Apply the new delta rotation.
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
 				Vector3 imperfection = Vector3.forward * (mfDesiredTotalZEulerAngle - mfAccumulatedZEulerAngle);
-				mTransform.Rotate(imperfection, Space.Self);    // Force to exact delta displacement.
+				_transform.Rotate(imperfection, Space.Self);    // Force to exact delta displacement.
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -117,7 +117,7 @@ namespace DaburuTools
 			if (_bSnapToDesired)
 			{
 				Vector3 imperfection = Vector3.forward * (mfDesiredTotalZEulerAngle - mfAccumulatedZEulerAngle);
-				mTransform.Rotate(imperfection, Space.Self);    // Force it to be the exact position that it wants.
+				_transform.Rotate(imperfection, Space.Self);    // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

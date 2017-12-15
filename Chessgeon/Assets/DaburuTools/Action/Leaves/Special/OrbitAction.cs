@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class OrbitAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Transform mOrbitPointTransform;
 		Vector3 mOrbitAxisDir;
 		int mnNumCycles;
@@ -22,13 +22,13 @@ namespace DaburuTools
 		int mnCurrentCycle;
 
 		public OrbitAction(
-			Transform _transform, Transform mOrbitPointTransform,
+			Transform inTransform, Transform mOrbitPointTransform,
 			Vector3 _orbitAxisDir,
 			int _numCycles, Graph _revolutionGraph,
 			float _cycleDuration,
 			bool _preventOwnAxisRotation = true)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetOrbitPointTransform(mOrbitPointTransform);
 			SetOrbitAxisDir(_orbitAxisDir);
 			SetNumCycles(_numCycles);
@@ -75,9 +75,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -85,21 +85,21 @@ namespace DaburuTools
 			// Undo previous frame's rotation.
 			float mfCycleElapsedOld = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;
 			float tOld = mRevolutionGraph.Read(mfCycleElapsedOld / mfCycleDuration);
-			mTransform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, -360.0f * tOld);
+			_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, -360.0f * tOld);
 			// Offset Rotation so that the orbit action does not affect the object's rotation.
 			if (PreventOwnAxisRotation)
-				mTransform.Rotate(mOrbitAxisDir, 360.0f * tOld);
+				_transform.Rotate(mOrbitAxisDir, 360.0f * tOld);
 
 			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 			float mfCycleElapsed = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;
 			if (mfCycleElapsed < mfCycleDuration)
 			{
 				float t = mRevolutionGraph.Read(mfCycleElapsed / mfCycleDuration);
-				mTransform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f * t);
+				_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f * t);
 
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
 				if (mbPreventOwnAxisRotation)
-					mTransform.Rotate(mOrbitAxisDir, 360.0f * -t);
+					_transform.Rotate(mOrbitAxisDir, 360.0f * -t);
 			}
 			else
 			{
@@ -108,10 +108,10 @@ namespace DaburuTools
 				if (mnCurrentCycle >= mnNumCycles)
 				{
 					// Force it to be the end position of the cycle.
-					mTransform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f);
+					_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f);
 					// Offset Rotation so that the orbit action does not affect the object's rotation.
 					if (mbPreventOwnAxisRotation)
-						mTransform.Rotate(mOrbitAxisDir, -360.0f);
+						_transform.Rotate(mOrbitAxisDir, -360.0f);
 					OnActionEnd();
 					_parent.Remove(this);
 				}
@@ -119,11 +119,11 @@ namespace DaburuTools
 				{
 					// Do the interpolation for the beginning of the next cycle.
 					float t = mRevolutionGraph.Read((mfCycleElapsed - mfCycleDuration) / mfCycleDuration);
-					mTransform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f * t);
+					_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f * t);
 
 					// Offset Rotation so that the orbit action does not affect the object's rotation.
 					if (mbPreventOwnAxisRotation)
-						mTransform.Rotate(mOrbitAxisDir, 360.0f * -t);
+						_transform.Rotate(mOrbitAxisDir, 360.0f * -t);
 				}
 			}
 		}
@@ -151,16 +151,16 @@ namespace DaburuTools
 				// Undo previous frame's rotation.
 				float mfCycleElapsedOld = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;
 				float tOld = mRevolutionGraph.Read(mfCycleElapsedOld / mfCycleDuration);
-				mTransform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, -360.0f * tOld);
+				_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, -360.0f * tOld);
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
 				if (PreventOwnAxisRotation)
-					mTransform.Rotate(mOrbitAxisDir, 360.0f * tOld);
+					_transform.Rotate(mOrbitAxisDir, 360.0f * tOld);
 
 				// Force it to be the end position of the cycle.
-				mTransform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f);
+				_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f);
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
 				if (mbPreventOwnAxisRotation)
-					mTransform.Rotate(mOrbitAxisDir, -360.0f);
+					_transform.Rotate(mOrbitAxisDir, -360.0f);
 			}
 
 			OnActionEnd();

@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class ShakeAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		int mnNumShakes;
 		float mfShakePeriod;
 		float mfShakeIntensity;
@@ -15,9 +15,9 @@ namespace DaburuTools
 		float mfElapsedDuration;
 		int mnCurrentCycle;
 
-		public ShakeAction(Transform _transform, int _numShakes, float _shakeIntensity)
+		public ShakeAction(Transform inTransform, int _numShakes, float _shakeIntensity)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 
 			SetNumShakes(_numShakes);
 			SetShakeIntensity(_shakeIntensity);
@@ -25,9 +25,9 @@ namespace DaburuTools
 
 			SetShakePeriod(0.05f);
 		}
-		public ShakeAction(Transform _transform, int _numShakes, float _shakeIntensity, Graph _attenuationGraph)
+		public ShakeAction(Transform inTransform, int _numShakes, float _shakeIntensity, Graph _attenuationGraph)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 
 			SetNumShakes(_numShakes);
 			SetShakeIntensity(_shakeIntensity);
@@ -80,9 +80,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -97,7 +97,7 @@ namespace DaburuTools
 				if (mnCurrentCycle >= mnNumShakes)
 				{
 					// Force it back to original position.
-					mTransform.position -= mVecDeltaPos;
+					_transform.position -= mVecDeltaPos;
 
 					OnActionEnd();
 					_parent.Remove(this);
@@ -105,11 +105,11 @@ namespace DaburuTools
 				else
 				{
 					// Set back to original position.
-					mTransform.position -= mVecDeltaPos;
+					_transform.position -= mVecDeltaPos;
 					// Set new shake pos.
 					float t = mAttenuationGraph.Read(mfElapsedDuration / (mfShakePeriod * mnNumShakes));
 					mVecDeltaPos = Random.insideUnitSphere * mfShakeIntensity * t;
-					mTransform.position += mVecDeltaPos;
+					_transform.position += mVecDeltaPos;
 				}
 			}
 		}
@@ -134,7 +134,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.position -= mVecDeltaPos;    // Force it to be the exact position that it wants.
+				_transform.position -= mVecDeltaPos;    // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class RotateToAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Graph mGraph;
 		Vector3 mvecDesiredRotation;
 		float mfActionDuration;
@@ -13,18 +13,18 @@ namespace DaburuTools
 		Vector3 mvecInitialRotation;
 		float mfElapsedDuration;
 
-		public RotateToAction(Transform _transform, Graph _graph, Vector3 _desiredRotation, float _actionDuration)
+		public RotateToAction(Transform inTransform, Graph _graph, Vector3 _desiredRotation, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(_graph);
 			SetDesiredRotation(_desiredRotation);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public RotateToAction(Transform _transform, Vector3 _desiredRotation, float _actionDuration)
+		public RotateToAction(Transform inTransform, Vector3 _desiredRotation, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredRotation(_desiredRotation);
 			SetActionDuration(_actionDuration);
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialRotation = mTransform.eulerAngles;
+			mvecInitialRotation = _transform.eulerAngles;
 			mfElapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -61,9 +61,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -71,12 +71,12 @@ namespace DaburuTools
 			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
-			mTransform.eulerAngles = Vector3.LerpUnclamped(mvecInitialRotation, mvecDesiredRotation, t);
+			_transform.eulerAngles = Vector3.LerpUnclamped(mvecInitialRotation, mvecDesiredRotation, t);
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
-				mTransform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact rotation that it wants.
+				_transform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact rotation that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact position that it wants.
+				_transform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

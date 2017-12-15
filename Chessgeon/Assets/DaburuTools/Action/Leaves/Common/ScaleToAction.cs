@@ -5,7 +5,7 @@ namespace DaburuTools
 {
 	public class ScaleToAction : Action
 	{
-		Transform mTransform;
+		Transform _transform;
 		Graph mGraph;
 		Vector3 mvecDesiredScale;
 		float mfActionDuration;
@@ -13,18 +13,18 @@ namespace DaburuTools
 		Vector3 mvecInitialScale;
 		float mfElapsedDuration;
 
-		public ScaleToAction(Transform _transform, Graph _graph, Vector3 _desiredScale, float _actionDuration)
+		public ScaleToAction(Transform inTransform, Graph _graph, Vector3 _desiredScale, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(_graph);
 			SetDesiredScale(_desiredScale);
 			SetActionDuration(_actionDuration);
 
 			SetupAction();
 		}
-		public ScaleToAction(Transform _transform, Vector3 _desiredScale, float _actionDuration)
+		public ScaleToAction(Transform inTransform, Vector3 _desiredScale, float _actionDuration)
 		{
-			mTransform = _transform;
+			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredScale(_desiredScale);
 			SetActionDuration(_actionDuration);
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialScale = mTransform.localScale;
+			mvecInitialScale = _transform.localScale;
 			mfElapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -61,9 +61,9 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mTransform == null)
+			if (_transform == null)
 			{
-				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
+				// Debug.LogWarning("DaburuTools.Action: _transform Deleted prematurely");
 				_parent.Remove(this);
 				return;
 			}
@@ -71,12 +71,12 @@ namespace DaburuTools
 			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
-			mTransform.localScale = Vector3.LerpUnclamped(mvecInitialScale, mvecDesiredScale, t);
+			_transform.localScale = Vector3.LerpUnclamped(mvecInitialScale, mvecDesiredScale, t);
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
-				mTransform.localScale = mvecDesiredScale;   // Force it to be the exact scale that it wants.
+				_transform.localScale = mvecDesiredScale;   // Force it to be the exact scale that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (_bSnapToDesired)
 			{
-				mTransform.localScale = mvecDesiredScale;   // Force it to be the exact position that it wants.
+				_transform.localScale = mvecDesiredScale;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();
