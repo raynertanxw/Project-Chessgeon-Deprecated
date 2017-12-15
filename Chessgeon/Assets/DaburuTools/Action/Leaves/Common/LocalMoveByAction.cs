@@ -13,20 +13,20 @@ namespace DaburuTools
 		Vector3 mvecAccumulatedDelta;
 		float mfElapsedDuration;
 
-		public LocalMoveByAction(Transform inTransform, Graph inGraph, Vector3 _desiredDelta, float inActionDuration)
+		public LocalMoveByAction(Transform inTransform, Graph inGraph, Vector3 inDesiredDelta, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(inGraph);
-			SetDesiredDelta(_desiredDelta);
+			SetDesiredDelta(inDesiredDelta);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public LocalMoveByAction(Transform inTransform, Vector3 _desiredDelta, float inActionDuration)
+		public LocalMoveByAction(Transform inTransform, Vector3 inDesiredDelta, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
-			SetDesiredDelta(_desiredDelta);
+			SetDesiredDelta(inDesiredDelta);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredDelta(Vector3 _newDesiredDelta)
+		public void SetDesiredDelta(Vector3 inNewDesiredDelta)
 		{
-			mvecDesiredTotalDelta = _newDesiredDelta;
+			mvecDesiredTotalDelta = inNewDesiredDelta;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
