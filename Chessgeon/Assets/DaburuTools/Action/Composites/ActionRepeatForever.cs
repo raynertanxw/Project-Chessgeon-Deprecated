@@ -2,22 +2,22 @@
 {
 	public class ActionRepeatForever : Action
 	{
-		public override void SetUnscaledDeltaTime(bool _bIsUnscaledDeltaTime)
+		public override void SetUnscaledDeltaTime(bool inIsUnscaledDeltaTime)
 		{
-			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			base.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			_repeatedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			_repeatedAction.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 		}
 
 		private Action _repeatedAction;
 
-		public ActionRepeatForever(Action _Action)
+		public ActionRepeatForever(Action inAction)
 		{
-			_Action._parent = this;
-			_repeatedAction = _Action;
+			inAction._parent = this;
+			_repeatedAction = inAction;
 
-			_Action.MakeResettable(true);
+			inAction.MakeResettable(true);
 		}
 
 
@@ -29,7 +29,7 @@
 			if (_repeatedAction != null)
 				_repeatedAction.RunAction();
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
 			UnityEngine.Debug.LogWarning("ActionRepeatForever cannot be resetted");
 		}
@@ -37,14 +37,14 @@
 		{
 			UnityEngine.Debug.LogWarning("ActionRepeatForever cannot be resetted");
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
 
 			if (_repeatedAction._isRunning == false)
 				_repeatedAction.RunAction();
-			_repeatedAction.StopAction(_bSnapToDesired);
+			_repeatedAction.StopAction(inSnapToDesired);
 
 			OnActionEnd();
 			_parent.Remove(this);
@@ -53,7 +53,7 @@
 
 
 		// Doesn't make sense to add. Don't need to override Add.
-		public override bool Remove(Action _Action)
+		public override bool Remove(Action inAction)
 		{
 			_repeatedAction.Reset();
 			return true;

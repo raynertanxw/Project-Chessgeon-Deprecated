@@ -2,23 +2,23 @@
 {
 	public class ActionAfterDelay : Action
 	{
-		public override void SetUnscaledDeltaTime(bool _bIsUnscaledDeltaTime)
+		public override void SetUnscaledDeltaTime(bool inIsUnscaledDeltaTime)
 		{
-			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			base.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			_delayedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			_delayedAction.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 		}
 
 		private Action _delayedAction;
 		private float _timeDelay;
 		private float _timePassed;
 
-		public ActionAfterDelay(Action _Action, float _fTimeDelay)
+		public ActionAfterDelay(Action inAction, float inTimeDelay)
 		{
-			_Action._parent = this;
-			_delayedAction = _Action;
-			_timeDelay = _fTimeDelay;
+			inAction._parent = this;
+			_delayedAction = inAction;
+			_timeDelay = inTimeDelay;
 			_timePassed = 0f;
 		}
 
@@ -47,12 +47,12 @@
 					_parent.Remove(this);
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 
 			if (_delayedAction != null)
-				_delayedAction.MakeResettable(_bIsResettable);
+				_delayedAction.MakeResettable(inIsResettable);
 		}
 		public override void Reset()
 		{
@@ -62,7 +62,7 @@
 			_timePassed = 0f;
 			_delayedAction.Reset();
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
@@ -77,7 +77,7 @@
 				// Need another null check, incase the delayed action is a sequence or parallel.
 				// When they are going to run, they might have deleted themself because they are empty.
 				if (_delayedAction != null)
-					_delayedAction.StopAction(_bSnapToDesired);
+					_delayedAction.StopAction(inSnapToDesired);
 			}
 
 			OnActionEnd();
@@ -87,7 +87,7 @@
 
 
 		// Doesn't make sense to add. Don't need to override Add.
-		public override bool Remove(Action _Action)
+		public override bool Remove(Action inAction)
 		{
 			// Simply de-reference to let GC collect.
 			if (!_isResettable)

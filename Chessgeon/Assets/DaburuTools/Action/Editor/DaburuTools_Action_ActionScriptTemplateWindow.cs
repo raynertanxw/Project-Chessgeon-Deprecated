@@ -99,7 +99,7 @@ namespace DaburuTools
 			}
 		}
 
-		private bool CreateNewActionScript(string _name)
+		private bool CreateNewActionScript(string inName)
 		{
 			TextAsset templateTextFile = AssetDatabase.LoadAssetAtPath("Assets/DaburuTools/Action/Editor/ActionScriptTemplate.txt",
 				typeof(TextAsset)) as TextAsset;
@@ -113,9 +113,9 @@ namespace DaburuTools
 
 			string contents = "";
 			contents = templateTextFile.text;
-			contents = contents.Replace("#SCRIPTNAME#", _name);
+			contents = contents.Replace("#SCRIPTNAME#", inName);
 			string newAssetPath = DTEditorUtility.GetSelectedPathOrFallback();
-			newAssetPath += "/" + _name + ".cs";
+			newAssetPath += "/" + inName + ".cs";
 
 			if (File.Exists(newAssetPath) == false) // Do not overwrite
 			{

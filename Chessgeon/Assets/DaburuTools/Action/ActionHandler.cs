@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 
 		#region Client Functions
-		public static void RunAction(params Action[] _Actions)
+		public static void RunAction(params Action[] InActions)
 		{
 #if UNITY_EDITOR
 			if (_instance == null)
@@ -47,20 +47,20 @@ namespace DaburuTools
 			}
 #endif
 
-			_instance._masterActionParallel.Add(_Actions);
+			_instance._masterActionParallel.Add(InActions);
 		}
 		#endregion
 
 		#region Nested Special ActionParallelClass
 		private sealed class MasterActionParallel : Action
 		{
-			public override void SetUnscaledDeltaTime(bool _bIsUnscaledDeltaTime)
+			public override void SetUnscaledDeltaTime(bool InIsUnscaledDeltaTime)
 			{
-				base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+				base.SetUnscaledDeltaTime(InIsUnscaledDeltaTime);
 
 				// Set the same for children actions.
 				for (int i = 0; i < _actionList.Count; i++)
-					_actionList[i].SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+					_actionList[i].SetUnscaledDeltaTime(InIsUnscaledDeltaTime);
 			}
 
 			private List<Action> _actionList;
@@ -89,34 +89,34 @@ namespace DaburuTools
 						_parent.Remove(this);
 				}
 			}
-			public override void StopAction(bool _bSnapToDesired)
+			public override void StopAction(bool InSnapToDesired)
 			{
 				return;
 			}
 
 
 
-			public override bool Add(Action _Action)
+			public override bool Add(Action InAction)
 			{
-				_Action._parent = this;
-				_actionList.Add(_Action);
+				InAction._parent = this;
+				_actionList.Add(InAction);
 				return true;
 			}
-			public bool Add(params Action[] _Actions)
+			public bool Add(params Action[] InActions)
 			{
-				for (int i = 0; i < _Actions.Length; i++)
+				for (int i = 0; i < InActions.Length; i++)
 				{
-					_Actions[i]._parent = this;
-					_actionList.Add(_Actions[i]);
+					InActions[i]._parent = this;
+					_actionList.Add(InActions[i]);
 				}
 
 				return true;
 			}
-			public override bool Remove(Action _Action)
+			public override bool Remove(Action InAction)
 			{
 				if (_actionList.Count == 0) { return false; }
 
-				return _actionList.Remove(_Action);
+				return _actionList.Remove(InAction);
 			}
 		}
 		#endregion

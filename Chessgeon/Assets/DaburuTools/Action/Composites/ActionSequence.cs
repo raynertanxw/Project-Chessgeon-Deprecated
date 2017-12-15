@@ -4,13 +4,13 @@ namespace DaburuTools
 {
 	public class ActionSequence : Action
 	{
-		public override void SetUnscaledDeltaTime(bool _bIsUnscaledDeltaTime)
+		public override void SetUnscaledDeltaTime(bool inIsUnscaledDeltaTime)
 		{
-			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			base.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
 			for (LinkedListNode<Action> node = _actionLinkedList.First; node != null; node = node.Next)
-				node.Value.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+				node.Value.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 		}
 
 		private LinkedList<Action> _actionLinkedList;
@@ -20,13 +20,13 @@ namespace DaburuTools
 		{
 			_actionLinkedList = new LinkedList<Action>();
 		}
-		public ActionSequence(params Action[] _Actions)
+		public ActionSequence(params Action[] inActions)
 		{
 			_actionLinkedList = new LinkedList<Action>();
-			for (int i = 0; i < _Actions.Length; i++)
+			for (int i = 0; i < inActions.Length; i++)
 			{
-				if (_Actions[i] == null) continue;
-				Add(_Actions[i]);
+				if (inActions[i] == null) continue;
+				Add(inActions[i]);
 			}
 		}
 
@@ -48,14 +48,14 @@ namespace DaburuTools
 					_parent.Remove(this);
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 
 			for (LinkedListNode<Action> node = _actionLinkedList.First; node != null; node = node.Next)
-				node.Value.MakeResettable(_bIsResettable);
+				node.Value.MakeResettable(inIsResettable);
 
-			if (_bIsResettable)
+			if (inIsResettable)
 				_storageLinkedList = new LinkedList<Action>();
 			else
 				_storageLinkedList = null;
@@ -74,7 +74,7 @@ namespace DaburuTools
 			_storageLinkedList.Clear();
 			_isRunning = false;
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
@@ -99,7 +99,7 @@ namespace DaburuTools
 
 			for (int i = 0; i < actionList.Length; i++)
 			{
-				actionList[i].StopAction(_bSnapToDesired);
+				actionList[i].StopAction(inSnapToDesired);
 			}
 
 			OnActionEnd();
@@ -108,23 +108,23 @@ namespace DaburuTools
 
 
 
-		public override bool Add(Action _Action)
+		public override bool Add(Action inAction)
 		{
-			_Action._parent = this;
-			_actionLinkedList.AddLast(_Action);
+			inAction._parent = this;
+			_actionLinkedList.AddLast(inAction);
 			return true;
 		}
-		public bool Add(params Action[] _Actions)
+		public bool Add(params Action[] inActions)
 		{
-			for (int i = 0; i < _Actions.Length; i++)
+			for (int i = 0; i < inActions.Length; i++)
 			{
-				_Actions[i]._parent = this;
-				_actionLinkedList.AddLast(_Actions[i]);
+				inActions[i]._parent = this;
+				_actionLinkedList.AddLast(inActions[i]);
 			}
 
 			return true;
 		}
-		public override bool Remove(Action _Action)
+		public override bool Remove(Action inAction)
 		{
 			if (GetListHead() == null) { return false; }
 
@@ -132,7 +132,7 @@ namespace DaburuTools
 			{
 				_storageLinkedList.AddFirst(_actionLinkedList.First.Value);
 			}
-			return _actionLinkedList.Remove(_Action);
+			return _actionLinkedList.Remove(inAction);
 		}
 		public override LinkedListNode<Action> GetListHead() { return _actionLinkedList.First; }
 		public override bool IsComposite() { return true; }

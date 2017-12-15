@@ -6,10 +6,10 @@ namespace DaburuTools
 	{
 		// Unscaled Delta Time Settings
 		protected bool _isUnscaledDeltaTime = false;
-		public virtual void SetUnscaledDeltaTime(bool InIsUnscaledDeltaTime) { _isUnscaledDeltaTime = InIsUnscaledDeltaTime; }
-		protected float ActionDeltaTime(bool InIsUnscaledDeltaTime)
+		public virtual void SetUnscaledDeltaTime(bool inIsUnscaledDeltaTime) { _isUnscaledDeltaTime = inIsUnscaledDeltaTime; }
+		protected float ActionDeltaTime(bool inIsUnscaledDeltaTime)
 		{
-			if (InIsUnscaledDeltaTime)
+			if (inIsUnscaledDeltaTime)
 				return UnityEngine.Time.unscaledDeltaTime;
 			else
 				return UnityEngine.Time.deltaTime;
@@ -39,25 +39,25 @@ namespace DaburuTools
 
 			OnActionRun();
 		}
-		public virtual void MakeResettable(bool _bIsResettable) { _isResettable = _bIsResettable; }
+		public virtual void MakeResettable(bool inIsResettable) { _isResettable = inIsResettable; }
 		public virtual void Reset() { }
-		public virtual void StopAction(bool _bSnapToDesired = false) { }
+		public virtual void StopAction(bool inSnapToDesired = false) { }
 		// Do not override ActionRecurisve.
-		public void StopActionRecursive(bool _bSnapToDesired = false)
+		public void StopActionRecursive(bool inSnapToDesired = false)
 		{
 			if (!_isRunning)
 				return;
 
 			// Stop itself.
-			StopAction(_bSnapToDesired);
+			StopAction(inSnapToDesired);
 
 			if (_parent != null)
-				_parent.StopActionRecursive(_bSnapToDesired);
+				_parent.StopActionRecursive(inSnapToDesired);
 		}
 
 		// Leaves do not need to override these functions.
-		public virtual bool Add(Action _Action) { return false; }
-		public virtual bool Remove(Action _Action) { return false; }
+		public virtual bool Add(Action inAction) { return false; }
+		public virtual bool Remove(Action inAction) { return false; }
 		public virtual LinkedListNode<Action> GetListHead() { return null; }
 		public virtual bool IsComposite() { return false; }
 	}

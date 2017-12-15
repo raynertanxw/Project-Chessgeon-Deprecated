@@ -2,12 +2,12 @@
 {
 	public class ActionRepeat : Action
 	{
-		public override void SetUnscaledDeltaTime(bool _bIsUnscaledDeltaTime)
+		public override void SetUnscaledDeltaTime(bool inIsUnscaledDeltaTime)
 		{
-			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			base.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			_repeatedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			_repeatedAction.SetUnscaledDeltaTime(inIsUnscaledDeltaTime);
 		}
 
 		private Action _repeatedAction;
@@ -15,14 +15,14 @@
 		private int _currentRepeats;
 		private bool _readyToReset;
 
-		public ActionRepeat(Action _Action, int _numRepeats)
+		public ActionRepeat(Action inAction, int inNumRepeats)
 		{
-			_Action._parent = this;
-			_repeatedAction = _Action;
-			this._numRepeats = _numRepeats;
+			inAction._parent = this;
+			_repeatedAction = inAction;
+			this._numRepeats = inNumRepeats;
 			_currentRepeats = 0;
 
-			_Action.MakeResettable(true);
+			inAction.MakeResettable(true);
 		}
 
 
@@ -52,9 +52,9 @@
 					_parent.Remove(this);
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 
 			_readyToReset = false;
 		}
@@ -64,7 +64,7 @@
 			_readyToReset = false;
 			_repeatedAction.Reset();
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
@@ -77,7 +77,7 @@
 
 			if (_repeatedAction._isRunning == false)
 				_repeatedAction.RunAction();
-			_repeatedAction.StopAction(_bSnapToDesired);
+			_repeatedAction.StopAction(inSnapToDesired);
 
 			OnActionEnd();
 			_parent.Remove(this);
@@ -86,7 +86,7 @@
 
 
 		// Doesn't make sense to add. Don't need to override Add.
-		public override bool Remove(Action _Action)
+		public override bool Remove(Action inAction)
 		{
 			_currentRepeats++;
 			if (_currentRepeats < _numRepeats)
