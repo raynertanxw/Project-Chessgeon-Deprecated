@@ -101,95 +101,95 @@
 			/// <summary>
 			/// Flip the graph along the f(x)-direction
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <returns> Returns the flipped graph </returns>
-			public static Graph VerticalFlip(Graph _graph)
+			public static Graph VerticalFlip(Graph inGraph)
 			{
-				return VerticalFlip(_graph, 0.5f);
+				return VerticalFlip(inGraph, 0.5f);
 			}
 			
 			/// <summary>
 			/// Flip the graph along the f(x)-direction
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <param name="_fFlip"> The value of f(x) at which the graph will be flipped along </param>
 			/// <returns> Returns the flipped graph </returns>
-			public static Graph VerticalFlip(Graph _graph, float _fFlip)
+			public static Graph VerticalFlip(Graph inGraph, float _fFlip)
 			{
 				return new Graph((float x) =>
 				{
-					return VerticalFlipAsFloat(_graph, _fFlip, x);
-				}, _graph.enum_graphCycle);
+					return VerticalFlipAsFloat(inGraph, _fFlip, x);
+				}, inGraph.enum_graphCycle);
 			}
 
 			/// <summary>
 			/// Flips the graph along the f(x)-direction and returns the x value of the graph
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <param name="_fFlip"> The value of f(x) at which the graph will be flipped along </param>
 			/// <returns> Returns the value of f(x) on the flipped graph </returns>
-			public static float VerticalFlipAsFloat(Graph _graph, float _x)
+			public static float VerticalFlipAsFloat(Graph inGraph, float _x)
 			{
-				return VerticalFlipAsFloat(_graph, 0.5f, _x);
+				return VerticalFlipAsFloat(inGraph, 0.5f, _x);
 			}
 			
 			/// <summary>
 			/// Flips the graph along the f(x)-direction and returns the x value of the graph
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <param name="_fFlip"> The value of f(x) at which the graph will be flipped along </param>
 			/// <param name="_x"> The x value of the graph </param>
 			/// <returns> Returns the value of f(x) on the flipped graph </returns>
-			public static float VerticalFlipAsFloat(Graph _graph, float _fFlip, float _x)
+			public static float VerticalFlipAsFloat(Graph inGraph, float _fFlip, float _x)
 			{
-				return _fFlip * 2f - _graph.Read(_x);
+				return _fFlip * 2f - inGraph.Read(_x);
 			}
 
 			/// <summary>
 			/// Flip the graph along the x-direction
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <returns> Returns the flipped graph </returns>
-			public static Graph HorizontalFlip(Graph _graph)
+			public static Graph HorizontalFlip(Graph inGraph)
 			{
-				return HorizontalFlip(_graph, 0.5f);
+				return HorizontalFlip(inGraph, 0.5f);
 			}
 
 			/// <summary>
 			/// Flip the graph along the x-direction
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <param name="_fFlip"> The value of x at which the graph will be flipped along </param>
 			/// <returns> Returns the flipped graph </returns>
-			public static Graph HorizontalFlip(Graph _graph, float _fFlip)
+			public static Graph HorizontalFlip(Graph inGraph, float _fFlip)
 			{
 				return new Graph((float x) =>
 				{
-					return HorizontalFlipAsFloat(_graph, _fFlip, x);
-				}, _graph.enum_graphCycle);
+					return HorizontalFlipAsFloat(inGraph, _fFlip, x);
+				}, inGraph.enum_graphCycle);
 			}
 
 			/// <summary>
 			/// Flips the graph along the x-direction and returns the x value of the graph
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <param name="_fFlip"> The value of f(x) at which the graph will be flipped along </param>
 			/// <returns> Returns the value of x on the flipped graph </returns>
-			public static float HorizontalFlipAsFloat(Graph _graph, float _x)
+			public static float HorizontalFlipAsFloat(Graph inGraph, float _x)
 			{
-				return HorizontalFlipAsFloat(_graph, 0.5f, _x);
+				return HorizontalFlipAsFloat(inGraph, 0.5f, _x);
 			}
 
 			/// <summary>
 			/// Flips the graph along the x-direction and returns the x value of the graph
 			/// </summary>
-			/// <param name="_graph"> The graph to be flipped </param>
+			/// <param name="inGraph"> The graph to be flipped </param>
 			/// <param name="_fFlip"> The value of f(x) at which the graph will be flipped along </param>
 			/// <param name="_x"> The x value of the graph </param>
 			/// <returns> Returns the value of x on the flipped graph </returns>
-			public static float HorizontalFlipAsFloat(Graph _graph, float _fFlip, float _x)
+			public static float HorizontalFlipAsFloat(Graph inGraph, float _fFlip, float _x)
 			{
-				return _graph.Read(_fFlip * 2f - _x);
+				return inGraph.Read(_fFlip * 2f - _x);
 			}
 
 			/// <summary>
@@ -313,45 +313,45 @@
 			/// <summary>
 			/// Returns a new graph with an offset of the float along the f(x)-axis
 			/// </summary>
-			public static Graph operator +(Graph _graph, float _x) 
+			public static Graph operator +(Graph inGraph, float _x) 
 			{
 				return new Graph((float x) =>
 				{
-					return _graph.Read(x) + _x;
-				}, _graph.enum_graphCycle);
+					return inGraph.Read(x) + _x;
+				}, inGraph.enum_graphCycle);
 			}
 
 			/// <summary>
 			/// Returns a new graph with an offset of the float along the f(x)-axis
 			/// </summary>
-			public static Graph operator -(Graph _graph, float _x)
+			public static Graph operator -(Graph inGraph, float _x)
 			{
  				return new Graph((float x) =>
 				{
-					return _graph.Read(x) - _x;
-				}, _graph.enum_graphCycle);
+					return inGraph.Read(x) - _x;
+				}, inGraph.enum_graphCycle);
 			}
 			
 			/// <summary>
 			/// Returns a new graph that is scaled by the floating point
 			/// </summary>
-			public static Graph operator *(Graph _graph, float _x)
+			public static Graph operator *(Graph inGraph, float _x)
 			{
 				return new Graph((float x) =>
 				{
-					return _graph.Read(x) * _x;
-				}, _graph.enum_graphCycle);
+					return inGraph.Read(x) * _x;
+				}, inGraph.enum_graphCycle);
 			}
 			
 			/// <summary>
 			/// Returns a new graph that is scaled by the floating point
 			/// </summary>
-			public static Graph operator /(Graph _graph, float _x)
+			public static Graph operator /(Graph inGraph, float _x)
 			{
 				return new Graph((float x) =>
 				{
-					return _graph.Read(x) / _x;
-				}, _graph.enum_graphCycle);
+					return inGraph.Read(x) / _x;
+				}, inGraph.enum_graphCycle);
 			}
 
 			/// <summary>

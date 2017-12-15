@@ -14,21 +14,21 @@ namespace DaburuTools
 		float mfOriginalAlpha;
 		float mfElapsedDuration;
 
-		public TextAlphaToAction(Text _text, Graph _graph, float _desiredAlpha, float _actionDuration)
+		public TextAlphaToAction(Text _text, Graph inGraph, float _desiredAlpha, float inActionDuration)
 		{
 			mText = _text;
-			SetGraph(_graph);
+			SetGraph(inGraph);
 			SetDesiredAlpha(_desiredAlpha);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public TextAlphaToAction(Text _text, float _desiredAlpha, float _actionDuration)
+		public TextAlphaToAction(Text _text, float _desiredAlpha, float inActionDuration)
 		{
 			mText = _text;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(_desiredAlpha);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}

@@ -13,21 +13,21 @@ namespace DaburuTools
 		Vector2 mvecInitialAnchoredPos;
 		float mfElapsedDuration;
 
-		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float _actionDuration, AnimationCurve inAnimCurve)
+		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
 			SetAnimCurve(inAnimCurve);
 			SetDesiredAnchoredPos(_desiredAnchoredPos);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float _actionDuration)
+		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetAnimCurve(null);
 			SetDesiredAnchoredPos(_desiredAnchoredPos);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}

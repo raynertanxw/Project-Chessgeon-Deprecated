@@ -15,16 +15,16 @@ namespace DaburuTools
 
 			SetupAction();
 		}
-		public DelayAction(float _actionDuration)
+		public DelayAction(float inActionDuration)
 		{
-			SetAction(_actionDuration);
+			SetAction(inActionDuration);
 
 			SetupAction();
 		}
 
-		public void SetAction(float _actionDuration)
+		public void SetAction(float inActionDuration)
 		{
-			mfActionDuration = _actionDuration;
+			mfActionDuration = inActionDuration;
 		}
 		private void SetupAction()
 		{

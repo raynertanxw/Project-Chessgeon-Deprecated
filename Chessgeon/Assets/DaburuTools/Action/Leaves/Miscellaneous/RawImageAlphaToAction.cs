@@ -15,21 +15,21 @@ namespace DaburuTools
 		float mfOriginalAlpha;
 		float mfElapsedDuration;
 
-		public RawImageAlphaToAction(RawImage _rawImage, Graph _graph, float _desiredAlpha, float _actionDuration)
+		public RawImageAlphaToAction(RawImage _rawImage, Graph inGraph, float _desiredAlpha, float inActionDuration)
 		{
 			mRawImage = _rawImage;
-			SetGraph(_graph);
+			SetGraph(inGraph);
 			SetDesiredAlpha(_desiredAlpha);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public RawImageAlphaToAction(RawImage _rawImage, float _desiredAlpha, float _actionDuration)
+		public RawImageAlphaToAction(RawImage _rawImage, float _desiredAlpha, float inActionDuration)
 		{
 			mRawImage = _rawImage;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(_desiredAlpha);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}

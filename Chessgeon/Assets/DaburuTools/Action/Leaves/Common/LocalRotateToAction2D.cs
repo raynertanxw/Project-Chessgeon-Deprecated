@@ -13,21 +13,21 @@ namespace DaburuTools
 		float mfInitialLocalZEulerAngle;
 		float mfElapsedDuration;
 
-		public LocalRotateToAction2D(Transform inTransform, Graph _graph, float _desiredLocalZEulerAngle, float _actionDuration)
+		public LocalRotateToAction2D(Transform inTransform, Graph inGraph, float _desiredLocalZEulerAngle, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(_graph);
+			SetGraph(inGraph);
 			SetDesiredLocalZEulerAngle(_desiredLocalZEulerAngle);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public LocalRotateToAction2D(Transform inTransform, float _desiredLocalZEulerAngle, float _actionDuration)
+		public LocalRotateToAction2D(Transform inTransform, float _desiredLocalZEulerAngle, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredLocalZEulerAngle(_desiredLocalZEulerAngle);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}

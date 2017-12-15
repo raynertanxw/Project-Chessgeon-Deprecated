@@ -14,21 +14,21 @@ namespace DaburuTools
 		float mfOriginalAlpha;
 		float mfElapsedDuration;
 
-		public CanvasGroupAlphaToAction(CanvasGroup _canvasGroup, Graph _graph, float _desiredAlpha, float _actionDuration)
+		public CanvasGroupAlphaToAction(CanvasGroup _canvasGroup, Graph inGraph, float _desiredAlpha, float inActionDuration)
 		{
 			mCanvasGroup = _canvasGroup;
-			SetGraph(_graph);
+			SetGraph(inGraph);
 			SetDesiredAlpha(_desiredAlpha);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public CanvasGroupAlphaToAction(CanvasGroup _canvasGroup, float _desiredAlpha, float _actionDuration)
+		public CanvasGroupAlphaToAction(CanvasGroup _canvasGroup, float _desiredAlpha, float inActionDuration)
 		{
 			mCanvasGroup = _canvasGroup;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(_desiredAlpha);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}

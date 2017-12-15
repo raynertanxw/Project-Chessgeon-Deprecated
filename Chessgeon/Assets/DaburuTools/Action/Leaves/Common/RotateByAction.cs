@@ -13,21 +13,21 @@ namespace DaburuTools
 		Vector3 mvecAccumulatedDelta;
 		float mfElapsedDuration;
 
-		public RotateByAction(Transform inTransform, Graph _graph, Vector3 _desiredDelta, float _actionDuration)
+		public RotateByAction(Transform inTransform, Graph inGraph, Vector3 _desiredDelta, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(_graph);
+			SetGraph(inGraph);
 			SetDesiredDelta(_desiredDelta);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public RotateByAction(Transform inTransform, Vector3 _desiredDelta, float _actionDuration)
+		public RotateByAction(Transform inTransform, Vector3 _desiredDelta, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
 			SetDesiredDelta(_desiredDelta);
-			SetActionDuration(_actionDuration);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}

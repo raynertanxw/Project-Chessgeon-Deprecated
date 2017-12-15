@@ -14,23 +14,23 @@ namespace DaburuTools
 		float mfAccumulatedAngleDelta;
 		float mfElapsedDuration;
 
-		public AxisRotateByAction(Transform inTransform, Graph _graph, Vector3 _axis, float _desiredAngleDelta, float _actionDuration)
+		public AxisRotateByAction(Transform inTransform, Graph inGraph, Vector3 inAxis, float inDesiredAngleDelta, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(_graph);
-			SetAxis(_axis);
-			SetDesiredAngleDelta(_desiredAngleDelta);
-			SetActionDuration(_actionDuration);
+			SetGraph(inGraph);
+			SetAxis(inAxis);
+			SetDesiredAngleDelta(inDesiredAngleDelta);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public AxisRotateByAction(Transform inTransform, Vector3 _axis, float _desiredAngleDelta, float _actionDuration)
+		public AxisRotateByAction(Transform inTransform, Vector3 inAxis, float inDesiredAngleDelta, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
-			SetAxis(_axis);
-			SetDesiredAngleDelta(_desiredAngleDelta);
-			SetActionDuration(_actionDuration);
+			SetAxis(inAxis);
+			SetDesiredAngleDelta(inDesiredAngleDelta);
+			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
