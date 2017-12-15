@@ -6,20 +6,20 @@ namespace DaburuTools
 {
 	public class ActionHandler : MonoBehaviour
 	{
-		private static ActionHandler sInstance = null;
-		public static ActionHandler Instance { get { return sInstance; } }
+		private static ActionHandler _instance = null;
+		public static ActionHandler Instance { get { return _instance; } }
 
-		private MasterActionParallel mMasterActionParallel;
+		private MasterActionParallel _masterActionParallel;
 
 		private void SetUpActionHandler()
 		{
-			mMasterActionParallel = new MasterActionParallel();
+			_masterActionParallel = new MasterActionParallel();
 		}
 
 		void Awake()
 		{
-			if (sInstance == null)
-				sInstance = this;
+			if (_instance == null)
+				_instance = this;
 			else
 				Destroy(this.gameObject);
 
@@ -28,26 +28,26 @@ namespace DaburuTools
 
 		void Update()
 		{
-			mMasterActionParallel.RunAction();
+			_masterActionParallel.RunAction();
 		}
 
 		void OnDestroy()
 		{
-			sInstance = null;
+			_instance = null;
 		}
 
 		#region Client Functions
 		public static void RunAction(params Action[] _Actions)
 		{
 #if UNITY_EDITOR
-			if (sInstance == null)
+			if (_instance == null)
 			{
 				Debug.LogWarning("DaburuTools.Action: MISSING ACTIONHANDLER. Please check if you have an ActionHandler in the scene.\nOtherwise, add one by going to the Menu bar and selecting DaburuTools > Action > Create ActionHandler");
 				return;
 			}
 #endif
 
-			sInstance.mMasterActionParallel.Add(_Actions);
+			_instance._masterActionParallel.Add(_Actions);
 		}
 		#endregion
 
@@ -59,15 +59,15 @@ namespace DaburuTools
 				base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 
 				// Set the same for children actions.
-				for (int i = 0; i < mActionList.Count; i++)
-					mActionList[i].SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+				for (int i = 0; i < _actionList.Count; i++)
+					_actionList[i].SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 			}
 
-			private List<Action> mActionList;
+			private List<Action> _actionList;
 
 			public MasterActionParallel()
 			{
-				mActionList = new List<Action>(128);
+				_actionList = new List<Action>(128);
 			}
 
 
@@ -76,17 +76,17 @@ namespace DaburuTools
 			{
 				base.RunAction();
 
-				if (mActionList.Count > 0)
+				if (_actionList.Count > 0)
 				{
-					for (int i = 0; i < mActionList.Count; i++)
-						mActionList[i].RunAction();
+					for (int i = 0; i < _actionList.Count; i++)
+						_actionList[i].RunAction();
 				}
 				else
 				{
 					OnActionEnd();
 
-					if (mParent != null)
-						mParent.Remove(this);
+					if (_parent != null)
+						_parent.Remove(this);
 				}
 			}
 			public override void StopAction(bool _bSnapToDesired)
@@ -98,25 +98,25 @@ namespace DaburuTools
 
 			public override bool Add(Action _Action)
 			{
-				_Action.mParent = this;
-				mActionList.Add(_Action);
+				_Action._parent = this;
+				_actionList.Add(_Action);
 				return true;
 			}
 			public bool Add(params Action[] _Actions)
 			{
 				for (int i = 0; i < _Actions.Length; i++)
 				{
-					_Actions[i].mParent = this;
-					mActionList.Add(_Actions[i]);
+					_Actions[i]._parent = this;
+					_actionList.Add(_Actions[i]);
 				}
 
 				return true;
 			}
 			public override bool Remove(Action _Action)
 			{
-				if (mActionList.Count == 0) { return false; }
+				if (_actionList.Count == 0) { return false; }
 
-				return mActionList.Remove(_Action);
+				return _actionList.Remove(_Action);
 			}
 		}
 		#endregion

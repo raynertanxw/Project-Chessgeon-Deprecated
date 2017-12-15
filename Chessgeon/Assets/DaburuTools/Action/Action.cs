@@ -5,19 +5,19 @@ namespace DaburuTools
 	public class Action
 	{
 		// Unscaled Delta Time Settings
-		protected bool mbIsUnscaledDeltaTime = false;
-		public virtual void SetUnscaledDeltaTime(bool _bIsUnscaledDeltaTime) { mbIsUnscaledDeltaTime = _bIsUnscaledDeltaTime; }
-		protected float ActionDeltaTime(bool _bIsUnscaledDeltaTime)
+		protected bool _isUnscaledDeltaTime = false;
+		public virtual void SetUnscaledDeltaTime(bool InIsUnscaledDeltaTime) { _isUnscaledDeltaTime = InIsUnscaledDeltaTime; }
+		protected float ActionDeltaTime(bool InIsUnscaledDeltaTime)
 		{
-			if (_bIsUnscaledDeltaTime)
+			if (InIsUnscaledDeltaTime)
 				return UnityEngine.Time.unscaledDeltaTime;
 			else
 				return UnityEngine.Time.deltaTime;
 		}
 
-		public Action mParent = null;
-		public bool mbIsRunning = false;
-		public bool mbIsResettable = false;
+		public Action _parent = null;
+		public bool _isRunning = false;
+		public bool _isResettable = false;
 		public OnActionBeginDelegate OnActionStart = EmptyFunc;
 		public OnActionUpdateDelegate OnActionUpdate = EmptyFunc;
 		public OnActionEndDelegate OnActionFinish = EmptyFunc;
@@ -26,33 +26,33 @@ namespace DaburuTools
 		public delegate void OnActionBeginDelegate();
 		public delegate void OnActionUpdateDelegate();
 		public delegate void OnActionEndDelegate();
-		protected virtual void OnActionBegin() { mbIsRunning = true; OnActionStart(); }
+		protected virtual void OnActionBegin() { _isRunning = true; OnActionStart(); }
 		protected virtual void OnActionRun() { OnActionUpdate(); }
-		protected virtual void OnActionEnd() { mbIsRunning = false; OnActionFinish(); }
+		protected virtual void OnActionEnd() { _isRunning = false; OnActionFinish(); }
 		private static void EmptyFunc() { }
 
 		// All must implement.
 		public virtual void RunAction()
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				OnActionBegin();
 
 			OnActionRun();
 		}
-		public virtual void MakeResettable(bool _bIsResettable) { mbIsResettable = _bIsResettable; }
+		public virtual void MakeResettable(bool _bIsResettable) { _isResettable = _bIsResettable; }
 		public virtual void Reset() { }
 		public virtual void StopAction(bool _bSnapToDesired = false) { }
 		// Do not override ActionRecurisve.
 		public void StopActionRecursive(bool _bSnapToDesired = false)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Stop itself.
 			StopAction(_bSnapToDesired);
 
-			if (mParent != null)
-				mParent.StopActionRecursive(_bSnapToDesired);
+			if (_parent != null)
+				_parent.StopActionRecursive(_bSnapToDesired);
 		}
 
 		// Leaves do not need to override these functions.

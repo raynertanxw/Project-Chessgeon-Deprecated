@@ -7,15 +7,15 @@
 			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			mRepeatedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			_repeatedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 		}
 
-		private Action mRepeatedAction;
+		private Action _repeatedAction;
 
 		public ActionRepeatForever(Action _Action)
 		{
-			_Action.mParent = this;
-			mRepeatedAction = _Action;
+			_Action._parent = this;
+			_repeatedAction = _Action;
 
 			_Action.MakeResettable(true);
 		}
@@ -26,8 +26,8 @@
 		{
 			base.RunAction();
 
-			if (mRepeatedAction != null)
-				mRepeatedAction.RunAction();
+			if (_repeatedAction != null)
+				_repeatedAction.RunAction();
 		}
 		public override void MakeResettable(bool _bIsResettable)
 		{
@@ -39,15 +39,15 @@
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
-			if (mRepeatedAction.mbIsRunning == false)
-				mRepeatedAction.RunAction();
-			mRepeatedAction.StopAction(_bSnapToDesired);
+			if (_repeatedAction._isRunning == false)
+				_repeatedAction.RunAction();
+			_repeatedAction.StopAction(_bSnapToDesired);
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 
 
@@ -55,7 +55,7 @@
 		// Doesn't make sense to add. Don't need to override Add.
 		public override bool Remove(Action _Action)
 		{
-			mRepeatedAction.Reset();
+			_repeatedAction.Reset();
 			return true;
 		}
 		// No LinkedList to return. Don't need to override GetListHead.

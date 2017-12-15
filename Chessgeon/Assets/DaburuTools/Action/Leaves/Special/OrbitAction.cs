@@ -78,7 +78,7 @@ namespace DaburuTools
 			if (mTransform == null)
 			{
 				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
-				mParent.Remove(this);
+				_parent.Remove(this);
 				return;
 			}
 
@@ -90,7 +90,7 @@ namespace DaburuTools
 			if (PreventOwnAxisRotation)
 				mTransform.Rotate(mOrbitAxisDir, 360.0f * tOld);
 
-			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 			float mfCycleElapsed = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;
 			if (mfCycleElapsed < mfCycleDuration)
 			{
@@ -113,7 +113,7 @@ namespace DaburuTools
 					if (mbPreventOwnAxisRotation)
 						mTransform.Rotate(mOrbitAxisDir, -360.0f);
 					OnActionEnd();
-					mParent.Remove(this);
+					_parent.Remove(this);
 				}
 				else
 				{
@@ -137,7 +137,7 @@ namespace DaburuTools
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
@@ -164,7 +164,7 @@ namespace DaburuTools
 			}
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 	}
 }

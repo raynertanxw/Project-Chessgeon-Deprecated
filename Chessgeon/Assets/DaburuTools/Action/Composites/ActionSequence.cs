@@ -9,20 +9,20 @@ namespace DaburuTools
 			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			for (LinkedListNode<Action> node = mActionLinkedList.First; node != null; node = node.Next)
+			for (LinkedListNode<Action> node = _actionLinkedList.First; node != null; node = node.Next)
 				node.Value.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 		}
 
-		private LinkedList<Action> mActionLinkedList;
-		private LinkedList<Action> mStorageLinkedList;  // Used for resetting.
+		private LinkedList<Action> _actionLinkedList;
+		private LinkedList<Action> _storageLinkedList;  // Used for resetting.
 
 		public ActionSequence()
 		{
-			mActionLinkedList = new LinkedList<Action>();
+			_actionLinkedList = new LinkedList<Action>();
 		}
 		public ActionSequence(params Action[] _Actions)
 		{
-			mActionLinkedList = new LinkedList<Action>();
+			_actionLinkedList = new LinkedList<Action>();
 			for (int i = 0; i < _Actions.Length; i++)
 			{
 				if (_Actions[i] == null) continue;
@@ -36,60 +36,60 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			if (mActionLinkedList.Count > 0)
+			if (_actionLinkedList.Count > 0)
 			{
-				mActionLinkedList.First.Value.RunAction();
+				_actionLinkedList.First.Value.RunAction();
 			}
 			else
 			{
 				OnActionEnd();
 
-				if (mParent != null)
-					mParent.Remove(this);
+				if (_parent != null)
+					_parent.Remove(this);
 			}
 		}
 		public override void MakeResettable(bool _bIsResettable)
 		{
 			base.MakeResettable(_bIsResettable);
 
-			for (LinkedListNode<Action> node = mActionLinkedList.First; node != null; node = node.Next)
+			for (LinkedListNode<Action> node = _actionLinkedList.First; node != null; node = node.Next)
 				node.Value.MakeResettable(_bIsResettable);
 
 			if (_bIsResettable)
-				mStorageLinkedList = new LinkedList<Action>();
+				_storageLinkedList = new LinkedList<Action>();
 			else
-				mStorageLinkedList = null;
+				_storageLinkedList = null;
 		}
 		public override void Reset()
 		{
-			if (!mbIsResettable)
+			if (!_isResettable)
 				return;
 
-			for (LinkedListNode<Action> node = mStorageLinkedList.First; node != null; node = node.Next)
+			for (LinkedListNode<Action> node = _storageLinkedList.First; node != null; node = node.Next)
 			{
 				node.Value.Reset();
-				mActionLinkedList.AddFirst(node.Value);
+				_actionLinkedList.AddFirst(node.Value);
 			}
 
-			mStorageLinkedList.Clear();
-			mbIsRunning = false;
+			_storageLinkedList.Clear();
+			_isRunning = false;
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
 			MakeResettable(false);
 
 			// Use an array because cannot remove node from linkedlist while traversing.
-			Action[] actionList = new Action[mActionLinkedList.Count];
+			Action[] actionList = new Action[_actionLinkedList.Count];
 			int numActions = 0;
 
-			for (LinkedListNode<Action> node = mActionLinkedList.First; node != null; node = node.Next)
+			for (LinkedListNode<Action> node = _actionLinkedList.First; node != null; node = node.Next)
 			{
 				// Ensure they are all running so that the StopAction can work properly.
-				if (node.Value.mbIsRunning == false)
+				if (node.Value._isRunning == false)
 					node.Value.RunAction();
 
 				// Add to array to be used later.
@@ -103,23 +103,23 @@ namespace DaburuTools
 			}
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 
 
 
 		public override bool Add(Action _Action)
 		{
-			_Action.mParent = this;
-			mActionLinkedList.AddLast(_Action);
+			_Action._parent = this;
+			_actionLinkedList.AddLast(_Action);
 			return true;
 		}
 		public bool Add(params Action[] _Actions)
 		{
 			for (int i = 0; i < _Actions.Length; i++)
 			{
-				_Actions[i].mParent = this;
-				mActionLinkedList.AddLast(_Actions[i]);
+				_Actions[i]._parent = this;
+				_actionLinkedList.AddLast(_Actions[i]);
 			}
 
 			return true;
@@ -128,13 +128,13 @@ namespace DaburuTools
 		{
 			if (GetListHead() == null) { return false; }
 
-			if (mbIsResettable)
+			if (_isResettable)
 			{
-				mStorageLinkedList.AddFirst(mActionLinkedList.First.Value);
+				_storageLinkedList.AddFirst(_actionLinkedList.First.Value);
 			}
-			return mActionLinkedList.Remove(_Action);
+			return _actionLinkedList.Remove(_Action);
 		}
-		public override LinkedListNode<Action> GetListHead() { return mActionLinkedList.First; }
+		public override LinkedListNode<Action> GetListHead() { return _actionLinkedList.First; }
 		public override bool IsComposite() { return true; }
 	}
 }

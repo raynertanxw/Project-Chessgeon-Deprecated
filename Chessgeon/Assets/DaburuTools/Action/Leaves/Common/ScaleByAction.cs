@@ -73,11 +73,11 @@ namespace DaburuTools
 			if (mTransform == null)
 			{
 				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
-				mParent.Remove(this);
+				_parent.Remove(this);
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
 			Vector3 delta = Vector3.LerpUnclamped(Vector3.zero, mvecDesiredScaleDelta, t) + Vector3.one - mvecAccumulatedScale;
@@ -94,7 +94,7 @@ namespace DaburuTools
 				mTransform.localScale = finalScaleVec;  // Force it to be the exact scale that it wants.
 
 				OnActionEnd();
-				mParent.Remove(this);
+				_parent.Remove(this);
 			}
 		}
 		public override void MakeResettable(bool _bIsResettable)
@@ -107,7 +107,7 @@ namespace DaburuTools
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
@@ -124,7 +124,7 @@ namespace DaburuTools
 			}
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 	}
 }

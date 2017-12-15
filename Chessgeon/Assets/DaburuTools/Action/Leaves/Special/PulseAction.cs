@@ -78,11 +78,11 @@ namespace DaburuTools
 			if (mTransform == null)
 			{
 				// Debug.LogWarning("DaburuTools.Action: mTransform Deleted prematurely");
-				mParent.Remove(this);
+				_parent.Remove(this);
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 			float mfCycleElapsed = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;
 			if (mfCycleElapsed < mfExpandDuration) // Expand
 			{
@@ -102,7 +102,7 @@ namespace DaburuTools
 				{
 					mTransform.localScale = mvecMinScale;   // Force it to be the exact scale that it wants.
 					OnActionEnd();
-					mParent.Remove(this);
+					_parent.Remove(this);
 				}
 				else
 				{
@@ -122,7 +122,7 @@ namespace DaburuTools
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
@@ -137,7 +137,7 @@ namespace DaburuTools
 			}
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 	}
 }

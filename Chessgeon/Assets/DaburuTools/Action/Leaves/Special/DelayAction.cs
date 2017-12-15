@@ -43,13 +43,13 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			// Remove self after action is finished.
 			if (mfElapsedDuration >= mfActionDuration)
 			{
 				OnActionEnd();
-				mParent.Remove(this);
+				_parent.Remove(this);
 			}
 		}
 		public override void MakeResettable(bool _bIsResettable)
@@ -62,7 +62,7 @@ namespace DaburuTools
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
@@ -75,7 +75,7 @@ namespace DaburuTools
 			// Only delays time, will simply run the next Action either ways.
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 	}
 }

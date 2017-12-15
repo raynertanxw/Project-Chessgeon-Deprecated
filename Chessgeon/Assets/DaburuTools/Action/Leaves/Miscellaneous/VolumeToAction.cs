@@ -61,7 +61,7 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
 			mAudioSource.volume = Mathf.Lerp(mfOriginalVolume, mfDesiredVolume, t);
@@ -73,7 +73,7 @@ namespace DaburuTools
 				mAudioSource.volume = mfDesiredVolume;
 
 				OnActionEnd();
-				mParent.Remove(this);
+				_parent.Remove(this);
 			}
 		}
 		public override void MakeResettable(bool _bIsResettable)
@@ -86,7 +86,7 @@ namespace DaburuTools
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
@@ -102,7 +102,7 @@ namespace DaburuTools
 			}
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 	}
 }

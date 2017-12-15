@@ -7,19 +7,19 @@
 			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			mDelayedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			_delayedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 		}
 
-		private Action mDelayedAction;
-		private float mfTimeDelay;
-		private float mfTimePassed;
+		private Action _delayedAction;
+		private float _timeDelay;
+		private float _timePassed;
 
 		public ActionAfterDelay(Action _Action, float _fTimeDelay)
 		{
-			_Action.mParent = this;
-			mDelayedAction = _Action;
-			mfTimeDelay = _fTimeDelay;
-			mfTimePassed = 0f;
+			_Action._parent = this;
+			_delayedAction = _Action;
+			_timeDelay = _fTimeDelay;
+			_timePassed = 0f;
 		}
 
 
@@ -29,59 +29,59 @@
 			base.RunAction();
 
 			// Delay the action till delay span has passed.
-			if (mfTimePassed < mfTimeDelay)
+			if (_timePassed < _timeDelay)
 			{
-				mfTimePassed += ActionDeltaTime(mbIsUnscaledDeltaTime);
+				_timePassed += ActionDeltaTime(_isUnscaledDeltaTime);
 				return;
 			}
 
-			if (mDelayedAction != null)
+			if (_delayedAction != null)
 			{
-				mDelayedAction.RunAction();
+				_delayedAction.RunAction();
 			}
 			else
 			{
 				OnActionEnd();
 
-				if (mParent != null)
-					mParent.Remove(this);
+				if (_parent != null)
+					_parent.Remove(this);
 			}
 		}
 		public override void MakeResettable(bool _bIsResettable)
 		{
 			base.MakeResettable(_bIsResettable);
 
-			if (mDelayedAction != null)
-				mDelayedAction.MakeResettable(_bIsResettable);
+			if (_delayedAction != null)
+				_delayedAction.MakeResettable(_bIsResettable);
 		}
 		public override void Reset()
 		{
-			if (!mbIsResettable)
+			if (!_isResettable)
 				return;
 
-			mfTimePassed = 0f;
-			mDelayedAction.Reset();
+			_timePassed = 0f;
+			_delayedAction.Reset();
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
 			MakeResettable(false);
 
-			if (mDelayedAction != null)
+			if (_delayedAction != null)
 			{
-				if (mDelayedAction.mbIsRunning == false)
-					mDelayedAction.RunAction();
+				if (_delayedAction._isRunning == false)
+					_delayedAction.RunAction();
 				// Need another null check, incase the delayed action is a sequence or parallel.
 				// When they are going to run, they might have deleted themself because they are empty.
-				if (mDelayedAction != null)
-					mDelayedAction.StopAction(_bSnapToDesired);
+				if (_delayedAction != null)
+					_delayedAction.StopAction(_bSnapToDesired);
 			}
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 
 
@@ -90,10 +90,10 @@
 		public override bool Remove(Action _Action)
 		{
 			// Simply de-reference to let GC collect.
-			if (!mbIsResettable)
-				mDelayedAction = null;
+			if (!_isResettable)
+				_delayedAction = null;
 			else
-				mParent.Remove(this);
+				_parent.Remove(this);
 
 			return true;
 		}

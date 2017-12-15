@@ -7,20 +7,20 @@
 			base.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 
 			// Set the same for children actions.
-			mRepeatedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
+			_repeatedAction.SetUnscaledDeltaTime(_bIsUnscaledDeltaTime);
 		}
 
-		private Action mRepeatedAction;
-		private int mnNumRepeats;
-		private int mnCurrentRepeats;
-		private bool mbReadyToReset;
+		private Action _repeatedAction;
+		private int _numRepeats;
+		private int _currentRepeats;
+		private bool _readyToReset;
 
 		public ActionRepeat(Action _Action, int _numRepeats)
 		{
-			_Action.mParent = this;
-			mRepeatedAction = _Action;
-			mnNumRepeats = _numRepeats;
-			mnCurrentRepeats = 0;
+			_Action._parent = this;
+			_repeatedAction = _Action;
+			this._numRepeats = _numRepeats;
+			_currentRepeats = 0;
 
 			_Action.MakeResettable(true);
 		}
@@ -31,56 +31,56 @@
 		{
 			base.RunAction();
 
-			if (mRepeatedAction != null)
+			if (_repeatedAction != null)
 			{
-				if (mbIsResettable && mbReadyToReset)
+				if (_isResettable && _readyToReset)
 				{
 					OnActionEnd();
 
-					mParent.Remove(this);
+					_parent.Remove(this);
 				}
 				else
 				{
-					mRepeatedAction.RunAction();
+					_repeatedAction.RunAction();
 				}
 			}
 			else
 			{
 				OnActionEnd();
 
-				if (mParent != null)
-					mParent.Remove(this);
+				if (_parent != null)
+					_parent.Remove(this);
 			}
 		}
 		public override void MakeResettable(bool _bIsResettable)
 		{
 			base.MakeResettable(_bIsResettable);
 
-			mbReadyToReset = false;
+			_readyToReset = false;
 		}
 		public override void Reset()
 		{
-			mnCurrentRepeats = 0;
-			mbReadyToReset = false;
-			mRepeatedAction.Reset();
+			_currentRepeats = 0;
+			_readyToReset = false;
+			_repeatedAction.Reset();
 		}
 		public override void StopAction(bool _bSnapToDesired)
 		{
-			if (!mbIsRunning)
+			if (!_isRunning)
 				return;
 
 			// Prevent it from Resetting.
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mnCurrentRepeats = mnNumRepeats;
+			_currentRepeats = _numRepeats;
 
-			if (mRepeatedAction.mbIsRunning == false)
-				mRepeatedAction.RunAction();
-			mRepeatedAction.StopAction(_bSnapToDesired);
+			if (_repeatedAction._isRunning == false)
+				_repeatedAction.RunAction();
+			_repeatedAction.StopAction(_bSnapToDesired);
 
 			OnActionEnd();
-			mParent.Remove(this);
+			_parent.Remove(this);
 		}
 
 
@@ -88,18 +88,18 @@
 		// Doesn't make sense to add. Don't need to override Add.
 		public override bool Remove(Action _Action)
 		{
-			mnCurrentRepeats++;
-			if (mnCurrentRepeats < mnNumRepeats)
+			_currentRepeats++;
+			if (_currentRepeats < _numRepeats)
 			{
-				mRepeatedAction.Reset();
+				_repeatedAction.Reset();
 				return true;
 			}
 
 			// Simply de-reference to let GC collect.
-			if (!mbIsResettable)
-				mRepeatedAction = null;
+			if (!_isResettable)
+				_repeatedAction = null;
 			else
-				mbReadyToReset = true;
+				_readyToReset = true;
 
 			return true;
 		}
