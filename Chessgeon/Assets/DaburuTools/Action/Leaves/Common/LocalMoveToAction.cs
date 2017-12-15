@@ -13,20 +13,20 @@ namespace DaburuTools
 		Vector3 mvecInitialLocalPos;
 		float mfElapsedDuration;
 
-		public LocalMoveToAction(Transform inTransform, Graph inGraph, Vector3 _desiredLocalPosition, float inActionDuration)
+		public LocalMoveToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredLocalPosition, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(inGraph);
-			SetDesiredLocalPosition(_desiredLocalPosition);
+			SetDesiredLocalPosition(inDesiredLocalPosition);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public LocalMoveToAction(Transform inTransform, Vector3 _desiredLocalPosition, float inActionDuration)
+		public LocalMoveToAction(Transform inTransform, Vector3 inDesiredLocalPosition, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
-			SetDesiredLocalPosition(_desiredLocalPosition);
+			SetDesiredLocalPosition(inDesiredLocalPosition);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();

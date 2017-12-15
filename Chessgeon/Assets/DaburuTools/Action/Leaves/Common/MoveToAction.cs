@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredPosition(Vector3 _newDesiredPosition)
+		public void SetDesiredPosition(Vector3 inNewDesiredPosition)
 		{
-			mvecDesiredPos = _newDesiredPosition;
+			mvecDesiredPos = inNewDesiredPosition;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{

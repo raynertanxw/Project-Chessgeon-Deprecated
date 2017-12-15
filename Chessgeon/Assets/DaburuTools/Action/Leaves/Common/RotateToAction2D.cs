@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredZEulerAngle(float _newDesiredZEulerAngle)
+		public void SetDesiredZEulerAngle(float inNewDesiredZEulerAngle)
 		{
-			mfDesiredZEulerAngle = _newDesiredZEulerAngle;
+			mfDesiredZEulerAngle = inNewDesiredZEulerAngle;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
