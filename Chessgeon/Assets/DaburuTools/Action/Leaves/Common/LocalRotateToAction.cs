@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredLocalRotation(Vector3 _newDesiredLocalRotation)
+		public void SetDesiredLocalRotation(Vector3 inNewDesiredLocalRotation)
 		{
-			mvecDesiredLocalRotation = _newDesiredLocalRotation;
+			mvecDesiredLocalRotation = inNewDesiredLocalRotation;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
