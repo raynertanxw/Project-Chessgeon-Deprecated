@@ -25,9 +25,9 @@ namespace DaburuTools
 		// For standard Actions in DaburuTools, we used one function per parameter.
 		// E.g. SetGraph(Graph _graph) to change the graph after construction.
 		// Below, we are making a function to set the ActionDuration.
-		public void SetActionDuration(float _newActionDuration)
+		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = _newActionDuration;
+			mfActionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
@@ -62,15 +62,15 @@ namespace DaburuTools
 				mParent.Remove(this);
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 		}
 		public override void Reset()
 		{
 			SetupAction();
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!mbIsRunning)
 				return;
@@ -81,9 +81,9 @@ namespace DaburuTools
 			// Simulate the action has ended. Does not really matter by how much.
 			mfElapsedDuration = mfActionDuration;
 
-			if (_bSnapToDesired)
+			if (inSnapToDesired)
 			{
-				// 6: Implement how to snap to the desired end values should the parameter _bSnapToDesired be set true.
+				// 6: Implement how to snap to the desired end values should the parameter inSnapToDesired be set true.
 
 			}
 

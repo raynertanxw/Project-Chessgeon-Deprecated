@@ -127,15 +127,15 @@ namespace DaburuTools
 				}
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 		}
 		public override void Reset()
 		{
 			SetupAction();
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
@@ -146,7 +146,7 @@ namespace DaburuTools
 			// Simulate the action has ended. Does not really matter by how much.
 			mnCurrentCycle = mnNumCycles;
 
-			if (_bSnapToDesired)
+			if (inSnapToDesired)
 			{
 				// Undo previous frame's rotation.
 				float mfCycleElapsedOld = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;

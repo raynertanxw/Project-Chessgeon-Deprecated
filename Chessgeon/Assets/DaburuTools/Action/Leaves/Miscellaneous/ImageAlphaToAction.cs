@@ -32,17 +32,17 @@ namespace DaburuTools
 
 			SetupAction();
 		}
-		public void SetGraph(Graph _newGraph)
+		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = _newGraph;
+			mGraph = inNewGraph;
 		}
 		public void SetDesiredAlpha(float _newDesiredAlpha)
 		{
 			mfDesiredAlpha = _newDesiredAlpha;
 		}
-		public void SetActionDuration(float _newActionDuration)
+		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = _newActionDuration;
+			mfActionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
@@ -81,15 +81,15 @@ namespace DaburuTools
 				_parent.Remove(this);
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 		}
 		public override void Reset()
 		{
 			SetupAction();
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
@@ -100,7 +100,7 @@ namespace DaburuTools
 			// Simulate the action has ended. Does not really matter by how much.
 			mfElapsedDuration = mfActionDuration;
 
-			if (_bSnapToDesired)
+			if (inSnapToDesired)
 			{
 				// Snap to desired alpha.
 				Color finalCol = mImage.color;

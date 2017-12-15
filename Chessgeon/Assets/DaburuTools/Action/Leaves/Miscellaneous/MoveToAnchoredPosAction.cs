@@ -39,9 +39,9 @@ namespace DaburuTools
 		{
 			mvecDesiredAnchoredPos = _newDesiredAnchoredPos;
 		}
-		public void SetActionDuration(float _newActionDuration)
+		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = _newActionDuration;
+			mfActionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
@@ -83,15 +83,15 @@ namespace DaburuTools
 				_parent.Remove(this);
 			}
 		}
-		public override void MakeResettable(bool _bIsResettable)
+		public override void MakeResettable(bool inIsResettable)
 		{
-			base.MakeResettable(_bIsResettable);
+			base.MakeResettable(inIsResettable);
 		}
 		public override void Reset()
 		{
 			SetupAction();
 		}
-		public override void StopAction(bool _bSnapToDesired)
+		public override void StopAction(bool inSnapToDesired)
 		{
 			if (!_isRunning)
 				return;
@@ -102,7 +102,7 @@ namespace DaburuTools
 			// Simulate the action has ended. Does not really matter by how much.
 			mfElapsedDuration += mfActionDuration;
 
-			if (_bSnapToDesired)
+			if (inSnapToDesired)
 			{
 				_transform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact position that it wants.
 			}
