@@ -12,7 +12,7 @@ namespace DaburuTools
 		Graph mExpandGraph, mShrinkGraph;
 		float mfExpandDuration, mfShrinkDuration, mfCycleDuration;
 
-		float mfElapsedDuration;
+		float _elapsedDuration;
 		int mnCurrentCycle;
 
 		public PulseAction(
@@ -59,7 +59,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 			mnCurrentCycle = 0;
 		}
 		protected override void OnActionBegin()
@@ -82,8 +82,8 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
-			float mfCycleElapsed = mfElapsedDuration - mfCycleDuration * mnCurrentCycle;
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			float mfCycleElapsed = _elapsedDuration - mfCycleDuration * mnCurrentCycle;
 			if (mfCycleElapsed < mfExpandDuration) // Expand
 			{
 				float t = mExpandGraph.Read(mfCycleElapsed / mfExpandDuration);

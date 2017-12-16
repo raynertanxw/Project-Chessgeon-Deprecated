@@ -6,12 +6,12 @@ namespace DaburuTools
 	public class RotateToAction : Action
 	{
 		Transform _transform;
-		Graph mGraph;
+		Graph _graph;
 		Vector3 mvecDesiredRotation;
-		float mfActionDuration;
+		float _actionDuration;
 
 		Vector3 mvecInitialRotation;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public RotateToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredRotation, float inActionDuration)
 		{
@@ -33,7 +33,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredRotation(Vector3 inNewDesiredRotation)
 		{
@@ -41,12 +41,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mvecInitialRotation = _transform.eulerAngles;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -68,13 +68,13 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			_transform.eulerAngles = Vector3.LerpUnclamped(mvecInitialRotation, mvecDesiredRotation, t);
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				_transform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact rotation that it wants.
 				OnActionEnd();
@@ -98,7 +98,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

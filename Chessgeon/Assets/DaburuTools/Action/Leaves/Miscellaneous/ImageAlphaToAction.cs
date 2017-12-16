@@ -8,11 +8,11 @@ namespace DaburuTools
 	{
 		Image mImage;
 		float mfDesiredAlpha;
-		float mfActionDuration;
-		Graph mGraph;
+		float _actionDuration;
+		Graph _graph;
 
 		float mfOriginalAlpha;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public ImageAlphaToAction(Image inImage, Graph inGraph, float inDesiredAlpha, float inActionDuration)
 		{
@@ -34,7 +34,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
@@ -42,12 +42,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mfOriginalAlpha = mImage.color.a;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -62,15 +62,15 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			Color newCol = mImage.color;
-			newCol.a = mGraph.Read(Mathf.Lerp(mfOriginalAlpha, mfDesiredAlpha, t));
+			newCol.a = _graph.Read(Mathf.Lerp(mfOriginalAlpha, mfDesiredAlpha, t));
 			mImage.color = newCol;
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				// Snap to desired alpha.
 				Color finalCol = mImage.color;
@@ -98,7 +98,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration = mfActionDuration;
+			_elapsedDuration = _actionDuration;
 
 			if (inSnapToDesired)
 			{

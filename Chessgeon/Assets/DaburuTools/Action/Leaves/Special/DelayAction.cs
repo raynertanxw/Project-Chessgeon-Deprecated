@@ -5,9 +5,9 @@ namespace DaburuTools
 {
 	public class DelayAction : Action
 	{
-		float mfActionDuration;
+		float _actionDuration;
 
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public DelayAction()
 		{
@@ -24,11 +24,11 @@ namespace DaburuTools
 
 		public void SetAction(float inActionDuration)
 		{
-			mfActionDuration = inActionDuration;
+			_actionDuration = inActionDuration;
 		}
 		private void SetupAction()
 		{
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -43,10 +43,10 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				OnActionEnd();
 				_parent.Remove(this);
@@ -69,7 +69,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration = mfActionDuration;
+			_elapsedDuration = _actionDuration;
 
 			// No need for snap to desired, true same effect as false.
 			// Only delays time, will simply run the next Action either ways.

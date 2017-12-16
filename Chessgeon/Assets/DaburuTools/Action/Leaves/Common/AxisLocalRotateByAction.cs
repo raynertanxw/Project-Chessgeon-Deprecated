@@ -6,13 +6,13 @@ namespace DaburuTools
 	public class AxisLocalRotateByAction : Action
 	{
 		Transform _transform;
-		Graph mGraph;
-		Vector3 mvecAxis;
-		float mfDesiredAngleDelta;
-		float mfActionDuration;
+		Graph _graph;
+		Vector3 _vecAxis;
+		float _desiredAngleDelta;
+		float _actionDuration;
 
-		float mfAccumulatedAngleDelta;
-		float mfElapsedDuration;
+		float _accumulatedAngleDelta;
+		float _elapsedDuration;
 
 		public AxisLocalRotateByAction(Transform inTransform, Graph inGraph, Vector3 inAxis, float inDesiredAngleDelta, float inActionDuration)
 		{
@@ -36,24 +36,24 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetAxis(Vector3 inNewAxis)
 		{
-			mvecAxis = inNewAxis;
+			_vecAxis = inNewAxis;
 		}
 		public void SetDesiredAngleDelta(float inNewDesiredAngleDelta)
 		{
-			mfDesiredAngleDelta = inNewDesiredAngleDelta;
+			_desiredAngleDelta = inNewDesiredAngleDelta;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
-			mfAccumulatedAngleDelta = 0;
-			mfElapsedDuration = 0f;
+			_accumulatedAngleDelta = 0;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -75,20 +75,20 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			_transform.Rotate(mvecAxis, -mfAccumulatedAngleDelta, Space.Self);  // Reverse the previous frame's rotation.
+			_transform.Rotate(_vecAxis, -_accumulatedAngleDelta, Space.Self);  // Reverse the previous frame's rotation.
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
-			mfAccumulatedAngleDelta = Mathf.LerpUnclamped(0.0f, mfDesiredAngleDelta, t);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			_accumulatedAngleDelta = Mathf.LerpUnclamped(0.0f, _desiredAngleDelta, t);
 
-			_transform.Rotate(mvecAxis, mfAccumulatedAngleDelta, Space.Self);   // Apply the new delta rotation.
+			_transform.Rotate(_vecAxis, _accumulatedAngleDelta, Space.Self);   // Apply the new delta rotation.
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
-				float imperfection = mfDesiredAngleDelta - mfAccumulatedAngleDelta;
-				_transform.Rotate(mvecAxis, imperfection, Space.Self);  // Force to exact delta displacement.
+				float imperfection = _desiredAngleDelta - _accumulatedAngleDelta;
+				_transform.Rotate(_vecAxis, imperfection, Space.Self);  // Force to exact delta displacement.
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -111,12 +111,12 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{
-				float imperfection = mfDesiredAngleDelta - mfAccumulatedAngleDelta;
-				_transform.Rotate(mvecAxis, imperfection, Space.Self);  // Force to exact delta displacement.
+				float imperfection = _desiredAngleDelta - _accumulatedAngleDelta;
+				_transform.Rotate(_vecAxis, imperfection, Space.Self);  // Force to exact delta displacement.
 			}
 
 			OnActionEnd();

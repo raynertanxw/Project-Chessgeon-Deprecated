@@ -6,12 +6,12 @@ namespace DaburuTools
 	public class ScaleByAction : Action
 	{
 		Transform _transform;
-		Graph mGraph;
+		Graph _graph;
 		Vector3 mvecDesiredScaleDelta;
-		float mfActionDuration;
+		float _actionDuration;
 
 		Vector3 mvecAccumulatedScale;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public ScaleByAction(Transform inTransform, Graph inGraph, Vector3 inDesiredDelta, float inActionDuration)
 		{
@@ -33,7 +33,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredDelta(Vector3 inNewDesiredDelta)
 		{
@@ -41,12 +41,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mvecAccumulatedScale = Vector3.one;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		private Vector3 CalcInverseAccumulatedScale()
 		{
@@ -77,9 +77,9 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			Vector3 delta = Vector3.LerpUnclamped(Vector3.zero, mvecDesiredScaleDelta, t) + Vector3.one - mvecAccumulatedScale;
 
 			_transform.localScale = Vector3.Scale(CalcInverseAccumulatedScale(), mvecAccumulatedScale + delta);
@@ -87,7 +87,7 @@ namespace DaburuTools
 
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				Vector3 finalScaleVec = CalcInverseAccumulatedScale();
 				finalScaleVec = Vector3.Scale(finalScaleVec, mvecDesiredScaleDelta + Vector3.one);
@@ -114,7 +114,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

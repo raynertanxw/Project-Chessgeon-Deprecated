@@ -8,25 +8,25 @@ namespace DaburuTools
 		RectTransform _transform;
 		AnimationCurve _animCurve;
 		Vector2 mvecDesiredAnchoredPos;
-		float mfActionDuration;
+		float _actionDuration;
 
 		Vector2 mvecInitialAnchoredPos;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
-		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float inActionDuration, AnimationCurve inAnimCurve)
+		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 inDesiredAnchoredPos, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
 			SetAnimCurve(inAnimCurve);
-			SetDesiredAnchoredPos(_desiredAnchoredPos);
+			SetDesiredAnchoredPos(inDesiredAnchoredPos);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 _desiredAnchoredPos, float inActionDuration)
+		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 inDesiredAnchoredPos, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetAnimCurve(null);
-			SetDesiredAnchoredPos(_desiredAnchoredPos);
+			SetDesiredAnchoredPos(inDesiredAnchoredPos);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
@@ -35,18 +35,18 @@ namespace DaburuTools
 		{
 			_animCurve = inAnimCurve;
 		}
-		public void SetDesiredAnchoredPos(Vector2 _newDesiredAnchoredPos)
+		public void SetDesiredAnchoredPos(Vector2 inNewDesiredAnchoredPos)
 		{
-			mvecDesiredAnchoredPos = _newDesiredAnchoredPos;
+			mvecDesiredAnchoredPos = inNewDesiredAnchoredPos;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mvecInitialAnchoredPos = _transform.anchoredPosition;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -68,15 +68,15 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t;
-			if (_animCurve == null) t = Mathf.Clamp01(mfElapsedDuration / mfActionDuration);
-			else t = _animCurve.Evaluate(mfElapsedDuration / mfActionDuration);
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_transform.anchoredPosition = Vector2.LerpUnclamped(mvecInitialAnchoredPos, mvecDesiredAnchoredPos, t);
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				_transform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact anchored position that it wants.
 				OnActionEnd();
@@ -100,7 +100,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

@@ -6,12 +6,12 @@ namespace DaburuTools
 	public class LocalRotateToAction2D : Action
 	{
 		Transform _transform;
-		Graph mGraph;
+		Graph _graph;
 		float mfDesiredLocalZEulerAngle;
-		float mfActionDuration;
+		float _actionDuration;
 
 		float mfInitialLocalZEulerAngle;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public LocalRotateToAction2D(Transform inTransform, Graph inGraph, float inDesiredLocalZEulerAngle, float inActionDuration)
 		{
@@ -33,7 +33,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredLocalZEulerAngle(float inNewDesiredLocalZEulerAngle)
 		{
@@ -41,12 +41,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mfInitialLocalZEulerAngle = _transform.localEulerAngles.z;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -68,9 +68,9 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			_transform.localEulerAngles = new Vector3(
 				_transform.localEulerAngles.x,
 				_transform.localEulerAngles.y,
@@ -78,7 +78,7 @@ namespace DaburuTools
 			);
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				_transform.localEulerAngles = new Vector3(
 					_transform.localEulerAngles.x,
@@ -106,7 +106,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

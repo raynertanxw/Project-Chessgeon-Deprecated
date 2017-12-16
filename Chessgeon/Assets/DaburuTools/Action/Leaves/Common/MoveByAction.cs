@@ -6,12 +6,12 @@ namespace DaburuTools
 	public class MoveByAction : Action
 	{
 		Transform _transform;
-		Graph mGraph;
+		Graph _graph;
 		Vector3 mvecDesiredTotalDelta;
-		float mfActionDuration;
+		float _actionDuration;
 
 		Vector3 mvecAccumulatedDelta;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public MoveByAction(Transform inTransform, Graph inGraph, Vector3 inDesiredDelta, float inActionDuration)
 		{
@@ -33,7 +33,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredDelta(Vector3 inNewDesiredDelta)
 		{
@@ -41,12 +41,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mvecAccumulatedDelta = Vector3.zero;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -68,17 +68,17 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			_transform.position -= mvecAccumulatedDelta;    // Reverse the previous frame's rotation.
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			mvecAccumulatedDelta = Vector3.LerpUnclamped(Vector3.zero, mvecDesiredTotalDelta, t);
 
 			_transform.position += mvecAccumulatedDelta;    // Apply the new delta rotation.
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				Vector3 imperfection = mvecDesiredTotalDelta - mvecAccumulatedDelta;
 				_transform.position += imperfection;    // Force to exact delta displacement.
@@ -104,7 +104,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

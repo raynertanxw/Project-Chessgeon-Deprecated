@@ -6,12 +6,12 @@ namespace DaburuTools
 	public class RotateByAction2D : Action
 	{
 		Transform _transform;
-		Graph mGraph;
+		Graph _graph;
 		float mfDesiredTotalZEulerAngle;
-		float mfActionDuration;
+		float _actionDuration;
 
 		float mfAccumulatedZEulerAngle;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public RotateByAction2D(Transform inTransform, Graph inGraph, float inDesiredZEulerAngle, float inActionDuration)
 		{
@@ -33,7 +33,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredZEulerAngle(float inNewDesiredZEulerAngle)
 		{
@@ -41,12 +41,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mfAccumulatedZEulerAngle = 0f;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -68,7 +68,7 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			Vector3 previousDeltaRot = new Vector3(
 				0.0f,
@@ -76,7 +76,7 @@ namespace DaburuTools
 				mfAccumulatedZEulerAngle);
 			_transform.Rotate(-previousDeltaRot);   // Reverse the previous frame's rotation.
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			mfAccumulatedZEulerAngle = Mathf.LerpUnclamped(0.0f, mfDesiredTotalZEulerAngle, t);
 
 			Vector3 newDeltaRot = new Vector3(
@@ -86,7 +86,7 @@ namespace DaburuTools
 			_transform.Rotate(newDeltaRot); // Apply the new delta rotation.
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				Vector3 imperfection = Vector3.forward * (mfDesiredTotalZEulerAngle - mfAccumulatedZEulerAngle);
 				_transform.Rotate(imperfection);    // Force to exact delta displacement.
@@ -112,7 +112,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

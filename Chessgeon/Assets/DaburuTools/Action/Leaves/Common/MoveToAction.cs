@@ -6,12 +6,12 @@ namespace DaburuTools
 	public class MoveToAction : Action
 	{
 		Transform _transform;
-		Graph mGraph;
+		Graph _graph;
 		Vector3 mvecDesiredPos;
-		float mfActionDuration;
+		float _actionDuration;
 
 		Vector3 mvecInitialPos;
-		float mfElapsedDuration;
+		float _elapsedDuration;
 
 		public MoveToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredPosition, float inActionDuration)
 		{
@@ -33,7 +33,7 @@ namespace DaburuTools
 		}
 		public void SetGraph(Graph inNewGraph)
 		{
-			mGraph = inNewGraph;
+			_graph = inNewGraph;
 		}
 		public void SetDesiredPosition(Vector3 inNewDesiredPosition)
 		{
@@ -41,12 +41,12 @@ namespace DaburuTools
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			mvecInitialPos = _transform.position;
-			mfElapsedDuration = 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -68,13 +68,13 @@ namespace DaburuTools
 				return;
 			}
 
-			mfElapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = mGraph.Read(mfElapsedDuration / mfActionDuration);
+			float t = _graph.Read(_elapsedDuration / _actionDuration);
 			_transform.position = Vector3.LerpUnclamped(mvecInitialPos, mvecDesiredPos, t);
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				_transform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
 				OnActionEnd();
@@ -98,7 +98,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration += mfActionDuration;
+			_elapsedDuration += _actionDuration;
 
 			if (inSnapToDesired)
 			{

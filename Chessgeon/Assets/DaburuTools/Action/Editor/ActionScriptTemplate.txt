@@ -8,8 +8,8 @@ namespace DaburuTools
 		// 1: Declare your other variables such as Transforms, Graphs, etc.
 
 		// LEAVE THIS HERE: Variables to track time.
-		float mfActionDuration;
-		float mfElapsedDuration;
+		float _actionDuration;
+		float _elapsedDuration;
 
 		// 2: Constructor.
 		// DO NOT FORGET YOUR OTHER PARAMETERS!
@@ -27,15 +27,15 @@ namespace DaburuTools
 		// Below, we are making a function to set the ActionDuration.
 		public void SetActionDuration(float inNewActionDuration)
 		{
-			mfActionDuration = inNewActionDuration;
+			_actionDuration = inNewActionDuration;
 		}
 		private void SetupAction()
 		{
 			// 4: Declare what you want to be dont just before the Action runs.
 			// Commonly used to grab position or transform values at the start of the Action.
 			// This is to prevent errors when an Action is not immediately run the same frame of initialisation.
-			// Here, we always re-set the mfElapsedDuration to 0f;
-			mfElapsedDuration = 0f;
+			// Here, we always re-set the _elapsedDuration to 0f;
+			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
 		{
@@ -50,11 +50,11 @@ namespace DaburuTools
 		{
 			base.RunAction();
 
-			mfElapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
+			_elapsedDuration += ActionDeltaTime(mbIsUnscaledDeltaTime);
 			// 5: Implementation of the Action's "update" function goes here.
 
 			// Remove self after action is finished.
-			if (mfElapsedDuration >= mfActionDuration)
+			if (_elapsedDuration >= _actionDuration)
 			{
 				// 6: Snapping your action to end desired value.
 
@@ -79,7 +79,7 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mfElapsedDuration = mfActionDuration;
+			_elapsedDuration = _actionDuration;
 
 			if (inSnapToDesired)
 			{

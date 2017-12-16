@@ -210,14 +210,14 @@
 			/// <param name="_graphA"> The initial graph A </param>
 			/// <param name="_graphB"> The influencing graph B </param>
 			/// <param name="_fBInfluence"> The percentage of influenced from the influencing graph B </param>
-			/// <param name="_enumGraphCycle"> The graph cycle type of the graph </param>
+			/// <param name="_enu_graphCycle"> The graph cycle type of the graph </param>
 			/// <returns> Returns a graph that mixed the two graphs together </returns>
-			public static Graph Mix(Graph _graphA, Graph _graphB, float _fBInfluence, GraphCycle _enumGraphCycle)
+			public static Graph Mix(Graph _graphA, Graph _graphB, float _fBInfluence, GraphCycle _enu_graphCycle)
 			{
 				return new Graph((float x) =>
 				{
 					return MixAsFloat(_graphA, _graphB, _fBInfluence, x);
-				}, _enumGraphCycle);
+				}, _enu_graphCycle);
 			}
 
             /// <summary>
@@ -249,14 +249,14 @@
 			/// </summary>
 			/// <param name="_graphA"> The first graph </param>
 			/// <param name="_graphB"> The second graph </param>
-			/// <param name="_enumGraphCycle"> The graph cycle type of the graph </param>
+			/// <param name="_enu_graphCycle"> The graph cycle type of the graph </param>
 			/// <returns> Returns the average of both graph </returns>
-			public static Graph Average(Graph _graphA, Graph _graphB, GraphCycle _enumGraphCycle)
+			public static Graph Average(Graph _graphA, Graph _graphB, GraphCycle _enu_graphCycle)
 			{
 				return new Graph((float x) =>
 				{
 					return AverageAsFloat(_graphA, _graphB, x);
-				}, _enumGraphCycle);
+				}, _enu_graphCycle);
 			}
 
             /// <summary>
@@ -287,7 +287,7 @@
 			/// </summary>
 			/// <param name="_graphA"> The first graph </param>
 			/// <param name="_graphB"> The second graph </param>
-			///	<param name="_enumGraphCycle"> The graph cycle type of the graph </param>
+			///	<param name="_enu_graphCycle"> The graph cycle type of the graph </param>
 			/// <returns> Return the product of both graphs </returns>
 			public static Graph Multiply(Graph _graphA, Graph _graphB, GraphCycle _enumgraphCycle)
 			{
