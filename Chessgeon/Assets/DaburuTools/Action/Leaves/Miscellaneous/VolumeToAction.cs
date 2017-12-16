@@ -13,20 +13,20 @@ namespace DaburuTools
 		float mfOriginalVolume;
 		float mfElapsedDuration;
 
-		public VolumeToAction(AudioSource _audioSource, Graph inGraph, float _desiredVolume, float inActionDuration)
+		public VolumeToAction(AudioSource inAudioSource, Graph inGraph, float inDesiredVolume, float inActionDuration)
 		{
-			mAudioSource = _audioSource;
+			mAudioSource = inAudioSource;
 			SetGraph(inGraph);
-			SetDesiredVolume(_desiredVolume);
+			SetDesiredVolume(inDesiredVolume);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public VolumeToAction(AudioSource _audioSource, float _desiredVolume, float inActionDuration)
+		public VolumeToAction(AudioSource inAudioSource, float inDesiredVolume, float inActionDuration)
 		{
-			mAudioSource = _audioSource;
+			mAudioSource = inAudioSource;
 			SetGraph(Graph.Linear);
-			SetDesiredVolume(_desiredVolume);
+			SetDesiredVolume(inDesiredVolume);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredVolume(float _newDesiredVolume)
+		public void SetDesiredVolume(float inNewDesiredVolume)
 		{
-			mfDesiredVolume = _newDesiredVolume;
+			mfDesiredVolume = inNewDesiredVolume;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{

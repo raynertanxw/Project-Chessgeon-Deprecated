@@ -36,35 +36,35 @@ namespace DaburuTools
 
 		public OrbitAction2D(
 			Transform inTransform, Transform mOrbitPointTransform,
-			bool _isClockwise,
-			int _numCycles, Graph _revolutionGraph,
-			float _cycleDuration,
-			bool _preventOwnAxisRotation = true)
+			bool inIsClockwise,
+			int inNumCycles, Graph inRevolutionGraph,
+			float inCycleDuration,
+			bool inPreventOwnAxisRotation = true)
 		{
 			_transform = inTransform;
 			SetOrbitPointTransform(mOrbitPointTransform);
-			IsClockwise = _isClockwise;
-			SetNumCycles(_numCycles);
-			SetRevolutionGraph(_revolutionGraph);
-			SetCycleDuration(_cycleDuration);
-			mbPreventOwnAxisRotation = _preventOwnAxisRotation;
+			IsClockwise = inIsClockwise;
+			SetNumCycles(inNumCycles);
+			SetRevolutionGraph(inRevolutionGraph);
+			SetCycleDuration(inCycleDuration);
+			mbPreventOwnAxisRotation = inPreventOwnAxisRotation;
 		}
 
-		public void SetOrbitPointTransform(Transform _newOrbitPointTransform)
+		public void SetOrbitPointTransform(Transform inNewOrbitPointTransform)
 		{
-			mOrbitPointTransform = _newOrbitPointTransform;
+			mOrbitPointTransform = inNewOrbitPointTransform;
 		}
-		public void SetNumCycles(int _newNumCycles)
+		public void SetNumCycles(int inNewNumCycles)
 		{
-			mnNumCycles = _newNumCycles;
+			mnNumCycles = inNewNumCycles;
 		}
-		public void SetRevolutionGraph(Graph _newRevolutionGraph)
+		public void SetRevolutionGraph(Graph inNewRevolutionGraph)
 		{
-			mRevolutionGraph = _newRevolutionGraph;
+			mRevolutionGraph = inNewRevolutionGraph;
 		}
-		public void SetCycleDuration(float _newCycleDuration)
+		public void SetCycleDuration(float inNewCycleDuration)
 		{
-			mfCycleDuration = _newCycleDuration;
+			mfCycleDuration = inNewCycleDuration;
 		}
 		private void SetupAction()
 		{

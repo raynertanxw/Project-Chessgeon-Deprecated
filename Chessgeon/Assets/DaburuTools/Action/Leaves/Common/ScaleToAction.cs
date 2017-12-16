@@ -13,20 +13,20 @@ namespace DaburuTools
 		Vector3 mvecInitialScale;
 		float mfElapsedDuration;
 
-		public ScaleToAction(Transform inTransform, Graph inGraph, Vector3 _desiredScale, float inActionDuration)
+		public ScaleToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredScale, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(inGraph);
-			SetDesiredScale(_desiredScale);
+			SetDesiredScale(inDesiredScale);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public ScaleToAction(Transform inTransform, Vector3 _desiredScale, float inActionDuration)
+		public ScaleToAction(Transform inTransform, Vector3 inDesiredScale, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
-			SetDesiredScale(_desiredScale);
+			SetDesiredScale(inDesiredScale);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredScale(Vector3 _newDesiredScale)
+		public void SetDesiredScale(Vector3 inNewDesiredScale)
 		{
-			mvecDesiredScale = _newDesiredScale;
+			mvecDesiredScale = inNewDesiredScale;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{

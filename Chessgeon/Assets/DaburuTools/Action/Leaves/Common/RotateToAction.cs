@@ -13,20 +13,20 @@ namespace DaburuTools
 		Vector3 mvecInitialRotation;
 		float mfElapsedDuration;
 
-		public RotateToAction(Transform inTransform, Graph inGraph, Vector3 _desiredRotation, float inActionDuration)
+		public RotateToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredRotation, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(inGraph);
-			SetDesiredRotation(_desiredRotation);
+			SetDesiredRotation(inDesiredRotation);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public RotateToAction(Transform inTransform, Vector3 _desiredRotation, float inActionDuration)
+		public RotateToAction(Transform inTransform, Vector3 inDesiredRotation, float inActionDuration)
 		{
 			_transform = inTransform;
 			SetGraph(Graph.Linear);
-			SetDesiredRotation(_desiredRotation);
+			SetDesiredRotation(inDesiredRotation);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
@@ -35,9 +35,9 @@ namespace DaburuTools
 		{
 			mGraph = inNewGraph;
 		}
-		public void SetDesiredRotation(Vector3 _newDesiredRotation)
+		public void SetDesiredRotation(Vector3 inNewDesiredRotation)
 		{
-			mvecDesiredRotation = _newDesiredRotation;
+			mvecDesiredRotation = inNewDesiredRotation;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{

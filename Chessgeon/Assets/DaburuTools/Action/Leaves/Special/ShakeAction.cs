@@ -15,51 +15,51 @@ namespace DaburuTools
 		float mfElapsedDuration;
 		int mnCurrentCycle;
 
-		public ShakeAction(Transform inTransform, int _numShakes, float _shakeIntensity)
+		public ShakeAction(Transform inTransform, int inNumShakes, float inShakeIntensity)
 		{
 			_transform = inTransform;
 
-			SetNumShakes(_numShakes);
-			SetShakeIntensity(_shakeIntensity);
+			SetNumShakes(inNumShakes);
+			SetShakeIntensity(inShakeIntensity);
 			SetAttenuationGraph(Graph.One);
 
 			SetShakePeriod(0.05f);
 		}
-		public ShakeAction(Transform inTransform, int _numShakes, float _shakeIntensity, Graph _attenuationGraph)
+		public ShakeAction(Transform inTransform, int inNumShakes, float inShakeIntensity, Graph inAttenuationGraph)
 		{
 			_transform = inTransform;
 
-			SetNumShakes(_numShakes);
-			SetShakeIntensity(_shakeIntensity);
-			SetAttenuationGraph(_attenuationGraph);
+			SetNumShakes(inNumShakes);
+			SetShakeIntensity(inShakeIntensity);
+			SetAttenuationGraph(inAttenuationGraph);
 
 			SetShakePeriod(0.05f);
 		}
 
-		public void SetNumShakes(int _newNumShakes)
+		public void SetNumShakes(int inNewNumShakes)
 		{
-			mnNumShakes = _newNumShakes;
+			mnNumShakes = inNewNumShakes;
 		}
-		public void SetShakeIntensity(float _newShakeIntensity)
+		public void SetShakeIntensity(float inNewShakeIntensity)
 		{
-			mfShakeIntensity = _newShakeIntensity;
+			mfShakeIntensity = inNewShakeIntensity;
 		}
-		public void SetAttenuationGraph(Graph _newAttenuationGraph)
+		public void SetAttenuationGraph(Graph inNewAttenuationGraph)
 		{
-			mAttenuationGraph = _newAttenuationGraph;
+			mAttenuationGraph = inNewAttenuationGraph;
 		}
-		public void SetShakeFrequency(float _newShakeFrequency)
+		public void SetShakeFrequency(float inNewShakeFrequency)
 		{
-			SetShakePeriod(1.0f / _newShakeFrequency);
+			SetShakePeriod(1.0f / inNewShakeFrequency);
 		}
-		public void SetShakeByDuration(float _newShakeDuration, int _newNumShakes)
+		public void SetShakeByDuration(float inNewShakeDuration, int inNewNumShakes)
 		{
-			SetNumShakes(_newNumShakes);
-			SetShakePeriod(_newShakeDuration / _newNumShakes);
+			SetNumShakes(inNewNumShakes);
+			SetShakePeriod(inNewShakeDuration / inNewNumShakes);
 		}
-		private void SetShakePeriod(float _newShakePeriod)
+		private void SetShakePeriod(float inNewShakePeriod)
 		{
-			mfShakePeriod = _newShakePeriod;
+			mfShakePeriod = inNewShakePeriod;
 		}
 		private void SetupAction()
 		{

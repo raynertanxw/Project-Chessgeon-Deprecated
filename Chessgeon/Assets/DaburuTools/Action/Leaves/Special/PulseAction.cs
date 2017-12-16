@@ -16,46 +16,46 @@ namespace DaburuTools
 		int mnCurrentCycle;
 
 		public PulseAction(
-			Transform inTransform, int _numCycles,
-			Graph _expandGraph, Graph _shrinkGraph,
-			float _expandDuration, float _shrinkDuration,
-			Vector3 _minScale, Vector3 _maxScale)
+			Transform inTransform, int inNumCycles,
+			Graph inExpandGraph, Graph inShrinkGraph,
+			float inExpandDuration, float inShrinkDuration,
+			Vector3 inMinScale, Vector3 inMaxScale)
 		{
 			_transform = inTransform;
-			SetNumCycles(_numCycles);
-			SetExpandShrinkGraphs(_expandGraph, _shrinkGraph);
-			SetExpandShrinkDuration(_expandDuration, _shrinkDuration);
-			SetMinMaxScale(_minScale, _maxScale);
+			SetNumCycles(inNumCycles);
+			SetExpandShrinkGraphs(inExpandGraph, inShrinkGraph);
+			SetExpandShrinkDuration(inExpandDuration, inShrinkDuration);
+			SetMinMaxScale(inMinScale, inMaxScale);
 		}
-		public PulseAction(Transform inTransform, int _numCycles, Graph _expandShrinkGraph, float _cycleDuration,
-			Vector3 _minScale, Vector3 _maxScale)
+		public PulseAction(Transform inTransform, int inNumCycles, Graph inExpandShrinkGraph, float inCycleDuration,
+			Vector3 inMinScale, Vector3 inMaxScale)
 		{
 			_transform = inTransform;
-			SetNumCycles(_numCycles);
-			SetExpandShrinkGraphs(_expandShrinkGraph, _expandShrinkGraph);
-			SetExpandShrinkDuration(_cycleDuration / 2.0f, _cycleDuration / 2.0f);
-			SetMinMaxScale(_minScale, _maxScale);
+			SetNumCycles(inNumCycles);
+			SetExpandShrinkGraphs(inExpandShrinkGraph, inExpandShrinkGraph);
+			SetExpandShrinkDuration(inCycleDuration / 2.0f, inCycleDuration / 2.0f);
+			SetMinMaxScale(inMinScale, inMaxScale);
 		}
 
-		public void SetNumCycles(int _newNumCycles)
+		public void SetNumCycles(int inNewNumCycles)
 		{
-			mnNumCycles = _newNumCycles;
+			mnNumCycles = inNewNumCycles;
 		}
-		public void SetExpandShrinkGraphs(Graph _newExpandGraph, Graph _newShrinkGraph)
+		public void SetExpandShrinkGraphs(Graph inNewExpandGraph, Graph inNewShrinkGraph)
 		{
-			mExpandGraph = _newExpandGraph;
-			mShrinkGraph = _newShrinkGraph;
+			mExpandGraph = inNewExpandGraph;
+			mShrinkGraph = inNewShrinkGraph;
 		}
-		public void SetExpandShrinkDuration(float _newExpandDuration, float _newShrinkDuration)
+		public void SetExpandShrinkDuration(float inNewExpandDuration, float inNewShrinkDuration)
 		{
-			mfExpandDuration = _newExpandDuration;
-			mfShrinkDuration = _newShrinkDuration;
+			mfExpandDuration = inNewExpandDuration;
+			mfShrinkDuration = inNewShrinkDuration;
 			mfCycleDuration = mfExpandDuration + mfShrinkDuration;
 		}
-		public void SetMinMaxScale(Vector3 _newMinScale, Vector3 _newMaxScale)
+		public void SetMinMaxScale(Vector3 inNewMinScale, Vector3 inNewMaxScale)
 		{
-			mvecMinScale = _newMinScale;
-			mvecMaxScale = _newMaxScale;
+			mvecMinScale = inNewMinScale;
+			mvecMaxScale = inNewMaxScale;
 		}
 		private void SetupAction()
 		{
