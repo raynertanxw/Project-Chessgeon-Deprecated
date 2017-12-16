@@ -5,17 +5,17 @@ namespace DaburuTools
 {
 	public class SpriteRendererAlphaToAction : Action
 	{
-		SpriteRenderer mSpriteRenderer;
-		float mfDesiredAlpha;
+		SpriteRenderer _spriteRenderer;
+		float _desiredAlpha;
 		float _actionDuration;
 		Graph _graph;
 
-		float mfOriginalAlpha;
+		float _originalAlpha;
 		float _elapsedDuration;
 
 		public SpriteRendererAlphaToAction(SpriteRenderer inSpriteRenderer, Graph inGraph, float inDesiredAlpha, float inActionDuration)
 		{
-			mSpriteRenderer = inSpriteRenderer;
+			_spriteRenderer = inSpriteRenderer;
 			SetGraph(inGraph);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -24,7 +24,7 @@ namespace DaburuTools
 		}
 		public SpriteRendererAlphaToAction(SpriteRenderer inSpriteRenderer, float inDesiredAlpha, float inActionDuration)
 		{
-			mSpriteRenderer = inSpriteRenderer;
+			_spriteRenderer = inSpriteRenderer;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
-			mfDesiredAlpha = inNewDesiredAlpha;
+			_desiredAlpha = inNewDesiredAlpha;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfOriginalAlpha = mSpriteRenderer.color.a;
+			_originalAlpha = _spriteRenderer.color.a;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -64,17 +64,17 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			Color newCol = mSpriteRenderer.color;
-			newCol.a = _graph.Read(Mathf.Lerp(mfOriginalAlpha, mfDesiredAlpha, t));
-			mSpriteRenderer.color = newCol;
+			Color newCol = _spriteRenderer.color;
+			newCol.a = _graph.Read(Mathf.Lerp(_originalAlpha, _desiredAlpha, t));
+			_spriteRenderer.color = newCol;
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
 				// Snap to desired alpha.
-				Color finalCol = mSpriteRenderer.color;
-				finalCol.a = mfDesiredAlpha;
-				mSpriteRenderer.color = finalCol;
+				Color finalCol = _spriteRenderer.color;
+				finalCol.a = _desiredAlpha;
+				_spriteRenderer.color = finalCol;
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -102,9 +102,9 @@ namespace DaburuTools
 			if (inSnapToDesired)
 			{
 				// Snap to desired alpha.
-				Color finalCol = mSpriteRenderer.color;
-				finalCol.a = mfDesiredAlpha;
-				mSpriteRenderer.color = finalCol;
+				Color finalCol = _spriteRenderer.color;
+				finalCol.a = _desiredAlpha;
+				_spriteRenderer.color = finalCol;
 			}
 
 			OnActionEnd();

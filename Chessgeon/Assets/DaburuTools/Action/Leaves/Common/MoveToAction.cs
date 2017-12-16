@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredPos;
+		Vector3 _vecDesiredPos;
 		float _actionDuration;
 
-		Vector3 mvecInitialPos;
+		Vector3 _vecInitialPos;
 		float _elapsedDuration;
 
 		public MoveToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredPosition, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredPosition(Vector3 inNewDesiredPosition)
 		{
-			mvecDesiredPos = inNewDesiredPosition;
+			_vecDesiredPos = inNewDesiredPosition;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialPos = _transform.position;
+			_vecInitialPos = _transform.position;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -71,12 +71,12 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			_transform.position = Vector3.LerpUnclamped(mvecInitialPos, mvecDesiredPos, t);
+			_transform.position = Vector3.LerpUnclamped(_vecInitialPos, _vecDesiredPos, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				_transform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
+				_transform.position = _vecDesiredPos;   // Force it to be the exact position that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				_transform.position = mvecDesiredPos;   // Force it to be the exact position that it wants.
+				_transform.position = _vecDesiredPos;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

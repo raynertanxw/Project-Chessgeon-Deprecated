@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredLocalPos;
+		Vector3 _vecDesiredLocalPos;
 		float _actionDuration;
 
-		Vector3 mvecInitialLocalPos;
+		Vector3 _vecInitialLocalPos;
 		float _elapsedDuration;
 
 		public LocalMoveToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredLocalPosition, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredLocalPosition(Vector3 inNewDesiredLocalPosition)
 		{
-			mvecDesiredLocalPos = inNewDesiredLocalPosition;
+			_vecDesiredLocalPos = inNewDesiredLocalPosition;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialLocalPos = _transform.localPosition;
+			_vecInitialLocalPos = _transform.localPosition;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -71,12 +71,12 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			_transform.localPosition = Vector3.LerpUnclamped(mvecInitialLocalPos, mvecDesiredLocalPos, t);
+			_transform.localPosition = Vector3.LerpUnclamped(_vecInitialLocalPos, _vecDesiredLocalPos, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				_transform.localPosition = mvecDesiredLocalPos; // Force it to be the exact local position that it wants.
+				_transform.localPosition = _vecDesiredLocalPos; // Force it to be the exact local position that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				_transform.localPosition = mvecDesiredLocalPos; // Force it to be the exact position that it wants.
+				_transform.localPosition = _vecDesiredLocalPos; // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

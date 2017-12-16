@@ -6,17 +6,17 @@ namespace DaburuTools
 {
 	public class CanvasGroupAlphaToAction : Action
 	{
-		CanvasGroup mCanvasGroup;
-		float mfDesiredAlpha;
+		CanvasGroup _canvasGroup;
+		float _desiredAlpha;
 		float _actionDuration;
 		Graph _graph;
 
-		float mfOriginalAlpha;
+		float _originalAlpha;
 		float _elapsedDuration;
 
 		public CanvasGroupAlphaToAction(CanvasGroup inCanvasGroup, Graph inGraph, float inDesiredAlpha, float inActionDuration)
 		{
-			mCanvasGroup = inCanvasGroup;
+			_canvasGroup = inCanvasGroup;
 			SetGraph(inGraph);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -25,7 +25,7 @@ namespace DaburuTools
 		}
 		public CanvasGroupAlphaToAction(CanvasGroup inCanvasGroup, float inDesiredAlpha, float inActionDuration)
 		{
-			mCanvasGroup = inCanvasGroup;
+			_canvasGroup = inCanvasGroup;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -38,7 +38,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
-			mfDesiredAlpha = inNewDesiredAlpha;
+			_desiredAlpha = inNewDesiredAlpha;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -46,7 +46,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfOriginalAlpha = mCanvasGroup.alpha;
+			_originalAlpha = _canvasGroup.alpha;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -65,13 +65,13 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			mCanvasGroup.alpha = _graph.Read(Mathf.Lerp(mfOriginalAlpha, mfDesiredAlpha, t));
+			_canvasGroup.alpha = _graph.Read(Mathf.Lerp(_originalAlpha, _desiredAlpha, t));
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
 				// Snap to desired alpha.
-				mCanvasGroup.alpha = mfDesiredAlpha;
+				_canvasGroup.alpha = _desiredAlpha;
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -99,7 +99,7 @@ namespace DaburuTools
 			if (inSnapToDesired)
 			{
 				// Snap to desired alpha.
-				mCanvasGroup.alpha = mfDesiredAlpha;
+				_canvasGroup.alpha = _desiredAlpha;
 			}
 
 			OnActionEnd();

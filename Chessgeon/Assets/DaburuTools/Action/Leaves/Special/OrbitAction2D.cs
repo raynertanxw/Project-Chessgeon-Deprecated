@@ -6,33 +6,33 @@ namespace DaburuTools
 	public class OrbitAction2D : Action
 	{
 		Transform _transform;
-		Transform mOrbitPointTransform;
-		Vector3 mOrbitAxisDir;
-		bool mbIsClockwise;
+		Transform _orbitPointTransform;
+		Vector3 _orbitAxisDir;
+		bool _isClockwise;
 		public bool IsClockwise
 		{
-			get { return mbIsClockwise; }
+			get { return _isClockwise; }
 			set
 			{
-				mbIsClockwise = value;
-				if (mbIsClockwise)
-					mOrbitAxisDir = -Vector3.forward;
+				_isClockwise = value;
+				if (_isClockwise)
+					_orbitAxisDir = -Vector3.forward;
 				else
-					mOrbitAxisDir = Vector3.forward;
+					_orbitAxisDir = Vector3.forward;
 			}
 		}
-		int mnNumCycles;
-		Graph mRevolutionGraph;
-		float mfCycleDuration;
-		bool mbPreventOwnAxisRotation;
+		int _numCycles;
+		Graph _revolutionGraph;
+		float _cycleDuration;
+		bool _preventOwnAxisRotation;
 		public bool PreventOwnAxisRotation
 		{
-			get { return mbPreventOwnAxisRotation; }
-			set { mbPreventOwnAxisRotation = value; }
+			get { return _preventOwnAxisRotation; }
+			set { _preventOwnAxisRotation = value; }
 		}
 
 		float _elapsedDuration;
-		int mnCurrentCycle;
+		int _currentCycle;
 
 		public OrbitAction2D(
 			Transform inTransform, Transform mOrbitPointTransform,
@@ -47,29 +47,29 @@ namespace DaburuTools
 			SetNumCycles(inNumCycles);
 			SetRevolutionGraph(inRevolutionGraph);
 			SetCycleDuration(inCycleDuration);
-			mbPreventOwnAxisRotation = inPreventOwnAxisRotation;
+			_preventOwnAxisRotation = inPreventOwnAxisRotation;
 		}
 
 		public void SetOrbitPointTransform(Transform inNewOrbitPointTransform)
 		{
-			mOrbitPointTransform = inNewOrbitPointTransform;
+			_orbitPointTransform = inNewOrbitPointTransform;
 		}
 		public void SetNumCycles(int inNewNumCycles)
 		{
-			mnNumCycles = inNewNumCycles;
+			_numCycles = inNewNumCycles;
 		}
 		public void SetRevolutionGraph(Graph inNewRevolutionGraph)
 		{
-			mRevolutionGraph = inNewRevolutionGraph;
+			_revolutionGraph = inNewRevolutionGraph;
 		}
 		public void SetCycleDuration(float inNewCycleDuration)
 		{
-			mfCycleDuration = inNewCycleDuration;
+			_cycleDuration = inNewCycleDuration;
 		}
 		private void SetupAction()
 		{
 			_elapsedDuration = 0f;
-			mnCurrentCycle = 0;
+			_currentCycle = 0;
 		}
 		protected override void OnActionBegin()
 		{
@@ -92,47 +92,47 @@ namespace DaburuTools
 			}
 
 			// Undo previous frame's rotation.
-			float mfCycleElapsedOld = _elapsedDuration - mfCycleDuration * mnCurrentCycle;
-			float tOld = mRevolutionGraph.Read(mfCycleElapsedOld / mfCycleDuration);
-			_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, -360.0f * tOld);
+			float mfCycleElapsedOld = _elapsedDuration - _cycleDuration * _currentCycle;
+			float tOld = _revolutionGraph.Read(mfCycleElapsedOld / _cycleDuration);
+			_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, -360.0f * tOld);
 			// Offset Rotation so that the orbit action does not affect the object's rotation.
 			if (PreventOwnAxisRotation)
-				_transform.Rotate(mOrbitAxisDir, 360.0f * tOld);
+				_transform.Rotate(_orbitAxisDir, 360.0f * tOld);
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
-			float mfCycleElapsed = _elapsedDuration - mfCycleDuration * mnCurrentCycle;
-			if (mfCycleElapsed < mfCycleDuration)
+			float mfCycleElapsed = _elapsedDuration - _cycleDuration * _currentCycle;
+			if (mfCycleElapsed < _cycleDuration)
 			{
-				float t = mRevolutionGraph.Read(mfCycleElapsed / mfCycleDuration);
-				_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f * t);
+				float t = _revolutionGraph.Read(mfCycleElapsed / _cycleDuration);
+				_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, 360.0f * t);
 
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
-				if (mbPreventOwnAxisRotation)
-					_transform.Rotate(mOrbitAxisDir, 360.0f * -t);
+				if (_preventOwnAxisRotation)
+					_transform.Rotate(_orbitAxisDir, 360.0f * -t);
 			}
 			else
 			{
-				mnCurrentCycle++;
+				_currentCycle++;
 				// Remove self after action is finished.
-				if (mnCurrentCycle >= mnNumCycles)
+				if (_currentCycle >= _numCycles)
 				{
 					// Force it to be the end position of the cycle.
-					_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f);
+					_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, 360.0f);
 					// Offset Rotation so that the orbit action does not affect the object's rotation.
-					if (mbPreventOwnAxisRotation)
-						_transform.Rotate(mOrbitAxisDir, -360.0f);
+					if (_preventOwnAxisRotation)
+						_transform.Rotate(_orbitAxisDir, -360.0f);
 					OnActionEnd();
 					_parent.Remove(this);
 				}
 				else
 				{
 					// Do the interpolation for the beginning of the next cycle.
-					float t = mRevolutionGraph.Read((mfCycleElapsed - mfCycleDuration) / mfCycleDuration);
-					_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f * t);
+					float t = _revolutionGraph.Read((mfCycleElapsed - _cycleDuration) / _cycleDuration);
+					_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, 360.0f * t);
 
 					// Offset Rotation so that the orbit action does not affect the object's rotation.
-					if (mbPreventOwnAxisRotation)
-						_transform.Rotate(mOrbitAxisDir, 360.0f * -t);
+					if (_preventOwnAxisRotation)
+						_transform.Rotate(_orbitAxisDir, 360.0f * -t);
 				}
 			}
 		}
@@ -153,23 +153,23 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mnCurrentCycle = mnNumCycles;
+			_currentCycle = _numCycles;
 
 			if (inSnapToDesired)
 			{
 				// Undo previous frame's rotation.
-				float mfCycleElapsedOld = _elapsedDuration - mfCycleDuration * mnCurrentCycle;
-				float tOld = mRevolutionGraph.Read(mfCycleElapsedOld / mfCycleDuration);
-				_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, -360.0f * tOld);
+				float mfCycleElapsedOld = _elapsedDuration - _cycleDuration * _currentCycle;
+				float tOld = _revolutionGraph.Read(mfCycleElapsedOld / _cycleDuration);
+				_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, -360.0f * tOld);
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
 				if (PreventOwnAxisRotation)
-					_transform.Rotate(mOrbitAxisDir, 360.0f * tOld);
+					_transform.Rotate(_orbitAxisDir, 360.0f * tOld);
 
 				// Force it to be the end position of the cycle.
-				_transform.RotateAround(mOrbitPointTransform.position, mOrbitAxisDir, 360.0f);
+				_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, 360.0f);
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
-				if (mbPreventOwnAxisRotation)
-					_transform.Rotate(mOrbitAxisDir, -360.0f);
+				if (_preventOwnAxisRotation)
+					_transform.Rotate(_orbitAxisDir, -360.0f);
 			}
 
 			OnActionEnd();

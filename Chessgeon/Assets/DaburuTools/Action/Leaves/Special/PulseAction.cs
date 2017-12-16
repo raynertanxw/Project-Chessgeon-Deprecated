@@ -6,14 +6,14 @@ namespace DaburuTools
 	public class PulseAction : Action
 	{
 		Transform _transform;
-		Vector3 mvecMinScale;
-		Vector3 mvecMaxScale;
-		int mnNumCycles;
-		Graph mExpandGraph, mShrinkGraph;
-		float mfExpandDuration, mfShrinkDuration, mfCycleDuration;
+		Vector3 _vecMinScale;
+		Vector3 _vecMaxScale;
+		int _numCycles;
+		Graph _expandGraph, _shrinkGraph;
+		float _expandDuration, _shrinkDuration, _cycleDuration;
 
 		float _elapsedDuration;
-		int mnCurrentCycle;
+		int _currentCycle;
 
 		public PulseAction(
 			Transform inTransform, int inNumCycles,
@@ -39,28 +39,28 @@ namespace DaburuTools
 
 		public void SetNumCycles(int inNewNumCycles)
 		{
-			mnNumCycles = inNewNumCycles;
+			_numCycles = inNewNumCycles;
 		}
 		public void SetExpandShrinkGraphs(Graph inNewExpandGraph, Graph inNewShrinkGraph)
 		{
-			mExpandGraph = inNewExpandGraph;
-			mShrinkGraph = inNewShrinkGraph;
+			_expandGraph = inNewExpandGraph;
+			_shrinkGraph = inNewShrinkGraph;
 		}
 		public void SetExpandShrinkDuration(float inNewExpandDuration, float inNewShrinkDuration)
 		{
-			mfExpandDuration = inNewExpandDuration;
-			mfShrinkDuration = inNewShrinkDuration;
-			mfCycleDuration = mfExpandDuration + mfShrinkDuration;
+			_expandDuration = inNewExpandDuration;
+			_shrinkDuration = inNewShrinkDuration;
+			_cycleDuration = _expandDuration + _shrinkDuration;
 		}
 		public void SetMinMaxScale(Vector3 inNewMinScale, Vector3 inNewMaxScale)
 		{
-			mvecMinScale = inNewMinScale;
-			mvecMaxScale = inNewMaxScale;
+			_vecMinScale = inNewMinScale;
+			_vecMaxScale = inNewMaxScale;
 		}
 		private void SetupAction()
 		{
 			_elapsedDuration = 0f;
-			mnCurrentCycle = 0;
+			_currentCycle = 0;
 		}
 		protected override void OnActionBegin()
 		{
@@ -83,32 +83,32 @@ namespace DaburuTools
 			}
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
-			float mfCycleElapsed = _elapsedDuration - mfCycleDuration * mnCurrentCycle;
-			if (mfCycleElapsed < mfExpandDuration) // Expand
+			float mfCycleElapsed = _elapsedDuration - _cycleDuration * _currentCycle;
+			if (mfCycleElapsed < _expandDuration) // Expand
 			{
-				float t = mExpandGraph.Read(mfCycleElapsed / mfExpandDuration);
-				_transform.localScale = Vector3.LerpUnclamped(mvecMinScale, mvecMaxScale, t);
+				float t = _expandGraph.Read(mfCycleElapsed / _expandDuration);
+				_transform.localScale = Vector3.LerpUnclamped(_vecMinScale, _vecMaxScale, t);
 			}
-			else if (mfCycleElapsed < mfCycleDuration) // Shrink
+			else if (mfCycleElapsed < _cycleDuration) // Shrink
 			{
-				float t = mShrinkGraph.Read((mfCycleElapsed - mfExpandDuration) / mfShrinkDuration);
-				_transform.localScale = Vector3.LerpUnclamped(mvecMaxScale, mvecMinScale, t);
+				float t = _shrinkGraph.Read((mfCycleElapsed - _expandDuration) / _shrinkDuration);
+				_transform.localScale = Vector3.LerpUnclamped(_vecMaxScale, _vecMinScale, t);
 			}
 			else
 			{
-				mnCurrentCycle++;
+				_currentCycle++;
 				// Remove self after action is finished.
-				if (mnCurrentCycle >= mnNumCycles)
+				if (_currentCycle >= _numCycles)
 				{
-					_transform.localScale = mvecMinScale;   // Force it to be the exact scale that it wants.
+					_transform.localScale = _vecMinScale;   // Force it to be the exact scale that it wants.
 					OnActionEnd();
 					_parent.Remove(this);
 				}
 				else
 				{
 					// Do the interpolation for the beginning of the next cycle.
-					float t = mExpandGraph.Read((mfCycleElapsed - mfCycleDuration) / mfExpandDuration);
-					_transform.localScale = Vector3.LerpUnclamped(mvecMinScale, mvecMaxScale, t);
+					float t = _expandGraph.Read((mfCycleElapsed - _cycleDuration) / _expandDuration);
+					_transform.localScale = Vector3.LerpUnclamped(_vecMinScale, _vecMaxScale, t);
 				}
 			}
 		}
@@ -129,11 +129,11 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mnCurrentCycle = mnNumCycles;
+			_currentCycle = _numCycles;
 
 			if (inSnapToDesired)
 			{
-				_transform.localScale = mvecMinScale;   // Force it to be the exact position that it wants.
+				_transform.localScale = _vecMinScale;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

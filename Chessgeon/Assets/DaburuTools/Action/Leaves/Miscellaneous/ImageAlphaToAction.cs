@@ -6,17 +6,17 @@ namespace DaburuTools
 {
 	public class ImageAlphaToAction : Action
 	{
-		Image mImage;
-		float mfDesiredAlpha;
+		Image _image;
+		float _desiredAlpha;
 		float _actionDuration;
 		Graph _graph;
 
-		float mfOriginalAlpha;
+		float _originalAlpha;
 		float _elapsedDuration;
 
 		public ImageAlphaToAction(Image inImage, Graph inGraph, float inDesiredAlpha, float inActionDuration)
 		{
-			mImage = inImage;
+			_image = inImage;
 			SetGraph(inGraph);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -25,7 +25,7 @@ namespace DaburuTools
 		}
 		public ImageAlphaToAction(Image inImage, float inDesiredAlpha, float inActionDuration)
 		{
-			mImage = inImage;
+			_image = inImage;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -38,7 +38,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
-			mfDesiredAlpha = inNewDesiredAlpha;
+			_desiredAlpha = inNewDesiredAlpha;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -46,7 +46,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfOriginalAlpha = mImage.color.a;
+			_originalAlpha = _image.color.a;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -65,17 +65,17 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			Color newCol = mImage.color;
-			newCol.a = _graph.Read(Mathf.Lerp(mfOriginalAlpha, mfDesiredAlpha, t));
-			mImage.color = newCol;
+			Color newCol = _image.color;
+			newCol.a = _graph.Read(Mathf.Lerp(_originalAlpha, _desiredAlpha, t));
+			_image.color = newCol;
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
 				// Snap to desired alpha.
-				Color finalCol = mImage.color;
-				finalCol.a = mfDesiredAlpha;
-				mImage.color = finalCol;
+				Color finalCol = _image.color;
+				finalCol.a = _desiredAlpha;
+				_image.color = finalCol;
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -103,9 +103,9 @@ namespace DaburuTools
 			if (inSnapToDesired)
 			{
 				// Snap to desired alpha.
-				Color finalCol = mImage.color;
-				finalCol.a = mfDesiredAlpha;
-				mImage.color = finalCol;
+				Color finalCol = _image.color;
+				finalCol.a = _desiredAlpha;
+				_image.color = finalCol;
 			}
 
 			OnActionEnd();

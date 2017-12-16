@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredTotalDelta;
+		Vector3 _vecDesiredTotalDelta;
 		float _actionDuration;
 
-		Vector3 mvecAccumulatedDelta;
+		Vector3 _vecAccumulatedDelta;
 		float _elapsedDuration;
 
 		public RotateByAction(Transform inTransform, Graph inGraph, Vector3 inDesiredDelta, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredDelta(Vector3 inNewDesiredDelta)
 		{
-			mvecDesiredTotalDelta = inNewDesiredDelta;
+			_vecDesiredTotalDelta = inNewDesiredDelta;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecAccumulatedDelta = Vector3.zero;
+			_vecAccumulatedDelta = Vector3.zero;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -70,17 +70,17 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			_transform.Rotate(-mvecAccumulatedDelta);   // Reverse the previous frame's rotation.
+			_transform.Rotate(-_vecAccumulatedDelta);   // Reverse the previous frame's rotation.
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			mvecAccumulatedDelta = Vector3.LerpUnclamped(Vector3.zero, mvecDesiredTotalDelta, t);
+			_vecAccumulatedDelta = Vector3.LerpUnclamped(Vector3.zero, _vecDesiredTotalDelta, t);
 
-			_transform.Rotate(mvecAccumulatedDelta);    // Apply the new delta rotation.
+			_transform.Rotate(_vecAccumulatedDelta);    // Apply the new delta rotation.
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				Vector3 imperfection = mvecDesiredTotalDelta - mvecAccumulatedDelta;
+				Vector3 imperfection = _vecDesiredTotalDelta - _vecAccumulatedDelta;
 				_transform.Rotate(imperfection);    // Force to exact delta displacement.
 
 				OnActionEnd();
@@ -108,7 +108,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				Vector3 imperfection = mvecDesiredTotalDelta - mvecAccumulatedDelta;
+				Vector3 imperfection = _vecDesiredTotalDelta - _vecAccumulatedDelta;
 				_transform.Rotate(imperfection);    // Force it to be the exact position that it wants.
 			}
 

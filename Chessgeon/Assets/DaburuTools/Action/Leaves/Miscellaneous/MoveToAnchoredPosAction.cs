@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		RectTransform _transform;
 		AnimationCurve _animCurve;
-		Vector2 mvecDesiredAnchoredPos;
+		Vector2 _vecDesiredAnchoredPos;
 		float _actionDuration;
 
-		Vector2 mvecInitialAnchoredPos;
+		Vector2 _vecInitialAnchoredPos;
 		float _elapsedDuration;
 
 		public MoveToAnchoredPosAction(RectTransform inTransform, Vector2 inDesiredAnchoredPos, float inActionDuration, AnimationCurve inAnimCurve)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredAnchoredPos(Vector2 inNewDesiredAnchoredPos)
 		{
-			mvecDesiredAnchoredPos = inNewDesiredAnchoredPos;
+			_vecDesiredAnchoredPos = inNewDesiredAnchoredPos;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialAnchoredPos = _transform.anchoredPosition;
+			_vecInitialAnchoredPos = _transform.anchoredPosition;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -73,12 +73,12 @@ namespace DaburuTools
 			float t;
 			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
 			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
-			_transform.anchoredPosition = Vector2.LerpUnclamped(mvecInitialAnchoredPos, mvecDesiredAnchoredPos, t);
+			_transform.anchoredPosition = Vector2.LerpUnclamped(_vecInitialAnchoredPos, _vecDesiredAnchoredPos, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				_transform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact anchored position that it wants.
+				_transform.anchoredPosition = _vecDesiredAnchoredPos; // Force it to be the exact anchored position that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -104,7 +104,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				_transform.anchoredPosition = mvecDesiredAnchoredPos; // Force it to be the exact position that it wants.
+				_transform.anchoredPosition = _vecDesiredAnchoredPos; // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

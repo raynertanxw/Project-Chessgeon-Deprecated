@@ -5,17 +5,17 @@ namespace DaburuTools
 {
 	public class VolumeToAction : Action
 	{
-		AudioSource mAudioSource;
-		float mfDesiredVolume;
+		AudioSource _audioSource;
+		float _desiredVolume;
 		float _actionDuration;
 		Graph _graph;
 
-		float mfOriginalVolume;
+		float _originalVolume;
 		float _elapsedDuration;
 
 		public VolumeToAction(AudioSource inAudioSource, Graph inGraph, float inDesiredVolume, float inActionDuration)
 		{
-			mAudioSource = inAudioSource;
+			_audioSource = inAudioSource;
 			SetGraph(inGraph);
 			SetDesiredVolume(inDesiredVolume);
 			SetActionDuration(inActionDuration);
@@ -24,7 +24,7 @@ namespace DaburuTools
 		}
 		public VolumeToAction(AudioSource inAudioSource, float inDesiredVolume, float inActionDuration)
 		{
-			mAudioSource = inAudioSource;
+			_audioSource = inAudioSource;
 			SetGraph(Graph.Linear);
 			SetDesiredVolume(inDesiredVolume);
 			SetActionDuration(inActionDuration);
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredVolume(float inNewDesiredVolume)
 		{
-			mfDesiredVolume = inNewDesiredVolume;
+			_desiredVolume = inNewDesiredVolume;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfOriginalVolume = mAudioSource.volume;
+			_originalVolume = _audioSource.volume;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -64,13 +64,13 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			mAudioSource.volume = Mathf.Lerp(mfOriginalVolume, mfDesiredVolume, t);
+			_audioSource.volume = Mathf.Lerp(_originalVolume, _desiredVolume, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
 				// Snap volume to desired volume.
-				mAudioSource.volume = mfDesiredVolume;
+				_audioSource.volume = _desiredVolume;
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -98,7 +98,7 @@ namespace DaburuTools
 			if (inSnapToDesired)
 			{
 				// Snap volume to desired volume.
-				mAudioSource.volume = mfDesiredVolume;
+				_audioSource.volume = _desiredVolume;
 			}
 
 			OnActionEnd();

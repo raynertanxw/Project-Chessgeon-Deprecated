@@ -6,17 +6,17 @@ namespace DaburuTools
 {
 	public class TextAlphaToAction : Action
 	{
-		Text mText;
-		float mfDesiredAlpha;
+		Text _text;
+		float _desiredAlpha;
 		float _actionDuration;
 		Graph _graph;
 
-		float mfOriginalAlpha;
+		float _originalAlpha;
 		float _elapsedDuration;
 
 		public TextAlphaToAction(Text inText, Graph inGraph, float inDesiredAlpha, float inActionDuration)
 		{
-			mText = inText;
+			_text = inText;
 			SetGraph(inGraph);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -25,7 +25,7 @@ namespace DaburuTools
 		}
 		public TextAlphaToAction(Text inText, float inDesiredAlpha, float inActionDuration)
 		{
-			mText = inText;
+			_text = inText;
 			SetGraph(Graph.Linear);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
@@ -38,7 +38,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
-			mfDesiredAlpha = inNewDesiredAlpha;
+			_desiredAlpha = inNewDesiredAlpha;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -46,7 +46,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfOriginalAlpha = mText.color.a;
+			_originalAlpha = _text.color.a;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -65,17 +65,17 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			Color newCol = mText.color;
-			newCol.a = _graph.Read(Mathf.Lerp(mfOriginalAlpha, mfDesiredAlpha, t));
-			mText.color = newCol;
+			Color newCol = _text.color;
+			newCol.a = _graph.Read(Mathf.Lerp(_originalAlpha, _desiredAlpha, t));
+			_text.color = newCol;
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
 				// Snap to desired alpha.
-				Color finalCol = mText.color;
-				finalCol.a = mfDesiredAlpha;
-				mText.color = finalCol;
+				Color finalCol = _text.color;
+				finalCol.a = _desiredAlpha;
+				_text.color = finalCol;
 
 				OnActionEnd();
 				_parent.Remove(this);
@@ -103,9 +103,9 @@ namespace DaburuTools
 			if (inSnapToDesired)
 			{
 				// Snap to desired alpha.
-				Color finalCol = mText.color;
-				finalCol.a = mfDesiredAlpha;
-				mText.color = finalCol;
+				Color finalCol = _text.color;
+				finalCol.a = _desiredAlpha;
+				_text.color = finalCol;
 			}
 
 			OnActionEnd();

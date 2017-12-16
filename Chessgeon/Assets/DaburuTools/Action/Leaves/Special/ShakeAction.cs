@@ -6,14 +6,14 @@ namespace DaburuTools
 	public class ShakeAction : Action
 	{
 		Transform _transform;
-		int mnNumShakes;
-		float mfShakePeriod;
-		float mfShakeIntensity;
-		Graph mAttenuationGraph;
+		int _numShakes;
+		float _shakePeriod;
+		float _shakeIntensity;
+		Graph _attenuationGraph;
 
-		Vector3 mVecDeltaPos;
+		Vector3 _vecDeltaPos;
 		float _elapsedDuration;
-		int mnCurrentCycle;
+		int _currentCycle;
 
 		public ShakeAction(Transform inTransform, int inNumShakes, float inShakeIntensity)
 		{
@@ -38,15 +38,15 @@ namespace DaburuTools
 
 		public void SetNumShakes(int inNewNumShakes)
 		{
-			mnNumShakes = inNewNumShakes;
+			_numShakes = inNewNumShakes;
 		}
 		public void SetShakeIntensity(float inNewShakeIntensity)
 		{
-			mfShakeIntensity = inNewShakeIntensity;
+			_shakeIntensity = inNewShakeIntensity;
 		}
 		public void SetAttenuationGraph(Graph inNewAttenuationGraph)
 		{
-			mAttenuationGraph = inNewAttenuationGraph;
+			_attenuationGraph = inNewAttenuationGraph;
 		}
 		public void SetShakeFrequency(float inNewShakeFrequency)
 		{
@@ -59,13 +59,13 @@ namespace DaburuTools
 		}
 		private void SetShakePeriod(float inNewShakePeriod)
 		{
-			mfShakePeriod = inNewShakePeriod;
+			_shakePeriod = inNewShakePeriod;
 		}
 		private void SetupAction()
 		{
 			_elapsedDuration = 0f;
-			mnCurrentCycle = 0;
-			mVecDeltaPos = Vector3.zero;
+			_currentCycle = 0;
+			_vecDeltaPos = Vector3.zero;
 		}
 		protected override void OnActionBegin()
 		{
@@ -88,16 +88,16 @@ namespace DaburuTools
 			}
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
-			float mfCycleElapsed = _elapsedDuration - mfShakePeriod * mnCurrentCycle;
-			if (mfCycleElapsed > mfShakePeriod)
+			float mfCycleElapsed = _elapsedDuration - _shakePeriod * _currentCycle;
+			if (mfCycleElapsed > _shakePeriod)
 			{
-				mnCurrentCycle = (int)(_elapsedDuration / mfShakePeriod);
+				_currentCycle = (int)(_elapsedDuration / _shakePeriod);
 
 				// Remove self after action is finished.
-				if (mnCurrentCycle >= mnNumShakes)
+				if (_currentCycle >= _numShakes)
 				{
 					// Force it back to original position.
-					_transform.position -= mVecDeltaPos;
+					_transform.position -= _vecDeltaPos;
 
 					OnActionEnd();
 					_parent.Remove(this);
@@ -105,11 +105,11 @@ namespace DaburuTools
 				else
 				{
 					// Set back to original position.
-					_transform.position -= mVecDeltaPos;
+					_transform.position -= _vecDeltaPos;
 					// Set new shake pos.
-					float t = mAttenuationGraph.Read(_elapsedDuration / (mfShakePeriod * mnNumShakes));
-					mVecDeltaPos = Random.insideUnitSphere * mfShakeIntensity * t;
-					_transform.position += mVecDeltaPos;
+					float t = _attenuationGraph.Read(_elapsedDuration / (_shakePeriod * _numShakes));
+					_vecDeltaPos = Random.insideUnitSphere * _shakeIntensity * t;
+					_transform.position += _vecDeltaPos;
 				}
 			}
 		}
@@ -130,11 +130,11 @@ namespace DaburuTools
 			MakeResettable(false);
 
 			// Simulate the action has ended. Does not really matter by how much.
-			mnCurrentCycle = mnNumShakes;
+			_currentCycle = _numShakes;
 
 			if (inSnapToDesired)
 			{
-				_transform.position -= mVecDeltaPos;    // Force it to be the exact position that it wants.
+				_transform.position -= _vecDeltaPos;    // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

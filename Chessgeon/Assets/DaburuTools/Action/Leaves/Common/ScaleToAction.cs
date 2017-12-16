@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredScale;
+		Vector3 _vecDesiredScale;
 		float _actionDuration;
 
-		Vector3 mvecInitialScale;
+		Vector3 _vecInitialScale;
 		float _elapsedDuration;
 
 		public ScaleToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredScale, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredScale(Vector3 inNewDesiredScale)
 		{
-			mvecDesiredScale = inNewDesiredScale;
+			_vecDesiredScale = inNewDesiredScale;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialScale = _transform.localScale;
+			_vecInitialScale = _transform.localScale;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -71,12 +71,12 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			_transform.localScale = Vector3.LerpUnclamped(mvecInitialScale, mvecDesiredScale, t);
+			_transform.localScale = Vector3.LerpUnclamped(_vecInitialScale, _vecDesiredScale, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				_transform.localScale = mvecDesiredScale;   // Force it to be the exact scale that it wants.
+				_transform.localScale = _vecDesiredScale;   // Force it to be the exact scale that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				_transform.localScale = mvecDesiredScale;   // Force it to be the exact position that it wants.
+				_transform.localScale = _vecDesiredScale;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

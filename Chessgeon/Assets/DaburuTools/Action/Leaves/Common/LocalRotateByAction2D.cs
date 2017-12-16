@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		float mfDesiredTotalZEulerAngle;
+		float _desiredTotalZEulerAngle;
 		float _actionDuration;
 
-		float mfAccumulatedZEulerAngle;
+		float _accumulatedZEulerAngle;
 		float _elapsedDuration;
 
 		public LocalRotateByAction2D(Transform inTransform, Graph inGraph, float inDesiredZEulerAngle, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredZEulerAngle(float inNewDesiredZEulerAngle)
 		{
-			mfDesiredTotalZEulerAngle = inNewDesiredZEulerAngle;
+			_desiredTotalZEulerAngle = inNewDesiredZEulerAngle;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mfAccumulatedZEulerAngle = 0f;
+			_accumulatedZEulerAngle = 0f;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -73,22 +73,22 @@ namespace DaburuTools
 			Vector3 previousDeltaRot = new Vector3(
 				0.0f,
 				0.0f,
-				mfAccumulatedZEulerAngle);
+				_accumulatedZEulerAngle);
 			_transform.Rotate(-previousDeltaRot, Space.Self);   // Reverse the previous frame's rotation.
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			mfAccumulatedZEulerAngle = Mathf.LerpUnclamped(0.0f, mfDesiredTotalZEulerAngle, t);
+			_accumulatedZEulerAngle = Mathf.LerpUnclamped(0.0f, _desiredTotalZEulerAngle, t);
 
 			Vector3 newDeltaRot = new Vector3(
 				0.0f,
 				0.0f,
-				mfAccumulatedZEulerAngle);
+				_accumulatedZEulerAngle);
 			_transform.Rotate(newDeltaRot, Space.Self); // Apply the new delta rotation.
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				Vector3 imperfection = Vector3.forward * (mfDesiredTotalZEulerAngle - mfAccumulatedZEulerAngle);
+				Vector3 imperfection = Vector3.forward * (_desiredTotalZEulerAngle - _accumulatedZEulerAngle);
 				_transform.Rotate(imperfection, Space.Self);    // Force to exact delta displacement.
 
 				OnActionEnd();
@@ -116,7 +116,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				Vector3 imperfection = Vector3.forward * (mfDesiredTotalZEulerAngle - mfAccumulatedZEulerAngle);
+				Vector3 imperfection = Vector3.forward * (_desiredTotalZEulerAngle - _accumulatedZEulerAngle);
 				_transform.Rotate(imperfection, Space.Self);    // Force it to be the exact position that it wants.
 			}
 

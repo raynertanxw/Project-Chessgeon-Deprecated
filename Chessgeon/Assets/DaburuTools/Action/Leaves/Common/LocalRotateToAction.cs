@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredLocalRotation;
+		Vector3 _vecDesiredLocalRotation;
 		float _actionDuration;
 
-		Vector3 mvecInitialLocalRotation;
+		Vector3 _vecInitialLocalRotation;
 		float _elapsedDuration;
 
 		public LocalRotateToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredLocalRotation, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredLocalRotation(Vector3 inNewDesiredLocalRotation)
 		{
-			mvecDesiredLocalRotation = inNewDesiredLocalRotation;
+			_vecDesiredLocalRotation = inNewDesiredLocalRotation;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialLocalRotation = _transform.localEulerAngles;
+			_vecInitialLocalRotation = _transform.localEulerAngles;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -71,12 +71,12 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			_transform.localEulerAngles = Vector3.LerpUnclamped(mvecInitialLocalRotation, mvecDesiredLocalRotation, t);
+			_transform.localEulerAngles = Vector3.LerpUnclamped(_vecInitialLocalRotation, _vecDesiredLocalRotation, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				_transform.localEulerAngles = mvecDesiredLocalRotation; // Force it to be the exact local rotation that it wants.
+				_transform.localEulerAngles = _vecDesiredLocalRotation; // Force it to be the exact local rotation that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				_transform.localEulerAngles = mvecDesiredLocalRotation; // Force it to be the exact position that it wants.
+				_transform.localEulerAngles = _vecDesiredLocalRotation; // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

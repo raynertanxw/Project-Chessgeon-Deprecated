@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredRotation;
+		Vector3 _vecDesiredRotation;
 		float _actionDuration;
 
-		Vector3 mvecInitialRotation;
+		Vector3 _vecInitialRotation;
 		float _elapsedDuration;
 
 		public RotateToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredRotation, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredRotation(Vector3 inNewDesiredRotation)
 		{
-			mvecDesiredRotation = inNewDesiredRotation;
+			_vecDesiredRotation = inNewDesiredRotation;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,7 +45,7 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecInitialRotation = _transform.eulerAngles;
+			_vecInitialRotation = _transform.eulerAngles;
 			_elapsedDuration = 0f;
 		}
 		protected override void OnActionBegin()
@@ -71,12 +71,12 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			_transform.eulerAngles = Vector3.LerpUnclamped(mvecInitialRotation, mvecDesiredRotation, t);
+			_transform.eulerAngles = Vector3.LerpUnclamped(_vecInitialRotation, _vecDesiredRotation, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
-				_transform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact rotation that it wants.
+				_transform.eulerAngles = _vecDesiredRotation;   // Force it to be the exact rotation that it wants.
 				OnActionEnd();
 				_parent.Remove(this);
 			}
@@ -102,7 +102,7 @@ namespace DaburuTools
 
 			if (inSnapToDesired)
 			{
-				_transform.eulerAngles = mvecDesiredRotation;   // Force it to be the exact position that it wants.
+				_transform.eulerAngles = _vecDesiredRotation;   // Force it to be the exact position that it wants.
 			}
 
 			OnActionEnd();

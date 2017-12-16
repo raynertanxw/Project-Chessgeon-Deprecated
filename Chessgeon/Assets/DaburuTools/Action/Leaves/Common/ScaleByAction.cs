@@ -7,10 +7,10 @@ namespace DaburuTools
 	{
 		Transform _transform;
 		Graph _graph;
-		Vector3 mvecDesiredScaleDelta;
+		Vector3 _vecDesiredScaleDelta;
 		float _actionDuration;
 
-		Vector3 mvecAccumulatedScale;
+		Vector3 _vecAccumulatedScale;
 		float _elapsedDuration;
 
 		public ScaleByAction(Transform inTransform, Graph inGraph, Vector3 inDesiredDelta, float inActionDuration)
@@ -37,7 +37,7 @@ namespace DaburuTools
 		}
 		public void SetDesiredDelta(Vector3 inNewDesiredDelta)
 		{
-			mvecDesiredScaleDelta = inNewDesiredDelta - Vector3.one;
+			_vecDesiredScaleDelta = inNewDesiredDelta - Vector3.one;
 		}
 		public void SetActionDuration(float inNewActionDuration)
 		{
@@ -45,15 +45,15 @@ namespace DaburuTools
 		}
 		private void SetupAction()
 		{
-			mvecAccumulatedScale = Vector3.one;
+			_vecAccumulatedScale = Vector3.one;
 			_elapsedDuration = 0f;
 		}
 		private Vector3 CalcInverseAccumulatedScale()
 		{
 			Vector3 inverseAccumulatedScale = _transform.localScale;
-			inverseAccumulatedScale.x /= mvecAccumulatedScale.x;
-			inverseAccumulatedScale.y /= mvecAccumulatedScale.y;
-			inverseAccumulatedScale.z /= mvecAccumulatedScale.z;
+			inverseAccumulatedScale.x /= _vecAccumulatedScale.x;
+			inverseAccumulatedScale.y /= _vecAccumulatedScale.y;
+			inverseAccumulatedScale.z /= _vecAccumulatedScale.z;
 
 			return inverseAccumulatedScale;
 		}
@@ -80,17 +80,17 @@ namespace DaburuTools
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
 			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			Vector3 delta = Vector3.LerpUnclamped(Vector3.zero, mvecDesiredScaleDelta, t) + Vector3.one - mvecAccumulatedScale;
+			Vector3 delta = Vector3.LerpUnclamped(Vector3.zero, _vecDesiredScaleDelta, t) + Vector3.one - _vecAccumulatedScale;
 
-			_transform.localScale = Vector3.Scale(CalcInverseAccumulatedScale(), mvecAccumulatedScale + delta);
-			mvecAccumulatedScale += delta;
+			_transform.localScale = Vector3.Scale(CalcInverseAccumulatedScale(), _vecAccumulatedScale + delta);
+			_vecAccumulatedScale += delta;
 
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)
 			{
 				Vector3 finalScaleVec = CalcInverseAccumulatedScale();
-				finalScaleVec = Vector3.Scale(finalScaleVec, mvecDesiredScaleDelta + Vector3.one);
+				finalScaleVec = Vector3.Scale(finalScaleVec, _vecDesiredScaleDelta + Vector3.one);
 				_transform.localScale = finalScaleVec;  // Force it to be the exact scale that it wants.
 
 				OnActionEnd();
@@ -119,7 +119,7 @@ namespace DaburuTools
 			if (inSnapToDesired)
 			{
 				Vector3 finalScaleVec = CalcInverseAccumulatedScale();
-				finalScaleVec = Vector3.Scale(finalScaleVec, mvecDesiredScaleDelta + Vector3.one);
+				finalScaleVec = Vector3.Scale(finalScaleVec, _vecDesiredScaleDelta + Vector3.one);
 				_transform.localScale = finalScaleVec;  // Force it to be the exact position that it wants.
 			}
 
