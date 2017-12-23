@@ -17,7 +17,10 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Text _phaseBannerTextTop = null;
 	[SerializeField] private Text _phaseBannerTextBtm = null;
 
-	Graph InverseSmoothStep;
+	[Header("Animation Curves")]
+	[SerializeField] private AnimationCurve _inverseSmoothStep = null;
+	[SerializeField] private AnimationCurve _exponential = null;
+	[SerializeField] private AnimationCurve _inverseExponential = null;
 
 	private void Awake()
 	{
@@ -39,14 +42,6 @@ public class DungeonDisplay : MonoBehaviour
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
 			SetDarkOverlayVisible(false);
-
-			InverseSmoothStep = new Graph((float _x) =>
-			{
-				return Mathf.Lerp(
-					1f - ((1f - _x) * (1f - _x)),
-					_x * _x,
-					_x);
-			});
 		}
 		else if (_instance != this)
 		{
@@ -107,15 +102,15 @@ public class DungeonDisplay : MonoBehaviour
 			_instance._phaseBannerTop.localEulerAngles = Vector3.forward * -90.0f;
 			_instance._phaseBannerBtm.localEulerAngles = Vector3.forward * 90.0f;
 
-			LocalRotateByAction2D topRotIn = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, Graph.InverseExponential, -86.0f, 0.6f);
-			LocalRotateByAction2D bottomRotIn = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, Graph.InverseExponential, -86.0f, 0.6f);
+			LocalRotateByAction2D topRotIn = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, -86.0f, 0.6f, _instance._inverseExponential);
+			LocalRotateByAction2D bottomRotIn = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, -86.0f, 0.6f, _instance._inverseExponential);
 			ActionParallel rotateIn = new ActionParallel(topRotIn, bottomRotIn);
 			rotateIn.OnActionStart += () => { /*TODO: Play the shing shing sound.*/ };
 
 			DelayAction rotInOutDelay = new DelayAction(0.6f);
 
-			LocalRotateByAction2D topRotOut = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, Graph.Exponential, -86.0f, 0.6f);
-			LocalRotateByAction2D bottomRotOut = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, Graph.Exponential, -86.0f, 0.6f);
+			LocalRotateByAction2D topRotOut = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, -86.0f, 0.6f, _instance._exponential);
+			LocalRotateByAction2D bottomRotOut = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, -86.0f, 0.6f, _instance._exponential);
 			ActionParallel rotateOut = new ActionParallel(topRotOut, bottomRotOut);
 			rotateOut.OnActionStart += () => { /*TODO: Play the shing shing sound.*/ };
 
@@ -128,16 +123,16 @@ public class DungeonDisplay : MonoBehaviour
 			DelayAction stallFrontDelay = new DelayAction(0.5f);
 			DelayAction stallEndDelay = new DelayAction(0.5f);
 
-			LocalRotateByAction2D topRotStall = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, _instance.InverseSmoothStep, -8.0f, 0.8f);
-			LocalRotateByAction2D bottomRotStall = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, _instance.InverseSmoothStep, -8.0f, 0.8f);
+			LocalRotateByAction2D topRotStall = new LocalRotateByAction2D(_instance._phaseBannerTop.transform, -8.0f, 0.8f, _instance._inverseSmoothStep);
+			LocalRotateByAction2D bottomRotStall = new LocalRotateByAction2D(_instance._phaseBannerBtm.transform, -8.0f, 0.8f, _instance._inverseSmoothStep);
 			ActionParallel rotateStall = new ActionParallel(topRotStall, bottomRotStall);
 
 			ActionSequence rotStallSeq = new ActionSequence(stallFrontDelay, rotateStall, stallEndDelay);
 
 
 			DelayAction alphaDelay = new DelayAction(0.8f);
-			ImageAlphaToAction alphaIn = new ImageAlphaToAction(_instance._darkOverlay, Graph.Linear, 0.5f, 0.5f);
-			ImageAlphaToAction alphaOut = new ImageAlphaToAction(_instance._darkOverlay, Graph.Linear, 0.0f, 0.5f);
+			ImageAlphaToAction alphaIn = new ImageAlphaToAction(_instance._darkOverlay, 0.5f, 0.5f);
+			ImageAlphaToAction alphaOut = new ImageAlphaToAction(_instance._darkOverlay, 0.0f, 0.5f);
 			ActionSequence alphaFadeSeq = new ActionSequence(alphaIn, alphaDelay, alphaOut);
 
 			ActionParallel phaseAnim = new ActionParallel(rotInOutSeq, rotStallSeq, alphaFadeSeq);
