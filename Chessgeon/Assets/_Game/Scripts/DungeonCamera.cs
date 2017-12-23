@@ -15,7 +15,7 @@ public class DungeonCamera : MonoBehaviour
 
 	// TODO: Make this a scroll sensitivity in options.
 	private float _dragSpeed = 10.0f;
-	private Vector3 _prevFramPos;
+	private Vector2 _prevFramPos;
 	private float _camMinX;
 	private float _camMaxX;
 	private float _camMinZ;
@@ -34,6 +34,9 @@ public class DungeonCamera : MonoBehaviour
 			int cullMaskANDLayerUI = (_dungeonCamera.cullingMask & (1 << LayerMask.NameToLayer(Constants.LAYER_NAME_UI)));
 			Debug.Assert(cullMaskANDLayerUI == 0, "Dungeon Cam should not have UI in it's culling mask.");
 			_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);
+
+			BoardScroller.OnDrag += OnDrag;
+			BoardScroller.OnBeginDrag += OnBeginDrag;
 		}
 		else if (_instance != this)
 		{
@@ -49,27 +52,31 @@ public class DungeonCamera : MonoBehaviour
 		}
 	}
 
-	private void Update()
+	private Vector2 ConvertPointerPosToPercentage(Vector2 inPointerPos)
 	{
-		if (Input.GetMouseButton(0))
-		{
-			Vector3 pos = _dungeonCamera.ScreenToViewportPoint(Input.mousePosition);
-			if (Input.GetMouseButtonDown(0)) _prevFramPos = pos;
+		inPointerPos.x = inPointerPos.x / Screen.width;
+		inPointerPos.y = inPointerPos.y / Screen.height;
 
-			Vector3 diff = _prevFramPos - pos;
-			_prevFramPos = pos;
+		return inPointerPos;
+	}
 
-			if (!_isFocusingOnTile && !_isShaking)
-			{
-				Vector3 move = new Vector3(diff.x * _dragSpeed, 0.0f, diff.y * _dragSpeed);
-				move = _cameraYRotOffset * move;
-				transform.Translate(move, Space.World);
-				RestrictCameraPosition();
-			}
-		}
-		else
+	private void OnBeginDrag(Vector2 inPointerPos)
+	{
+		_prevFramPos = ConvertPointerPosToPercentage(inPointerPos);
+	}
+
+	private void OnDrag(Vector2 inPointerPos)
+	{
+		Vector2 pos = ConvertPointerPosToPercentage(inPointerPos);
+		Vector2 diff = _prevFramPos - pos;
+		_prevFramPos = pos;
+
+		if (!_isFocusingOnTile && !_isShaking)
 		{
-			return;
+			Vector3 move = new Vector3(diff.x * _dragSpeed, 0.0f, diff.y * _dragSpeed);
+			move = _cameraYRotOffset * move;
+			transform.Translate(move, Space.World);
+			RestrictCameraPosition();
 		}
 	}
 
