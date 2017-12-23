@@ -12,7 +12,7 @@ public class DungeonCardDrawer : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 
 	[Header("Canvas UI Elements")]
-	[SerializeField] private RectTransform _cardDrawer = null;
+	[SerializeField] private RectTransform _cardDrawerRectTransform = null;
 	[SerializeField] private Button _cardDrawerBtn = null;
 
 	[Header("Animation Graphs")]
@@ -32,7 +32,7 @@ public class DungeonCardDrawer : MonoBehaviour
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
-			Debug.Assert(_cardDrawer != null, "_cardDrawer is not assigned.");
+			Debug.Assert(_cardDrawerRectTransform != null, "_cardDrawer is not assigned.");
 			Debug.Assert(_cardDrawerBtn != null, "_cardDrawerBtn is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
@@ -75,30 +75,30 @@ public class DungeonCardDrawer : MonoBehaviour
 
 		if (!_instance._cardDrawerAnimPlaying)
 		{
-			Vector2 newAnchorPos = _instance._cardDrawer.anchoredPosition;
-			if (inIsEnabled && _instance._cardDrawer.localPosition.x != ENABLED_X_POS)
+			Vector2 newAnchorPos = _instance._cardDrawerRectTransform.anchoredPosition;
+			if (inIsEnabled && _instance._cardDrawerRectTransform.localPosition.x != ENABLED_X_POS)
 			{
 				newAnchorPos.x = ENABLED_X_POS;
 				if (inIsAnimated)
 				{
 					_instance._cardDrawerAnimPlaying = true;
-					MoveToAnchoredPosAction openDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerBobber);
+					MoveToAnchoredPosAction openDrawer = new MoveToAnchoredPosAction(_instance._cardDrawerRectTransform, newAnchorPos, 0.6f, _instance._cardDrawerBobber);
 					openDrawer.OnActionFinish += onCompleteAnim;
 					ActionHandler.RunAction(openDrawer);
 				}
-				else { _instance._cardDrawer.anchoredPosition = newAnchorPos; }
+				else { _instance._cardDrawerRectTransform.anchoredPosition = newAnchorPos; }
 			}
-			else if (!inIsEnabled && _instance._cardDrawer.localPosition.x != DISABLED_X_POS)
+			else if (!inIsEnabled && _instance._cardDrawerRectTransform.localPosition.x != DISABLED_X_POS)
 			{
 				newAnchorPos.x = DISABLED_X_POS;
 				if (inIsAnimated)
 				{
 					_instance._cardDrawerAnimPlaying = true;
-					MoveToAnchoredPosAction closeDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerDipper);
+					MoveToAnchoredPosAction closeDrawer = new MoveToAnchoredPosAction(_instance._cardDrawerRectTransform, newAnchorPos, 0.6f, _instance._cardDrawerDipper);
 					closeDrawer.OnActionFinish += onCompleteAnim;
 					ActionHandler.RunAction(closeDrawer);
 				}
-				else { _instance._cardDrawer.anchoredPosition = newAnchorPos; }
+				else { _instance._cardDrawerRectTransform.anchoredPosition = newAnchorPos; }
 			}
 		}
 	}
