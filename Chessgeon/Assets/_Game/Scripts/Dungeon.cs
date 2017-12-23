@@ -225,6 +225,10 @@ public class Dungeon : MonoBehaviour
 			public DungeonStatePlayerPhase(DungeonFSM inDungeonFSM)
 			{
 				_dungeonFSM = inDungeonFSM;
+				DungeonCardDrawer.OnPlayerEndTurn.AddListener(() =>
+					{
+						_dungeonFSM.ChangeState(eDungeonState.EnemyPhase);
+					});
 			}
 
 			public override void OnEnterState()
@@ -235,7 +239,7 @@ public class Dungeon : MonoBehaviour
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
-					DungeonDisplay.EnableCardDrawer(true, true, OnJobComplete); });
+					DungeonCardDrawer.EnableCardDrawer(true, true, OnJobComplete); });
 
 				DTJobSequencer startPlayerPhaseSeq = new DTJobSequencer(null, playPhaseAnimJob, enableCardDrawerJob);
 				startPlayerPhaseSeq.ExecuteJobSequence();
@@ -250,8 +254,6 @@ public class Dungeon : MonoBehaviour
 			public override void ExecuteState()
 			{
 				if (_dungeonFSM.Dungeon.MorphyHasReachedStairs) _dungeonFSM.ChangeState(eDungeonState.EndFloor);
-				// TODO: Essentially doing a lot of waiting. Just waiting for the player to hit "end turn".
-				//else if (???) _dungeonFSM.ChangeState(eDungeonState.EnemyPhase);
 			}
 		}
 		private class DungeonStateEnemyPhase : DungeonState
@@ -270,14 +272,17 @@ public class Dungeon : MonoBehaviour
 			public override void ExitState()
 			{
 				// TODO: Any cleanup needed?
+				_delayTimer = 0.0f;
 			}
 
+			float _delayTimer = 0.0f;
 			public override void ExecuteState()
 			{
 				// TODO: Iterate through all enemies and process each of their turns.
 				//		 Prob just call on EnemyManager.processNextEnemy or smt like that.
 				//		 Prefably have the waiting be done on this FSM side and not EnemyManager.
-				_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+				_delayTimer += Time.deltaTime;
+				if (_delayTimer >= 2.5f) _dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
 				
 				// TODO: If the player is killed, immediately transition to the GameOverState.
 			}

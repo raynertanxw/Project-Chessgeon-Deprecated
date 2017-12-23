@@ -17,12 +17,6 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Text _phaseBannerTextTop = null;
 	[SerializeField] private Text _phaseBannerTextBtm = null;
 
-	[SerializeField] private RectTransform _cardDrawer = null;
-
-	[Header("Animation Graphs")]
-	[SerializeField] private AnimationCurve _cardDrawerBobber = null;
-	[SerializeField] private AnimationCurve _cardDrawerDipper = null;
-
 	Graph InverseSmoothStep;
 
 	private void Awake()
@@ -42,12 +36,9 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_phaseBannerTextTop != null, "_phaseBannerTextTop is not assigned.");
 			Debug.Assert(_phaseBannerTextBtm != null, "_phaseBannerTextBtm is not assigned.");
 
-			Debug.Assert(_cardDrawer != null, "_cardDrawer is not assigned.");
-
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
 			SetDarkOverlayVisible(false);
-			EnableCardDrawer(false, false);
 
 			InverseSmoothStep = new Graph((float _x) =>
 			{
@@ -153,48 +144,6 @@ public class DungeonDisplay : MonoBehaviour
 			if (inOnComplete != null) phaseAnim.OnActionFinish += () => { inOnComplete(); };
 
 			ActionHandler.RunAction(phaseAnim);
-		}
-	}
-
-	private bool _cardDrawerAnimPlaying = false;
-	public static void EnableCardDrawer(bool inIsEnabled, bool inIsAnimated = true, OnJobComplete inOnComplete = null)
-	{
-		const float ENABLED_X_POS = -200.0f;
-		const float DISABLED_X_POS = -1300.0f;
-
-		Action.OnActionEndDelegate onCompleteAnim = () =>
-		{
-			_instance._cardDrawerAnimPlaying = false;
-			if (inOnComplete != null) inOnComplete();
-		};
-
-		if (!_instance._cardDrawerAnimPlaying)
-		{
-			Vector2 newAnchorPos = _instance._cardDrawer.anchoredPosition;
-			if (inIsEnabled && _instance._cardDrawer.localPosition.x != ENABLED_X_POS)
-			{
-				newAnchorPos.x = ENABLED_X_POS;
-				if (inIsAnimated)
-				{
-					_instance._cardDrawerAnimPlaying = true;
-					MoveToAnchoredPosAction openDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerBobber);
-					openDrawer.OnActionFinish += onCompleteAnim;
-					ActionHandler.RunAction(openDrawer);
-				}
-				else { _instance._cardDrawer.anchoredPosition = newAnchorPos; }
-			}
-			else if (!inIsEnabled && _instance._cardDrawer.localPosition.x != DISABLED_X_POS)
-			{
-				newAnchorPos.x = DISABLED_X_POS;
-				if (inIsAnimated)
-				{
-					_instance._cardDrawerAnimPlaying = true;
-					MoveToAnchoredPosAction closeDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerDipper);
-					closeDrawer.OnActionFinish += onCompleteAnim;
-					ActionHandler.RunAction(closeDrawer);
-				}
-				else { _instance._cardDrawer.anchoredPosition = newAnchorPos; }
-			}
 		}
 	}
 }
