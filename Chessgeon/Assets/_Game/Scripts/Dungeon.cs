@@ -174,11 +174,11 @@ public class Dungeon : MonoBehaviour
 				DTJob camFocusPlayer = new DTJob((OnComplete) =>
 				{
 					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnComplete);
-				});
-				DTJobSequencer focusStairsAndPlayerSeq = new DTJobSequencer(
+				}, camFocusStairs);
+				DTJobList focusStairsAndPlayer = new DTJobList(
 					() => { _finishedAnims = true; },
-					camFocusStairs, camFocusPlayer);
-				focusStairsAndPlayerSeq.ExecuteJobSequence();
+					camFocusPlayer);
+				focusStairsAndPlayer.ExecuteAllJobs();
 			}
 
 			public override void ExitState()
@@ -239,10 +239,11 @@ public class Dungeon : MonoBehaviour
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
-					DungeonCardDrawer.EnableCardDrawer(true, true, OnJobComplete); });
+					DungeonCardDrawer.EnableCardDrawer(true, true, OnJobComplete); },
+					playPhaseAnimJob);
 
-				DTJobSequencer startPlayerPhaseSeq = new DTJobSequencer(null, playPhaseAnimJob, enableCardDrawerJob);
-				startPlayerPhaseSeq.ExecuteJobSequence();
+				DTJobList startPlayerPhase = new DTJobList(null, enableCardDrawerJob);
+				startPlayerPhase.ExecuteAllJobs();
 			}
 
 			public override void ExitState()
