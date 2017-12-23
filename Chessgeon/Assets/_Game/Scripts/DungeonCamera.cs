@@ -99,8 +99,8 @@ public class DungeonCamera : MonoBehaviour
 		_camMaxZ = _dungeon.CurrentFloor.Size.y - 9.5f;
 	}
 
-	public static void FocusCameraToTile(Vector2Int inPos, float inDuration) { FocusCameraToTile(inPos.x, inPos.y, inDuration); }
-	public static void FocusCameraToTile(int inX, int inY, float inDuration)
+	public static void FocusCameraToTile(Vector2Int inPos, float inDuration, OnJobComplete inOnComplete = null) { FocusCameraToTile(inPos.x, inPos.y, inDuration, inOnComplete); }
+	public static void FocusCameraToTile(int inX, int inY, float inDuration, OnJobComplete inOnComplete = null)
 	{
 		// Note: Assumes that the y and x euler degrees are acute angles.
 		Vector3 tileTransformPos = _instance._dungeon.TileManager.GetTileTransformPosition(inX, inY);
@@ -115,7 +115,11 @@ public class DungeonCamera : MonoBehaviour
 
 		MoveToAction moveToFocus = new MoveToAction(_instance.transform, Graph.SmoothStep, targetPos, inDuration);
 		moveToFocus.OnActionStart += () => { _instance._isFocusingOnTile = true; };
-		moveToFocus.OnActionFinish += () => { _instance._isFocusingOnTile = false; };
+		moveToFocus.OnActionFinish += () =>
+		{
+			_instance._isFocusingOnTile = false;
+			if (inOnComplete != null) inOnComplete();
+		};
 		ActionHandler.RunAction(moveToFocus);
 	}
 

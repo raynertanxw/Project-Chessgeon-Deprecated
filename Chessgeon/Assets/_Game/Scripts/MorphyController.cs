@@ -8,6 +8,7 @@ public class MorphyController : MonoBehaviour
 	[SerializeField] private GameObject _prefabMorphy = null;
 	[SerializeField] private Dungeon _dungeon = null;
 	public Dungeon Dungeon { get { return _dungeon; } }
+	public Vector2Int MorphyPos { get { return _morphy.Pos; } }
 
 	public UnityEvent OnMorphyReachStairs = new UnityEvent();
 	private Morphy _morphy = null;

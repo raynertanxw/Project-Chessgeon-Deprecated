@@ -167,21 +167,30 @@ public class Dungeon : MonoBehaviour
 			{
 				// TODO: MoveTo the camera to the player's location.
 				//		 Then move to the stairs, and then move back to player?
-				DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.StairsPos, 2.0f);
+				DTJob camFocusStairs = new DTJob((OnComplete) =>
+				{
+					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.StairsPos, 2.0f, OnComplete);
+				});
+				DTJob camFocusPlayer = new DTJob((OnComplete) =>
+				{
+					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnComplete);
+				});
+				DTJobSequencer focusStairsAndPlayerSeq = new DTJobSequencer(
+					() => { _finishedAnims = true; },
+					camFocusStairs, camFocusPlayer);
+				focusStairsAndPlayerSeq.ExecuteJobSequence();
 			}
 
 			public override void ExitState()
 			{
 				// TODO: Any cleanup needed?
-				delayTimer = 0.0f;
+				_finishedAnims = false;
 			}
 
-			float delayTimer = 0.0f;
+			bool _finishedAnims = false;
 			public override void ExecuteState()
 			{
-				delayTimer += Time.deltaTime;
-				// TODO: Check if above animation is done already, once done can transition.
-				if (delayTimer >= 2.0f) _dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+				if (_finishedAnims) _dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
 			}
 		}
 
