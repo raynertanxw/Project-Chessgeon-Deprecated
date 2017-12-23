@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using DaburuTools;
 
 public class Dungeon : MonoBehaviour
 {
@@ -222,8 +223,13 @@ public class Dungeon : MonoBehaviour
 				// TODO: Do the animation for indicating start of player phase.
 				//		 And draw cards for the player.
 				_dungeonFSM._dungeon._isPlayersTurn = true;
-				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn);
-				DungeonDisplay.EnableCardDrawer(true);
+				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
+					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
+				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
+					DungeonDisplay.EnableCardDrawer(true, true, OnJobComplete); });
+
+				DTJobSequencer startPlayerPhaseSeq = new DTJobSequencer(null, playPhaseAnimJob, enableCardDrawerJob);
+				startPlayerPhaseSeq.ExecuteJobSequence();
 			}
 
 			public override void ExitState()

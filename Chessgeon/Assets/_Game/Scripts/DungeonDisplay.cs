@@ -87,7 +87,7 @@ public class DungeonDisplay : MonoBehaviour
 	}
 
 	private bool _phaseAnimPlaying = false;
-	public static void PlayPhaseAnimation(bool inIsPlayersTurn)
+	public static void PlayPhaseAnimation(bool inIsPlayersTurn, OnJobComplete inOnComplete = null)
 	{
 		if (_instance._phaseAnimPlaying)
 		{
@@ -149,15 +149,24 @@ public class DungeonDisplay : MonoBehaviour
 			ImageAlphaToAction alphaOut = new ImageAlphaToAction(_instance._darkOverlay, Graph.Linear, 0.0f, 0.5f);
 			ActionSequence alphaFadeSeq = new ActionSequence(alphaIn, alphaDelay, alphaOut);
 
-			ActionHandler.RunAction(rotInOutSeq, rotStallSeq, alphaFadeSeq);
+			ActionParallel phaseAnim = new ActionParallel(rotInOutSeq, rotStallSeq, alphaFadeSeq);
+			if (inOnComplete != null) phaseAnim.OnActionFinish += () => { inOnComplete(); };
+
+			ActionHandler.RunAction(phaseAnim);
 		}
 	}
 
 	private bool _cardDrawerAnimPlaying = false;
-	public static void EnableCardDrawer(bool inIsEnabled, bool inIsAnimated = true)
+	public static void EnableCardDrawer(bool inIsEnabled, bool inIsAnimated = true, OnJobComplete inOnComplete = null)
 	{
 		const float ENABLED_X_POS = -200.0f;
 		const float DISABLED_X_POS = -1300.0f;
+
+		Action.OnActionEndDelegate onCompleteAnim = () =>
+		{
+			_instance._cardDrawerAnimPlaying = false;
+			if (inOnComplete != null) inOnComplete();
+		};
 
 		if (!_instance._cardDrawerAnimPlaying)
 		{
@@ -169,7 +178,7 @@ public class DungeonDisplay : MonoBehaviour
 				{
 					_instance._cardDrawerAnimPlaying = true;
 					MoveToAnchoredPosAction openDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerBobber);
-					openDrawer.OnActionFinish += () => { _instance._cardDrawerAnimPlaying = false; };
+					openDrawer.OnActionFinish += onCompleteAnim;
 					ActionHandler.RunAction(openDrawer);
 				}
 				else { _instance._cardDrawer.anchoredPosition = newAnchorPos; }
@@ -181,7 +190,7 @@ public class DungeonDisplay : MonoBehaviour
 				{
 					_instance._cardDrawerAnimPlaying = true;
 					MoveToAnchoredPosAction closeDrawer = new MoveToAnchoredPosAction(_instance._cardDrawer, newAnchorPos, 0.6f, _instance._cardDrawerDipper);
-					closeDrawer.OnActionFinish += () => { _instance._cardDrawerAnimPlaying = false; };
+					closeDrawer.OnActionFinish += onCompleteAnim;
 					ActionHandler.RunAction(closeDrawer);
 				}
 				else { _instance._cardDrawer.anchoredPosition = newAnchorPos; }
