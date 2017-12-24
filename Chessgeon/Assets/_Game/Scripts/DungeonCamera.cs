@@ -100,7 +100,7 @@ public class DungeonCamera : MonoBehaviour
 	private void CalcCameraBounds()
 	{
 		_camMinX = -5.5f;
-		_camMinZ = -5.5f;
+		_camMinZ = -10.5f;
 
 		_camMaxX = _dungeon.CurrentFloor.Size.x - 4.5f;
 		_camMaxZ = _dungeon.CurrentFloor.Size.y - 9.5f;
