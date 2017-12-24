@@ -18,6 +18,8 @@ public class BoardScroller : MonoBehaviour
 		if (_instance == null)
 		{
 			_instance = this;
+
+			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(DaburuTools.Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 		}
 		else if (_instance != this)
 		{
