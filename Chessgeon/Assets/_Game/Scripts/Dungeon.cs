@@ -54,16 +54,6 @@ public class Dungeon : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.R)) StartGame(); // TODO: Remove this temp debug functionality.
-
-		// TODO: Remove this temp debug functionality.
-		if (Input.GetKeyDown(KeyCode.Alpha0)) _morphyController.TransformBackToMorphy();
-		else if (Input.GetKeyDown(KeyCode.Alpha1)) _morphyController.MorphTo(eMoveType.Pawn);
-		else if (Input.GetKeyDown(KeyCode.Alpha2)) _morphyController.MorphTo(eMoveType.Rook);
-		else if (Input.GetKeyDown(KeyCode.Alpha3)) _morphyController.MorphTo(eMoveType.Bishop);
-		else if (Input.GetKeyDown(KeyCode.Alpha4)) _morphyController.MorphTo(eMoveType.Knight);
-		else if (Input.GetKeyDown(KeyCode.Alpha5)) _morphyController.MorphTo(eMoveType.King);
-
 		if (HasGameStarted)
 		{
 			_dungeonFSM.Execute();

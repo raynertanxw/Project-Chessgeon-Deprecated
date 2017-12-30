@@ -28,6 +28,7 @@ public class Card : MonoBehaviour
 	private RectTransform _cardRectTransform = null;
 	private MeshRenderer _cardMeshRen = null;
 	private CardManager _cardManager = null;
+	private int _cardIndex = -1;
 
 	private Vector3 _originLocalPos;
 	private float _originZ;
@@ -44,6 +45,9 @@ public class Card : MonoBehaviour
 	private const float TILT_INTERTIA_DRAG = 5.0f; 
 	private const float MAX_TILT = 35.0f;
 
+	public delegate void CardExecutionAction(int inCardIndex);
+	public CardExecutionAction OnCardExecute = null;
+
 	private void Awake()
 	{
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
@@ -56,6 +60,11 @@ public class Card : MonoBehaviour
 		_desiredCardLocalPos = _cardRectTransform.localPosition;
 		_originLocalPos = _cardRectTransform.localPosition;
 		_originZ = _cardRectTransform.localPosition.z;
+	}
+
+	public void SetCardIndex(int inIndex)
+	{
+		_cardIndex = inIndex;
 	}
 
 	private void Update()
@@ -83,6 +92,12 @@ public class Card : MonoBehaviour
 
 		_desiredCardLocalPos = _originLocalPos;
 		_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
+
+		PointerEventData ptrEventData = (PointerEventData)data;
+		if (ptrEventData.position.y > Screen.height / 2.0f) // If released in top half of screen.
+		{
+			if (OnCardExecute != null) OnCardExecute(_cardIndex);
+		}
 	}
 
 	public void EventTriggerOnDrag(BaseEventData data)
