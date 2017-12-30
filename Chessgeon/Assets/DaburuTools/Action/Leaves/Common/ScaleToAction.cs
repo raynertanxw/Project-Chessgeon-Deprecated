@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class ScaleToAction : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		Vector3 _vecDesiredScale;
 		float _actionDuration;
 
 		Vector3 _vecInitialScale;
 		float _elapsedDuration;
 
-		public ScaleToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredScale, float inActionDuration)
+		public ScaleToAction(Transform inTransform, Vector3 inDesiredScale, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredScale(inDesiredScale);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public ScaleToAction(Transform inTransform, Vector3 inDesiredScale, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredScale(inDesiredScale);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inAnimCurve;
 		}
 		public void SetDesiredScale(Vector3 inNewDesiredScale)
 		{
@@ -70,7 +70,9 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_transform.localScale = Vector3.LerpUnclamped(_vecInitialScale, _vecDesiredScale, t);
 
 			// Remove self after action is finished.

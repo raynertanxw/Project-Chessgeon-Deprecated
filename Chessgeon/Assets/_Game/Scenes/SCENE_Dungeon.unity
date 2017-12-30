@@ -3262,7 +3262,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1454064982}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 12.42, y: -2.6, z: 0}
+  m_LocalPosition: {x: 12.42, y: -2.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1554979926}
@@ -3271,7 +3271,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 12.42, y: -2.6}
+  m_AnchoredPosition: {x: 12.42, y: -2.7}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1454064984
@@ -3444,6 +3444,9 @@ MonoBehaviour:
   _dungeon: {fileID: 1426320895}
   _cardManager: {fileID: 286948805}
   _cardDrawerRectTransform: {fileID: 1523680074}
+  _endTurnBtnMesh: {fileID: 376370945}
+  _hideDrawerBtnMesh: {fileID: 1082432239}
+  _showDrawerBtnMesh: {fileID: 1454064983}
   _endTurnBtn: {fileID: 1524798520}
   _hideDrawerBtn: {fileID: 897683156}
   _showDrawerBtn: {fileID: 1554979927}
@@ -3483,6 +3486,54 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0.2602217
       value: -0.046950713
+      inSlope: 0.19544736
+      outSlope: 0.19544736
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  _bigBobber:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.66
+      value: 1.5
+      inSlope: 0.017891359
+      outSlope: 0.017891359
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0.010322206
+      outSlope: 0.010322206
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  _bigDipper:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: -0.5392291
+      outSlope: -0.5392291
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.33
+      value: -0.5
       inSlope: 0.19544736
       outSlope: 0.19544736
       tangentMode: 0
@@ -3576,7 +3627,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1523680073}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -640, y: -510, z: 2000}
+  m_LocalPosition: {x: -640, y: -520, z: 2000}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_Children:
   - {fileID: 376370945}
@@ -3588,7 +3639,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -100, y: 450}
+  m_AnchoredPosition: {x: -100, y: 440}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1523680075
