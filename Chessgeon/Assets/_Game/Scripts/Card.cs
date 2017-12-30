@@ -4,14 +4,30 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public enum eCardTier { Normal, Silver, Gold }
-public enum eCardType { Movement, Joker, Duplicate, Smash, Draw, Shield }
+public enum eCardType { Joker, Duplicate, Smash, Draw, Shield, Movement } // Movement needs to be last for calculations.
+
+public struct CardData
+{
+	public eCardTier cardTier;
+	public eCardType cardType;
+	public eMoveType cardMoveType;
+
+	public CardData(eCardTier inCardTier, eCardType inCardType, eMoveType inMoveType = eMoveType.Pawn)
+	{
+		cardTier = inCardTier;
+		cardType = inCardType;
+		cardMoveType = inMoveType;
+	}
+}
 
 public class Card : MonoBehaviour
 {
-	// TODO: Card types and attributes.
+	private CardData _cardData;
+	public CardData CardData { get { return _cardData; } }
 
 	private RectTransform _cardRectTransform = null;
 	private MeshRenderer _cardMeshRen = null;
+	private CardManager _cardManager = null;
 
 	private Vector3 _originLocalPos;
 	private float _originZ;
@@ -32,6 +48,7 @@ public class Card : MonoBehaviour
 	{
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
 		_cardMeshRen = gameObject.GetComponent<MeshRenderer>();
+		_cardManager = transform.parent.GetComponent<CardManager>();
 	}
 
 	private void Start()
@@ -84,5 +101,21 @@ public class Card : MonoBehaviour
 		_tiltIntertia += tiltIntertiaDelta;
 		_tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
+	}
+
+	public void SetCard(eCardTier inCardTier, eCardType inCardType, eMoveType inMoveType = eMoveType.Pawn)
+	{
+		SetCard(new CardData(inCardTier, inCardType, inMoveType));
+	}
+	public void SetCard(CardData inCardData)
+	{
+		_cardData = inCardData;
+
+		SetCardTexture();
+	}
+
+	private void SetCardTexture()
+	{
+		_cardMeshRen.material.SetTexture("_MainTex", _cardManager.GetCardTexture(_cardData.cardTier, _cardData.cardType, _cardData.cardMoveType));
 	}
 }

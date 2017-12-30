@@ -10,6 +10,7 @@ public class DungeonCardDrawer : MonoBehaviour
 	private static DungeonCardDrawer _instance = null;
 
 	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private CardManager _cardManager = null;
 
 	[Header("Canvas UI Elements")]
 	[SerializeField] private RectTransform _cardDrawerRectTransform = null;
@@ -31,6 +32,7 @@ public class DungeonCardDrawer : MonoBehaviour
 			Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
+			Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
 
 			Debug.Assert(_cardDrawerRectTransform != null, "_cardDrawer is not assigned.");
 			Debug.Assert(_cardDrawerBtn != null, "_cardDrawerBtn is not assigned.");

@@ -784,8 +784,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 286948804}
+  - component: {fileID: 286948805}
   m_Layer: 5
-  m_Name: Cards Anchor
+  m_Name: Card Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -817,6 +818,48 @@ RectTransform:
   m_AnchoredPosition: {x: 5.8, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &286948805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 286948803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad51ff0012cfbd6478657be55b162bfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cardTextures:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 2800000, guid: 01c81ea8ef1f4e44d89f6e26e6ee9ff3, type: 3}
+  - {fileID: 2800000, guid: 3791907f264121f47a82db032e8aaacd, type: 3}
+  - {fileID: 2800000, guid: 683e132ea47c4bf4ea3189212ad78bf5, type: 3}
+  - {fileID: 2800000, guid: fb5bedd1ce6d8db47ac1d1dde6836f96, type: 3}
+  - {fileID: 2800000, guid: 04109e7f5a7c71a408c5c35635c60eec, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &376370944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2985,6 +3028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dungeon: {fileID: 1426320895}
+  _cardManager: {fileID: 286948805}
   _cardDrawerRectTransform: {fileID: 1523680074}
   _cardDrawerBtn: {fileID: 1524798520}
   _cardDrawerBobber:
