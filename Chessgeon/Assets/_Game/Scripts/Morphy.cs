@@ -118,7 +118,7 @@ public class Morphy : MonoBehaviour
 		// TODO: Set all the health, stats, etc here?
 	}
 
-	public void MoveTo(Vector2Int inTargetPos)
+	public void MoveTo(Vector2Int inTargetPos, Action.OnActionEndDelegate inOnCompleteAction = null)
 	{
 		_pos = inTargetPos;
 		Vector3 targetTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
@@ -126,10 +126,11 @@ public class Morphy : MonoBehaviour
 		MoveToAction moveToTarget = new MoveToAction(this.transform, Graph.SmoothStep, targetTransformPos, moveDuration);
 		ActionAfterDelay moveAfterDelay = new ActionAfterDelay(moveToTarget, 0.1f);
 		moveAfterDelay.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveDuration); };
+		if (inOnCompleteAction != null) moveAfterDelay.OnActionFinish += inOnCompleteAction;
 		ActionHandler.RunAction(moveAfterDelay);
 	}
 
-	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy)
+	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy, Action.OnActionEndDelegate inOnCompleteAction = null)
 	{
 		_pos = inTargetPos;
 		Vector3 enemyTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
@@ -148,6 +149,7 @@ public class Morphy : MonoBehaviour
 		slamDown.OnActionFinish += () => { DungeonCamera.CameraShake(15, 0.5f, 0.2f); };
 		ActionSequence attackSeq = new ActionSequence(moveUp, new DelayAction(0.15f), slamDown);
 		attackSeq.OnActionFinish += inTargetEnemy.Kill;
+		if (inOnCompleteAction != null) attackSeq.OnActionFinish += inOnCompleteAction;
 		ActionHandler.RunAction(attackSeq);
 	}
 }

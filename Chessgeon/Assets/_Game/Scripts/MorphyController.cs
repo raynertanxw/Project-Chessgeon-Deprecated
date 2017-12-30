@@ -15,6 +15,7 @@ public class MorphyController : MonoBehaviour
 
 	private MorphyStratergy[] _stratergies = null;
 	private MorphyStratergy _currentStratergy = null;
+	private int _numMovesLeft = -1;
 
 	private void Awake()
 	{
@@ -43,20 +44,25 @@ public class MorphyController : MonoBehaviour
 		_morphy.SpawnAt(_dungeon.CurrentFloor.MorphyPos);
 	}
 
-	public void MorphTo(eMoveType inType)
+	public void MorphTo(eMoveType inType, int inNumMoves)
 	{
-		_currentStratergy = _stratergies[(int)inType];
+		_numMovesLeft = inNumMoves;
 		_morphy.SetType(inType);
 
+		CalcAndShowPossibleMoves();
+	}
+
+	private void CalcAndShowPossibleMoves()
+	{
+		_currentStratergy = _stratergies[(int)_morphy.CurrentType];
 		ShowPossibleMoves();
 	}
 
-	public void TransformBackToMorphy()
+	private void TransformBackToMorphy()
 	{
 		_currentStratergy = _stratergies[5]; // 5 is for MorphyStratergyMorphy.
 		_morphy.TransformBackToMorphy();
-
-		ShowPossibleMoves();
+		_dungeon.TileManager.HideAllSelectableTiles();
 	}
 
 	private void ShowPossibleMoves()
@@ -70,12 +76,28 @@ public class MorphyController : MonoBehaviour
 		else
 		{
 			// TODO: Deal with case when there are no possible spaces to move.
+			Debug.LogWarning("No Possible Moves.");
 		}
 	}
 
 	private void MoveTo(Vector2Int inTargetPos)
 	{
 		Debug.Assert(_dungeon.CurrentFloor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
+
+		_numMovesLeft--;
+		DaburuTools.Action.OnActionEndDelegate onFinishMove;
+		if (_numMovesLeft > 0)
+		{
+			onFinishMove = () => { CalcAndShowPossibleMoves(); };
+		}
+		else
+		{
+			onFinishMove = () =>
+			{
+				TransformBackToMorphy();
+				DungeonCardDrawer.EnableCardDrawer(true);
+			};
+		}
 
 		if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
 		{
@@ -85,11 +107,11 @@ public class MorphyController : MonoBehaviour
 		{
 			Enemy targetEnemy = _dungeon.CurrentFloor.GetEnemyAt(inTargetPos);
 			Debug.Assert(targetEnemy != null, "There is no enemy at " + inTargetPos);
-			_morphy.MoveAndAttack(inTargetPos, targetEnemy);
+			_morphy.MoveAndAttack(inTargetPos, targetEnemy, onFinishMove);
 		}
 		else
 		{
-			_morphy.MoveTo(inTargetPos);
+			_morphy.MoveTo(inTargetPos, onFinishMove);
 		}
 
 		_dungeon.CurrentFloor.MoveMorphyTo(inTargetPos);

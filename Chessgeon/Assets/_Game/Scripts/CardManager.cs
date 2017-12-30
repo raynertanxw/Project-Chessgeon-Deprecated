@@ -90,15 +90,24 @@ public class CardManager : MonoBehaviour
 		{
 			case eCardType.Movement:
 			{
-				// TODO: Factor in the tier.
-				_dungeon.MorphyController.MorphTo(cardData.cardMoveType);
+				int numMoves = -1;
+				switch (cardData.cardTier)
+				{
+					case eCardTier.Normal: numMoves = 1; break;
+					case eCardTier.Silver: numMoves = 2; break;
+					case eCardTier.Gold: numMoves = 3; break;
+					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+				}
+				_dungeon.MorphyController.MorphTo(cardData.cardMoveType, numMoves);
 				break;
 			}
 			default:
 			{
-				Debug.LogWarning("case: " + cardData.cardType.ToString() + "has not been handled.");
+				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
 				break;
 			}
 		}
+
+		DungeonCardDrawer.EnableCardDrawer(false);
 	}
 }
