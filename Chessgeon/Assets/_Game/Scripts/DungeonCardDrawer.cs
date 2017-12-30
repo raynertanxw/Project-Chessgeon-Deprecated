@@ -137,7 +137,7 @@ public class DungeonCardDrawer : MonoBehaviour
 				MoveToAnchoredPosAction animateDrawerMove = new MoveToAnchoredPosAction(
 					_instance._cardDrawerRectTransform,
 					newAnchorPos,
-					0.6f,
+					inIsEnabled ? 0.6f : 0.3f,
 					inIsEnabled ? _instance._cardDrawerBobber : _instance._cardDrawerDipper);
 
 				const float BTN_SCALE_ANIM_TIME = 0.25f;
