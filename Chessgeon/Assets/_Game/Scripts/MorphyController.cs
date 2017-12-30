@@ -43,11 +43,24 @@ public class MorphyController : MonoBehaviour
 		_morphy.SpawnAt(_dungeon.CurrentFloor.MorphyPos);
 	}
 
-	public void MorphTo(Morphy.eType inType)
+	public void MorphTo(eMoveType inType)
 	{
 		_currentStratergy = _stratergies[(int)inType];
 		_morphy.SetType(inType);
 
+		ShowPossibleMoves();
+	}
+
+	public void TransformBackToMorphy()
+	{
+		_currentStratergy = _stratergies[5]; // 5 is for MorphyStratergyMorphy.
+		_morphy.TransformBackToMorphy();
+
+		ShowPossibleMoves();
+	}
+
+	private void ShowPossibleMoves()
+	{
 		_dungeon.TileManager.HideAllSelectableTiles();
 		Vector2Int[] possibleMoves = _currentStratergy.CalcPossibleMoves(_morphy.Pos, _dungeon.CurrentFloor);
 		if (possibleMoves.Length > 0)

@@ -5,8 +5,6 @@ using DaburuTools;
 
 public class Morphy : MonoBehaviour
 {
-	public enum eType { Pawn, Rook, Bishop, Knight, King, Morphy }
-
 	[SerializeField] private Mesh _meshMorphy = null;
 	[SerializeField] private Mesh _meshPiecePawn = null;
 	[SerializeField] private Mesh _meshPieceRook = null;
@@ -21,8 +19,8 @@ public class Morphy : MonoBehaviour
 
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
-	private eType _currentType;
-	public eType CurrentType { get { return _currentType; } }
+	private eMoveType _currentType;
+	public eMoveType CurrentType { get { return _currentType; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
 
@@ -41,7 +39,7 @@ public class Morphy : MonoBehaviour
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
 
-		SetType(eType.Morphy);
+		TransformBackToMorphy();
 	}
 
 	public void Initialise(MorphyController inMorphyController)
@@ -57,41 +55,36 @@ public class Morphy : MonoBehaviour
 		}
 	}
 
-	public void SetType(eType inType)
+	public void SetType(eMoveType inType)
 	{
 		_meshRenderer.material.SetColor("_Color", Color.green);
 		_currentType = inType;
 
 		switch(inType)
 		{
-			case eType.Pawn:
+			case eMoveType.Pawn:
 			{
 				_meshFilter.mesh = _meshPiecePawn;
 				break;
 			}
-			case eType.Rook:
+			case eMoveType.Rook:
 			{
 				_meshFilter.mesh = _meshPieceRook;
 				break;
 			}
-			case eType.Bishop:
+			case eMoveType.Bishop:
 			{
 				_meshFilter.mesh = _meshPieceBishop;
 				break;
 			}
-			case eType.Knight:
+			case eMoveType.Knight:
 			{
 				_meshFilter.mesh = _meshPieceKnight;
 				break;
 			}
-			case eType.King:
+			case eMoveType.King:
 			{
 				_meshFilter.mesh = _meshPieceKing;
-				break;
-			}
-			case eType.Morphy:
-			{
-				_meshFilter.mesh = _meshMorphy;
 				break;
 			}
 			default:
@@ -100,6 +93,12 @@ public class Morphy : MonoBehaviour
 				break;
 			}
 		}
+	}
+
+	public void TransformBackToMorphy()
+	{
+		_meshRenderer.material.SetColor("_Color", Color.green);
+		_meshFilter.mesh = _meshMorphy;
 	}
 
 	public void Hide()
@@ -115,7 +114,7 @@ public class Morphy : MonoBehaviour
 		transform.position = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
 
-		SetType(eType.Morphy);
+		TransformBackToMorphy();
 		// TODO: Set all the health, stats, etc here?
 	}
 

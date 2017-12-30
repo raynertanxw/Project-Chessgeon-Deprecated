@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum eMoveType { Pawn, Rook, Bishop, Knight, King }
 public class Floor
 {
 	public enum eTileState { Empty, Stairs, Blocked, Enemy, Morphy };

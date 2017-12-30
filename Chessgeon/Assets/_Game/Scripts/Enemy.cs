@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	public enum eType { Pawn, Rook, Bishop, Knight, King }
 	public enum eElement { Basic }
 
 	[SerializeField] private Mesh _meshPiecePawn = null;
@@ -20,8 +19,8 @@ public class Enemy : MonoBehaviour
 	private bool _isInitialised = false;
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
-	private eType _type = eType.Pawn;
-	public eType Type { get { return _type; } }
+	private eMoveType _type = eMoveType.Pawn;
+	public eMoveType Type { get { return _type; } }
 	private eElement _element = eElement.Basic;
 	public eElement Element { get { return _element; } }
 	private Vector2Int _pos;
@@ -54,39 +53,39 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	public void SetEnemy(eType inType, eElement inElement)
+	public void SetEnemy(eMoveType inType, eElement inElement)
 	{
 		SetEnemyElement(inElement);
 		SetEnemyType(inType);
 	}
 
-	public void SetEnemyType(eType inType)
+	public void SetEnemyType(eMoveType inType)
 	{
 		_type = inType;
 
 		switch (inType)
 		{
-			case eType.Pawn:
+			case eMoveType.Pawn:
 			{
 				_meshFilter.mesh = _meshPiecePawn;
 				break;
 			}
-			case eType.Rook:
+			case eMoveType.Rook:
 			{
 				_meshFilter.mesh = _meshPieceRook;
 				break;
 			}
-			case eType.Bishop:
+			case eMoveType.Bishop:
 			{
 				_meshFilter.mesh = _meshPieceBishop;
 				break;
 			}
-			case eType.Knight:
+			case eMoveType.Knight:
 			{
 				_meshFilter.mesh = _meshPieceKnight;
 				break;
 			}
-			case eType.King:
+			case eMoveType.King:
 			{
 				_meshFilter.mesh = _meshPieceKing;
 				break;

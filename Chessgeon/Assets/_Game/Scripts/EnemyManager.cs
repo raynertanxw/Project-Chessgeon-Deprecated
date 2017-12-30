@@ -32,7 +32,7 @@ public class EnemyManager : MonoBehaviour
 
 	public Enemy SpawnEnemyAt(Vector2Int inSpawnPos)
     {
-        Enemy.eType enemyType = (Enemy.eType)Random.Range(0, 5);
+        eMoveType enemyType = (eMoveType)Random.Range(0, 5);
 
         Enemy currentEnemy = null;
         for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)

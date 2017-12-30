@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+public enum eCardTier { Normal, Silver, Gold }
+public enum eCardType { Movement, Joker, Duplicate, Smash, Draw, Shield }
+
 public class Card : MonoBehaviour
 {
 	// TODO: Card types and attributes.
 
-	private Vector3 _originLocalPos;
 	private RectTransform _cardRectTransform = null;
+	private MeshRenderer _cardMeshRen = null;
+
+	private Vector3 _originLocalPos;
 	private float _originZ;
 
 	private Vector3 _desiredCardLocalPos;
@@ -26,6 +31,7 @@ public class Card : MonoBehaviour
 	private void Awake()
 	{
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
+		_cardMeshRen = gameObject.GetComponent<MeshRenderer>();
 	}
 
 	private void Start()
