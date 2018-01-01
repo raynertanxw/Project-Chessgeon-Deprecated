@@ -303,4 +303,69 @@ public class Dungeon : MonoBehaviour
 		#endregion
 	}
 	#endregion
+
+	#region AStarDebug
+	private LinkedList<Node> _debugPath = null;
+	private eMoveType _debugMoveType = eMoveType.Knight;
+	private void OnDrawGizmos()
+	{
+		if (!_hasGameStarted)
+			return;
+
+		Gizmos.color = Color.grey;
+		for (int x = 0; x < CurrentFloor.Size.x; x++)
+		{
+			for (int y = 0; y < CurrentFloor.Size.y; y++)
+			{
+				switch(CurrentFloor.Nodes[x, y].State)
+				{
+					case Floor.eTileState.Empty: Gizmos.color = Color.gray; break;
+					case Floor.eTileState.Stairs: Gizmos.color = Color.cyan; break;
+					case Floor.eTileState.Blocked: Gizmos.color = Color.red; break;
+					case Floor.eTileState.Enemy: Gizmos.color = new Color (1.0f, 0.0f, 1.0f); break;
+					case Floor.eTileState.Morphy: Gizmos.color = Color.green; break;
+					default: Gizmos.color = Color.magenta; break;
+				}
+
+				Gizmos.DrawCube(TileManager.GetTileTransformPosition(new Vector2Int(x, y)) + Vector3.up * 3.0f, Vector3.one * 0.5f);
+			}
+		}
+
+		bool needRecalc = false;
+		if (_debugPath == null) needRecalc = true;
+		if (needRecalc)
+		{
+			Enemy firstEnemy = null;
+			for (int x = 0; x < CurrentFloor.Size.x; x++)
+			{
+				for (int y = 0; y < CurrentFloor.Size.y; y++)
+				{
+					if (CurrentFloor.IsTileOfState(x, y, Floor.eTileState.Enemy))
+					{
+						firstEnemy = CurrentFloor.GetEnemyAt(x, y);
+						break;
+					}
+				}
+				if (firstEnemy != null) break;
+			}
+			_debugPath = AStarManager.FindPath(CurrentFloor.Nodes[firstEnemy.Pos.x, firstEnemy.Pos.y],
+				CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
+				CurrentFloor,
+				_debugMoveType);
+		}
+
+		if (_debugPath != null)
+		{
+			for (LinkedListNode<Node> j = _debugPath.First; j.Next != null; j = j.Next)
+			{
+				Node node = (Node)j.Value;
+				Node next = (Node)j.Next.Value;
+				Vector3 upVector = Vector3.up * 6.0f;
+				Debug.DrawLine(TileManager.GetTileTransformPosition(node.PosX, node.PosY) + upVector,
+					TileManager.GetTileTransformPosition(next.PosX, next.PosY) + upVector,
+					Color.magenta);
+			}
+		}
+	}
+	#endregion
 }

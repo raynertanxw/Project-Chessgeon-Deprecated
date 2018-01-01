@@ -6,7 +6,7 @@ public abstract class GridStratergy
 	// TODO: Change this to Vetcor2Int. the size
 	protected int _sizeX;
 	protected int _sizeY;
-	protected Node[,] nodes;
+	protected Floor _floor;
 
 	public abstract void GetNSetNodeNeighbours(Node _node);
 	public abstract int HeuristicEstimatedCost(Node _curNode, Node _goalNode);
@@ -20,6 +20,6 @@ public abstract class GridStratergy
 			return;
 		}
 
-		inNode.neighbours[(int)inMoveType].AddFirst(nodes[inPosX, inPosY]);
+		inNode.neighbours[(int)inMoveType].AddFirst(_floor.Nodes[inPosX, inPosY]);
 	}
 }

@@ -90,11 +90,27 @@ public class Floor
 
 
 		_gridStratergy = new GridStratergy[5];
-		_gridStratergy[(int)eMoveType.Pawn] = new GridStratergyPawn(Size.x, Size.y, _nodes);
-		_gridStratergy[(int)eMoveType.Rook] = new GridStratergyRook(Size.x, Size.y, _nodes);
-		_gridStratergy[(int)eMoveType.Bishop] = new GridStratergyBishop(Size.x, Size.y, _nodes);
-		_gridStratergy[(int)eMoveType.Knight] = new GridStratergyKnight(Size.x, Size.y, _nodes);
-		_gridStratergy[(int)eMoveType.King] = new GridStratergyKing(Size.x, Size.y, _nodes);
+		_gridStratergy[(int)eMoveType.Pawn] = new GridStratergyPawn(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.Rook] = new GridStratergyRook(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.Bishop] = new GridStratergyBishop(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.Knight] = new GridStratergyKnight(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.King] = new GridStratergyKing(Size.x, Size.y, this);
+
+		for (int y = 0; y < _size.y; y++)
+		{
+			for (int x = 0; x < _size.x; x++)
+			{
+				for (int iGridStrat = 0; iGridStrat < 5; iGridStrat++)
+				{
+					_gridStratergy[iGridStrat].GetNSetNodeNeighbours(Nodes[x, y]);
+				}
+			}
+		}
+	}
+
+	public GridStratergy GridStratergyForMoveType(eMoveType inMoveType)
+	{
+		return _gridStratergy[(int)inMoveType];
 	}
 
 	private void SetTileState(Vector2Int inPos, eTileState inTileState) { SetTileState(inPos.x, inPos.y, inTileState); }

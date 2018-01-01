@@ -18,11 +18,13 @@ public class AStarManager
 		return path;
 	}
 
-	public static LinkedList<Node> FindPath(Node _startNode, Node _goalNode, GridManager _grid, Floor inFloor, eMoveType inMoveType)
+	public static LinkedList<Node> FindPath(Node _startNode, Node _goalNode, Floor inFloor, eMoveType inMoveType)
 	{
 		if (_startNode.State != Floor.eTileState.Enemy ||
 			_goalNode.State != Floor.eTileState.Morphy)
 			return null;
+
+		GridStratergy gridStratergy = inFloor.GridStratergyForMoveType(inMoveType);
 
 		// RESET ALL NODES.
 		IEnumerator gridEnumurator = inFloor.Nodes.GetEnumerator();
@@ -34,7 +36,7 @@ public class AStarManager
 		openBHList.Clear();
 		openBHList.Insert(_startNode);
 		_startNode.nodePathCost = 0.0f;
-		_startNode.totalCost = _grid.GridAlgorithms.HeuristicEstimatedCost(_startNode, _goalNode);// + _startNode.nodePathCost;
+		_startNode.totalCost = gridStratergy.HeuristicEstimatedCost(_startNode, _goalNode);// + _startNode.nodePathCost;
 
 		closedList.Clear();
 		Node curNode = null;
@@ -52,20 +54,20 @@ public class AStarManager
 			for (LinkedListNode<Node> curLinkedNode = curNode.neighbours[(int)inMoveType].First; curLinkedNode != null; curLinkedNode = curLinkedNode.Next)
 			{
 				Node curNeighbourNode = (Node)curLinkedNode.Value;
-				if (curNeighbourNode.State != Floor.eTileState.Empty ||
+				if (curNeighbourNode.State != Floor.eTileState.Empty &&
 					curNeighbourNode.State != Floor.eTileState.Morphy)
 					continue;
 
 				if (!closedList.Contains(curNeighbourNode))
 				{
 					//Cost from current node to this neighbour node
-					float cost = _grid.GridAlgorithms.NeighbourPathCost(curNode, curNeighbourNode);
+					float cost = gridStratergy.NeighbourPathCost(curNode, curNeighbourNode);
 
 					//Total Cost So Far from start to this neighbour node
 					float totalPathCost = curNode.nodePathCost + cost;
 
 					//Estimated cost for neighbour node to the goal
-					float neighbourNodeEstCost = _grid.GridAlgorithms.HeuristicEstimatedCost(curNeighbourNode, _goalNode);
+					float neighbourNodeEstCost = gridStratergy.HeuristicEstimatedCost(curNeighbourNode, _goalNode);
 
 					if (openBHList.Contains(curNeighbourNode)) // Calculated before?
 					{

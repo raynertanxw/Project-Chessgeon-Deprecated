@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 public class GridStratergyRook : GridStratergy
 {
-	public GridStratergyRook(int _sizeX, int _sizeY, Node[,] _nodes)
+	public GridStratergyRook(int inSizeX, int inSizeY, Floor inFloor)
 	{
-		base._sizeX = _sizeX;
-		base._sizeY = _sizeY;
-		nodes = _nodes;
+		base._sizeX = inSizeX;
+		base._sizeY = inSizeY;
+		base._floor = inFloor;
 	}
 
 	public override void GetNSetNodeNeighbours (Node _node)
