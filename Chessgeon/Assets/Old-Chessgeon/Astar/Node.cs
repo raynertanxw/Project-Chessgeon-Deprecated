@@ -6,20 +6,27 @@ public class Node
 {
     public float nodePathCost;
     public float totalCost;	// To get Heuristic, totalCost - nodePathCost.
-    private DungeonBlock dungeonBlock;
-	public BlockState State { get { return dungeonBlock.State; } }
-	public int PosX { get { return dungeonBlock.PosX; } }
-	public int PosY { get { return dungeonBlock.PosY; } }
+	private Floor.eTileState _tileState;
+	public Floor.eTileState State { get { return _tileState; } }
+	private Vector2Int _size;
+	public Vector2Int Size { get { return _size; } }
+	public int PosX { get { return _size.x; } }
+	public int PosY { get { return _size.y; } }
 	public Node parent;
-	public LinkedList<Node> neighbours;
+	public LinkedList<Node>[] neighbours;
 
-	public Node(DungeonBlock _dungeonBlock)
+	public Node(int inPosX, int inPosY, Floor.eTileState inTileState)
     {
-        this.nodePathCost = 1.0f;
-		this.totalCost = 0.0f;
-        this.dungeonBlock = _dungeonBlock;
-        this.parent = null;
+		_size = new Vector2Int(inPosX, inPosY);
+		_tileState = inTileState;
+		neighbours = new LinkedList<Node>[5];
+		Reset();
     }
+
+	public void UpdateState(Floor.eTileState inNewTileState)
+	{
+		_tileState = inNewTileState;
+	}
 
     public int CompareTo(Node _otherNode)
     {

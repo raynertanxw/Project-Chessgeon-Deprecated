@@ -9,8 +9,11 @@ public class Floor
 
 	private Dungeon _dungeon = null;
 
-	private eTileState[,] _tileStates;
-	private Enemy[,] _enemies; // TODO: Next time.
+	private Node[,] _nodes;
+	public Node[,] Nodes { get { return _nodes; } }
+	private GridStratergy[] _gridStratergy;
+
+	private Enemy[,] _enemies; // TODO: Next time when moving enemies.
 	private Vector2Int _size;
 	private Vector2Int _stairsPos;
 	private Vector2Int _morphyPos;
@@ -33,18 +36,18 @@ public class Floor
 		// Here we + 1 the max becasue Random.Range(int) is inclusive exclusive.
 		_size = new Vector2Int(Random.Range(inMinX, inMaxX + 1), Random.Range(inMinY, inMaxY + 1));
 
-		_tileStates = new eTileState[Size.x, Size.y];
+		_nodes = new Node[Size.x, Size.y];
 		for (int x = 0; x < Size.x; x++)
 		{
 			for (int y = 0; y < Size.y; y++)
 			{
-				_tileStates[x, y] = eTileState.Empty;
+				_nodes[x, y] = new Node(x, y, eTileState.Empty);
 			}
 		}
 
 		// Here it's -1 and not -2 becasue the max for Random.Range(int) is exclusive.
 		_stairsPos = new Vector2Int(Random.Range(1, Size.x - 1), Random.Range(1, Size.y - 1));
-		_tileStates[StairsPos.x, StairsPos.y] = eTileState.Stairs;
+		SetTileState(StairsPos, eTileState.Stairs);
 
 		_dungeon.TileManager.SetUpFloorTerrain();
 
@@ -81,12 +84,23 @@ public class Floor
 		// TODO: Obstalces (if any)
 
 		// TODO: Special tiles (if any)
+
+
+
+
+
+		_gridStratergy = new GridStratergy[5];
+		_gridStratergy[(int)eMoveType.Pawn] = new GridStratergyPawn(Size.x, Size.y, _nodes);
+		_gridStratergy[(int)eMoveType.Rook] = new GridStratergyRook(Size.x, Size.y, _nodes);
+		_gridStratergy[(int)eMoveType.Bishop] = new GridStratergyBishop(Size.x, Size.y, _nodes);
+		_gridStratergy[(int)eMoveType.Knight] = new GridStratergyKnight(Size.x, Size.y, _nodes);
+		_gridStratergy[(int)eMoveType.King] = new GridStratergyKing(Size.x, Size.y, _nodes);
 	}
 
 	private void SetTileState(Vector2Int inPos, eTileState inTileState) { SetTileState(inPos.x, inPos.y, inTileState); }
 	private void SetTileState(int inX, int inY, eTileState inTileState)
 	{
-		_tileStates[inX, inY] = inTileState;
+		_nodes[inX, inY].UpdateState(inTileState);
 	}
 
 	public Enemy GetEnemyAt(Vector2Int inPos) { return GetEnemyAt(inPos.x, inPos.y); }
@@ -122,7 +136,7 @@ public class Floor
 	public bool IsTileEmpty(Vector2Int inPos) { return IsTileEmpty(inPos.x, inPos.y); }
 	public bool IsTileEmpty(int inX, int inY)
 	{
-		return (_tileStates[inX, inY] == eTileState.Empty);
+		return (_nodes[inX, inY].State == eTileState.Empty);
 	}
 
 	public bool IsValidEnemyMove(Vector2Int inPos) { return IsValidEnemyMove(inPos.x, inPos.y); }
@@ -130,7 +144,7 @@ public class Floor
 	{
 		if (IsValidPos(inX, inY))
 		{
-			eTileState tileState = _tileStates[inX, inY];
+			eTileState tileState = _nodes[inX, inY].State;
 			// TODO: Can ememy step on hidden tiles???
 			return (tileState == eTileState.Empty
 				|| tileState == eTileState.Morphy);
@@ -146,7 +160,7 @@ public class Floor
 	{
 		if (IsValidPos(inX, inY))
 		{
-			eTileState tileState = _tileStates[inX, inY];
+			eTileState tileState = _nodes[inX, inY].State;
 			// TODO: Handle hidden tiles case, if we decide that it is another eTileState.
 			return (tileState == eTileState.Empty
 				|| tileState == eTileState.Enemy
@@ -154,7 +168,7 @@ public class Floor
 		}
 		else
 		{
-			if (IsValidPos(inX, inY)) Debug.Log(inX + ", " + inY + " is of state: " + _tileStates[inX, inY].ToString());
+			if (IsValidPos(inX, inY)) Debug.Log(inX + ", " + inY + " is of state: " + _nodes[inX, inY].State.ToString());
 			return false;
 		}
 	}
@@ -170,7 +184,7 @@ public class Floor
 	{
 		for (int iState = 0; iState < inTileStates.Length; iState++)
 		{
-			if (_tileStates[inX, inY] == inTileStates[iState]) return true;
+			if (_nodes[inX, inY].State == inTileStates[iState]) return true;
 		}
 
 		return false;

@@ -6,14 +6,14 @@ public class GridStratergyKnight : GridStratergy
 {
 	public GridStratergyKnight(int _sizeX, int _sizeY, Node[,] _nodes)
 	{
-		mnSizeX = _sizeX;
-		mnSizeY = _sizeY;
+		base._sizeX = _sizeX;
+		base._sizeY = _sizeY;
 		nodes = _nodes;
 	}
 
 	public override void GetNSetNodeNeighbours (Node _node)
 	{
-		_node.neighbours = new LinkedList<Node>();
+		_node.neighbours[(int)eMoveType.Knight] = new LinkedList<Node>();
 
 		/*	0 2 0 3 0
 		 * 	1 0 0 0 4
@@ -25,21 +25,21 @@ public class GridStratergyKnight : GridStratergy
 		 */
 
 		// 1
-		AssignNeighbour(_node.PosX - 2, _node.PosY + 1, _node);
+		AssignNeighbour(_node.PosX - 2, _node.PosY + 1, _node, eMoveType.Knight);
 		// 2
-		AssignNeighbour(_node.PosX - 1, _node.PosY + 2, _node);
+		AssignNeighbour(_node.PosX - 1, _node.PosY + 2, _node, eMoveType.Knight);
 		// 3
-		AssignNeighbour(_node.PosX + 1, _node.PosY + 2, _node);
+		AssignNeighbour(_node.PosX + 1, _node.PosY + 2, _node, eMoveType.Knight);
 		// 4
-		AssignNeighbour(_node.PosX + 2, _node.PosY + 1, _node);
+		AssignNeighbour(_node.PosX + 2, _node.PosY + 1, _node, eMoveType.Knight);
 		// 5
-		AssignNeighbour(_node.PosX + 2, _node.PosY - 1, _node);
+		AssignNeighbour(_node.PosX + 2, _node.PosY - 1, _node, eMoveType.Knight);
 		// 6
-		AssignNeighbour(_node.PosX + 1, _node.PosY - 2, _node);
+		AssignNeighbour(_node.PosX + 1, _node.PosY - 2, _node, eMoveType.Knight);
 		// 7
-		AssignNeighbour(_node.PosX - 1, _node.PosY - 2, _node);
+		AssignNeighbour(_node.PosX - 1, _node.PosY - 2, _node, eMoveType.Knight);
 		// 8
-		AssignNeighbour(_node.PosX - 2, _node.PosY - 1, _node);
+		AssignNeighbour(_node.PosX - 2, _node.PosY - 1, _node, eMoveType.Knight);
 	}
 
 	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)

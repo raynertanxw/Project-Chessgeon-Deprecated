@@ -3,22 +3,23 @@ using System.Collections;
 
 public abstract class GridStratergy
 {
-	protected int mnSizeX;
-	protected int mnSizeY;
+	// TODO: Change this to Vetcor2Int. the size
+	protected int _sizeX;
+	protected int _sizeY;
 	protected Node[,] nodes;
 
 	public abstract void GetNSetNodeNeighbours(Node _node);
 	public abstract int HeuristicEstimatedCost(Node _curNode, Node _goalNode);
 	public abstract int NeighbourPathCost(Node _curNode, Node _neighbourNode);
 
-	protected void AssignNeighbour(int _x, int _y, Node _node)
+	protected void AssignNeighbour(int inPosX, int inPosY, Node inNode, eMoveType inMoveType)
 	{
-		if (_x < 0 || _y < 0 || _x >= mnSizeX || _y >= mnSizeY)
+		if (inPosX < 0 || inPosY < 0 || inPosX >= _sizeX || inPosY >= _sizeY)
 		{
 //			Debug.LogWarning("Failed Attempt to Assigne Node: Neighbour out of index.");
 			return;
 		}
 
-		_node.neighbours.AddFirst(nodes[_x, _y]);
+		inNode.neighbours[(int)inMoveType].AddFirst(nodes[inPosX, inPosY]);
 	}
 }

@@ -18,15 +18,14 @@ public class AStarManager
 		return path;
 	}
 
-	public static LinkedList<Node> FindPath(Node _startNode, Node _goalNode, GridManager _grid)
+	public static LinkedList<Node> FindPath(Node _startNode, Node _goalNode, GridManager _grid, Floor inFloor, eMoveType inMoveType)
 	{
-		if (_startNode.State != BlockState.EnemyPiece)
-			return null;
-		if (_goalNode.State != BlockState.Empty)
+		if (_startNode.State != Floor.eTileState.Enemy ||
+			_goalNode.State != Floor.eTileState.Morphy)
 			return null;
 
 		// RESET ALL NODES.
-		IEnumerator gridEnumurator = _grid.nodes.GetEnumerator();
+		IEnumerator gridEnumurator = inFloor.Nodes.GetEnumerator();
 		while (gridEnumurator.MoveNext())
 		{
 			(gridEnumurator.Current as Node).Reset();
@@ -50,10 +49,11 @@ public class AStarManager
 
 			curNode = openBHList.PopRoot();
 
-			for (LinkedListNode<Node> curLinkedNode = curNode.neighbours.First; curLinkedNode != null; curLinkedNode = curLinkedNode.Next)
+			for (LinkedListNode<Node> curLinkedNode = curNode.neighbours[(int)inMoveType].First; curLinkedNode != null; curLinkedNode = curLinkedNode.Next)
 			{
 				Node curNeighbourNode = (Node)curLinkedNode.Value;
-				if (curNeighbourNode.State != BlockState.Empty)
+				if (curNeighbourNode.State != Floor.eTileState.Empty ||
+					curNeighbourNode.State != Floor.eTileState.Morphy)
 					continue;
 
 				if (!closedList.Contains(curNeighbourNode))

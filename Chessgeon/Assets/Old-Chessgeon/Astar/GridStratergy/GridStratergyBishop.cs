@@ -6,23 +6,23 @@ public class GridStratergyBishop : GridStratergy
 {
 	public GridStratergyBishop(int _sizeX, int _sizeY, Node[,] _nodes)
 	{
-		mnSizeX = _sizeX;
-		mnSizeY = _sizeY;
+		base._sizeX = _sizeX;
+		base._sizeY = _sizeY;
 		nodes = _nodes;
 	}
 
 	public override void GetNSetNodeNeighbours (Node _node)
 	{
-		_node.neighbours = new LinkedList<Node>();
+		_node.neighbours[(int)eMoveType.Bishop] = new LinkedList<Node>();
 
 		// Top-Left
-		AssignNeighbour(_node.PosX - 1, _node.PosY + 1, _node);
+		AssignNeighbour(_node.PosX - 1, _node.PosY + 1, _node, eMoveType.Bishop);
 		// Top-Right
-		AssignNeighbour(_node.PosX + 1, _node.PosY + 1, _node);
+		AssignNeighbour(_node.PosX + 1, _node.PosY + 1, _node, eMoveType.Bishop);
 		// Btm-Right
-		AssignNeighbour(_node.PosX + 1, _node.PosY - 1, _node);
+		AssignNeighbour(_node.PosX + 1, _node.PosY - 1, _node, eMoveType.Bishop);
 		// Btm-Left
-		AssignNeighbour(_node.PosX - 1, _node.PosY - 1, _node);
+		AssignNeighbour(_node.PosX - 1, _node.PosY - 1, _node, eMoveType.Bishop);
 	}
 
 	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
@@ -33,7 +33,7 @@ public class GridStratergyBishop : GridStratergy
 
 	public override int NeighbourPathCost(Node _curNode, Node _neighbourNode)
 	{
-		if (_curNode.neighbours.Contains(_neighbourNode))
+		if (_curNode.neighbours[(int)eMoveType.Bishop].Contains(_neighbourNode))
 			return 1;
 		else
 			return Mathf.Abs(_curNode.PosX - _neighbourNode.PosX)

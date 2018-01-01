@@ -97,13 +97,13 @@ public class DungeonManager : MonoBehaviour
 
 		Generate();
 
-		mGrids = new GridManager[5];
+		//mGrids = new GridManager[5];
 
-		mGrids[0] = new GridManager(this, GridType.Pawn);
-		mGrids[1] = new GridManager(this, GridType.Rook);
-		mGrids[2] = new GridManager(this, GridType.Bishop);
-		mGrids[3] = new GridManager(this, GridType.Knight);
-		mGrids[4] = new GridManager(this, GridType.King);
+		//mGrids[0] = new GridManager(this, GridType.Pawn);
+		//mGrids[1] = new GridManager(this, GridType.Rook);
+		//mGrids[2] = new GridManager(this, GridType.Bishop);
+		//mGrids[3] = new GridManager(this, GridType.Knight);
+		//mGrids[4] = new GridManager(this, GridType.King);
 	}
 
 	#region Dungeon Generation
