@@ -13,8 +13,6 @@ public class MorphyController : MonoBehaviour
 	public UnityEvent OnMorphyReachStairs = new UnityEvent();
 	private Morphy _morphy = null;
 
-	private MorphyStratergy[] _stratergies = null;
-	private MorphyStratergy _currentStratergy = null;
 	private int _numMovesLeft = -1;
 
 	private void Awake()
@@ -29,14 +27,6 @@ public class MorphyController : MonoBehaviour
 		_morphy.Initialise(this);
 
 		_morphy.Hide();
-
-		_stratergies = new MorphyStratergy[6];
-		_stratergies[0] = new MorphyStratergyPawn();
-		_stratergies[1] = new MorphyStratergyRook();
-		_stratergies[2] = new MorphyStratergyBishop();
-		_stratergies[3] = new MorphyStratergyKnight();
-		_stratergies[4] = new MorphyStratergyKing();
-		_stratergies[5] = new MorphyStratergyMorphy();
 	}
 
 	public void SetUpPlayer()
@@ -49,18 +39,11 @@ public class MorphyController : MonoBehaviour
 		_numMovesLeft = inNumMoves;
 		_morphy.SetType(inType);
 
-		CalcAndShowPossibleMoves();
-	}
-
-	private void CalcAndShowPossibleMoves()
-	{
-		_currentStratergy = _stratergies[(int)_morphy.CurrentType];
 		ShowPossibleMoves();
 	}
 
 	private void TransformBackToMorphy()
 	{
-		_currentStratergy = _stratergies[5]; // 5 is for MorphyStratergyMorphy.
 		_morphy.TransformBackToMorphy();
 		_dungeon.TileManager.HideAllSelectableTiles();
 	}
@@ -68,7 +51,10 @@ public class MorphyController : MonoBehaviour
 	private void ShowPossibleMoves()
 	{
 		_dungeon.TileManager.HideAllSelectableTiles();
-		Vector2Int[] possibleMoves = _currentStratergy.CalcPossibleMoves(_morphy.Pos, _dungeon.CurrentFloor);
+		// TODO: Get nothing if type is morphy.
+		Vector2Int[] possibleMoves = null;
+		if (_morphy.IsInMorphyForm) possibleMoves = new Vector2Int[0];
+		else possibleMoves = Dungeon.CurrentFloor.GridStratergyForMoveType(_morphy.CurrentType).CalcPossibleMoves(_morphy.Pos, GridStratergy.eMoveEntity.Morphy);
 		if (possibleMoves.Length > 0)
 		{
 			_dungeon.TileManager.ShowPossibleMoves(possibleMoves, MoveTo);
@@ -88,7 +74,7 @@ public class MorphyController : MonoBehaviour
 		DaburuTools.Action.OnActionEndDelegate onFinishMove;
 		if (_numMovesLeft > 0)
 		{
-			onFinishMove = () => { CalcAndShowPossibleMoves(); };
+			onFinishMove = () => { ShowPossibleMoves(); };
 		}
 		else
 		{

@@ -128,6 +128,17 @@ public class Floor
 		return enemyAtPos;
 	}
 
+	public void MoveEnemy(Vector2Int inFromPos, Vector2Int inTargetPos)
+	{
+		Debug.Assert(_enemies[inFromPos.x, inFromPos.y] != null, "There is no enemy at " + inFromPos);
+		Debug.Assert(_enemies[inTargetPos.x, inTargetPos.y] == null, "There is already an enemy at " + inTargetPos);
+		_enemies[inTargetPos.x, inTargetPos.y] = _enemies[inFromPos.x, inFromPos.y];
+		_enemies[inFromPos.x, inFromPos.y] = null;
+
+		SetTileState(inTargetPos, Floor.eTileState.Enemy);
+		SetTileState(inFromPos, Floor.eTileState.Empty);
+	}
+
 	public void MoveMorphyTo(Vector2Int inTargetPos)
     {
         Debug.Assert(IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");

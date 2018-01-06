@@ -21,6 +21,8 @@ public class Morphy : MonoBehaviour
 	public bool IsAlive { get { return _isAlive; } }
 	private eMoveType _currentType;
 	public eMoveType CurrentType { get { return _currentType; } }
+	private bool _isInMorphyForm = true;
+	public bool IsInMorphyForm { get { return _isInMorphyForm; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
 
@@ -59,6 +61,7 @@ public class Morphy : MonoBehaviour
 	{
 		_meshRenderer.material.SetColor("_Color", Color.green);
 		_currentType = inType;
+		_isInMorphyForm = false;
 
 		switch(inType)
 		{
@@ -97,6 +100,7 @@ public class Morphy : MonoBehaviour
 
 	public void TransformBackToMorphy()
 	{
+		_isInMorphyForm = true;
 		_meshRenderer.material.SetColor("_Color", Color.green);
 		_meshFilter.mesh = _meshMorphy;
 	}

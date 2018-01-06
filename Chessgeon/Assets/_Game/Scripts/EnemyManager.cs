@@ -55,4 +55,15 @@ public class EnemyManager : MonoBehaviour
 			_enemies[iEnemy].Hide();
 		}
 	}
+	
+	public Enemy[] GetArrayOfAliveEnemies()
+	{
+		List<Enemy> enemiesAlive = new List<Enemy>();
+		for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
+		{
+			if (_enemies[iEnemy].IsAlive) enemiesAlive.Add(_enemies[iEnemy]);
+		}
+
+		return enemiesAlive.ToArray();
+	}
 }

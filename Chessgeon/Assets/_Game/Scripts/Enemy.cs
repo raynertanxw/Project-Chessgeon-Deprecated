@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaburuTools;
 
 public class Enemy : MonoBehaviour
 {
@@ -126,5 +127,93 @@ public class Enemy : MonoBehaviour
 		_meshRenderer.enabled = true;
 
 		// TODO: Reset the health and all that stuff.
+	}
+
+	public void ExecuteTurn(Floor inCurrentFloor, Action.OnActionEndDelegate inOnComplete)
+	{
+		LinkedList<Node> pathToMorphy = AStarManager.FindPath(
+			inCurrentFloor.Nodes[Pos.x, Pos.y],
+			inCurrentFloor.Nodes[inCurrentFloor.MorphyPos.x, inCurrentFloor.MorphyPos.y],
+			inCurrentFloor,
+			Type);
+		if (pathToMorphy == null) // No path to morphy.
+		{
+			Debug.Log("No possible moves for enemy. Picking Random one.");
+			Vector2Int[] possibleMoves = inCurrentFloor.GridStratergyForMoveType(Type).CalcPossibleMoves(Pos, GridStratergy.eMoveEntity.Enemy);
+			if (possibleMoves.Length == 0)
+			{
+				inOnComplete();
+			}
+			else
+			{
+				Vector2Int randMovePos = possibleMoves[Random.Range(0, possibleMoves.Length)];
+				inCurrentFloor.MoveEnemy(Pos, randMovePos);
+				MoveTo(randMovePos, inOnComplete);
+			}
+		}
+		else
+		{
+			Node nextNode = (Node)pathToMorphy.First.Next.Value;
+			Vector2Int nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
+			if (nextPos == inCurrentFloor.MorphyPos)
+			{
+				if (Type == eMoveType.Pawn)
+				{
+					// TODO: Decide what should pawn do?
+					//		 For now just do nothing cause there isn't anything it can do except move furthur away.
+					inOnComplete();
+				}
+				else
+				{
+					AttackMorphy(nextPos, inOnComplete);
+				}
+			}
+			else
+			{
+				inCurrentFloor.MoveEnemy(Pos, nextPos);
+				MoveTo(nextPos, inOnComplete);
+			}
+		}
+	}
+
+	private void MoveTo(Vector2Int inTargetPos, Action.OnActionEndDelegate inOnCompleteAction = null)
+	{
+		_pos = inTargetPos;
+		Vector3 targetTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);
+		float moveDuration = 0.6f;
+		MoveToAction moveToTarget = new MoveToAction(this.transform, Graph.SmoothStep, targetTransformPos, moveDuration);
+		ActionAfterDelay moveAfterDelay = new ActionAfterDelay(moveToTarget, 0.1f);
+		moveAfterDelay.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveDuration); };
+		if (inOnCompleteAction != null) moveAfterDelay.OnActionFinish += inOnCompleteAction;
+		ActionHandler.RunAction(moveAfterDelay);
+	}
+
+	private void AttackMorphy(Vector2Int inTargetPos, Action.OnActionEndDelegate inOnCompleteAction = null)
+	{
+		Vector3 originPos = this.transform.position;
+		Vector3 morphyTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(inTargetPos);
+		float moveUpDuration = 0.4f;
+		MoveToAction moveUp = new MoveToAction(
+			this.transform,
+			Graph.InverseExponential,
+			transform.position + new Vector3(0.0f, 2.5f, 0.0f),
+			moveUpDuration);
+		moveUp.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveUpDuration); };
+		MoveToAction slamDown = new MoveToAction(
+			this.transform,
+			Graph.Exponential,
+			morphyTransformPos,
+			0.1f);
+		slamDown.OnActionFinish += () => { DungeonCamera.CameraShake(15, 0.5f, 0.2f); };
+		MoveToAction moveBack = new MoveToAction(
+			this.transform,
+			Graph.SmoothStep,
+			originPos,
+			0.5f);
+		ActionSequence attackSeq = new ActionSequence(moveUp, new DelayAction(0.15f), slamDown, moveBack);
+		// TODO: Call Morphy.TakeDamage();
+		//attackSeq.OnActionFinish += ;
+		if (inOnCompleteAction != null) attackSeq.OnActionFinish += inOnCompleteAction;
+		ActionHandler.RunAction(attackSeq);
 	}
 }

@@ -55,4 +55,75 @@ public class GridStratergyKnight : GridStratergy
 		return Mathf.Abs(_curNode.PosX - _neighbourNode.PosX)
 			+ Mathf.Abs(_curNode.PosY - _neighbourNode.PosY);
 	}
+
+	public override Vector2Int[] CalcPossibleMoves(Vector2Int inPos, eMoveEntity inMoveEntity)
+	{
+		List<Vector2Int> possibleMoves = new List<Vector2Int>();
+
+		{
+			Vector2Int upLeft = inPos;
+			upLeft.y += 2;
+			upLeft.x += -1;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(upLeft)) possibleMoves.Add(upLeft);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(upLeft)) possibleMoves.Add(upLeft);
+		}
+
+		{
+			Vector2Int upRight = inPos;
+			upRight.y += 2;
+			upRight.x += 1;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(upRight)) possibleMoves.Add(upRight);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(upRight)) possibleMoves.Add(upRight);
+		}
+
+		{
+			Vector2Int rightUp = inPos;
+			rightUp.y += 1;
+			rightUp.x += 2;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(rightUp)) possibleMoves.Add(rightUp);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(rightUp)) possibleMoves.Add(rightUp);
+		}
+
+		{
+			Vector2Int rightDown = inPos;
+			rightDown.y += -1;
+			rightDown.x += 2;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(rightDown)) possibleMoves.Add(rightDown);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(rightDown)) possibleMoves.Add(rightDown);
+		}
+
+		{
+			Vector2Int downRight = inPos;
+			downRight.y += -2;
+			downRight.x += 1;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(downRight)) possibleMoves.Add(downRight);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(downRight)) possibleMoves.Add(downRight);
+		}
+
+		{
+			Vector2Int downLeft = inPos;
+			downLeft.y += -2;
+			downLeft.x += -1;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(downLeft)) possibleMoves.Add(downLeft);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(downLeft)) possibleMoves.Add(downLeft);
+		}
+
+		{
+			Vector2Int leftDown = inPos;
+			leftDown.y += -1;
+			leftDown.x += -2;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(leftDown)) possibleMoves.Add(leftDown);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(leftDown)) possibleMoves.Add(leftDown);
+		}
+
+		{
+			Vector2Int leftUp = inPos;
+			leftUp.y += 1;
+			leftUp.x += -2;
+			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(leftUp)) possibleMoves.Add(leftUp);
+			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(leftUp)) possibleMoves.Add(leftUp);
+		}
+
+		return possibleMoves.ToArray();
+	}
 }

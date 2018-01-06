@@ -257,25 +257,46 @@ public class Dungeon : MonoBehaviour
 			public override void OnEnterState()
 			{
 				// TODO: Do the animation for indicating start of enemy phase.
-				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn);
+				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn,
+					() =>
+					{
+						_readyToProcessNextEnemy = true;
+					});
+				_enemiesAlive = _dungeonFSM._dungeon.EnemyManager.GetArrayOfAliveEnemies();
 			}
 
 			public override void ExitState()
 			{
 				// TODO: Any cleanup needed?
-				_delayTimer = 0.0f;
+				_enemiesAlive = null;
+				_currentEnemyIndex = -1;
+				_readyToProcessNextEnemy = false;
 			}
 
-			float _delayTimer = 0.0f;
+			Enemy[] _enemiesAlive = null;
+			int _currentEnemyIndex = -1;
+			bool _readyToProcessNextEnemy = false;
 			public override void ExecuteState()
 			{
-				// TODO: Iterate through all enemies and process each of their turns.
-				//		 Prob just call on EnemyManager.processNextEnemy or smt like that.
-				//		 Prefably have the waiting be done on this FSM side and not EnemyManager.
-				_delayTimer += Time.deltaTime;
-				if (_delayTimer >= 2.5f) _dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
-				
+				if (_readyToProcessNextEnemy)
+				{
+					_readyToProcessNextEnemy = false;
+					_currentEnemyIndex++;
+					if (_currentEnemyIndex == _enemiesAlive.Length)
+					{
+						_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+					}
+					else
+					{
+						_enemiesAlive[_currentEnemyIndex].ExecuteTurn(_dungeonFSM._dungeon.CurrentFloor, OnFinishProcessingEnemy);
+					}
+				}
+			}
+
+			private void OnFinishProcessingEnemy()
+			{
 				// TODO: If the player is killed, immediately transition to the GameOverState.
+				_readyToProcessNextEnemy = true;
 			}
 		}
 		private class DungeonStateGameOver : DungeonState

@@ -11,6 +11,8 @@ public abstract class GridStratergy
 	public abstract void GetNSetNodeNeighbours(Node _node);
 	public abstract int HeuristicEstimatedCost(Node _curNode, Node _goalNode);
 	public abstract int NeighbourPathCost(Node _curNode, Node _neighbourNode);
+	public enum eMoveEntity { Morphy, Enemy }
+	public abstract Vector2Int[] CalcPossibleMoves(Vector2Int inPos, eMoveEntity inMoveEntity);
 
 	protected void AssignNeighbour(int inPosX, int inPosY, Node inNode, eMoveType inMoveType)
 	{
