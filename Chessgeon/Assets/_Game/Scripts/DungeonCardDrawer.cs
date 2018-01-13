@@ -27,7 +27,7 @@ public class DungeonCardDrawer : MonoBehaviour
 	[SerializeField] private AnimationCurve _bigBobber = null;
 	[SerializeField] private AnimationCurve _bigDipper = null;
 
-	public static UnityEvent OnPlayerEndTurn = new UnityEvent();
+	public static Utils.GenericVoidDelegate OnPlayerEndTurn;
 
 	private void Awake()
 	{
@@ -55,10 +55,10 @@ public class DungeonCardDrawer : MonoBehaviour
 			_showDrawerBtn.interactable = false;
 
 			// Set up drawer btn Listeners.
-			OnPlayerEndTurn.AddListener(() =>
+			OnPlayerEndTurn += () =>
 			{
 				EnableCardDrawer(false);
-			});
+			};
 			_endTurnBtn.onClick.AddListener(() => { OnPlayerEndTurn.Invoke(); });
 
 			_hideDrawerBtn.onClick.AddListener(() =>

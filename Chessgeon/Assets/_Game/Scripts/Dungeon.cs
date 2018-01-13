@@ -215,10 +215,10 @@ public class Dungeon : MonoBehaviour
 			public DungeonStatePlayerPhase(DungeonFSM inDungeonFSM)
 			{
 				_dungeonFSM = inDungeonFSM;
-				DungeonCardDrawer.OnPlayerEndTurn.AddListener(() =>
+				DungeonCardDrawer.OnPlayerEndTurn += () =>
 					{
 						_dungeonFSM.ChangeState(eDungeonState.EnemyPhase);
-					});
+					};
 			}
 
 			public override void OnEnterState()
