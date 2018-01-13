@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DaburuTools;
 
 public enum eCardTier { Normal, Silver, Gold }
 public enum eCardType { Joker, Duplicate, Smash, Draw, Shield, Movement } // Movement needs to be last for calculations.
@@ -69,9 +70,12 @@ public class Card : MonoBehaviour
 
 	private void Update()
 	{
-		_cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
-		_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
-		_tiltIntertia = Vector2.Lerp(_tiltIntertia, Vector2.zero, Time.deltaTime * TILT_INTERTIA_DRAG);
+		if (!_isAnimatingCardDraw) // TODO: Include booleans for animating card execution.
+		{
+			_cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
+			_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
+			_tiltIntertia = Vector2.Lerp(_tiltIntertia, Vector2.zero, Time.deltaTime * TILT_INTERTIA_DRAG);
+		}
 	}
 
 	public void EventTriggerOnPointerDown(BaseEventData data)
@@ -132,5 +136,21 @@ public class Card : MonoBehaviour
 	private void SetCardTexture()
 	{
 		_cardMeshRen.material.SetTexture("_MainTex", _cardManager.GetCardTexture(_cardData.cardTier, _cardData.cardType, _cardData.cardMoveType));
+	}
+
+	bool _isAnimatingCardDraw = false;
+	public void AnimateDrawCard(float inDelay = 0.0f, DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		_isAnimatingCardDraw = true;
+		_cardRectTransform.localPosition = new Vector3(-2.0f, -7.5f);
+		_cardRectTransform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+
+		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos, 0.4f);
+		LocalRotateToAction rotateCard = new LocalRotateToAction(_cardRectTransform, Vector3.zero, 0.6f);
+		ActionSequence revealCard = new ActionSequence(moveToHand, rotateCard);
+		revealCard.OnActionFinish += () => { _isAnimatingCardDraw = false; };
+		if (inOnComplete != null) revealCard.OnActionFinish += () => { inOnComplete(); };
+
+		ActionHandler.RunAction(new ActionAfterDelay(revealCard, inDelay));
 	}
 }

@@ -519,11 +519,6 @@ MonoBehaviour:
   _prefabMorphy: {fileID: 1221138819492650, guid: d00bbc87c8229674ab057b228f3fedc7,
     type: 2}
   _dungeon: {fileID: 1426320895}
-  OnMorphyReachStairs:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!1 &192189117
 GameObject:
   m_ObjectHideFlags: 0
@@ -2986,11 +2981,7 @@ MonoBehaviour:
   _tileManager: {fileID: 974361323}
   _enemyManager: {fileID: 228503335}
   _morphyController: {fileID: 180215242}
-  OnFloorGenerated:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  _cardManager: {fileID: 286948805}
 --- !u!1 &1435621909
 GameObject:
   m_ObjectHideFlags: 0

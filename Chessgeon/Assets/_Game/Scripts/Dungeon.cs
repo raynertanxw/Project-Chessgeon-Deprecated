@@ -10,9 +10,11 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private TileManager _tileManager = null;
 	[SerializeField] private EnemyManager _enemyManager = null;
 	[SerializeField] private MorphyController _morphyController = null;
+	[SerializeField] private CardManager _cardManager = null;
 	public TileManager TileManager { get { return _tileManager; } }
 	public EnemyManager EnemyManager { get { return _enemyManager; } }
 	public MorphyController MorphyController { get { return _morphyController; } }
+	public CardManager CardManager { get { return _cardManager; } }
 
 	private const int DUNGEON_MIN_X = 5;
 	private const int DUNGEON_MAX_X = 15;
@@ -47,6 +49,7 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_tileManager != null, "_tileManager is not assigned.");
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
+		Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
 
 		_morphyController.OnMorphyReachStairs += OnMorphyReachStairs;
 		_floor = new Floor(this);
@@ -75,7 +78,7 @@ public class Dungeon : MonoBehaviour
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
 
-		_floorNum = 1;
+		_floorNum = 1; // TODO: Reset this?
 		GenerateFloor();
 		_dungeonFSM = new DungeonFSM(this);
 	}
@@ -231,8 +234,11 @@ public class Dungeon : MonoBehaviour
 				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
 					DungeonCardDrawer.EnableCardDrawer(true, true, OnJobComplete); },
 					playPhaseAnimJob);
+				DTJob turnDrawJob = new DTJob((OnJobComplete) => {
+					_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.StatTotalCardsDrawn > 0 ? 2 : 3, OnJobComplete); },
+					enableCardDrawerJob);
 
-				DTJobList startPlayerPhase = new DTJobList(null, enableCardDrawerJob);
+				DTJobList startPlayerPhase = new DTJobList(null, turnDrawJob);
 				startPlayerPhase.ExecuteAllJobs();
 			}
 

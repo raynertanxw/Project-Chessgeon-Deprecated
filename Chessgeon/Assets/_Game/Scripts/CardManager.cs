@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaburuTools;
 
 public class CardManager : MonoBehaviour
 {
@@ -9,25 +10,46 @@ public class CardManager : MonoBehaviour
 
 	private Card[] _cards = null;
 
-	private const int NUM_TOTAL_CARDS = 7;
+	private const int MAX_CARDS = 7;
+	private int _numCardsInHand = -1;
+
+	// TODO: Statistics
+	private int _statTotalCardsDrawn = -1;
+	public int StatTotalCardsDrawn { get { return _statTotalCardsDrawn; } }
 
 	private void Awake()
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 		Debug.Assert(_cardTextures.Length == (3 * 5) + (3 * 5), "There is a mismatch in number of textures and number of cards.");
 
-		_cards = new Card[NUM_TOTAL_CARDS];
-		for (int iCard = 0; iCard < NUM_TOTAL_CARDS; iCard++)
+		_cards = new Card[MAX_CARDS];
+		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
 		{
 			_cards[iCard] = transform.Find("Card " + (iCard + 1)).GetComponent<Card>();
 			_cards[iCard].SetCardIndex(iCard);
 			_cards[iCard].OnCardExecute += ExecuteCard;
 		}
+
+		_numCardsInHand = 0;
+		_statTotalCardsDrawn = 0;
 	}
 
 	private void Start()
 	{
-		SetInitialHand();
+		// TODO: More elegate way of solving this.
+		// NOTE: Card Start needs to run first before this. But in turn, the start stuff can only be done in start
+		// due to unity's querk with calcualtion of local pos and all that.
+		DelayAction delayedAction = new DelayAction(0.5f);
+		delayedAction.OnActionFinish += HideAllCards;
+		ActionHandler.RunAction(delayedAction);
+	}
+
+	private void HideAllCards()
+	{
+		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
+		{
+			SetCardActive(iCard, false);
+		}
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)
@@ -45,20 +67,27 @@ public class CardManager : MonoBehaviour
 		return _cardTextures[texIndex];
 	}
 
-	public void SetInitialHand()
+	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		const int NUM_STARTING_HAND = 7; // TODO: Balance this figure. for now 7 for debugging purposes.
-		for (int iCard = 0; iCard < NUM_TOTAL_CARDS; iCard++)
+		int cardLimit = Mathf.Min(_numCardsInHand + inNumCardsDrawn, MAX_CARDS);
+		int cardsDrawn = 0;
+		const float CARD_ANIM_INTERVAL = 0.5f;
+		for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
 		{
-			if (iCard < NUM_STARTING_HAND)
+			Debug.Assert(!_cards[iCard].gameObject.activeSelf, "Card " + iCard + " is already active! Should not be drawn.");
+			SetCardActive(iCard, true);
+			_cards[iCard].SetCard(GenerateRandomCardData());
+			if ((iCard + 1) == cardLimit)
 			{
-				SetCardActive(iCard, true);
-				_cards[iCard].SetCard(GenerateRandomCardData());
+				_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
 			}
 			else
 			{
-				SetCardActive(iCard, false);
+				_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL);
 			}
+			cardsDrawn++;
+			_numCardsInHand++;
+			_statTotalCardsDrawn++;
 		}
 	}
 
