@@ -86,7 +86,7 @@ public class DungeonCardDrawer : MonoBehaviour
 	}
 
 	private bool _cardDrawerAnimPlaying = false;
-	public static void EnableCardDrawer(bool inIsEnabled, bool inIsAnimated = true, OnJobComplete inOnComplete = null)
+	public static void EnableCardDrawer(bool inIsEnabled, bool inIsAnimated = true, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		const float ENABLED_X_POS = -100.0f;
 		const float DISABLED_X_POS = -1250.0f;

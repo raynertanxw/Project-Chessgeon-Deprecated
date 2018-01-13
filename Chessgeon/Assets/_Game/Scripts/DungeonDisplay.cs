@@ -73,7 +73,7 @@ public class DungeonDisplay : MonoBehaviour
 	}
 
 	private bool _phaseAnimPlaying = false;
-	public static void PlayPhaseAnimation(bool inIsPlayersTurn, OnJobComplete inOnComplete = null)
+	public static void PlayPhaseAnimation(bool inIsPlayersTurn, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		if (_instance._phaseAnimPlaying)
 		{

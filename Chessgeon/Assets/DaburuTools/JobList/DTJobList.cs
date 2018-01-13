@@ -1,79 +1,139 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DaburuTools
 {
-	public delegate void OnJobComplete();
-	public delegate void Begin(OnJobComplete OnComplete);
-
 	public struct DTJob
 	{
-		public DTJob(Begin inBegin, params DTJob[] inDependencies)
-		{
-			begin = inBegin;
-			dependencies = inDependencies;
-			numCompletedDependencies = 0;
-		}
-		internal readonly Begin begin;
-		internal readonly DTJob[] dependencies;
-		internal int numCompletedDependencies;
+		public delegate void OnCompleteCallback();
+		// NOTE: Can be Async or non-async, but MUST execute onJobComplete.
+		public delegate void BeginDelegate(OnCompleteCallback onJobComplete);
 
-		internal int numDependencies { get { return dependencies.Length; } }
+		internal readonly BeginDelegate Begin;
+		internal readonly DTJob[] Dependencies;
+
+		public DTJob(BeginDelegate inBegin, params DTJob[] inDependencies)
+		{
+			Begin = inBegin;
+			Dependencies = inDependencies;
+		}
 	}
 
-	public class DTJobList
+	public sealed class DTJobList
 	{
-		private bool _hasStartedExecutingJobs = false;
-		private int _numSequencedJobsCompleted = 0;
-		private readonly int _totalNumJobs;
-
-		private OnJobComplete _onAllSequencedJobsComplete;
-		private DTJob[] _jobs;
-
-		public DTJobList(OnJobComplete OnComplete, params DTJob[] inJobs)
+		public DTJobList(DTJob.OnCompleteCallback inOnAllJobsComplete, params DTJob[] inJobs)
 		{
-			_hasStartedExecutingJobs = false;
-			_numSequencedJobsCompleted = 0;
-			_totalNumJobs = inJobs.Length;
-
-			_onAllSequencedJobsComplete = OnComplete;
-			_jobs = inJobs;
+			_allJobsCompleteCallback = inOnAllJobsComplete;
+			_remainingJobs = new List<DTJob>(inJobs);
+			foreach (DTJob job in inJobs)
+			{
+				TryBeginJob(job);
+			}
 		}
 
+		private bool _hasStartedExecutingAllJobs = false;
 		public void ExecuteAllJobs()
 		{
-			if (!_hasStartedExecutingJobs)
+			if (!_hasStartedExecutingAllJobs)
 			{
-				_hasStartedExecutingJobs = true;
-				for (int iJob = 0; iJob < _totalNumJobs; iJob++)
+				_hasStartedExecutingAllJobs = true;
+				for (int iJob = 0; iJob < _remainingJobs.Count; iJob++)
 				{
-					ExecuteJob(_jobs[iJob], CheckIfAllJobsCompleted);
+					TryBeginJob(_remainingJobs[iJob]);
 				}
 			}
 		}
 
-		private void CheckIfAllJobsCompleted()
+		// NOTE: If _jobsCompletionStatus does not have key, means dependency has not yet begun.
+		private readonly Dictionary<DTJob, bool> _jobsCompletionStatus = new Dictionary<DTJob, bool>();
+		private readonly Dictionary<DTJob, List<DTJob>> _dependents = new Dictionary<DTJob, List<DTJob>>();
+		private readonly List<DTJob> _remainingJobs;
+		private readonly DTJob.OnCompleteCallback _allJobsCompleteCallback;
+
+		private void TryBeginJob(DTJob inJob)
 		{
-			_numSequencedJobsCompleted++;
-			if (_numSequencedJobsCompleted == _totalNumJobs)
+			bool jobStarted = _jobsCompletionStatus.ContainsKey(inJob);
+			if (!jobStarted)
 			{
-				if (_onAllSequencedJobsComplete != null) _onAllSequencedJobsComplete();
+				bool shouldBeginJob = true;
+				DTJob[] dependencies = inJob.Dependencies;
+				foreach (DTJob dependency in dependencies)
+				{
+					bool dependencyCompleted = false;
+					bool dependencyStarted = _jobsCompletionStatus.TryGetValue(dependency, out dependencyCompleted);
+					if (!dependencyCompleted)
+					{
+						shouldBeginJob = false;
+						List<DTJob> dependents;
+						if (!_dependents.TryGetValue(dependency, out dependents))
+						{
+							dependents = new List<DTJob>();
+							_dependents.Add(dependency, dependents);
+						}
+
+						if (!dependents.Contains(inJob))
+						{
+							dependents.Add(inJob);
+						}
+
+						if (!dependencyStarted)
+						{
+							TryBeginJob(dependency);
+						}
+					}
+				}
+
+				bool jobComplete = false;
+				if (shouldBeginJob)
+				{
+					if (!_jobsCompletionStatus.TryGetValue(inJob, out jobComplete))
+					{
+						_jobsCompletionStatus.Add(inJob, false);
+					}
+
+					if (!_remainingJobs.Contains(inJob))
+					{
+						_remainingJobs.Add(inJob);
+					}
+
+					if (!jobComplete)
+					{
+						inJob.Begin(() => OnJobCompleteHandler(inJob));
+					}
+				}
 			}
 		}
 
-		private void ExecuteJob(DTJob inJob, OnJobComplete OnComplete)
+		private void OnJobCompleteHandler(DTJob inNewlyCompletedJob)
 		{
-            if (inJob.numDependencies == 0 ||
-				inJob.numCompletedDependencies == inJob.numDependencies)
+			bool keyFound = _jobsCompletionStatus.ContainsKey(inNewlyCompletedJob);
+			if (keyFound)
 			{
-				inJob.begin(OnComplete);
+				Debug.Assert(!_jobsCompletionStatus[inNewlyCompletedJob], "Init callback called more than once for " + inNewlyCompletedJob);
+				_jobsCompletionStatus[inNewlyCompletedJob] = true;
+
+				bool removed = _remainingJobs.Remove(inNewlyCompletedJob);
+				Debug.Assert(removed, "Could not find " + inNewlyCompletedJob + " in _remainingInitialisables.");
+				if (_remainingJobs.Count == 0)
+				{
+					if (_allJobsCompleteCallback != null)
+					{
+						_allJobsCompleteCallback();
+					}
+				}
 			}
 			else
 			{
-				ExecuteJob(inJob.dependencies[inJob.numCompletedDependencies], () => {
-					inJob.numCompletedDependencies++;
-					ExecuteJob(inJob, OnComplete);
-				});
+				Debug.LogError(inNewlyCompletedJob + " was not registered properly.");
+			}
+			List<DTJob> dependents;
+			if (_dependents.TryGetValue(inNewlyCompletedJob, out dependents))
+			{
+				foreach (DTJob dependent in dependents)
+				{
+					TryBeginJob(dependent);
+				}
 			}
 		}
 	}
