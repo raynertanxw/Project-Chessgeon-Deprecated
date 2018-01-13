@@ -40,7 +40,7 @@ public class Dungeon : MonoBehaviour
 
 	private DungeonFSM _dungeonFSM = null;
 
-	public UnityEvent OnFloorGenerated;
+	public Utils.GenericVoidDelegate OnFloorGenerated;
 
 	private void Awake()
 	{
@@ -48,7 +48,7 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 
-		_morphyController.OnMorphyReachStairs.AddListener(OnMorphyReachStairs);
+		_morphyController.OnMorphyReachStairs += OnMorphyReachStairs;
 		_floor = new Floor(this);
 	}
 

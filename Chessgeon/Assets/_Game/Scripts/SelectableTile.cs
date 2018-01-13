@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TileSelectedEvent : UnityEvent<Vector2Int>
-{
-}
-
 public class SelectableTile : MonoBehaviour
 {
 	private MeshRenderer _meshRenderer = null;
@@ -15,14 +11,13 @@ public class SelectableTile : MonoBehaviour
 
 	private bool _isInitialised = false;
 	private Vector2Int _tilePos;
-	public TileSelectedEvent OnTileSelected;
+	public delegate void OnTileSelectedDelegate(Vector2Int inSelectedTile);
+	public OnTileSelectedDelegate OnTileSelected;
 
 	private void Awake()
 	{
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 		_collider = gameObject.GetComponent<BoxCollider>();
-
-		OnTileSelected = new TileSelectedEvent();
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
 	}
@@ -42,19 +37,19 @@ public class SelectableTile : MonoBehaviour
 
 	private void OnMouseDown()
 	{
-		OnTileSelected.Invoke(_tilePos);
-		OnTileSelected.RemoveAllListeners();
+		OnTileSelected(_tilePos);
+		OnTileSelected = null;
 		_tileManager.HideAllSelectableTiles();
 	}
 
-	public void SetAt(Vector2Int inTilePos, params UnityAction<Vector2Int>[] inTileSelectedActions)
+	public void SetAt(Vector2Int inTilePos, params OnTileSelectedDelegate[] inTileSelectedActions)
 	{
 		_tilePos = inTilePos;
 		transform.position = _tileManager.GetTileTransformPosition(_tilePos);
-		OnTileSelected.RemoveAllListeners();
+		OnTileSelected = null;
 		for (int iAction = 0; iAction < inTileSelectedActions.Length; iAction++)
 		{
-			OnTileSelected.AddListener(inTileSelectedActions[iAction]);
+			OnTileSelected += inTileSelectedActions[iAction];
 		}
 
 		SetVisible(true);

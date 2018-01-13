@@ -33,7 +33,7 @@ public class DungeonCamera : MonoBehaviour
 			_dungeonCamera = this.GetComponent<Camera>();
 			int cullMaskANDLayerUI = (_dungeonCamera.cullingMask & (1 << LayerMask.NameToLayer(Constants.LAYER_NAME_UI)));
 			Debug.Assert(cullMaskANDLayerUI == 0, "Dungeon Cam should not have UI in it's culling mask.");
-			_dungeon.OnFloorGenerated.AddListener(CalcCameraBounds);
+			_dungeon.OnFloorGenerated += CalcCameraBounds;
 
 			BoardScroller.OnDrag += OnDrag;
 			BoardScroller.OnBeginDrag += OnBeginDrag;

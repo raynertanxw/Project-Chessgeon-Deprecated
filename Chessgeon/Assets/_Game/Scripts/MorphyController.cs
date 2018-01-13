@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using DaburuTools;
 
 public class MorphyController : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class MorphyController : MonoBehaviour
 	public Dungeon Dungeon { get { return _dungeon; } }
 	public Vector2Int MorphyPos { get { return _morphy.Pos; } }
 
-	public UnityEvent OnMorphyReachStairs = new UnityEvent();
+	public Utils.GenericVoidDelegate OnMorphyReachStairs;
 	private Morphy _morphy = null;
 
 	private int _numMovesLeft = -1;
@@ -71,7 +72,7 @@ public class MorphyController : MonoBehaviour
 		Debug.Assert(_dungeon.CurrentFloor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
 
 		_numMovesLeft--;
-		DaburuTools.Action.OnActionEndDelegate onFinishMove;
+		Utils.GenericVoidDelegate onFinishMove;
 		if (_numMovesLeft > 0)
 		{
 			onFinishMove = () => { ShowPossibleMoves(); };

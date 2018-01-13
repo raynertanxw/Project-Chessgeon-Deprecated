@@ -96,7 +96,7 @@ public class DungeonCardDrawer : MonoBehaviour
 		_instance._hideDrawerBtn.interactable = false;
 		_instance._showDrawerBtn.interactable = false;
 
-		Action.OnActionEndDelegate onCompleteAnim = () =>
+		Utils.GenericVoidDelegate onCompleteAnim = () =>
 		{
 			_instance._cardDrawerAnimPlaying = false;
 			if (inOnComplete != null) inOnComplete();

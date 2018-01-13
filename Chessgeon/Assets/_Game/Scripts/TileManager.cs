@@ -108,7 +108,7 @@ public class TileManager : MonoBehaviour
 		return _dungeonTiles[inPosX, inPosY].transform.position;
 	}
 
-	public void ShowPossibleMoves(Vector2Int[] inPossibleMoves, UnityAction<Vector2Int> inTileSelectedAction)
+	public void ShowPossibleMoves(Vector2Int[] inPossibleMoves, SelectableTile.OnTileSelectedDelegate inTileSelectedAction)
 	{
 		HideAllSelectableTiles();
 

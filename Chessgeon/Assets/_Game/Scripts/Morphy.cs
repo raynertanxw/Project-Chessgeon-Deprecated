@@ -122,7 +122,7 @@ public class Morphy : MonoBehaviour
 		// TODO: Set all the health, stats, etc here?
 	}
 
-	public void MoveTo(Vector2Int inTargetPos, Action.OnActionEndDelegate inOnCompleteAction = null)
+	public void MoveTo(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
 		_pos = inTargetPos;
 		Vector3 targetTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);
@@ -134,7 +134,7 @@ public class Morphy : MonoBehaviour
 		ActionHandler.RunAction(moveAfterDelay);
 	}
 
-	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy, Action.OnActionEndDelegate inOnCompleteAction = null)
+	public void MoveAndAttack(Vector2Int inTargetPos, Enemy inTargetEnemy, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
 		_pos = inTargetPos;
 		Vector3 enemyTransformPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(Pos);

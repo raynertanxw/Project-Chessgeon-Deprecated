@@ -25,7 +25,7 @@ public class EnemyManager : MonoBehaviour
 			_enemies[iEnemy] = newEnemy;
 		}
 
-		_dungeon.MorphyController.OnMorphyReachStairs.AddListener(HideAllEnemies);
+		_dungeon.MorphyController.OnMorphyReachStairs += HideAllEnemies;
 
 		HideAllEnemies();
 	}

@@ -18,14 +18,11 @@ namespace DaburuTools
 		public Action _parent = null;
 		public bool _isRunning = false;
 		public bool _isResettable = false;
-		public OnActionBeginDelegate OnActionStart = EmptyFunc;
-		public OnActionUpdateDelegate OnActionUpdate = EmptyFunc;
-		public OnActionEndDelegate OnActionFinish = EmptyFunc;
+		public Utils.GenericVoidDelegate OnActionStart = EmptyFunc;
+		public Utils.GenericVoidDelegate OnActionUpdate = EmptyFunc;
+		public Utils.GenericVoidDelegate OnActionFinish = EmptyFunc;
 
 		// Optional.
-		public delegate void OnActionBeginDelegate();
-		public delegate void OnActionUpdateDelegate();
-		public delegate void OnActionEndDelegate();
 		protected virtual void OnActionBegin() { _isRunning = true; OnActionStart(); }
 		protected virtual void OnActionRun() { OnActionUpdate(); }
 		protected virtual void OnActionEnd() { _isRunning = false; OnActionFinish(); }

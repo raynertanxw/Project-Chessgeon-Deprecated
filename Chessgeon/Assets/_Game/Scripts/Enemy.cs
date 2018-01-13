@@ -129,7 +129,7 @@ public class Enemy : MonoBehaviour
 		// TODO: Reset the health and all that stuff.
 	}
 
-	public void ExecuteTurn(Floor inCurrentFloor, Action.OnActionEndDelegate inOnComplete)
+	public void ExecuteTurn(Floor inCurrentFloor, Utils.GenericVoidDelegate inOnComplete)
 	{
 		LinkedList<Node> pathToMorphy = AStarManager.FindPath(
 			inCurrentFloor.Nodes[Pos.x, Pos.y],
@@ -176,7 +176,7 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	private void MoveTo(Vector2Int inTargetPos, Action.OnActionEndDelegate inOnCompleteAction = null)
+	private void MoveTo(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
 		_pos = inTargetPos;
 		Vector3 targetTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);
@@ -188,7 +188,7 @@ public class Enemy : MonoBehaviour
 		ActionHandler.RunAction(moveAfterDelay);
 	}
 
-	private void AttackMorphy(Vector2Int inTargetPos, Action.OnActionEndDelegate inOnCompleteAction = null)
+	private void AttackMorphy(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
 		Vector3 originPos = this.transform.position;
 		Vector3 morphyTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(inTargetPos);
