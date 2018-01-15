@@ -167,10 +167,10 @@ public class Card : MonoBehaviour
 	}
 
 	bool _isAnimatingMoveToOtherCardPos = false;
-	public void AnimateMoveFrom(Vector3 inOtherCardLocalPos, float inMoveDuration)
+	public void AnimateMoveToOriginFrom(Vector3 inOtherCardLocalPos, float inMoveDuration, float inZOffset)
 	{
 		_isAnimatingMoveToOtherCardPos = true;
-		_cardRectTransform.localPosition = inOtherCardLocalPos + Vector3.forward * -2;
+		_cardRectTransform.localPosition = inOtherCardLocalPos + Vector3.forward * -inZOffset;
 		LocalMoveToAction moveToOriginPos = new LocalMoveToAction(_cardRectTransform, _originLocalPos, inMoveDuration, Utils.CurveSmoothStep);
 		moveToOriginPos.OnActionFinish += () =>
 		{

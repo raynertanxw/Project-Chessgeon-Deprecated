@@ -98,6 +98,7 @@ public class CardManager : MonoBehaviour
 		int firstEmptyIndex = -1;
 		int curIndex = 0;
 		bool neededToReorg = false;
+		float offsetZ = 0.0f;
 		while (firstEmptyIndex != _numCardsInHand)
 		{
 			if (firstEmptyIndex < 0) // NOTE: Finding the first empty.
@@ -112,12 +113,11 @@ public class CardManager : MonoBehaviour
 				if (_cards[curIndex].IsEnabled)
 				{
 					neededToReorg = true;
+					offsetZ += 0.5f;
 
 					SwapCards(curIndex, firstEmptyIndex);
 					_cards[curIndex].SetEnabled(false);
-					_cards[firstEmptyIndex].AnimateMoveFrom(
-						_cards[curIndex].OriginLocalPos,
-						REORG_ANIM_DURATION);
+					_cards[firstEmptyIndex].AnimateMoveToOriginFrom(_cards[curIndex].OriginLocalPos, REORG_ANIM_DURATION, offsetZ);
 					_cards[firstEmptyIndex].SetEnabled(true);
 
 					curIndex = -1;
