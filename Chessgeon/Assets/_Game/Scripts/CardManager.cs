@@ -27,7 +27,7 @@ public class CardManager : MonoBehaviour
 		{
 			_cards[iCard] = transform.Find("Card " + (iCard + 1)).GetComponent<Card>();
 			_cards[iCard].SetCardIndex(iCard);
-			_cards[iCard].OnCardExecute += ExecuteCard;
+			_cards[iCard].OnCardExecute += ExecuteAndDiscardCard;
 		}
 
 		_numCardsInHand = 0;
@@ -42,6 +42,7 @@ public class CardManager : MonoBehaviour
 		DelayAction delayedAction = new DelayAction(0.5f);
 		delayedAction.OnActionFinish += HideAllCards;
 		ActionHandler.RunAction(delayedAction);
+
 	}
 
 	private void HideAllCards()
@@ -69,31 +70,83 @@ public class CardManager : MonoBehaviour
 
 	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		int cardLimit = Mathf.Min(_numCardsInHand + inNumCardsDrawn, MAX_CARDS);
-		int cardsDrawn = 0;
-		const float CARD_ANIM_INTERVAL = 0.5f;
-		for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
+		bool needReorg = ReorganiseCards(() => { DrawCard(inNumCardsDrawn, inOnComplete); });
+
+		if (!needReorg)
 		{
-			Debug.Assert(!_cards[iCard].gameObject.activeSelf, "Card " + iCard + " is already active! Should not be drawn.");
-			SetCardActive(iCard, true);
-			_cards[iCard].SetCard(GenerateRandomCardData());
-			if ((iCard + 1) == cardLimit)
+			int cardLimit = Mathf.Min(_numCardsInHand + inNumCardsDrawn, MAX_CARDS);
+			int cardsDrawn = 0;
+			const float CARD_ANIM_INTERVAL = 0.5f;
+			for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
 			{
-				_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
+				Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
+				SetCardActive(iCard, true);
+				_cards[iCard].SetCard(GenerateRandomCardData());
+				if ((iCard + 1) == cardLimit)
+				{
+					_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
+				}
+				else
+				{
+					_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL);
+				}
+				cardsDrawn++;
+				_numCardsInHand++;
+				_statTotalCardsDrawn++;
 			}
-			else
-			{
-				_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL);
-			}
-			cardsDrawn++;
-			_numCardsInHand++;
-			_statTotalCardsDrawn++;
 		}
+	}
+
+	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		// TODO: Reorg and then CALL inOnComlete.
+		const float REORG_ANIM_DURATION = 0.6f;
+		int firstEmptyIndex = -1;
+		int curIndex = 0;
+		bool neededToReorg = false;
+		while (firstEmptyIndex != _numCardsInHand)
+		{
+			if (firstEmptyIndex < 0) // NOTE: Finding the first empty.
+			{
+				if (!_cards[curIndex].IsEnabled)
+				{
+					firstEmptyIndex = curIndex;
+				}
+			}
+			else // Finding the next card.
+			{
+				if (_cards[curIndex].IsEnabled)
+				{
+					neededToReorg = true;
+
+					SwapCards(curIndex, firstEmptyIndex);
+					_cards[curIndex].SetEnabled(false);
+					_cards[firstEmptyIndex].AnimateMoveFrom(
+						_cards[curIndex].OriginLocalPos,
+						REORG_ANIM_DURATION);
+					_cards[firstEmptyIndex].SetEnabled(true);
+
+					curIndex = -1;
+					firstEmptyIndex = -1;
+				}
+			}
+
+			curIndex++;
+		}
+
+		if (neededToReorg)
+		{
+			DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
+			delayedExecution.OnActionFinish += () => { inOnComplete(); };
+			ActionHandler.RunAction(delayedExecution);
+		}
+
+		return neededToReorg;
 	}
 
 	private void SetCardActive(int inCardIndex, bool inIsActive)
 	{
-		_cards[inCardIndex].gameObject.SetActive(inIsActive);
+		_cards[inCardIndex].SetEnabled(inIsActive);
 	}
 
 	private CardData GenerateRandomCardData()
@@ -102,16 +155,15 @@ public class CardManager : MonoBehaviour
 		return new CardData(eCardTier.Normal, eCardType.Movement, (eMoveType)Random.Range(0, 5));
 	}
 
-	private void SwapCardData(int inCardIndexA, int inCardIndexB)
+	private void SwapCards(int inCardIndexA, int inCardIndexB)
 	{
 		CardData cardDataA = _cards[inCardIndexA].CardData;
 		CardData cardDataB = _cards[inCardIndexB].CardData;
-
 		_cards[inCardIndexA].SetCard(cardDataB);
 		_cards[inCardIndexB].SetCard(cardDataA);
 	}
 
-	private void ExecuteCard(int inCardIndex)
+	private void ExecuteAndDiscardCard(int inCardIndex)
 	{
 		Card card = _cards[inCardIndex];
 		CardData cardData = card.CardData;
@@ -137,6 +189,10 @@ public class CardManager : MonoBehaviour
 				break;
 			}
 		}
+
+		// TODO: Play the ExecuteCardAnim.
+		SetCardActive(inCardIndex, false);
+		_numCardsInHand--;
 
 		DungeonCardDrawer.EnableCardDrawer(false);
 	}

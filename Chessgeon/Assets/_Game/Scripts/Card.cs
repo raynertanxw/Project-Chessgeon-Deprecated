@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using DaburuTools;
 
@@ -28,10 +29,14 @@ public class Card : MonoBehaviour
 
 	private RectTransform _cardRectTransform = null;
 	private MeshRenderer _cardMeshRen = null;
+	private Image _cardRaycastTargetImage = null;
 	private CardManager _cardManager = null;
 	private int _cardIndex = -1;
+	private bool _isEnabled = false;
+	public bool IsEnabled { get { return _isEnabled; } }
 
 	private Vector3 _originLocalPos;
+	public Vector3 OriginLocalPos { get { return _originLocalPos; } }
 	private float _originZ;
 
 	private Vector3 _desiredCardLocalPos;
@@ -53,7 +58,9 @@ public class Card : MonoBehaviour
 	{
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
 		_cardMeshRen = gameObject.GetComponent<MeshRenderer>();
+		_cardRaycastTargetImage = transform.Find("Card Image").gameObject.GetComponent<Image>();
 		_cardManager = transform.parent.GetComponent<CardManager>();
+		SetEnabled(true);
 	}
 
 	private void Start()
@@ -70,7 +77,8 @@ public class Card : MonoBehaviour
 
 	private void Update()
 	{
-		if (!_isAnimatingCardDraw) // TODO: Include booleans for animating card execution.
+		if (!_isAnimatingCardDraw &&
+			!_isAnimatingMoveToOtherCardPos) // TODO: Include booleans for animating card execution.
 		{
 			_cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
 			_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
@@ -152,5 +160,29 @@ public class Card : MonoBehaviour
 		if (inOnComplete != null) revealCard.OnActionFinish += () => { inOnComplete(); };
 
 		ActionHandler.RunAction(new ActionAfterDelay(revealCard, inDelay));
+	}
+
+	bool _isAnimatingMoveToOtherCardPos = false;
+	public void AnimateMoveFrom(Vector3 inOtherCardLocalPos, float inMoveDuration)
+	{
+		_isAnimatingMoveToOtherCardPos = true;
+		_cardRectTransform.localPosition = inOtherCardLocalPos + Vector3.forward * -2;
+		LocalMoveToAction moveToOriginPos = new LocalMoveToAction(_cardRectTransform, _originLocalPos, inMoveDuration, Utils.CurveSmoothStep);
+		moveToOriginPos.OnActionFinish += () =>
+		{
+			_isAnimatingMoveToOtherCardPos = false;
+		};
+
+        ActionHandler.RunAction(moveToOriginPos);
+	}
+
+	public void SetEnabled(bool inIsEnabled)
+	{
+		if (inIsEnabled != _isEnabled)
+		{
+			_isEnabled = inIsEnabled;
+			_cardMeshRen.enabled = inIsEnabled;
+			_cardRaycastTargetImage.raycastTarget = inIsEnabled;
+		}
 	}
 }
