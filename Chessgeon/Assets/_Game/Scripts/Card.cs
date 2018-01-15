@@ -145,8 +145,8 @@ public class Card : MonoBehaviour
 		_cardRectTransform.localPosition = new Vector3(-2.0f, -7.5f);
 		_cardRectTransform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
 
-		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos, 0.4f);
-		LocalRotateToAction rotateCard = new LocalRotateToAction(_cardRectTransform, Vector3.zero, 0.6f);
+		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos, 0.4f, Utils.CurveInverseExponential);
+		LocalRotateToAction rotateCard = new LocalRotateToAction(_cardRectTransform, Vector3.zero, 0.6f, Utils.CurveSmoothStep);
 		ActionSequence revealCard = new ActionSequence(moveToHand, rotateCard);
 		revealCard.OnActionFinish += () => { _isAnimatingCardDraw = false; };
 		if (inOnComplete != null) revealCard.OnActionFinish += () => { inOnComplete(); };
