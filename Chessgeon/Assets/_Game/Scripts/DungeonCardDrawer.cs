@@ -85,7 +85,6 @@ public class DungeonCardDrawer : MonoBehaviour
 		}
 	}
 
-
 	const float BTN_SCALE_ANIM_TIME = 0.25f;
 	private bool _showDrawerBtnAnimPlaying = false;
 	public static void EnableShowDrawerBtn(bool inIsEnabled, bool inIsAnimated = true, DTJob.OnCompleteCallback inOnComplete = null)

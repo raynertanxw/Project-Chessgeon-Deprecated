@@ -185,6 +185,12 @@ public class CardManager : MonoBehaviour
 		}
 
 		_numCardsInHand--;
-		_cards[inCardIndex].AnimateCardExecuteAndDisable(() => { DungeonCardDrawer.EnableCardDrawer(false); });
+		_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
+		{
+			DungeonCardDrawer.EnableCardDrawer(false, true, () =>
+			{
+				DungeonCardDrawer.EnableShowDrawerBtn(false);
+			});
+		});
 	}
 }
