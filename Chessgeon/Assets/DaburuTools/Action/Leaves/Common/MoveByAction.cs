@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class MoveByAction : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		Vector3 _vecDesiredTotalDelta;
 		float _actionDuration;
 
 		Vector3 _vecAccumulatedDelta;
 		float _elapsedDuration;
 
-		public MoveByAction(Transform inTransform, Graph inGraph, Vector3 inDesiredDelta, float inActionDuration)
+		public MoveByAction(Transform inTransform, Vector3 inDesiredDelta, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredDelta(inDesiredDelta);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public MoveByAction(Transform inTransform, Vector3 inDesiredDelta, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredDelta(inDesiredDelta);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredDelta(Vector3 inNewDesiredDelta)
 		{
@@ -72,7 +72,9 @@ namespace DaburuTools
 
 			_transform.position -= _vecAccumulatedDelta;    // Reverse the previous frame's rotation.
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_vecAccumulatedDelta = Vector3.LerpUnclamped(Vector3.zero, _vecDesiredTotalDelta, t);
 
 			_transform.position += _vecAccumulatedDelta;    // Apply the new delta rotation.

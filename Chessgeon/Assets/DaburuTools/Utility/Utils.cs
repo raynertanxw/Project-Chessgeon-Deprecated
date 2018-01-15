@@ -32,6 +32,18 @@ namespace DaburuTools
 			new Keyframe(0.0f, 1.0f, 0.0f * Mathf.Deg2Rad, -57.5f * Mathf.Deg2Rad),
 			new Keyframe(1.0f, 0.0f, -57.5f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad));
 
+		public static readonly AnimationCurve CurveOne = new AnimationCurve(
+			new Keyframe(0.0f, 1.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad),
+			new Keyframe(1.0f, 1.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad));
+
+		public static readonly AnimationCurve CurveZero = new AnimationCurve(
+			new Keyframe(0.0f, 0.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad),
+			new Keyframe(1.0f, 0.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad));
+
+		public static readonly AnimationCurve CurveHalf = new AnimationCurve(
+			new Keyframe(0.0f, 0.5f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad),
+			new Keyframe(1.0f, 0.5f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad));
+
 		public static readonly AnimationCurve CurveSmoothStep = new AnimationCurve(
 			new Keyframe(0.0f, 0.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad),
 			new Keyframe(1.0f, 1.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad));

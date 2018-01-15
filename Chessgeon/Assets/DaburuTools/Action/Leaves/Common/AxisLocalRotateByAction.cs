@@ -6,7 +6,7 @@ namespace DaburuTools
 	public class AxisLocalRotateByAction : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		Vector3 _vecAxis;
 		float _desiredAngleDelta;
 		float _actionDuration;
@@ -14,10 +14,10 @@ namespace DaburuTools
 		float _accumulatedAngleDelta;
 		float _elapsedDuration;
 
-		public AxisLocalRotateByAction(Transform inTransform, Graph inGraph, Vector3 inAxis, float inDesiredAngleDelta, float inActionDuration)
+		public AxisLocalRotateByAction(Transform inTransform, Vector3 inAxis, float inDesiredAngleDelta, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetAxis(inAxis);
 			SetDesiredAngleDelta(inDesiredAngleDelta);
 			SetActionDuration(inActionDuration);
@@ -27,16 +27,16 @@ namespace DaburuTools
 		public AxisLocalRotateByAction(Transform inTransform, Vector3 inAxis, float inDesiredAngleDelta, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetAxis(inAxis);
 			SetDesiredAngleDelta(inDesiredAngleDelta);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetAxis(Vector3 inNewAxis)
 		{
@@ -79,7 +79,9 @@ namespace DaburuTools
 
 			_transform.Rotate(_vecAxis, -_accumulatedAngleDelta, Space.Self);  // Reverse the previous frame's rotation.
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_accumulatedAngleDelta = Mathf.LerpUnclamped(0.0f, _desiredAngleDelta, t);
 
 			_transform.Rotate(_vecAxis, _accumulatedAngleDelta, Space.Self);   // Apply the new delta rotation.

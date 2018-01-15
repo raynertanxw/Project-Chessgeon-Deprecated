@@ -8,15 +8,15 @@ namespace DaburuTools
 		SpriteRenderer _spriteRenderer;
 		float _desiredAlpha;
 		float _actionDuration;
-		Graph _graph;
+		AnimationCurve _animCurve;
 
 		float _originalAlpha;
 		float _elapsedDuration;
 
-		public SpriteRendererAlphaToAction(SpriteRenderer inSpriteRenderer, Graph inGraph, float inDesiredAlpha, float inActionDuration)
+		public SpriteRendererAlphaToAction(SpriteRenderer inSpriteRenderer, float inDesiredAlpha, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_spriteRenderer = inSpriteRenderer;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public SpriteRendererAlphaToAction(SpriteRenderer inSpriteRenderer, float inDesiredAlpha, float inActionDuration)
 		{
 			_spriteRenderer = inSpriteRenderer;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
@@ -63,9 +63,11 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			Color newCol = _spriteRenderer.color;
-			newCol.a = _graph.Read(Mathf.Lerp(_originalAlpha, _desiredAlpha, t));
+			newCol.a = Mathf.Lerp(_originalAlpha, _desiredAlpha, t);
 			_spriteRenderer.color = newCol;
 
 			// Remove self after action is finished.

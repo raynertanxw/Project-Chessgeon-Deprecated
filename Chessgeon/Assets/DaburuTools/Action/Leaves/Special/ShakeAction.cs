@@ -9,7 +9,7 @@ namespace DaburuTools
 		int _numShakes;
 		float _shakePeriod;
 		float _shakeIntensity;
-		Graph _attenuationGraph;
+		AnimationCurve _attenuationAnimCurve;
 
 		Vector3 _vecDeltaPos;
 		float _elapsedDuration;
@@ -21,17 +21,17 @@ namespace DaburuTools
 
 			SetNumShakes(inNumShakes);
 			SetShakeIntensity(inShakeIntensity);
-			SetAttenuationGraph(Graph.One);
+			SetAttenuationAnimCurve(Utils.CurveOne);
 
 			SetShakePeriod(0.05f);
 		}
-		public ShakeAction(Transform inTransform, int inNumShakes, float inShakeIntensity, Graph inAttenuationGraph)
+		public ShakeAction(Transform inTransform, int inNumShakes, float inShakeIntensity, AnimationCurve inAttenuationAnimCurve)
 		{
 			_transform = inTransform;
 
 			SetNumShakes(inNumShakes);
 			SetShakeIntensity(inShakeIntensity);
-			SetAttenuationGraph(inAttenuationGraph);
+			SetAttenuationAnimCurve(inAttenuationAnimCurve);
 
 			SetShakePeriod(0.05f);
 		}
@@ -44,9 +44,9 @@ namespace DaburuTools
 		{
 			_shakeIntensity = inNewShakeIntensity;
 		}
-		public void SetAttenuationGraph(Graph inNewAttenuationGraph)
+		public void SetAttenuationAnimCurve(AnimationCurve inNewAttenuationAnimCurve)
 		{
-			_attenuationGraph = inNewAttenuationGraph;
+			_attenuationAnimCurve = inNewAttenuationAnimCurve;
 		}
 		public void SetShakeFrequency(float inNewShakeFrequency)
 		{
@@ -107,7 +107,9 @@ namespace DaburuTools
 					// Set back to original position.
 					_transform.position -= _vecDeltaPos;
 					// Set new shake pos.
-					float t = _attenuationGraph.Read(_elapsedDuration / (_shakePeriod * _numShakes));
+					float t;
+					if (_attenuationAnimCurve == null) t = Mathf.Clamp01(_elapsedDuration / (_shakePeriod * _numShakes));
+					else t = _attenuationAnimCurve.Evaluate(_elapsedDuration / (_shakePeriod * _numShakes));
 					_vecDeltaPos = Random.insideUnitSphere * _shakeIntensity * t;
 					_transform.position += _vecDeltaPos;
 				}

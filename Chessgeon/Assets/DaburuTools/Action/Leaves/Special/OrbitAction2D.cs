@@ -22,7 +22,7 @@ namespace DaburuTools
 			}
 		}
 		int _numCycles;
-		Graph _revolutionGraph;
+		AnimationCurve _revolutionAnimCurve;
 		float _cycleDuration;
 		bool _preventOwnAxisRotation;
 		public bool PreventOwnAxisRotation
@@ -37,15 +37,15 @@ namespace DaburuTools
 		public OrbitAction2D(
 			Transform inTransform, Transform mOrbitPointTransform,
 			bool inIsClockwise,
-			int inNumCycles, Graph inRevolutionGraph,
-			float inCycleDuration,
+			int inNumCycles, float inCycleDuration,
+			AnimationCurve inRevolutionAnimCurve = null,
 			bool inPreventOwnAxisRotation = true)
 		{
 			_transform = inTransform;
 			SetOrbitPointTransform(mOrbitPointTransform);
 			IsClockwise = inIsClockwise;
 			SetNumCycles(inNumCycles);
-			SetRevolutionGraph(inRevolutionGraph);
+			SetRevolutionAnimCurve(inRevolutionAnimCurve);
 			SetCycleDuration(inCycleDuration);
 			_preventOwnAxisRotation = inPreventOwnAxisRotation;
 		}
@@ -58,9 +58,9 @@ namespace DaburuTools
 		{
 			_numCycles = inNewNumCycles;
 		}
-		public void SetRevolutionGraph(Graph inNewRevolutionGraph)
+		public void SetRevolutionAnimCurve(AnimationCurve inNewRevolutionAnimCurve)
 		{
-			_revolutionGraph = inNewRevolutionGraph;
+			_revolutionAnimCurve = inNewRevolutionAnimCurve;
 		}
 		public void SetCycleDuration(float inNewCycleDuration)
 		{
@@ -93,7 +93,9 @@ namespace DaburuTools
 
 			// Undo previous frame's rotation.
 			float mfCycleElapsedOld = _elapsedDuration - _cycleDuration * _currentCycle;
-			float tOld = _revolutionGraph.Read(mfCycleElapsedOld / _cycleDuration);
+			float tOld;
+			if (_revolutionAnimCurve == null) tOld = Mathf.Clamp01(mfCycleElapsedOld / _cycleDuration);
+			else tOld = _revolutionAnimCurve.Evaluate(mfCycleElapsedOld / _cycleDuration);
 			_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, -360.0f * tOld);
 			// Offset Rotation so that the orbit action does not affect the object's rotation.
 			if (PreventOwnAxisRotation)
@@ -103,7 +105,9 @@ namespace DaburuTools
 			float mfCycleElapsed = _elapsedDuration - _cycleDuration * _currentCycle;
 			if (mfCycleElapsed < _cycleDuration)
 			{
-				float t = _revolutionGraph.Read(mfCycleElapsed / _cycleDuration);
+				float t;
+				if (_revolutionAnimCurve == null) t = Mathf.Clamp01(mfCycleElapsed / _cycleDuration);
+				else t = _revolutionAnimCurve.Evaluate(mfCycleElapsed / _cycleDuration);
 				_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, 360.0f * t);
 
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
@@ -127,7 +131,9 @@ namespace DaburuTools
 				else
 				{
 					// Do the interpolation for the beginning of the next cycle.
-					float t = _revolutionGraph.Read((mfCycleElapsed - _cycleDuration) / _cycleDuration);
+					float t;
+					if (_revolutionAnimCurve == null) t = Mathf.Clamp01((mfCycleElapsed - _cycleDuration) / _cycleDuration);
+					else t = _revolutionAnimCurve.Evaluate((mfCycleElapsed - _cycleDuration) / _cycleDuration);
 					_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, 360.0f * t);
 
 					// Offset Rotation so that the orbit action does not affect the object's rotation.
@@ -159,7 +165,9 @@ namespace DaburuTools
 			{
 				// Undo previous frame's rotation.
 				float mfCycleElapsedOld = _elapsedDuration - _cycleDuration * _currentCycle;
-				float tOld = _revolutionGraph.Read(mfCycleElapsedOld / _cycleDuration);
+				float tOld;
+				if (_revolutionAnimCurve == null) tOld = Mathf.Clamp01(mfCycleElapsedOld / _cycleDuration);
+				else tOld = _revolutionAnimCurve.Evaluate(mfCycleElapsedOld / _cycleDuration);
 				_transform.RotateAround(_orbitPointTransform.position, _orbitAxisDir, -360.0f * tOld);
 				// Offset Rotation so that the orbit action does not affect the object's rotation.
 				if (PreventOwnAxisRotation)

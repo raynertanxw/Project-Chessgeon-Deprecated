@@ -181,7 +181,7 @@ public class Enemy : MonoBehaviour
 		_pos = inTargetPos;
 		Vector3 targetTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);
 		float moveDuration = 0.6f;
-		MoveToAction moveToTarget = new MoveToAction(this.transform, Graph.SmoothStep, targetTransformPos, moveDuration);
+		MoveToAction moveToTarget = new MoveToAction(this.transform, targetTransformPos, moveDuration, Utils.CurveSmoothStep);
 		ActionAfterDelay moveAfterDelay = new ActionAfterDelay(moveToTarget, 0.1f);
 		moveAfterDelay.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveDuration); };
 		if (inOnCompleteAction != null) moveAfterDelay.OnActionFinish += inOnCompleteAction;
@@ -195,21 +195,21 @@ public class Enemy : MonoBehaviour
 		float moveUpDuration = 0.4f;
 		MoveToAction moveUp = new MoveToAction(
 			this.transform,
-			Graph.InverseExponential,
 			transform.position + new Vector3(0.0f, 2.5f, 0.0f),
-			moveUpDuration);
+			moveUpDuration,
+			Utils.CurveInverseExponential);
 		moveUp.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveUpDuration); };
 		MoveToAction slamDown = new MoveToAction(
 			this.transform,
-			Graph.Exponential,
 			morphyTransformPos,
-			0.1f);
+			0.1f,
+			Utils.CurveExponential);
 		slamDown.OnActionFinish += () => { DungeonCamera.CameraShake(15, 0.5f, 0.2f); };
 		MoveToAction moveBack = new MoveToAction(
 			this.transform,
-			Graph.SmoothStep,
 			originPos,
-			0.5f);
+			0.5f,
+			Utils.CurveSmoothStep);
 		ActionSequence attackSeq = new ActionSequence(moveUp, new DelayAction(0.15f), slamDown, moveBack);
 		// TODO: Call Morphy.TakeDamage();
 		//attackSeq.OnActionFinish += ;

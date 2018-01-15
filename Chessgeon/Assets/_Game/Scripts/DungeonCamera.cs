@@ -120,7 +120,7 @@ public class DungeonCamera : MonoBehaviour
 			tileTransformPos.z - diffZ);
 		targetPos = _instance.RestrictToCameraBounds(targetPos);
 
-		MoveToAction moveToFocus = new MoveToAction(_instance.transform, Graph.SmoothStep, targetPos, inDuration);
+		MoveToAction moveToFocus = new MoveToAction(_instance.transform, targetPos, inDuration, Utils.CurveSmoothStep);
 		moveToFocus.OnActionStart += () => { _instance._isFocusingOnTile = true; };
 		moveToFocus.OnActionFinish += () =>
 		{
@@ -132,7 +132,7 @@ public class DungeonCamera : MonoBehaviour
 
 	public static void CameraShake(int inNumShakes, float inIntensity, float inDuration)
 	{
-		ShakeAction camShake = new ShakeAction(_instance.transform, inNumShakes, inIntensity, Graph.InverseLinear);
+		ShakeAction camShake = new ShakeAction(_instance.transform, inNumShakes, inIntensity, Utils.CurveInverseLinear);
 		camShake.SetShakeByDuration(inDuration, inNumShakes);
 		camShake.OnActionStart += () => { _instance._isShaking = true; };
 		camShake.OnActionFinish += () => { _instance._isShaking = false; };

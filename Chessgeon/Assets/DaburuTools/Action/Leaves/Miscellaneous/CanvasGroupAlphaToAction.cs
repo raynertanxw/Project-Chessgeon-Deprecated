@@ -9,15 +9,15 @@ namespace DaburuTools
 		CanvasGroup _canvasGroup;
 		float _desiredAlpha;
 		float _actionDuration;
-		Graph _graph;
+		AnimationCurve _animCurve;
 
 		float _originalAlpha;
 		float _elapsedDuration;
 
-		public CanvasGroupAlphaToAction(CanvasGroup inCanvasGroup, Graph inGraph, float inDesiredAlpha, float inActionDuration)
+		public CanvasGroupAlphaToAction(CanvasGroup inCanvasGroup, float inDesiredAlpha, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_canvasGroup = inCanvasGroup;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
 
@@ -26,15 +26,15 @@ namespace DaburuTools
 		public CanvasGroupAlphaToAction(CanvasGroup inCanvasGroup, float inDesiredAlpha, float inActionDuration)
 		{
 			_canvasGroup = inCanvasGroup;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredAlpha(inDesiredAlpha);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredAlpha(float inNewDesiredAlpha)
 		{
@@ -64,8 +64,10 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
-			_canvasGroup.alpha = _graph.Read(Mathf.Lerp(_originalAlpha, _desiredAlpha, t));
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
+			_canvasGroup.alpha = Mathf.Lerp(_originalAlpha, _desiredAlpha, t);
 
 			// Remove self after action is finished.
 			if (_elapsedDuration >= _actionDuration)

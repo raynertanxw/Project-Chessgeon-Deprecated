@@ -9,7 +9,7 @@ namespace DaburuTools
 		Vector3 _vecMinScale;
 		Vector3 _vecMaxScale;
 		int _numCycles;
-		Graph _expandGraph, _shrinkGraph;
+		AnimationCurve _expandAnimCurve, _shrinkAnimCurve;
 		float _expandDuration, _shrinkDuration, _cycleDuration;
 
 		float _elapsedDuration;
@@ -17,22 +17,22 @@ namespace DaburuTools
 
 		public PulseAction(
 			Transform inTransform, int inNumCycles,
-			Graph inExpandGraph, Graph inShrinkGraph,
 			float inExpandDuration, float inShrinkDuration,
-			Vector3 inMinScale, Vector3 inMaxScale)
+			Vector3 inMinScale, Vector3 inMaxScale,
+			AnimationCurve inExpandAnimCurve, AnimationCurve inShrinkAnimCurve)
 		{
 			_transform = inTransform;
 			SetNumCycles(inNumCycles);
-			SetExpandShrinkGraphs(inExpandGraph, inShrinkGraph);
 			SetExpandShrinkDuration(inExpandDuration, inShrinkDuration);
 			SetMinMaxScale(inMinScale, inMaxScale);
+			SetExpandShrinkAnimCurves(inExpandAnimCurve, inShrinkAnimCurve);
 		}
-		public PulseAction(Transform inTransform, int inNumCycles, Graph inExpandShrinkGraph, float inCycleDuration,
-			Vector3 inMinScale, Vector3 inMaxScale)
+		public PulseAction(Transform inTransform, int inNumCycles, float inCycleDuration,
+			Vector3 inMinScale, Vector3 inMaxScale, AnimationCurve inExpandAnimCurve)
 		{
 			_transform = inTransform;
 			SetNumCycles(inNumCycles);
-			SetExpandShrinkGraphs(inExpandShrinkGraph, inExpandShrinkGraph);
+			SetExpandShrinkAnimCurves(inExpandAnimCurve, inExpandAnimCurve);
 			SetExpandShrinkDuration(inCycleDuration / 2.0f, inCycleDuration / 2.0f);
 			SetMinMaxScale(inMinScale, inMaxScale);
 		}
@@ -41,10 +41,10 @@ namespace DaburuTools
 		{
 			_numCycles = inNewNumCycles;
 		}
-		public void SetExpandShrinkGraphs(Graph inNewExpandGraph, Graph inNewShrinkGraph)
+		public void SetExpandShrinkAnimCurves(AnimationCurve inNewExpandAnimCurve, AnimationCurve inNewShrinkAnimCurve)
 		{
-			_expandGraph = inNewExpandGraph;
-			_shrinkGraph = inNewShrinkGraph;
+			_expandAnimCurve = inNewExpandAnimCurve;
+			_shrinkAnimCurve = inNewShrinkAnimCurve;
 		}
 		public void SetExpandShrinkDuration(float inNewExpandDuration, float inNewShrinkDuration)
 		{
@@ -86,12 +86,16 @@ namespace DaburuTools
 			float mfCycleElapsed = _elapsedDuration - _cycleDuration * _currentCycle;
 			if (mfCycleElapsed < _expandDuration) // Expand
 			{
-				float t = _expandGraph.Read(mfCycleElapsed / _expandDuration);
+				float t;
+				if (_expandAnimCurve == null) t = Mathf.Clamp01(mfCycleElapsed / _expandDuration);
+				else t = _expandAnimCurve.Evaluate(mfCycleElapsed / _expandDuration);
 				_transform.localScale = Vector3.LerpUnclamped(_vecMinScale, _vecMaxScale, t);
 			}
 			else if (mfCycleElapsed < _cycleDuration) // Shrink
 			{
-				float t = _shrinkGraph.Read((mfCycleElapsed - _expandDuration) / _shrinkDuration);
+				float t;
+				if (_shrinkAnimCurve == null) t = Mathf.Clamp01((mfCycleElapsed - _expandDuration) / _shrinkDuration);
+				else t = _shrinkAnimCurve.Evaluate((mfCycleElapsed - _expandDuration) / _shrinkDuration);
 				_transform.localScale = Vector3.LerpUnclamped(_vecMaxScale, _vecMinScale, t);
 			}
 			else
@@ -107,7 +111,7 @@ namespace DaburuTools
 				else
 				{
 					// Do the interpolation for the beginning of the next cycle.
-					float t = _expandGraph.Read((mfCycleElapsed - _cycleDuration) / _expandDuration);
+					float t = _expandAnimCurve.Evaluate((mfCycleElapsed - _cycleDuration) / _expandDuration);
 					_transform.localScale = Vector3.LerpUnclamped(_vecMinScale, _vecMaxScale, t);
 				}
 			}

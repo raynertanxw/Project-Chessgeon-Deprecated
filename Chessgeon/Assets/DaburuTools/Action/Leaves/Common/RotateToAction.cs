@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class RotateToAction : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		Vector3 _vecDesiredRotation;
 		float _actionDuration;
 
 		Vector3 _vecInitialRotation;
 		float _elapsedDuration;
 
-		public RotateToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredRotation, float inActionDuration)
+		public RotateToAction(Transform inTransform, Vector3 inDesiredRotation, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredRotation(inDesiredRotation);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public RotateToAction(Transform inTransform, Vector3 inDesiredRotation, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredRotation(inDesiredRotation);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredRotation(Vector3 inNewDesiredRotation)
 		{
@@ -70,7 +70,9 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_transform.eulerAngles = Vector3.LerpUnclamped(_vecInitialRotation, _vecDesiredRotation, t);
 
 			// Remove self after action is finished.

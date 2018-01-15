@@ -8,15 +8,15 @@ namespace DaburuTools
 		AudioSource _audioSource;
 		float _desiredVolume;
 		float _actionDuration;
-		Graph _graph;
+		AnimationCurve _animCurve;
 
 		float _originalVolume;
 		float _elapsedDuration;
 
-		public VolumeToAction(AudioSource inAudioSource, Graph inGraph, float inDesiredVolume, float inActionDuration)
+		public VolumeToAction(AudioSource inAudioSource, float inDesiredVolume, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_audioSource = inAudioSource;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredVolume(inDesiredVolume);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public VolumeToAction(AudioSource inAudioSource, float inDesiredVolume, float inActionDuration)
 		{
 			_audioSource = inAudioSource;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredVolume(inDesiredVolume);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredVolume(float inNewDesiredVolume)
 		{
@@ -63,7 +63,9 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_audioSource.volume = Mathf.Lerp(_originalVolume, _desiredVolume, t);
 
 			// Remove self after action is finished.

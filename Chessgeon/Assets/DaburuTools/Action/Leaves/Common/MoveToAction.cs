@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class MoveToAction : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		Vector3 _vecDesiredPos;
 		float _actionDuration;
 
 		Vector3 _vecInitialPos;
 		float _elapsedDuration;
 
-		public MoveToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredPosition, float inActionDuration)
+		public MoveToAction(Transform inTransform, Vector3 inDesiredPosition, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredPosition(inDesiredPosition);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public MoveToAction(Transform inTransform, Vector3 inDesiredPosition, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredPosition(inDesiredPosition);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredPosition(Vector3 inNewDesiredPosition)
 		{
@@ -70,7 +70,9 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_transform.position = Vector3.LerpUnclamped(_vecInitialPos, _vecDesiredPos, t);
 
 			// Remove self after action is finished.

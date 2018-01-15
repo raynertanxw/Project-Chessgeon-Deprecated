@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class LocalRotateToAction2D : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		float _desiredLocalZEulerAngle;
 		float _actionDuration;
 
 		float _initialLocalZEulerAngle;
 		float _elapsedDuration;
 
-		public LocalRotateToAction2D(Transform inTransform, Graph inGraph, float inDesiredLocalZEulerAngle, float inActionDuration)
+		public LocalRotateToAction2D(Transform inTransform, float inDesiredLocalZEulerAngle, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredLocalZEulerAngle(inDesiredLocalZEulerAngle);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public LocalRotateToAction2D(Transform inTransform, float inDesiredLocalZEulerAngle, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredLocalZEulerAngle(inDesiredLocalZEulerAngle);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredLocalZEulerAngle(float inNewDesiredLocalZEulerAngle)
 		{
@@ -70,7 +70,9 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_transform.localEulerAngles = new Vector3(
 				_transform.localEulerAngles.x,
 				_transform.localEulerAngles.y,

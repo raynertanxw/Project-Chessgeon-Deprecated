@@ -31,9 +31,9 @@ namespace DaburuTools
 
 			SetupAction();
 		}
-		public void SetAnimCurve(AnimationCurve inAnimCurve)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_animCurve = inAnimCurve;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredZEulerAngle(float inNewDesiredZEulerAngle)
 		{

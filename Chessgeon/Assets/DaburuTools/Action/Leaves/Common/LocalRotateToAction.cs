@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class LocalRotateToAction : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		Vector3 _vecDesiredLocalRotation;
 		float _actionDuration;
 
 		Vector3 _vecInitialLocalRotation;
 		float _elapsedDuration;
 
-		public LocalRotateToAction(Transform inTransform, Graph inGraph, Vector3 inDesiredLocalRotation, float inActionDuration)
+		public LocalRotateToAction(Transform inTransform, Vector3 inDesiredLocalRotation, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredLocalRotation(inDesiredLocalRotation);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public LocalRotateToAction(Transform inTransform, Vector3 inDesiredLocalRotation, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredLocalRotation(inDesiredLocalRotation);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredLocalRotation(Vector3 inNewDesiredLocalRotation)
 		{
@@ -70,7 +70,9 @@ namespace DaburuTools
 
 			_elapsedDuration += ActionDeltaTime(_isUnscaledDeltaTime);
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_transform.localEulerAngles = Vector3.LerpUnclamped(_vecInitialLocalRotation, _vecDesiredLocalRotation, t);
 
 			// Remove self after action is finished.

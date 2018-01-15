@@ -6,17 +6,17 @@ namespace DaburuTools
 	public class RotateByAction2D : Action
 	{
 		Transform _transform;
-		Graph _graph;
+		AnimationCurve _animCurve;
 		float _desiredTotalZEulerAngle;
 		float _actionDuration;
 
 		float _accumulatedZEulerAngle;
 		float _elapsedDuration;
 
-		public RotateByAction2D(Transform inTransform, Graph inGraph, float inDesiredZEulerAngle, float inActionDuration)
+		public RotateByAction2D(Transform inTransform, float inDesiredZEulerAngle, float inActionDuration, AnimationCurve inAnimCurve)
 		{
 			_transform = inTransform;
-			SetGraph(inGraph);
+			SetAnimCurve(inAnimCurve);
 			SetDesiredZEulerAngle(inDesiredZEulerAngle);
 			SetActionDuration(inActionDuration);
 
@@ -25,15 +25,15 @@ namespace DaburuTools
 		public RotateByAction2D(Transform inTransform, float inDesiredZEulerAngle, float inActionDuration)
 		{
 			_transform = inTransform;
-			SetGraph(Graph.Linear);
+			SetAnimCurve(null);
 			SetDesiredZEulerAngle(inDesiredZEulerAngle);
 			SetActionDuration(inActionDuration);
 
 			SetupAction();
 		}
-		public void SetGraph(Graph inNewGraph)
+		public void SetAnimCurve(AnimationCurve inNewAnimCurve)
 		{
-			_graph = inNewGraph;
+			_animCurve = inNewAnimCurve;
 		}
 		public void SetDesiredZEulerAngle(float inNewDesiredZEulerAngle)
 		{
@@ -76,7 +76,9 @@ namespace DaburuTools
 				_accumulatedZEulerAngle);
 			_transform.Rotate(-previousDeltaRot);   // Reverse the previous frame's rotation.
 
-			float t = _graph.Read(_elapsedDuration / _actionDuration);
+			float t;
+			if (_animCurve == null) t = Mathf.Clamp01(_elapsedDuration / _actionDuration);
+			else t = _animCurve.Evaluate(_elapsedDuration / _actionDuration);
 			_accumulatedZEulerAngle = Mathf.LerpUnclamped(0.0f, _desiredTotalZEulerAngle, t);
 
 			Vector3 newDeltaRot = new Vector3(
