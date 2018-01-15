@@ -36,13 +36,7 @@ public class CardManager : MonoBehaviour
 
 	private void Start()
 	{
-		// TODO: More elegate way of solving this.
-		// NOTE: Card Start needs to run first before this. But in turn, the start stuff can only be done in start
-		// due to unity's querk with calcualtion of local pos and all that.
-		DelayAction delayedAction = new DelayAction(0.5f);
-		delayedAction.OnActionFinish += HideAllCards;
-		ActionHandler.RunAction(delayedAction);
-
+		HideAllCards();
 	}
 
 	private void HideAllCards()
