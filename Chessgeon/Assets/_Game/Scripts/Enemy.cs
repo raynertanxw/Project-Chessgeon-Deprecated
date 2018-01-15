@@ -147,8 +147,15 @@ public class Enemy : MonoBehaviour
 			else
 			{
 				Vector2Int randMovePos = possibleMoves[Random.Range(0, possibleMoves.Length)];
-				inCurrentFloor.MoveEnemy(Pos, randMovePos);
-				MoveTo(randMovePos, inOnComplete);
+				if (randMovePos == inCurrentFloor.MorphyPos)
+				{
+					AttackMorphy(randMovePos, inOnComplete);
+				}
+				else
+				{
+					inCurrentFloor.MoveEnemy(Pos, randMovePos);
+					MoveTo(randMovePos, inOnComplete);
+				}
 			}
 		}
 		else
@@ -159,8 +166,7 @@ public class Enemy : MonoBehaviour
 			{
 				if (Type == eMoveType.Pawn)
 				{
-					// TODO: Decide what should pawn do?
-					//		 For now just do nothing cause there isn't anything it can do except move furthur away.
+					// NOTE: Just do nothing cause there isn't anything it can do except move furthur away.
 					inOnComplete();
 				}
 				else

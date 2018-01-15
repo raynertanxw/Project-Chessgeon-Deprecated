@@ -34,19 +34,8 @@ public class GridStratergyPawn : GridStratergy
 	public override Vector2Int[] CalcPossibleMoves(Vector2Int inPos, eMoveEntity inMoveEntity)
 	{
 		List<Vector2Int> possibleMoves = new List<Vector2Int>();
-
-		{
-			Vector2Int up = inPos;
-			up.y += 1;
-			if (IsValidPawnNonCaptureMove(up, inMoveEntity)) possibleMoves.Add(up);
-		}
-
-		{
-			Vector2Int down = inPos;
-			down.y += -1;
-			if (IsValidPawnNonCaptureMove(down, inMoveEntity)) possibleMoves.Add(down);
-		}
-
+		
+		// Calculate if we can capture Morphy at all first.
 		{
 			Vector2Int upLeft = inPos;
 			upLeft.y += 1;
@@ -73,6 +62,21 @@ public class GridStratergyPawn : GridStratergy
 			downRight.y += -1;
 			downRight.x += 1;
 			if (IsValidPawnCapture(downRight, inMoveEntity)) possibleMoves.Add(downRight);
+		}
+
+		if (possibleMoves.Count < 1) // NOTE: Only if we don't have a capturing move.
+		{
+			{
+				Vector2Int up = inPos;
+				up.y += 1;
+				if (IsValidPawnNonCaptureMove(up, inMoveEntity)) possibleMoves.Add(up);
+			}
+
+			{
+				Vector2Int down = inPos;
+				down.y += -1;
+				if (IsValidPawnNonCaptureMove(down, inMoveEntity)) possibleMoves.Add(down);
+			}
 		}
 
 		return possibleMoves.ToArray();
