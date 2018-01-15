@@ -78,7 +78,8 @@ public class Card : MonoBehaviour
 	private void Update()
 	{
 		if (!_isAnimatingCardDraw &&
-			!_isAnimatingMoveToOtherCardPos) // TODO: Include booleans for animating card execution.
+			!_isAnimatingMoveToOtherCardPos &&
+			!_isAnimatingCardExecute)
 		{
 			_cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
 			_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
@@ -178,6 +179,25 @@ public class Card : MonoBehaviour
 		};
 
         ActionHandler.RunAction(moveToOriginPos);
+	}
+
+	bool _isAnimatingCardExecute = false;
+	public void AnimateCardExecuteAndDisable(DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		_isAnimatingCardExecute = true;
+		// TODO: Proper execute card animation.
+		AxisLocalRotateByAction spinCard = new AxisLocalRotateByAction(
+			_cardRectTransform,
+			Vector3.up,
+			360.0f,
+			0.4f);
+		spinCard.OnActionFinish += () =>
+		{
+			_isAnimatingCardExecute = false;
+			SetEnabled(false);
+			if (inOnComplete != null) inOnComplete();
+		};
+		ActionHandler.RunAction(spinCard);
 	}
 
 	public void SetEnabled(bool inIsEnabled)
