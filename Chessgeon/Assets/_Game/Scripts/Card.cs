@@ -150,13 +150,17 @@ public class Card : MonoBehaviour
 	public void AnimateDrawCard(float inDelay = 0.0f, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		_isAnimatingCardDraw = true;
-		_cardRectTransform.localPosition = new Vector3(-2.0f, -7.5f);
+		_cardRectTransform.localPosition = new Vector3(-2.0f, -7.5f, -HOLDING_CARD_Z_OFFSET);
 		_cardRectTransform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
 
-		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos, 0.4f, Utils.CurveInverseExponential);
+		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos + Vector3.forward * -HOLDING_CARD_Z_OFFSET, 0.4f, Utils.CurveInverseExponential);
 		LocalRotateToAction rotateCard = new LocalRotateToAction(_cardRectTransform, Vector3.zero, 0.6f, Utils.CurveSmoothStep);
 		ActionSequence revealCard = new ActionSequence(moveToHand, rotateCard);
-		revealCard.OnActionFinish += () => { _isAnimatingCardDraw = false; };
+		revealCard.OnActionFinish += () =>
+		{
+			_isAnimatingCardDraw = false;
+			_cardRectTransform.localPosition = _originLocalPos;
+		};
 		if (inOnComplete != null) revealCard.OnActionFinish += () => { inOnComplete(); };
 
 		ActionHandler.RunAction(new ActionAfterDelay(revealCard, inDelay));
