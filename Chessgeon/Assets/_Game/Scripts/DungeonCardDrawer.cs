@@ -57,7 +57,7 @@ public class DungeonCardDrawer : MonoBehaviour
 			// Set up drawer btn Listeners.
 			OnPlayerEndTurn += () =>
 			{
-				EnableCardDrawer(false);
+				EnableCardDrawer(false, true, () => { EnableShowDrawerBtn(false); });
 			};
 			_endTurnBtn.onClick.AddListener(() => { OnPlayerEndTurn.Invoke(); });
 
@@ -82,6 +82,37 @@ public class DungeonCardDrawer : MonoBehaviour
 		if (_instance == this)
 		{
 			_instance = null;
+		}
+	}
+
+
+	const float BTN_SCALE_ANIM_TIME = 0.25f;
+	private bool _showDrawerBtnAnimPlaying = false;
+	public static void EnableShowDrawerBtn(bool inIsEnabled, bool inIsAnimated = true, DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		if (!_instance._cardDrawerAnimPlaying && !_instance._showDrawerBtnAnimPlaying)
+		{
+			_instance._showDrawerBtn.interactable = false;
+			Vector3 btnTargetScale = inIsEnabled ? Vector3.one : new Vector3(1.0f, 0.0f, 1.0f);
+
+			Utils.GenericVoidDelegate onCompleteAnim = () =>
+			{
+				_instance._showDrawerBtnAnimPlaying = false;
+				if (inOnComplete != null) inOnComplete();
+				_instance._showDrawerBtn.interactable = inIsEnabled;
+			};
+
+			if (inIsAnimated)
+			{
+				ScaleToAction scaleBtn = new ScaleToAction(_instance._showDrawerBtnMesh, btnTargetScale, BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigDipper : _instance._bigBobber);
+				scaleBtn.OnActionFinish += onCompleteAnim;
+				ActionHandler.RunAction(scaleBtn);
+			}
+			else
+			{
+				_instance._showDrawerBtn.transform.localScale = btnTargetScale;
+				onCompleteAnim();
+			}
 		}
 	}
 
@@ -112,7 +143,7 @@ public class DungeonCardDrawer : MonoBehaviour
 			}
 		};
 
-		if (!_instance._cardDrawerAnimPlaying)
+		if (!_instance._cardDrawerAnimPlaying && !_instance._showDrawerBtnAnimPlaying)
 		{
 			Vector2 newAnchorPos = _instance._cardDrawerRectTransform.anchoredPosition;
 			Vector3 btnOpenScale = Vector3.one;
@@ -140,7 +171,6 @@ public class DungeonCardDrawer : MonoBehaviour
 					inIsEnabled ? 0.6f : 0.3f,
 					inIsEnabled ? _instance._cardDrawerBobber : _instance._cardDrawerDipper);
 
-				const float BTN_SCALE_ANIM_TIME = 0.25f;
 				ActionParallel animateButtonScales = new ActionParallel(
 					new ScaleToAction(_instance._endTurnBtnMesh, inIsEnabled ? btnOpenScale : btnCloseScale, BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigBobber : _instance._bigDipper),
 					new ScaleToAction(_instance._hideDrawerBtnMesh, inIsEnabled ? btnOpenScale : btnCloseScale,  BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigBobber : _instance._bigDipper),
@@ -166,7 +196,7 @@ public class DungeonCardDrawer : MonoBehaviour
 				_instance._endTurnBtnMesh.localScale = inIsEnabled ? btnOpenScale : btnCloseScale;
 				_instance._hideDrawerBtnMesh.localScale = inIsEnabled ? btnOpenScale : btnCloseScale;
 				_instance._showDrawerBtnMesh.localScale = inIsEnabled ? btnCloseScale : btnOpenScale;
-				onCompleteAnim.Invoke();
+				onCompleteAnim();
 			}
 		}
 	}
