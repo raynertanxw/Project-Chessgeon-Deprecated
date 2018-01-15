@@ -195,14 +195,14 @@ public class Enemy : MonoBehaviour
 		float moveUpDuration = 0.4f;
 		MoveToAction moveUp = new MoveToAction(
 			this.transform,
-			transform.position + new Vector3(0.0f, 2.5f, 0.0f),
+			transform.position + new Vector3(0.0f, 3.0f, 0.0f),
 			moveUpDuration,
 			Utils.CurveInverseExponential);
 		moveUp.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveUpDuration); };
 		MoveToAction slamDown = new MoveToAction(
 			this.transform,
-			morphyTransformPos,
-			0.1f,
+			morphyTransformPos + (Vector3.up * 2.0f),
+			0.075f,
 			Utils.CurveExponential);
 		slamDown.OnActionFinish += () => { DungeonCamera.CameraShake(15, 0.5f, 0.2f); };
 		MoveToAction moveBack = new MoveToAction(
