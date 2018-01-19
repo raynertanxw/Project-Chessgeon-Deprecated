@@ -232,7 +232,7 @@ public class Dungeon : MonoBehaviour
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
-					DungeonCardDrawer.EnableCardDrawer(true, true, OnJobComplete); },
+					DungeonCardDrawer.EnableCardDrawer(true, true, true, OnJobComplete); },
 					playPhaseAnimJob);
 				DTJob turnDrawJob = new DTJob((OnJobComplete) => {
 					_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.StatTotalCardsDrawn > 0 ? 2 : 3, OnJobComplete); },
