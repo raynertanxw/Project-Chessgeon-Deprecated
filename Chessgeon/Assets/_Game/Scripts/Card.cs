@@ -39,7 +39,9 @@ public class Card : MonoBehaviour
 	public Vector3 OriginLocalPos { get { return _originLocalPos; } }
 	private float _originZ;
 
+	private bool _isDragging = false;
 	private Vector3 _desiredCardLocalPos;
+	private Vector3 _desiredCardWorldPos;
 	private float _lerpSpeed;
 	private Vector2 _prevFrameLocalPos;
 	private Vector2 _tiltIntertia;
@@ -81,7 +83,8 @@ public class Card : MonoBehaviour
 			!_isAnimatingMoveToOtherCardPos &&
 			!_isAnimatingCardExecute)
 		{
-			_cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
+			if (_isDragging) _cardRectTransform.position = Vector3.Lerp(_cardRectTransform.position, _desiredCardWorldPos, Time.deltaTime * _lerpSpeed);
+			else _cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
 			_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
 			_tiltIntertia = Vector2.Lerp(_tiltIntertia, Vector2.zero, Time.deltaTime * TILT_INTERTIA_DRAG);
 		}
@@ -89,8 +92,10 @@ public class Card : MonoBehaviour
 
 	public void EventTriggerOnPointerDown(BaseEventData data)
 	{
+		_isDragging = true;
 		_cardRectTransform.localPosition += Vector3.forward * -HOLDING_CARD_Z_OFFSET;
 
+		_desiredCardWorldPos = _cardRectTransform.position;
 		_desiredCardLocalPos = _cardRectTransform.localPosition;
 		_tiltIntertia = Vector2.zero;
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
@@ -99,6 +104,7 @@ public class Card : MonoBehaviour
 
 	public void EventTriggerOnPointerUp(BaseEventData data)
 	{
+		_isDragging = false;
 		Vector3 originZ = _cardRectTransform.localPosition;
 		originZ.z = _originZ;
 		_cardRectTransform.localPosition = originZ;
@@ -116,13 +122,8 @@ public class Card : MonoBehaviour
 	public void EventTriggerOnDrag(BaseEventData data)
 	{
 		PointerEventData ptrEventData = (PointerEventData)data;
-		Vector3 desiredPos = UICamera.Camera.ScreenToWorldPoint(ptrEventData.position);
-
-		// TODO: Figure out why this code needs such arbitrary values. Would be best if the InverseTransformPoint worked.
-		Vector3 localVerOfDesiredPos = UICamera.Camera.transform.InverseTransformPoint(desiredPos);
-		localVerOfDesiredPos.z = -HOLDING_CARD_Z_OFFSET;
-		_desiredCardLocalPos = localVerOfDesiredPos + new Vector3(0.68f, 5.0f);
-		//Debug.Log(desiredPos + " : " + localVerOfDesiredPos);
+		_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position);
+		_desiredCardWorldPos.z = _cardRectTransform.position.z;
 
 		Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
 		tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
