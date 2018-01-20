@@ -14,6 +14,7 @@ public class MorphyController : MonoBehaviour
 	public Utils.GenericVoidDelegate OnMorphyReachStairs;
 	private Morphy _morphy = null;
 
+	private int MAX_HEALTH = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
 	private int _health = -1;
 	private int _numMovesLeft = -1;
 
@@ -33,7 +34,6 @@ public class MorphyController : MonoBehaviour
 
 	public void ResetForNewGame()
 	{
-		const int MAX_HEALTH = 3;
 		SetHealth(MAX_HEALTH);
 	}
 

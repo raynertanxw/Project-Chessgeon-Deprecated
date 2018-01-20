@@ -5,7 +5,19 @@ using DaburuTools;
 
 public class Enemy : MonoBehaviour
 {
-	public enum eElement { Basic }
+	public enum eElement { Classic, Stone, Glass, Gold, Slime, Ice, Fire, Cursed }
+	private static EnemyElementStratergy[] _elementStratergies =
+	{
+		new EnemyElementStratergyClassic(),
+		new EnemyElementStratergyStone(),
+		new EnemyElementStratergyGlass(),
+		new EnemyElementStratergyGold(),
+		new EnemyElementStratergySlime(),
+		new EnemyElementStratergyIce(),
+		new EnemyElementStratergyFire(),
+		new EnemyElementStratergyCursed()
+	};
+	private EnemyElementStratergy CurrentElementStratergy { get { return _elementStratergies[(int)_element]; } }
 
 	[SerializeField] private Mesh _meshPiecePawn = null;
 	[SerializeField] private Mesh _meshPieceRook = null;
@@ -22,7 +34,7 @@ public class Enemy : MonoBehaviour
 	public bool IsAlive { get { return _isAlive; } }
 	private eMoveType _type = eMoveType.Pawn;
 	public eMoveType Type { get { return _type; } }
-	private eElement _element = eElement.Basic;
+	private eElement _element = eElement.Classic;
 	public eElement Element { get { return _element; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
@@ -210,7 +222,7 @@ public class Enemy : MonoBehaviour
 			morphyTransformPos + (Vector3.up * 2.0f),
 			0.075f,
 			Utils.CurveExponential);
-		slamDown.OnActionFinish += () => { _enemyManager.Dungeon.MorphyController.TakeDamage(1); }; // TODO: Change the amount of damage according to enemy type.
+		slamDown.OnActionFinish += () => { _enemyManager.Dungeon.MorphyController.TakeDamage(CurrentElementStratergy.GetDamagePower()); };
 		MoveToAction moveBack = new MoveToAction(
 			this.transform,
 			originPos,

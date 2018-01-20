@@ -42,7 +42,7 @@ public class EnemyManager : MonoBehaviour
         Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
 
         Debug.Assert(_dungeon.CurrentFloor.IsTileEmpty(inSpawnPos), "Tile " + inSpawnPos + " is not empty!");
-        currentEnemy.SetEnemy(enemyType, Enemy.eElement.Basic);
+        currentEnemy.SetEnemy(enemyType, Enemy.eElement.Classic);
         currentEnemy.SpawnAt(inSpawnPos);
 
 		return currentEnemy;
