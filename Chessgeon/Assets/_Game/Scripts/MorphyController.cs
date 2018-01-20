@@ -14,6 +14,7 @@ public class MorphyController : MonoBehaviour
 	public Utils.GenericVoidDelegate OnMorphyReachStairs;
 	private Morphy _morphy = null;
 
+	private int _health = -1;
 	private int _numMovesLeft = -1;
 
 	private void Awake()
@@ -28,6 +29,12 @@ public class MorphyController : MonoBehaviour
 		_morphy.Initialise(this);
 
 		_morphy.Hide();
+	}
+
+	public void ResetForNewGame()
+	{
+		const int MAX_HEALTH = 3;
+		SetHealth(MAX_HEALTH);
 	}
 
 	public void SetUpPlayer()
@@ -47,6 +54,17 @@ public class MorphyController : MonoBehaviour
 	{
 		_morphy.TransformBackToMorphy();
 		_dungeon.TileManager.HideAllSelectableTiles();
+	}
+
+	private void SetHealth(int inHealth)
+	{
+		_health = inHealth;
+		// TODO: The UI reflection.
+
+		if (_health < 1)
+		{
+			// TODO: Call the GameOver thingy!
+		}
 	}
 
 	private void ShowPossibleMoves()
@@ -102,5 +120,13 @@ public class MorphyController : MonoBehaviour
 		}
 
 		_dungeon.CurrentFloor.MoveMorphyTo(inTargetPos);
+	}
+
+	public void TakeDamage(int inDamage)
+	{
+		int newHealth = _health - inDamage;
+		SetHealth(newHealth);
+		DungeonCamera.CameraShake(15, 0.5f, 0.2f);
+		DungeonDisplay.PlayDamageFrameAnimation();
 	}
 }

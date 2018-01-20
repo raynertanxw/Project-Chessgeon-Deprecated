@@ -210,15 +210,13 @@ public class Enemy : MonoBehaviour
 			morphyTransformPos + (Vector3.up * 2.0f),
 			0.075f,
 			Utils.CurveExponential);
-		slamDown.OnActionFinish += () => { DungeonCamera.CameraShake(15, 0.5f, 0.2f); };
+		slamDown.OnActionFinish += () => { _enemyManager.Dungeon.MorphyController.TakeDamage(1); }; // TODO: Change the amount of damage according to enemy type.
 		MoveToAction moveBack = new MoveToAction(
 			this.transform,
 			originPos,
 			0.5f,
 			Utils.CurveSmoothStep);
 		ActionSequence attackSeq = new ActionSequence(moveUp, new DelayAction(0.15f), slamDown, moveBack);
-		// TODO: Call Morphy.TakeDamage();
-		//attackSeq.OnActionFinish += ;
 		if (inOnCompleteAction != null) attackSeq.OnActionFinish += inOnCompleteAction;
 		ActionHandler.RunAction(attackSeq);
 	}

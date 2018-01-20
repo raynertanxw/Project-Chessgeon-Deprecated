@@ -79,6 +79,7 @@ public class Dungeon : MonoBehaviour
 		_isPlayersTurn = false;
 
 		_floorNum = 1; // TODO: Reset this?
+		_morphyController.ResetForNewGame();
 		GenerateFloor();
 		_dungeonFSM = new DungeonFSM(this);
 	}

@@ -11,6 +11,7 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 
 	[Header("Canvas UI Elements")]
+	[SerializeField] private Image _damageFrame = null;
 	[SerializeField] private Image _darkOverlay = null;
 	[SerializeField] private RectTransform _phaseBannerTop = null;
 	[SerializeField] private RectTransform _phaseBannerBtm = null;
@@ -28,6 +29,7 @@ public class DungeonDisplay : MonoBehaviour
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
+			Debug.Assert(_damageFrame != null, "_damageFrame is not assigned.");
 			Debug.Assert(_darkOverlay != null, "_darkOverlay is not assigned.");
 			Debug.Assert(_phaseBannerTop != null, "_phaseBannerTop is not assigned.");
 			Debug.Assert(_phaseBannerBtm != null, "_phaseBannerBtm is not assigned.");
@@ -37,6 +39,7 @@ public class DungeonDisplay : MonoBehaviour
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
 			SetDarkOverlayVisible(false);
+			SetDamageFrameVisible(false);
 		}
 		else if (_instance != this)
 		{
@@ -64,6 +67,47 @@ public class DungeonDisplay : MonoBehaviour
 			Color newCol = _darkOverlay.color;
 			newCol.a = inAlpha;
 			_darkOverlay.color = newCol;
+		}
+	}
+
+	private void SetDamageFrameVisible(bool inIsVisible)
+	{
+		_damageFrame.enabled = inIsVisible;
+	}
+
+	private void SetDamageFrameAlpha(float inAlpha)
+	{
+		if (_damageFrame.color.a != inAlpha)
+		{
+			Color newCol = _damageFrame.color;
+			newCol.a = inAlpha;
+			_damageFrame.color = newCol;
+		}
+	}
+
+	private bool _damageFrameAnimPlaying = false;
+	public static void PlayDamageFrameAnimation(float inDuration = 0.5f, DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		if (_instance._damageFrameAnimPlaying)
+		{
+			Debug.LogWarning("Trying to call PlayDamageFrameAnimation when its previous call has not finished animating.");
+		}
+		else
+		{
+			_instance._damageFrameAnimPlaying = true;
+
+			_instance.SetDamageFrameAlpha(0.6f);
+			_instance.SetDamageFrameVisible(true);
+
+			ImageAlphaToAction fadeAway = new ImageAlphaToAction(_instance._damageFrame, 0.0f, inDuration);
+			fadeAway.OnActionFinish += () =>
+			{
+				_instance._damageFrameAnimPlaying = false;
+				_instance.SetDamageFrameVisible(false);
+			};
+			if (inOnComplete != null) fadeAway.OnActionFinish += () => { inOnComplete(); };
+
+			ActionHandler.RunAction(fadeAway);
 		}
 	}
 
