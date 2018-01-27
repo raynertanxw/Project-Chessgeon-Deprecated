@@ -126,6 +126,7 @@ public class CardManager : MonoBehaviour
 			}
 
 			curIndex++;
+			if (curIndex >= _cards.Length) break;
 		}
 
 		if (neededToReorg)
