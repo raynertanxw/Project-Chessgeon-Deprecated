@@ -14,7 +14,7 @@ public class MorphyController : MonoBehaviour
 	public Utils.GenericVoidDelegate OnMorphyReachStairs;
 	private Morphy _morphy = null;
 
-	private int MAX_HEALTH = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
+	private int _maxHealth = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
 	private int _health = -1;
 	private int _numMovesLeft = -1;
 
@@ -34,7 +34,7 @@ public class MorphyController : MonoBehaviour
 
 	public void ResetForNewGame()
 	{
-		SetHealth(MAX_HEALTH);
+		SetHealth(_maxHealth);
 	}
 
 	public void SetUpPlayer()
@@ -59,7 +59,7 @@ public class MorphyController : MonoBehaviour
 	private void SetHealth(int inHealth)
 	{
 		_health = inHealth;
-		// TODO: The UI reflection.
+		DungeonDisplay.SetHealtUI(inHealth);
 
 		if (_health < 1)
 		{

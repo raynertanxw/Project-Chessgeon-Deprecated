@@ -17,6 +17,15 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private RectTransform _phaseBannerBtm = null;
 	[SerializeField] private Text _phaseBannerTextTop = null;
 	[SerializeField] private Text _phaseBannerTextBtm = null;
+	[SerializeField] private RectTransform _heartsHolder = null;
+
+	[Header("Meshes")]
+	[SerializeField] private Mesh _heartFullMesh = null;
+	[SerializeField] private Mesh _heartHalfMesh = null;
+
+	private const int NUM_HEARTS = 5;
+	private MeshRenderer[] _heartMeshRens = null;
+	private MeshFilter[] _heartMeshFilters = null;
 
 	private void Awake()
 	{
@@ -35,11 +44,24 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_phaseBannerBtm != null, "_phaseBannerBtm is not assigned.");
 			Debug.Assert(_phaseBannerTextTop != null, "_phaseBannerTextTop is not assigned.");
 			Debug.Assert(_phaseBannerTextBtm != null, "_phaseBannerTextBtm is not assigned.");
+			Debug.Assert(_heartsHolder != null, "_heartsHolder is not assigned.");
+
+			Debug.Assert(_heartFullMesh != null, "_heartFullMesh is not assigned.");
+			Debug.Assert(_heartHalfMesh != null, "_heartHalfMesh is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
+			_heartMeshRens = new MeshRenderer[NUM_HEARTS];
+			_heartMeshFilters = new MeshFilter[NUM_HEARTS];
+			for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
+			{
+				_heartMeshRens[iHeart] = _heartsHolder.GetChild(iHeart).GetComponent<MeshRenderer>();
+				_heartMeshFilters[iHeart] = _heartsHolder.GetChild(iHeart).GetComponent<MeshFilter>();
+			}
+
 			SetDarkOverlayVisible(false);
 			SetDamageFrameVisible(false);
+			SetHealtUI(0);
 		}
 		else if (_instance != this)
 		{
@@ -82,6 +104,30 @@ public class DungeonDisplay : MonoBehaviour
 			Color newCol = _damageFrame.color;
 			newCol.a = inAlpha;
 			_damageFrame.color = newCol;
+		}
+	}
+
+	public static void SetHealtUI(int inHealth)
+	{
+		Debug.Assert(inHealth <= NUM_HEARTS * 2, inHealth + " is beyond the max health displayble.");
+		int numHeartsToDisplay = inHealth / 2;
+		int halfHeartIndex = (inHealth % 2 == 1) ? numHeartsToDisplay : -1;
+		for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
+		{
+			MeshFilter curHeartFilter = _instance._heartMeshFilters[iHeart];
+			if (iHeart < numHeartsToDisplay)
+			{
+				curHeartFilter.mesh = _instance._heartFullMesh;
+			}
+			else if (iHeart == numHeartsToDisplay &&
+				iHeart == halfHeartIndex)
+			{
+				curHeartFilter.mesh = _instance._heartHalfMesh;
+			}
+			else
+			{
+				curHeartFilter.mesh = null;
+			}
 		}
 	}
 
