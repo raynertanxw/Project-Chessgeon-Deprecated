@@ -81,8 +81,8 @@ public class GameOverCanvas : MonoBehaviour
 	public static void SetGameOverValues(int inScore, int inFloor, int inGold)
 	{
 		// TODO: Format the int to txts!
-		_instance._scoreText.text = Convert.ToString(inScore);
-		_instance._floorText.text = Convert.ToString(inFloor);
-		_instance._goldText.text = Convert.ToString(inGold);
+		_instance._scoreText.text = "SCORE: " + String.Format("{0:n0}", inScore);
+		_instance._floorText.text = "FLOOR: " + inFloor.ToString();
+		_instance._goldText.text = "GOLD : " + String.Format("{0:n0}", inGold);
 	}
 }
