@@ -46,6 +46,9 @@ public class GameOverCanvas : MonoBehaviour
 			Debug.Assert(_exitBtnMeshRen != null, "_exitBtnMeshRen is not assigned.");
 
 			EnableGameOverPanel(false);
+
+			_startOverBtn.onClick.AddListener(StartOver);
+			_exitBtn.onClick.AddListener(ExitToMainMenu);
         }
 		else if (_instance != this)
 		{
@@ -84,5 +87,15 @@ public class GameOverCanvas : MonoBehaviour
 		_instance._scoreText.text = "SCORE: " + String.Format("{0:n0}", inScore);
 		_instance._floorText.text = "FLOOR: " + inFloor.ToString();
 		_instance._goldText.text = "GOLD : " + String.Format("{0:n0}", inGold);
+	}
+
+	private void ExitToMainMenu()
+	{
+		Debug.Log("Exit Btn Pressed!");
+	}
+
+	private void StartOver()
+	{
+		Debug.Log("Start Over Btn Pressed!");
 	}
 }
