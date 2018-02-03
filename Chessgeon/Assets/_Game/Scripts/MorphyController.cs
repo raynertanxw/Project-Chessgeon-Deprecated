@@ -14,6 +14,8 @@ public class MorphyController : MonoBehaviour
 	public Utils.GenericVoidDelegate OnMorphyReachStairs;
 	private Morphy _morphy = null;
 
+	private bool _isDead = false;
+    public bool IsDead { get { return _isDead; } }
 	private int _maxHealth = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
 	private int _health = -1;
 	private int _numMovesLeft = -1;
@@ -35,6 +37,7 @@ public class MorphyController : MonoBehaviour
 	public void ResetForNewGame()
 	{
 		SetHealth(_maxHealth);
+		_isDead = false;
 	}
 
 	public void SetUpPlayer()
@@ -63,7 +66,7 @@ public class MorphyController : MonoBehaviour
 
 		if (_health < 1)
 		{
-			// TODO: Call the GameOver thingy!
+			_isDead = true;
 		}
 	}
 

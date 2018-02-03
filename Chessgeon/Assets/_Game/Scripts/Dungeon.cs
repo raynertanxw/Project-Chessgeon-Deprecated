@@ -91,6 +91,8 @@ public class Dungeon : MonoBehaviour
 
 		// TODO: Disable some UI and stuff?
 		//		 Present GameOver panel and such
+		GameOverCanvas.SetGameOverValues(99999, 12, 321);
+		GameOverCanvas.EnableGameOverPanel(true);
 	}
 
 	private void OnMorphyReachStairs()
@@ -303,7 +305,15 @@ public class Dungeon : MonoBehaviour
 			private void OnFinishProcessingEnemy()
 			{
 				// TODO: If the player is killed, immediately transition to the GameOverState.
-				_readyToProcessNextEnemy = true;
+				if (_dungeonFSM.Dungeon.MorphyController.IsDead)
+				{
+					_readyToProcessNextEnemy = false;
+					_dungeonFSM.ChangeState(eDungeonState.GameOver);
+				}
+				else
+				{
+					_readyToProcessNextEnemy = true;
+				}
 			}
 		}
 		private class DungeonStateGameOver : DungeonState

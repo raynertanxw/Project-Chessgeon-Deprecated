@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,8 @@ public class GameOverCanvas : MonoBehaviour
 	{
         if (_instance == null)
         {
+			_instance = this;
+
             Debug.Assert(gameObject.GetComponent<GraphicRaycaster>() != null, "There is a GraphicRaycaster component on Dungeon Display Canvas. Remove it.");
             Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
@@ -58,20 +61,28 @@ public class GameOverCanvas : MonoBehaviour
 		}
 	}
 
-	private void EnableGameOverPanel(bool inEnabled)
+	public static void EnableGameOverPanel(bool inEnabled)
 	{
-		_startOverBtn.interactable = inEnabled;
-		_exitBtn.interactable = inEnabled;
-		_startOverBtnText.enabled = inEnabled;
-		_exitBtnText.enabled = inEnabled;
+		_instance._startOverBtn.interactable = inEnabled;
+		_instance._exitBtn.interactable = inEnabled;
+		_instance._startOverBtnText.enabled = inEnabled;
+		_instance._exitBtnText.enabled = inEnabled;
 
-		_gameOverText.enabled = inEnabled;
-		_scoreText.enabled = inEnabled;
-		_floorText.enabled = inEnabled;
-		_goldText.enabled = inEnabled;
+		_instance._gameOverText.enabled = inEnabled;
+		_instance._scoreText.enabled = inEnabled;
+		_instance._floorText.enabled = inEnabled;
+		_instance._goldText.enabled = inEnabled;
 
-		_gameOverPanelMeshRen.enabled = inEnabled;
-		_startOverBtnMeshRen.enabled = inEnabled;
-		_exitBtnMeshRen.enabled = inEnabled;
+		_instance._gameOverPanelMeshRen.enabled = inEnabled;
+		_instance._startOverBtnMeshRen.enabled = inEnabled;
+		_instance._exitBtnMeshRen.enabled = inEnabled;
+	}
+
+	public static void SetGameOverValues(int inScore, int inFloor, int inGold)
+	{
+		// TODO: Format the int to txts!
+		_instance._scoreText.text = Convert.ToString(inScore);
+		_instance._floorText.text = Convert.ToString(inFloor);
+		_instance._goldText.text = Convert.ToString(inGold);
 	}
 }
