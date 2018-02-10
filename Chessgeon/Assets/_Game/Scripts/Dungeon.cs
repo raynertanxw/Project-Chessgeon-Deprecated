@@ -103,7 +103,7 @@ public class Dungeon : MonoBehaviour
 
 		// TODO: Disable some UI and stuff?
 		//		 Present GameOver panel and such
-		GameOverCanvas.SetGameOverValues(99999, 12, 321);
+		GameOverCanvas.SetGameOverValues(99999, FloorNum, 321);
 		GameOverCanvas.EnableGameOverPanel(true);
 
 		// TODO: Save scores and stuff.
