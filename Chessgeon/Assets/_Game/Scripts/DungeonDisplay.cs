@@ -18,6 +18,9 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Text _phaseBannerTextTop = null;
 	[SerializeField] private Text _phaseBannerTextBtm = null;
 	[SerializeField] private RectTransform _heartsHolder = null;
+	[SerializeField] private Text _scoreText = null;
+	[SerializeField] private Text _floorText = null;
+	[SerializeField] private Text _coinText = null;
 
 	[Header("Meshes")]
 	[SerializeField] private Mesh _heartFullMesh = null;
@@ -45,6 +48,9 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_phaseBannerTextTop != null, "_phaseBannerTextTop is not assigned.");
 			Debug.Assert(_phaseBannerTextBtm != null, "_phaseBannerTextBtm is not assigned.");
 			Debug.Assert(_heartsHolder != null, "_heartsHolder is not assigned.");
+			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
+			Debug.Assert(_floorText != null, "_floorText is not assigned.");
+			Debug.Assert(_coinText != null, "_coinText is not assigned.");
 
 			Debug.Assert(_heartFullMesh != null, "_heartFullMesh is not assigned.");
 			Debug.Assert(_heartHalfMesh != null, "_heartHalfMesh is not assigned.");
@@ -62,6 +68,8 @@ public class DungeonDisplay : MonoBehaviour
 			SetDarkOverlayVisible(false);
 			SetDamageFrameVisible(false);
 			SetHealtUI(0);
+
+			_dungeon.OnFloorGenerated += () => { UpdateFloorText(_dungeon.FloorNum); };
 		}
 		else if (_instance != this)
 		{
@@ -104,30 +112,6 @@ public class DungeonDisplay : MonoBehaviour
 			Color newCol = _damageFrame.color;
 			newCol.a = inAlpha;
 			_damageFrame.color = newCol;
-		}
-	}
-
-	public static void SetHealtUI(int inHealth)
-	{
-		Debug.Assert(inHealth <= NUM_HEARTS * 2, inHealth + " is beyond the max health displayble.");
-		int numHeartsToDisplay = inHealth / 2;
-		int halfHeartIndex = (inHealth % 2 == 1) ? numHeartsToDisplay : -1;
-		for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
-		{
-			MeshFilter curHeartFilter = _instance._heartMeshFilters[iHeart];
-			if (iHeart < numHeartsToDisplay)
-			{
-				curHeartFilter.mesh = _instance._heartFullMesh;
-			}
-			else if (iHeart == numHeartsToDisplay &&
-				iHeart == halfHeartIndex)
-			{
-				curHeartFilter.mesh = _instance._heartHalfMesh;
-			}
-			else
-			{
-				curHeartFilter.mesh = null;
-			}
 		}
 	}
 
@@ -226,4 +210,36 @@ public class DungeonDisplay : MonoBehaviour
 			ActionHandler.RunAction(phaseAnim);
 		}
 	}
+
+	#region HUD Update Functions
+	public static void SetHealtUI(int inHealth)
+	{
+		Debug.Assert(inHealth <= NUM_HEARTS * 2, inHealth + " is beyond the max health displayble.");
+		int numHeartsToDisplay = inHealth / 2;
+		int halfHeartIndex = (inHealth % 2 == 1) ? numHeartsToDisplay : -1;
+		for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
+		{
+			MeshFilter curHeartFilter = _instance._heartMeshFilters[iHeart];
+			if (iHeart < numHeartsToDisplay)
+			{
+				curHeartFilter.mesh = _instance._heartFullMesh;
+			}
+			else if (iHeart == numHeartsToDisplay &&
+				iHeart == halfHeartIndex)
+			{
+				curHeartFilter.mesh = _instance._heartHalfMesh;
+			}
+			else
+			{
+				curHeartFilter.mesh = null;
+			}
+		}
+	}
+
+	private void UpdateFloorText(int inFloor)
+	{
+		Debug.Assert(inFloor > 0, "inFloor is out of range: " + inFloor);
+		_floorText.text = "F" + inFloor.ToString("000");
+	}
+	#endregion
 }
