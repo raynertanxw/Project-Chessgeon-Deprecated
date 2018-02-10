@@ -12,6 +12,8 @@ public class CardManager : MonoBehaviour
 
 	private const int MAX_CARDS = 7;
 	private int _numCardsInHand = -1;
+	private bool _isFirstDraw = true;
+	public bool IsFirstDraw { get { return _isFirstDraw; } }
 
 	// TODO: Statistics
 	private int _statTotalCardsDrawn = -1;
@@ -30,6 +32,7 @@ public class CardManager : MonoBehaviour
 			_cards[iCard].OnCardExecute += ExecuteAndDiscardCard;
 		}
 
+		_isFirstDraw = true;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
 	}
@@ -45,6 +48,14 @@ public class CardManager : MonoBehaviour
 		{
 			SetCardActive(iCard, false);
 		}
+	}
+
+	public void ResetForNewGame()
+	{
+		_isFirstDraw = true;
+		_numCardsInHand = 0;
+		_statTotalCardsDrawn = 0;
+		HideAllCards();
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)
@@ -89,6 +100,8 @@ public class CardManager : MonoBehaviour
 				_statTotalCardsDrawn++;
 			}
 		}
+
+		_isFirstDraw = false;
 	}
 
 	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null)

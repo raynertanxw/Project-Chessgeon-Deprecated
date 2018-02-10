@@ -78,6 +78,7 @@ public class Dungeon : MonoBehaviour
 		// TODO: Reset all of the UI?
 		_morphyController.ResetForNewGame();
 		_enemyManager.ResetForNewGame();
+		_cardManager.ResetForNewGame();
 
 		_floorNum = 1;
 		_morphyHasReachedStairs = false;
@@ -244,7 +245,7 @@ public class Dungeon : MonoBehaviour
 					DungeonCardDrawer.EnableCardDrawer(true, true, true, OnJobComplete); },
 					playPhaseAnimJob);
 				DTJob turnDrawJob = new DTJob((OnJobComplete) => {
-					_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.StatTotalCardsDrawn > 0 ? 2 : 3, OnJobComplete); },
+					_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDraw ? 3 : 2, OnJobComplete); },
 					enableCardDrawerJob);
 
 				DTJobList startPlayerPhase = new DTJobList(null, turnDrawJob);
