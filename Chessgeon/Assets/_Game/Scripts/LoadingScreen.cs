@@ -16,7 +16,7 @@ public class LoadingScreen : MonoBehaviour
 
 	void Start()
 	{
-		StartCoroutine(LoadMenuSceneAsync());
+		StartCoroutine(LoadMainSceneAsync());
 	}
 
 	void Update()
@@ -25,7 +25,7 @@ public class LoadingScreen : MonoBehaviour
 		_loadingIndicator.Rotate(Vector3.forward, -500.0f * Time.deltaTime);
 	}
 
-	IEnumerator LoadMenuSceneAsync()
+	IEnumerator LoadMainSceneAsync()
 	{
 		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_DUNGEON, LoadSceneMode.Additive);
 		asyncLoad.allowSceneActivation = false; // Stops scene load at 0.9 and prevents it from being activated immediately when ready.
@@ -41,7 +41,7 @@ public class LoadingScreen : MonoBehaviour
 			}
 			yield return null;
 		}
-		yield return new WaitForSeconds(5.0f); // TODO: Artificial wait loading time.
+		yield return new WaitForSeconds(2.0f); // TODO: Artificial wait loading time.
 
 		Scene menuScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_DUNGEON);
 		SceneManager.MoveGameObjectToScene(this.gameObject, menuScene);
