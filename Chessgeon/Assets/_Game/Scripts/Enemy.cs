@@ -125,7 +125,7 @@ public class Enemy : MonoBehaviour
 		_meshRenderer.enabled = false;
 	}
 
-	public void Hide()
+	public void Remove()
 	{
 		_isAlive = false;
 		_meshRenderer.enabled = false;

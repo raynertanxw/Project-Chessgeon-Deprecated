@@ -8,6 +8,8 @@ public class GameOverCanvas : MonoBehaviour
 {
 	private static GameOverCanvas _instance = null;
 
+	[SerializeField] private Dungeon _dungeon = null;
+
 	[Header("UI Components")]
 	[SerializeField] private Button _startOverBtn = null;
 	[SerializeField] private Button _exitBtn = null;
@@ -18,7 +20,7 @@ public class GameOverCanvas : MonoBehaviour
 	[SerializeField] private Text _floorText = null;
 	[SerializeField] private Text _goldText = null;
 
-	[Header("Meshe Renderers")]
+	[Header("Mesh Renderers")]
 	[SerializeField] private MeshRenderer _gameOverPanelMeshRen = null;
 	[SerializeField] private MeshRenderer _startOverBtnMeshRen = null;
 	[SerializeField] private MeshRenderer _exitBtnMeshRen = null;
@@ -31,6 +33,8 @@ public class GameOverCanvas : MonoBehaviour
 
             Debug.Assert(gameObject.GetComponent<GraphicRaycaster>() != null, "There is a GraphicRaycaster component on Dungeon Display Canvas. Remove it.");
             Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
+
+			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
             Debug.Assert(_startOverBtn != null, "_startOverBtn is not assigned.");
             Debug.Assert(_exitBtn != null, "_exitBtn is not assigned.");
@@ -96,6 +100,7 @@ public class GameOverCanvas : MonoBehaviour
 
 	private void StartOver()
 	{
-		Debug.Log("Start Over Btn Pressed!");
+		EnableGameOverPanel(false);
+		_dungeon.ResetAndStartGame();
 	}
 }

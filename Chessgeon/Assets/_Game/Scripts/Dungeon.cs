@@ -73,15 +73,20 @@ public class Dungeon : MonoBehaviour
 		OnFloorGenerated.Invoke();
 	}
 
-	public void StartGame()
+	public void ResetAndStartGame()
 	{
+		// TODO: Reset all of the UI?
+		_morphyController.ResetForNewGame();
+		_enemyManager.ResetForNewGame();
+
+		_floorNum = 1;
+		_morphyHasReachedStairs = false;
+		_dungeonFSM = new DungeonFSM(this);
+
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
 
-		_floorNum = 1; // TODO: Reset this?
-		_morphyController.ResetForNewGame();
 		GenerateFloor();
-		_dungeonFSM = new DungeonFSM(this);
 	}
 
 	public void EndGame()

@@ -7,6 +7,7 @@ public class MenuCanvas : MonoBehaviour
 {
 	[SerializeField] private Menu _menu = null;
 	[SerializeField] private Button _startButton = null;
+	[SerializeField] private Image _backgroundPanel = null;
 
 	private bool _isVisible = true;
 
@@ -14,6 +15,7 @@ public class MenuCanvas : MonoBehaviour
 	{
 		Debug.Assert(_menu != null, "_menu is not assigned.");
 		Debug.Assert(_startButton != null, "_startButton is not assigned.");
+		Debug.Assert(_backgroundPanel != null, "_backgroundPanel is not assigned.");
 		_startButton.onClick.AddListener(_menu.StartGame);
 	}
 
@@ -23,5 +25,6 @@ public class MenuCanvas : MonoBehaviour
 
 		_isVisible = inIsVisible;
 		_startButton.gameObject.SetActive(_isVisible);
+		_backgroundPanel.gameObject.SetActive(_isVisible);
 	}
 }

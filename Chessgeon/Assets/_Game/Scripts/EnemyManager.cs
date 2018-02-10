@@ -25,9 +25,9 @@ public class EnemyManager : MonoBehaviour
 			_enemies[iEnemy] = newEnemy;
 		}
 
-		_dungeon.MorphyController.OnMorphyReachStairs += HideAllEnemies;
+		_dungeon.MorphyController.OnMorphyReachStairs += RemoveAllEnemies;
 
-		HideAllEnemies();
+		RemoveAllEnemies();
 	}
 
 	public Enemy SpawnEnemyAt(Vector2Int inSpawnPos)
@@ -48,11 +48,11 @@ public class EnemyManager : MonoBehaviour
 		return currentEnemy;
     }
 
-	private void HideAllEnemies()
+	private void RemoveAllEnemies()
 	{
 		for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
 		{
-			_enemies[iEnemy].Hide();
+			_enemies[iEnemy].Remove();
 		}
 	}
 	
@@ -65,5 +65,10 @@ public class EnemyManager : MonoBehaviour
 		}
 
 		return enemiesAlive.ToArray();
+	}
+
+	public void ResetForNewGame()
+	{
+		RemoveAllEnemies();
 	}
 }
