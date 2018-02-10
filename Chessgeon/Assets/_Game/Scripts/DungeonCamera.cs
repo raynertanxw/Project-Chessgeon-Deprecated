@@ -11,7 +11,7 @@ public class DungeonCamera : MonoBehaviour
 
 	private Camera _dungeonCamera = null;
 
-	private readonly Quaternion _cameraYRotOffset = Quaternion.AngleAxis(30.0f, Vector3.up);
+	private readonly Quaternion _cameraYRotOffset = Quaternion.AngleAxis(20.0f, Vector3.up);
 
 	// TODO: Make this a scroll sensitivity in options.
 	private float _dragSpeed = 10.0f;
@@ -99,11 +99,11 @@ public class DungeonCamera : MonoBehaviour
 
 	private void CalcCameraBounds()
 	{
-		_camMinX = -5.5f;
+		_camMinX = -3.5f;
 		_camMinZ = -10.5f;
 
-		_camMaxX = _dungeon.CurrentFloor.Size.x - 4.5f;
-		_camMaxZ = _dungeon.CurrentFloor.Size.y - 9.5f;
+		_camMaxX = _dungeon.CurrentFloor.Size.x - 2.5f;
+		_camMaxZ = _dungeon.CurrentFloor.Size.y - 5.5f;
 	}
 
 	public static void FocusCameraToTile(Vector2Int inPos, float inDuration, DTJob.OnCompleteCallback inOnComplete = null) { FocusCameraToTile(inPos.x, inPos.y, inDuration, inOnComplete); }
