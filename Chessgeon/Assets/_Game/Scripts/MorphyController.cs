@@ -67,7 +67,7 @@ public class MorphyController : MonoBehaviour
 		if (_health < 1)
 		{
 			_isDead = true;
-			// TODO: Flash red flash. And slow down?
+			Dungeon.EndGame();
 		}
 	}
 

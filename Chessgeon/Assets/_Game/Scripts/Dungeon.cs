@@ -130,7 +130,6 @@ public class Dungeon : MonoBehaviour
 			_dungeonStates.Add(eDungeonState.EndFloor, new DungeonStateEndFloor(this));
 			_dungeonStates.Add(eDungeonState.PlayerPhase, new DungeonStatePlayerPhase(this));
 			_dungeonStates.Add(eDungeonState.EnemyPhase, new DungeonStateEnemyPhase(this));
-			_dungeonStates.Add(eDungeonState.GameOver, new DungeonStateGameOver(this));
 
 			ChangeState(eDungeonState.StartFloor);
 		}
@@ -149,7 +148,7 @@ public class Dungeon : MonoBehaviour
 		}
 
 		#region DungeonStates
-		private enum eDungeonState { StartFloor, EndFloor, PlayerPhase, EnemyPhase, GameOver }
+		private enum eDungeonState { StartFloor, EndFloor, PlayerPhase, EnemyPhase }
 		private abstract class DungeonState
 		{
 			protected DungeonFSM _dungeonFSM = null;
@@ -315,34 +314,12 @@ public class Dungeon : MonoBehaviour
 				if (_dungeonFSM.Dungeon.MorphyController.IsDead)
 				{
 					_readyToProcessNextEnemy = false;
-					_dungeonFSM.ChangeState(eDungeonState.GameOver);
+					// Do nothing. Player is dead so just wait for new game where this whole FSM will be recreated.
 				}
 				else
 				{
 					_readyToProcessNextEnemy = true;
 				}
-			}
-		}
-		private class DungeonStateGameOver : DungeonState
-		{
-			public DungeonStateGameOver(DungeonFSM inDungeonFSM)
-			{
-				_dungeonFSM = inDungeonFSM;
-			}
-
-			public override void OnEnterState()
-			{
-				_dungeonFSM.Dungeon.EndGame();
-			}
-
-			public override void ExitState()
-			{
-				// TODO: Any cleanup needed?
-			}
-
-			public override void ExecuteState()
-			{
-				if (_dungeonFSM.Dungeon.HasGameStarted) _dungeonFSM.ChangeState(eDungeonState.StartFloor);
 			}
 		}
 		#endregion
