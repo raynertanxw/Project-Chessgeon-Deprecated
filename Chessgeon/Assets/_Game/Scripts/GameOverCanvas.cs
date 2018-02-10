@@ -9,6 +9,7 @@ public class GameOverCanvas : MonoBehaviour
 	private static GameOverCanvas _instance = null;
 
 	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private Menu _menu = null;
 
 	[Header("UI Components")]
 	[SerializeField] private Button _startOverBtn = null;
@@ -35,6 +36,7 @@ public class GameOverCanvas : MonoBehaviour
             Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
+			Debug.Assert(_menu != null, "_menu is not assigned.");
 
             Debug.Assert(_startOverBtn != null, "_startOverBtn is not assigned.");
             Debug.Assert(_exitBtn != null, "_exitBtn is not assigned.");
@@ -95,7 +97,8 @@ public class GameOverCanvas : MonoBehaviour
 
 	private void ExitToMainMenu()
 	{
-		Debug.Log("Exit Btn Pressed!");
+		EnableGameOverPanel(false);
+		_menu.ReturnToMainMenu();
 	}
 
 	private void StartOver()

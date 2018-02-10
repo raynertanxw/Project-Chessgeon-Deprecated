@@ -3278,6 +3278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dungeon: {fileID: 1426320895}
+  _menu: {fileID: 1385113401}
   _startOverBtn: {fileID: 1676504034}
   _exitBtn: {fileID: 1256323818}
   _startOverBtnText: {fileID: 1296897944}
@@ -5903,8 +5904,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1798507098}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 188, y: 334, z: 0}
-  m_LocalScale: {x: 0.34791666, y: 0.34791666, z: 0.34791666}
+  m_LocalPosition: {x: 189, y: 336, z: 0}
+  m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
   m_Children:
   - {fileID: 1902630218}
   - {fileID: 580929945}

@@ -16,8 +16,12 @@ public class Menu : MonoBehaviour
 
 	public void StartGame()
 	{
-		Debug.Log("Start Dungeon");
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);
+	}
+
+	public void ReturnToMainMenu()
+	{
+		_menuCanvas.SetVisible(true);
 	}
 }
