@@ -55,6 +55,11 @@ public class Dungeon : MonoBehaviour
 		_floor = new Floor(this);
 	}
 
+	private void Start()
+	{
+		_dungeonFSM = new DungeonFSM(this);
+	}
+
 	private void Update()
 	{
 		if (HasGameStarted)
@@ -82,18 +87,19 @@ public class Dungeon : MonoBehaviour
 
 		_floorNum = 1;
 		_morphyHasReachedStairs = false;
-		_dungeonFSM = new DungeonFSM(this);
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
 
 		GenerateFloor();
+		_dungeonFSM.SetToStartFloorState();
 	}
 
 	public void EndGame()
 	{
 		_hasGameStarted = false;
 		_isPlayersTurn = false;
+		_dungeonFSM.SetToIdle();
 
 		// TODO: Disable some UI and stuff?
 		//		 Present GameOver panel and such
@@ -131,8 +137,9 @@ public class Dungeon : MonoBehaviour
 			_dungeonStates.Add(eDungeonState.EndFloor, new DungeonStateEndFloor(this));
 			_dungeonStates.Add(eDungeonState.PlayerPhase, new DungeonStatePlayerPhase(this));
 			_dungeonStates.Add(eDungeonState.EnemyPhase, new DungeonStateEnemyPhase(this));
+			_dungeonStates.Add(eDungeonState.Idle, new DungeonStateIdle(this));
 
-			ChangeState(eDungeonState.StartFloor);
+			ChangeState(eDungeonState.Idle);
 		}
 
 		public void Execute()
@@ -148,8 +155,18 @@ public class Dungeon : MonoBehaviour
 			_currentState.OnEnterState();
 		}
 
+		public void SetToStartFloorState()
+		{
+			ChangeState(eDungeonState.StartFloor);
+		}
+
+		public void SetToIdle()
+		{
+			ChangeState(eDungeonState.Idle);
+		}
+
 		#region DungeonStates
-		private enum eDungeonState { StartFloor, EndFloor, PlayerPhase, EnemyPhase }
+		private enum eDungeonState { StartFloor, EndFloor, PlayerPhase, EnemyPhase, Idle }
 		private abstract class DungeonState
 		{
 			protected DungeonFSM _dungeonFSM = null;
@@ -157,6 +174,26 @@ public class Dungeon : MonoBehaviour
 			public abstract void OnEnterState();
 			public abstract void ExitState();
 			public abstract void ExecuteState();
+		}
+		
+		private class DungeonStateIdle : DungeonState
+		{
+			public DungeonStateIdle(DungeonFSM inDungeonFSM)
+			{
+				_dungeonFSM = inDungeonFSM;
+			}
+
+			public override void OnEnterState()
+			{
+			}
+
+			public override void ExecuteState()
+			{
+			}
+
+			public override void ExitState()
+			{
+			}
 		}
 
 		private class DungeonStateStartFloor : DungeonState
