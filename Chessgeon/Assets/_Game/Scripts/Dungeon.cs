@@ -300,6 +300,8 @@ public class Dungeon : MonoBehaviour
 
 				DTJobList startPlayerPhase = new DTJobList(null, turnDrawJob);
 				startPlayerPhase.ExecuteAllJobs();
+
+				DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f);
 			}
 
 			public override void ExitState()
