@@ -21,6 +21,6 @@ public class EnemyElementStratergyCursed : EnemyElementStratergy
 
 	public override int GetNumCoinsReward()
 	{
-		return 1; // TODO: Implement this.
+		return 6;
 	}
 }
