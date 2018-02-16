@@ -16,6 +16,10 @@ public class Dungeon : MonoBehaviour
 	public MorphyController MorphyController { get { return _morphyController; } }
 	public CardManager CardManager { get { return _cardManager; } }
 
+	[Header("Object Pools")]
+	[SerializeField] private CoinObjectPool _coinObjectPool = null;
+	public CoinObjectPool CoinPool { get { return _coinObjectPool; } }
+
 	private const int DUNGEON_MIN_X = 5;
 	private const int DUNGEON_MAX_X = 15;
 	private const int DUNGEON_MIN_Y = 5;
@@ -50,6 +54,8 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 		Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
+
+		Debug.Assert(_coinObjectPool != null, "_coinObjectPool is not assigned.");
 
 		_morphyController.OnMorphyReachStairs += OnMorphyReachStairs;
 		_floor = new Floor(this);

@@ -123,6 +123,25 @@ public class Enemy : MonoBehaviour
 		_isAlive = false;
 		// TODO: Points and stuff.
 		_meshRenderer.enabled = false;
+
+		// TODO: Use action repeat to give multiple coins.
+		DelayAction giveCoin = new DelayAction(0.2f);
+		giveCoin.OnActionStart += () => { GiveCoin(); };
+		ActionHandler.RunAction(new ActionRepeat(giveCoin, CurrentElementStratergy.GetNumCoinsReward()));
+	}
+
+	private void GiveCoin()
+	{
+		GameObject coinInstance = _enemyManager.Dungeon.CoinPool.GetInstance();
+		coinInstance.transform.position = transform.position + Vector3.up * 2.0f;
+
+		MoveByAction moveCoinUp = new MoveByAction(coinInstance.transform, Vector3.up * 2.0f, 0.3f);
+		// TODO: Play get coin sound.
+		moveCoinUp.OnActionStart += () => { _enemyManager.Dungeon.CoinPool.EnableObject(coinInstance, true); };
+		moveCoinUp.OnActionFinish += () => { _enemyManager.Dungeon.CoinPool.EnableObject(coinInstance, false); };
+		ActionHandler.RunAction(moveCoinUp);
+
+		// TODO: Logic of adding coins to total.
 	}
 
 	public void Remove()
