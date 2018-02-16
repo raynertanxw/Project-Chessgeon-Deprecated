@@ -44,6 +44,9 @@ public class Dungeon : MonoBehaviour
 	public Vector2Int StairsPos { get { return _floor.StairsPos; } } // TODO: Decide if this is btr or make Floor publically accessible.
 	public int FloorNum { get { return _floor.FloorNum; } }
 
+	private int _numCoins = -1;
+	public int NumCoins { get { return _numCoins; } }
+
 	private DungeonFSM _dungeonFSM = null;
 
 	public Utils.GenericVoidDelegate OnFloorGenerated;
@@ -93,6 +96,8 @@ public class Dungeon : MonoBehaviour
 
 		_floorNum = 1;
 		_morphyHasReachedStairs = false;
+		_numCoins = 0;
+		DungeonDisplay.UpdateCoinText(NumCoins);
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
@@ -125,6 +130,18 @@ public class Dungeon : MonoBehaviour
 		_floorNum++;
 		GenerateFloor();
 		if (inOnComplete != null) inOnComplete();
+	}
+
+	public void EarnCoins(int inNumCoinsEarned)
+	{
+		_numCoins += inNumCoinsEarned;
+		DungeonDisplay.UpdateCoinText(NumCoins);
+	}
+	public void SpendCoins(int inNumCoinsSpent)
+	{
+		Debug.Assert(NumCoins - inNumCoinsSpent > -1, "Not enough coins! Only have " + NumCoins + " but trying to spend " + inNumCoinsSpent);
+		_numCoins -= inNumCoinsSpent;
+		DungeonDisplay.UpdateCoinText(NumCoins);
 	}
 
 	#region DungeonFSM

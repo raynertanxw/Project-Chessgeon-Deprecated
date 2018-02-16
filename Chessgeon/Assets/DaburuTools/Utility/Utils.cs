@@ -15,6 +15,22 @@ namespace DaburuTools
 		}
 
 
+
+		#region CommonStringFormatting
+		public static string FormatIntWithThousandSeparator(int inInt, bool inWithDecimals = false)
+		{
+			if (inWithDecimals)
+			{
+				return string.Format("{0:n}", inInt);
+			}
+			else
+			{
+				return string.Format("{0:n0}", inInt);
+			}
+		}
+		#endregion
+
+
 		#region AnimationCurveDefaults
 		public static readonly AnimationCurve CurveExponential = new AnimationCurve(
 			new Keyframe(0.0f, 0.0f, 0.0f * Mathf.Deg2Rad, 0.0f * Mathf.Deg2Rad),

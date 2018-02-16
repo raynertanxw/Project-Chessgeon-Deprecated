@@ -281,5 +281,11 @@ public class DungeonDisplay : MonoBehaviour
 		Debug.Assert(inFloorNum > 0, "inFloor is out of range: " + inFloorNum);
 		_floorText.text = ChessgeonUtils.FormatFloorString(inFloorNum);
 	}
+
+	public static void UpdateCoinText(int inNumCoins)
+	{
+		Debug.Assert(inNumCoins > -1, "inNumCoins is out of range: " + inNumCoins);
+		_instance._coinText.text = ChessgeonUtils.FormatCoinString(inNumCoins);
+	}
 	#endregion
 }

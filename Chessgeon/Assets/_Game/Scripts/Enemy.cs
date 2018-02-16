@@ -141,7 +141,7 @@ public class Enemy : MonoBehaviour
 		moveCoinUp.OnActionFinish += () => { _enemyManager.Dungeon.CoinPool.EnableObject(coinInstance, false); };
 		ActionHandler.RunAction(moveCoinUp);
 
-		// TODO: Logic of adding coins to total.
+		_enemyManager.Dungeon.EarnCoins(1);
 	}
 
 	public void Remove()
