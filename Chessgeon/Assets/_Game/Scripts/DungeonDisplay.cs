@@ -219,7 +219,7 @@ public class DungeonDisplay : MonoBehaviour
 	public static void ShowNextFloorPanel(int inFloorNum, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		const float FADE_IN_DURATION = 1.5f;
-		_instance._nextFloorText.text = "F" + inFloorNum.ToString(); // TODO: Format floor string func in future.
+		_instance._nextFloorText.text = ChessgeonUtils.FormatFloorString(inFloorNum);
 		ImageAlphaToAction fadeInPanel = new ImageAlphaToAction(_instance._nextFloorPanel, 1.0f, FADE_IN_DURATION);
 		TextAlphaToAction fadeInText = new TextAlphaToAction(_instance._nextFloorText, 1.0f, FADE_IN_DURATION);
 
@@ -276,10 +276,10 @@ public class DungeonDisplay : MonoBehaviour
 		}
 	}
 
-	private void UpdateFloorText(int inFloor)
+	private void UpdateFloorText(int inFloorNum)
 	{
-		Debug.Assert(inFloor > 0, "inFloor is out of range: " + inFloor);
-		_floorText.text = "F" + inFloor.ToString("000");
+		Debug.Assert(inFloorNum > 0, "inFloor is out of range: " + inFloorNum);
+		_floorText.text = ChessgeonUtils.FormatFloorString(inFloorNum);
 	}
 	#endregion
 }
