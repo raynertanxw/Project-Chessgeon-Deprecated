@@ -114,10 +114,11 @@ public class Dungeon : MonoBehaviour
 		_morphyHasReachedStairs = true;
 	}
 
-	public void ProgressToNextFloor()
+	public void ProgressToNextFloor(DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		_floorNum++;
 		GenerateFloor();
+		if (inOnComplete != null) inOnComplete();
 	}
 
 	#region DungeonFSM
@@ -244,6 +245,22 @@ public class Dungeon : MonoBehaviour
 			public override void OnEnterState()
 			{
 				// TODO: Display stats and all that.
+				DTJob fadeInNextFloorPanel = new DTJob((OnComplete) =>
+				{
+					DungeonDisplay.ShowNextFloorPanel((_dungeonFSM.Dungeon.FloorNum + 1), OnComplete);
+				});
+				DTJob generateNewFloor = new DTJob((OnComplete) =>
+				{
+					_dungeonFSM.Dungeon.ProgressToNextFloor(OnComplete);
+				}, fadeInNextFloorPanel);
+				DTJob fadeOutNextFloorPanel = new DTJob((OnComplete) =>
+				{
+					DelayAction delay = new DelayAction(0.75f);
+					delay.OnActionFinish += () => { DungeonDisplay.HideNextFloorPanel(OnComplete); };
+					ActionHandler.RunAction(delay);
+				}, generateNewFloor);
+				DTJobList nextFloorAnimSequence = new DTJobList(() => { _dungeonFSM.ChangeState(eDungeonState.StartFloor); }, fadeOutNextFloorPanel);
+				nextFloorAnimSequence.ExecuteAllJobs();
 			}
 
 			public override void ExitState()
@@ -253,11 +270,7 @@ public class Dungeon : MonoBehaviour
 
 			public override void ExecuteState()
 			{
-				// TODO: Wait for the player to click the okay button, then set black fade.
-				//		 and hand over to dungeon to generate the next floor.
-				//		 once generated, then lift the black fade and then switch to start floor.
-				_dungeonFSM.Dungeon.ProgressToNextFloor();
-				_dungeonFSM.ChangeState(eDungeonState.StartFloor);
+				// Nth here.
 			}
 		}
 		private class DungeonStatePlayerPhase : DungeonState
