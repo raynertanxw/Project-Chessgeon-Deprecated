@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DaburuTools;
 
 public class CardManager : MonoBehaviour
 {
 	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private Image _controlBlocker = null;
+
+	[Header("Card Texture")]
 	[SerializeField] private Texture[] _cardTextures = null;
 
 	private Card[] _cards = null;
@@ -23,6 +27,7 @@ public class CardManager : MonoBehaviour
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 		Debug.Assert(_cardTextures.Length == (3 * 5) + (3 * 5), "There is a mismatch in number of textures and number of cards.");
+		Debug.Assert(_controlBlocker != null, "_controlBlocker is not assigned.");
 
 		_cards = new Card[MAX_CARDS];
 		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
@@ -35,6 +40,7 @@ public class CardManager : MonoBehaviour
 		_isFirstDraw = true;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
+		ToggleControlBlocker(true);
 	}
 
 	private void Start()
@@ -71,6 +77,11 @@ public class CardManager : MonoBehaviour
 		}
 
 		return _cardTextures[texIndex];
+	}
+
+	public void ToggleControlBlocker(bool inBlocked)
+	{
+		_controlBlocker.raycastTarget = inBlocked;
 	}
 
 	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null)

@@ -321,7 +321,7 @@ public class Dungeon : MonoBehaviour
 					_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDraw ? 3 : 2, OnJobComplete); },
 					enableCardDrawerJob);
 
-				DTJobList startPlayerPhase = new DTJobList(null, turnDrawJob);
+				DTJobList startPlayerPhase = new DTJobList(() => { _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); }, turnDrawJob);
 				startPlayerPhase.ExecuteAllJobs();
 
 				DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f);
@@ -331,6 +331,7 @@ public class Dungeon : MonoBehaviour
 			{
 				// TODO: Any cleanup needed?
 				_dungeonFSM._dungeon._isPlayersTurn = false;
+				_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(true);
 			}
 
 			public override void ExecuteState()
