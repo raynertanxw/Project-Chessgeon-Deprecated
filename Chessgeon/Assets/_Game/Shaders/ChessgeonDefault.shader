@@ -38,7 +38,7 @@
 			{
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
-				float uv : TEXCOORD0;
+				float2 uv : TEXCOORD0;
 			};
 
 			sampler2D _MainTex;
