@@ -46,12 +46,15 @@ public class Card : MonoBehaviour
 	private Vector2 _prevFrameLocalPos;
 	private Vector2 _tiltIntertia;
 
-	private const float HOLDING_CARD_Z_OFFSET = 1.0f;
+	private const float HOLDING_CARD_Z_OFFSET = 5.0f;
 	private const float DRAGGING_LERP_SPEED = 20.0f;
 	private const float SNAPPING_BACK_LERP_SPEED = 30.0f;
 	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(25.0f, 12.5f);
 	private const float TILT_INTERTIA_DRAG = 5.0f; 
 	private const float MAX_TILT = 35.0f;
+	private readonly Vector3 DRAG_SCALE = new Vector3(2.0f, 2.0f, 1.0f);
+	private const float SCALE_LERP_SPEED = 20.0f;
+	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 2.5f, 0.0f);
 
 	public delegate void CardExecutionAction(int inCardIndex);
 	public CardExecutionAction OnCardExecute = null;
@@ -83,8 +86,17 @@ public class Card : MonoBehaviour
 			!_isAnimatingMoveToOtherCardPos &&
 			!_isAnimatingCardExecute)
 		{
-			if (_isDragging) _cardRectTransform.position = Vector3.Lerp(_cardRectTransform.position, _desiredCardWorldPos, Time.deltaTime * _lerpSpeed);
-			else _cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
+			if (_isDragging)
+			{
+				_cardRectTransform.position = Vector3.Lerp(_cardRectTransform.position, _desiredCardWorldPos, Time.deltaTime * _lerpSpeed);
+				_cardRectTransform.localScale = Vector3.Lerp(_cardRectTransform.localScale, DRAG_SCALE, Time.deltaTime * SCALE_LERP_SPEED);
+			}
+			else
+			{
+				_cardRectTransform.localPosition = Vector3.Lerp(_cardRectTransform.localPosition, _desiredCardLocalPos, Time.deltaTime * _lerpSpeed);
+				_cardRectTransform.localScale = Vector3.Lerp(_cardRectTransform.localScale, Vector3.one, Time.deltaTime * SCALE_LERP_SPEED);
+			}
+
 			_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
 			_tiltIntertia = Vector2.Lerp(_tiltIntertia, Vector2.zero, Time.deltaTime * TILT_INTERTIA_DRAG);
 		}
@@ -95,7 +107,7 @@ public class Card : MonoBehaviour
 		_isDragging = true;
 		_cardRectTransform.localPosition += Vector3.forward * -HOLDING_CARD_Z_OFFSET;
 
-		_desiredCardWorldPos = _cardRectTransform.position;
+		_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
 		_desiredCardLocalPos = _cardRectTransform.localPosition;
 		_tiltIntertia = Vector2.zero;
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
@@ -122,7 +134,7 @@ public class Card : MonoBehaviour
 	public void EventTriggerOnDrag(BaseEventData data)
 	{
 		PointerEventData ptrEventData = (PointerEventData)data;
-		_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position);
+		_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
 		_desiredCardWorldPos.z = _cardRectTransform.position.z;
 
 		Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
