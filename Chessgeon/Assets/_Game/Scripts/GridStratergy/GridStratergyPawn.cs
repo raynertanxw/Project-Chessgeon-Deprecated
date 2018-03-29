@@ -64,7 +64,8 @@ public class GridStratergyPawn : GridStratergy
 			if (IsValidPawnCapture(downRight, inMoveEntity)) possibleMoves.Add(downRight);
 		}
 
-		if (possibleMoves.Count < 1) // NOTE: Only if we don't have a capturing move.
+		if (possibleMoves.Count < 1 ||
+			inMoveEntity == eMoveEntity.Morphy) // NOTE: Only if we don't have a capturing move. Or if we are the player.
 		{
 			{
 				Vector2Int up = inPos;
