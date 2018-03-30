@@ -156,4 +156,36 @@ public class Morphy : MonoBehaviour
 		if (inOnCompleteAction != null) attackSeq.OnActionFinish += inOnCompleteAction;
 		ActionHandler.RunAction(attackSeq);
 	}
+
+	public void SmashAttack(Enemy[] inEnemies, Utils.GenericVoidDelegate inOnCompleteAction = null)
+	{
+		float moveUpDuration = 0.4f;
+		Vector3 originPos = transform.position;
+		MoveToAction moveUp = new MoveToAction(
+			this.transform,
+			transform.position + new Vector3(0.0f, 2.5f, 0.0f),
+			moveUpDuration,
+			Utils.CurveInverseExponential);
+		moveUp.OnActionStart += () => { DungeonCamera.FocusCameraToTile(Pos, moveUpDuration); };
+		MoveToAction slamDown = new MoveToAction(
+			this.transform,
+			originPos,
+			0.1f,
+			Utils.CurveExponential);
+		slamDown.OnActionFinish += () =>
+		{
+			DungeonCamera.CameraShake(35, 1.0f, 0.5f);
+
+			Enemy curEnemy;
+			for (int iEnemy = 0; iEnemy < inEnemies.Length; iEnemy++)
+			{
+				curEnemy = inEnemies[iEnemy];
+				_morphyController.Dungeon.CurrentFloor.SmashEnemyAt(curEnemy.Pos);
+                curEnemy.Kill();
+			}
+		};
+		ActionSequence attackSeq = new ActionSequence(moveUp, new DelayAction(0.15f), slamDown, new DelayAction(1.0f));
+		if (inOnCompleteAction != null) attackSeq.OnActionFinish += inOnCompleteAction;
+		ActionHandler.RunAction(attackSeq);
+	}
 }

@@ -181,7 +181,7 @@ public class CardManager : MonoBehaviour
 		else cardTier = eCardTier.Normal;
 
 		// TODO: DEBUG FOR NOW. Re-balance once all is in.
-		return new CardData(cardTier, eCardType.Movement, (eMoveType)Random.Range(0, 5));
+		return new CardData(cardTier, eCardType.Smash, (eMoveType)Random.Range(0, 5));
 	}
 
 	private void SwapCards(int inCardIndexA, int inCardIndexB)
@@ -198,6 +198,7 @@ public class CardManager : MonoBehaviour
 		CardData cardData = card.CardData;
 		bool closeDrawerAfterExecute = true;
 		Utils.GenericVoidDelegate postExecuteCardAnimActions = null;
+		DTJob.OnCompleteCallback postCloseDrawerAnimActions = null;
 
 		switch (cardData.cardType)
 		{
@@ -214,7 +215,7 @@ public class CardManager : MonoBehaviour
 			}
 			case eCardType.Smash:
 			{
-				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				postCloseDrawerAnimActions += () => { _dungeon.MorphyController.Smash(cardData.cardTier); };
 				break;
 			}
 			case eCardType.Draw:
@@ -264,7 +265,7 @@ public class CardManager : MonoBehaviour
 		{
 			if (closeDrawerAfterExecute)
 			{
-				DungeonCardDrawer.EnableCardDrawer(false, true);
+				DungeonCardDrawer.EnableCardDrawer(false, true, true, postCloseDrawerAnimActions);
 			}
 
 			if (postExecuteCardAnimActions != null) postExecuteCardAnimActions();

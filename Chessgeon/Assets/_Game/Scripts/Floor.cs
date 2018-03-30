@@ -160,10 +160,24 @@ public class Floor
         }
     }
 
+	public void SmashEnemyAt(Vector2Int inEnemyPos)
+	{
+		Debug.Assert(IsTileOfState(inEnemyPos, Floor.eTileState.Enemy));
+		SetTileState(inEnemyPos, Floor.eTileState.Empty);
+		_enemies[inEnemyPos.x, inEnemyPos.y] = null;
+	}
+
 	public bool IsTileEmpty(Vector2Int inPos) { return IsTileEmpty(inPos.x, inPos.y); }
 	public bool IsTileEmpty(int inX, int inY)
 	{
-		return (_nodes[inX, inY].State == eTileState.Empty);
+		if (IsValidPos(inX, inY))
+		{
+			return (_nodes[inX, inY].State == eTileState.Empty);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public bool IsValidEnemyMove(Vector2Int inPos) { return IsValidEnemyMove(inPos.x, inPos.y); }
@@ -209,9 +223,12 @@ public class Floor
 	public bool IsTileOfState(Vector2Int inPos, params eTileState[] inTileStates) { return IsTileOfState(inPos.x, inPos.y, inTileStates); }
 	public bool IsTileOfState(int inX, int inY, params eTileState[] inTileStates)
 	{
-		for (int iState = 0; iState < inTileStates.Length; iState++)
+		if (IsValidPos(inX, inY))
 		{
-			if (_nodes[inX, inY].State == inTileStates[iState]) return true;
+			for (int iState = 0; iState < inTileStates.Length; iState++)
+			{
+				if (_nodes[inX, inY].State == inTileStates[iState]) return true;
+			}
 		}
 
 		return false;
