@@ -84,8 +84,11 @@ public class MorphyController : MonoBehaviour
 		}
 		else
 		{
-			// TODO: Deal with case when there are no possible spaces to move.
 			Debug.LogWarning("No Possible Moves.");
+			_numMovesLeft = 0;
+			TransformBackToMorphy();
+			DungeonCardDrawer.EnableCardDrawer(true);
+			// TODO: Tell player that there are no possible moves.
 		}
 	}
 
