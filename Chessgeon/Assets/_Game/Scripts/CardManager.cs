@@ -117,7 +117,6 @@ public class CardManager : MonoBehaviour
 
 	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		// TODO: Reorg and then CALL inOnComlete.
 		const float REORG_ANIM_DURATION = 0.6f;
 		int firstEmptyIndex = -1;
 		int curIndex = 0;
@@ -159,6 +158,7 @@ public class CardManager : MonoBehaviour
 			delayedExecution.OnActionFinish += () => { inOnComplete(); };
 			ActionHandler.RunAction(delayedExecution);
 		}
+		// NOTE: DO NOT RUN inOnComplete if there is no need to reorg.
 
 		return neededToReorg;
 	}
@@ -170,8 +170,18 @@ public class CardManager : MonoBehaviour
 
 	private CardData GenerateRandomCardData()
 	{
+		// Chances for card tier.
+		// Normal: 80%
+		// Silver: 15%
+		// Gold  : 5%
+		eCardTier cardTier = eCardTier.Normal;
+		float cardTierRandValue = Random.value;
+		if (cardTierRandValue < 0.05f) cardTier = eCardTier.Gold;
+		else if (cardTierRandValue < 0.2f) cardTier = eCardTier.Silver;
+		else cardTier = eCardTier.Normal;
+
 		// TODO: DEBUG FOR NOW. Re-balance once all is in.
-		return new CardData(eCardTier.Normal, eCardType.Movement, (eMoveType)Random.Range(0, 5));
+		return new CardData(cardTier, eCardType.Movement, (eMoveType)Random.Range(0, 5));
 	}
 
 	private void SwapCards(int inCardIndexA, int inCardIndexB)
