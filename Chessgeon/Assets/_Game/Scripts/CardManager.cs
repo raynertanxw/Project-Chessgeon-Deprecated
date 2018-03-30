@@ -196,8 +196,48 @@ public class CardManager : MonoBehaviour
 	{
 		Card card = _cards[inCardIndex];
 		CardData cardData = card.CardData;
+		bool closeDrawerAfterExecute = true;
+		Utils.GenericVoidDelegate postExecuteCardAnimActions = null;
+
 		switch (cardData.cardType)
 		{
+			case eCardType.Joker:
+			{
+				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				break;
+			}
+			case eCardType.Duplicate:
+			{
+				closeDrawerAfterExecute = false;
+				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				break;
+			}
+			case eCardType.Smash:
+			{
+				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				break;
+			}
+			case eCardType.Draw:
+			{
+				closeDrawerAfterExecute = false;
+				int numDraws = -1;
+				switch (cardData.cardTier)
+				{
+					case eCardTier.Normal: numDraws = 2; break;
+					case eCardTier.Silver: numDraws = 3; break;
+					case eCardTier.Gold: numDraws = 5; break;
+					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+				}
+
+				postExecuteCardAnimActions += () => { DrawCard(numDraws, ()=> { ToggleControlBlocker(false); }); };
+				ToggleControlBlocker(true);
+				break;
+			}
+			case eCardType.Shield:
+			{
+				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				break;
+			}
 			case eCardType.Movement:
 			{
 				int numMoves = -1;
@@ -222,7 +262,12 @@ public class CardManager : MonoBehaviour
 		_numCardsInHand--;
 		_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 		{
-			DungeonCardDrawer.EnableCardDrawer(false, true);
+			if (closeDrawerAfterExecute)
+			{
+				DungeonCardDrawer.EnableCardDrawer(false, true);
+			}
+
+			if (postExecuteCardAnimActions != null) postExecuteCardAnimActions();
 		});
 	}
 }

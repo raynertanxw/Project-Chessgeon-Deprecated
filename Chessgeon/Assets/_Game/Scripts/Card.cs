@@ -208,6 +208,9 @@ public class Card : MonoBehaviour
 		{
 			_isAnimatingCardExecute = false;
 			SetEnabled(false);
+			_cardRectTransform.localScale = Vector3.one;
+			_tiltIntertia = Vector2.zero;
+			_cardRectTransform.localRotation = Quaternion.identity;
 			if (inOnComplete != null) inOnComplete();
 		};
 		ActionHandler.RunAction(spinCard);
