@@ -6,18 +6,20 @@ using UnityEngine.EventSystems;
 using DaburuTools;
 
 public enum eCardTier { Normal, Silver, Gold }
-public enum eCardType { Joker, Duplicate, Smash, Draw, Shield, Movement } // Movement needs to be last for calculations.
+public enum eCardType { Joker, Clone, Smash, Draw, Shield, Movement } // Movement needs to be last for calculations.
 
 public struct CardData
 {
 	public eCardTier cardTier;
 	public eCardType cardType;
 	public eMoveType cardMoveType;
+	public bool isCloned;
 
-	public CardData(eCardTier inCardTier, eCardType inCardType, eMoveType inMoveType = eMoveType.Pawn)
+	public CardData(eCardTier inCardTier, eCardType inCardType, bool inIsCloned, eMoveType inMoveType = eMoveType.Pawn)
 	{
 		cardTier = inCardTier;
 		cardType = inCardType;
+		isCloned = inIsCloned;
 		cardMoveType = inMoveType;
 	}
 }
@@ -29,9 +31,11 @@ public class Card : MonoBehaviour
 
 	private RectTransform _cardRectTransform = null;
 	private MeshRenderer _cardMeshRen = null;
+	private MeshRenderer _clonedIconMeshRen = null;
 	private Image _cardRaycastTargetImage = null;
 	private CardManager _cardManager = null;
 	private int _cardIndex = -1;
+	public int CardIndex { get { return _cardIndex; } }
 	private bool _isEnabled = false;
 	public bool IsEnabled { get { return _isEnabled; } }
 
@@ -63,6 +67,7 @@ public class Card : MonoBehaviour
 	{
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
 		_cardMeshRen = gameObject.GetComponent<MeshRenderer>();
+		_clonedIconMeshRen = transform.GetChild(1).GetComponent<MeshRenderer>();
 		_cardRaycastTargetImage = transform.Find("Card Image").gameObject.GetComponent<Image>();
 		_cardManager = transform.parent.GetComponent<CardManager>();
 		SetEnabled(true);
@@ -144,13 +149,14 @@ public class Card : MonoBehaviour
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
 	}
 
-	public void SetCard(eCardTier inCardTier, eCardType inCardType, eMoveType inMoveType = eMoveType.Pawn)
+	public void SetCard(eCardTier inCardTier, eCardType inCardType, bool inIsCloned = false, eMoveType inMoveType = eMoveType.Pawn)
 	{
-		SetCard(new CardData(inCardTier, inCardType, inMoveType));
+		SetCard(new CardData(inCardTier, inCardType, inIsCloned, inMoveType));
 	}
 	public void SetCard(CardData inCardData)
 	{
 		_cardData = inCardData;
+		_clonedIconMeshRen.enabled = _cardData.isCloned;
 
 		SetCardTexture();
 	}
@@ -216,13 +222,25 @@ public class Card : MonoBehaviour
 		ActionHandler.RunAction(spinCard);
 	}
 
+	public void ReturnCardAndUnexecute(string inReturnReason)
+	{
+		SetEnabled(true);
+		Debug.LogWarning("Card Returned: " + inReturnReason);
+	}
+
 	public void SetEnabled(bool inIsEnabled)
 	{
-		if (inIsEnabled != _isEnabled)
+		_isEnabled = inIsEnabled;
+		_cardMeshRen.enabled = inIsEnabled;
+		_cardRaycastTargetImage.raycastTarget = inIsEnabled;
+
+		if (inIsEnabled && CardData.isCloned)
 		{
-			_isEnabled = inIsEnabled;
-			_cardMeshRen.enabled = inIsEnabled;
-			_cardRaycastTargetImage.raycastTarget = inIsEnabled;
+			_clonedIconMeshRen.enabled = true;
+		}
+		else
+		{
+			_clonedIconMeshRen.enabled = false;
 		}
 	}
 }

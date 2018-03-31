@@ -34,7 +34,7 @@ public class CardManager : MonoBehaviour
 		{
 			_cards[iCard] = transform.Find("Card " + (iCard + 1)).GetComponent<Card>();
 			_cards[iCard].SetCardIndex(iCard);
-			_cards[iCard].OnCardExecute += ExecuteAndDiscardCard;
+			_cards[iCard].OnCardExecute += TryExecuteAndDiscardCard;
 		}
 
 		_isFirstDraw = true;
@@ -86,18 +86,28 @@ public class CardManager : MonoBehaviour
 
 	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		bool needReorg = ReorganiseCards(() => { DrawCard(inNumCardsDrawn, inOnComplete); });
+		CardData[] cardDatas = new CardData[inNumCardsDrawn];
+		for (int iCard = 0; iCard < inNumCardsDrawn; iCard++)
+		{
+			cardDatas[iCard] = GenerateRandomCardData();
+		}
+		DrawCard(inOnComplete, cardDatas);
+	}
+	public void DrawCard(DTJob.OnCompleteCallback inOnComplete = null, params CardData[] inCardDatas)
+	{
+		bool needReorg = ReorganiseCards(() => { DrawCard(inOnComplete, inCardDatas); });
 
 		if (!needReorg)
 		{
-			int cardLimit = Mathf.Min(_numCardsInHand + inNumCardsDrawn, MAX_CARDS);
+			int numCardsDrawn = inCardDatas.Length;
+			int cardLimit = Mathf.Min(_numCardsInHand + numCardsDrawn, MAX_CARDS);
 			int cardsDrawn = 0;
 			const float CARD_ANIM_INTERVAL = 0.5f;
 			for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
 			{
 				Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
 				SetCardActive(iCard, true);
-				_cards[iCard].SetCard(GenerateRandomCardData());
+				_cards[iCard].SetCard(inCardDatas[cardsDrawn]);
 				if ((iCard + 1) == cardLimit)
 				{
 					_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
@@ -184,7 +194,7 @@ public class CardManager : MonoBehaviour
 		else cardTier = eCardTier.Normal;
 
 		// TODO: DEBUG FOR NOW. Re-balance once all is in.
-		return new CardData(cardTier, eCardType.Joker, (eMoveType)Random.Range(0, 5));
+		return new CardData(cardTier, eCardType.Clone, false, (eMoveType)Random.Range(0, 5));
 	}
 
 	private void SwapCards(int inCardIndexA, int inCardIndexB)
@@ -195,118 +205,206 @@ public class CardManager : MonoBehaviour
 		_cards[inCardIndexB].SetCard(cardDataA);
 	}
 
-	private void ExecuteAndDiscardCard(int inCardIndex)
+	private bool _isCloneMode = false;
+	private int _numToClone = -1;
+	private void TryExecuteAndDiscardCard(int inCardIndex)
 	{
 		Card card = _cards[inCardIndex];
 		CardData cardData = card.CardData;
-		bool closeDrawerAfterExecute = true;
-		Utils.GenericVoidDelegate postExecuteCardAnimActions = null;
-		DTJob.OnCompleteCallback postCloseDrawerAnimActions = null;
 
-		switch (cardData.cardType)
+		if (_isCloneMode)
 		{
-			case eCardType.Joker:
+			bool cloneIsCardRejected = false;
+			string cloneRejectReasonStr = string.Empty;
+			if (cardData.isCloned)
 			{
-				int numMoves = -1;
-				eMoveType moveType = eMoveType.Pawn;
-				switch (cardData.cardTier)
+				cloneIsCardRejected = true;
+				cloneRejectReasonStr = "Clone Reject: Card is already cloned";
+			}
+
+			if (cloneIsCardRejected)
+			{
+				card.ReturnCardAndUnexecute(cloneRejectReasonStr);
+			}
+			else
+			{
+				CardData newClonedData = cardData;
+				newClonedData.isCloned = true;
+
+				CardData[] cloneCardDatas = new CardData[_numToClone];
+				for (int iClone = 0; iClone < _numToClone; iClone++)
 				{
-					case eCardTier.Normal:
-					{
-						numMoves = 1;
-						moveType = (eMoveType)Random.Range(0, 3);
-						break;
-					}
-					case eCardTier.Silver:
-					{
-						numMoves = 2;
-						moveType = (eMoveType)Random.Range(0, 4);
-						break;
-					}
-					case eCardTier.Gold:
-					{
-						numMoves = 3;
-						moveType = (eMoveType)Random.Range(1, 5);
-						break;
-					}
-					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-				}
-				_dungeon.MorphyController.MorphTo(moveType, numMoves);
-				DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
-				break;
-			}
-			case eCardType.Duplicate:
-			{
-				closeDrawerAfterExecute = false;
-				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
-				break;
-			}
-			case eCardType.Smash:
-			{
-				postCloseDrawerAnimActions += () => { _dungeon.MorphyController.Smash(cardData.cardTier); };
-				break;
-			}
-			case eCardType.Draw:
-			{
-				closeDrawerAfterExecute = false;
-				int numDraws = -1;
-				switch (cardData.cardTier)
-				{
-					case eCardTier.Normal: numDraws = 2; break;
-					case eCardTier.Silver: numDraws = 3; break;
-					case eCardTier.Gold: numDraws = 5; break;
-					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+					cloneCardDatas[iClone] = newClonedData;
 				}
 
-				postExecuteCardAnimActions += () => { DrawCard(numDraws, ()=> { ToggleControlBlocker(false); }); };
+				_isCloneMode = false;
+				_numToClone = -1;
 				ToggleControlBlocker(true);
-				break;
-			}
-			case eCardType.Shield:
-			{
-				closeDrawerAfterExecute = false;
-				int numShield = -1;
-				switch (cardData.cardTier)
-				{
-					case eCardTier.Normal: numShield = 1; break;
-					case eCardTier.Silver: numShield = 3; break;
-					case eCardTier.Gold: numShield = 5; break;
-					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-				}
 
-				postExecuteCardAnimActions += () => { _dungeon.MorphyController.AwardShield(numShield); };
-				break;
-			}
-			case eCardType.Movement:
-			{
-				int numMoves = -1;
-				switch (cardData.cardTier)
+				_numCardsInHand--;
+				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{
-					case eCardTier.Normal: numMoves = 1; break;
-					case eCardTier.Silver: numMoves = 2; break;
-					case eCardTier.Gold: numMoves = 3; break;
-					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-				}
-				_dungeon.MorphyController.MorphTo(cardData.cardMoveType, numMoves);
-				DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
-				break;
-			}
-			default:
-			{
-				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
-				break;
+					DrawCard(() => { ToggleControlBlocker(false); }, cloneCardDatas);
+				});
 			}
 		}
-
-		_numCardsInHand--;
-		_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
+		#region NormalExecutionMode
+		else
 		{
-			if (closeDrawerAfterExecute)
+			bool closeDrawerAfterExecute = true;
+			Utils.GenericVoidDelegate postExecuteCardAnimActions = null;
+			DTJob.OnCompleteCallback postCloseDrawerAnimActions = null;
+			bool isCardRejected = false;
+			string rejectReasonStr = string.Empty;
+			switch (cardData.cardType)
 			{
-				DungeonCardDrawer.EnableCardDrawer(false, true, true, postCloseDrawerAnimActions);
+				case eCardType.Joker:
+				{
+					int numMoves = -1;
+					eMoveType moveType = eMoveType.Pawn;
+					switch (cardData.cardTier)
+					{
+						case eCardTier.Normal:
+						{
+							numMoves = 1;
+							moveType = (eMoveType)Random.Range(0, 3);
+							break;
+						}
+						case eCardTier.Silver:
+						{
+							numMoves = 2;
+							moveType = (eMoveType)Random.Range(0, 4);
+							break;
+						}
+						case eCardTier.Gold:
+						{
+							numMoves = 3;
+							moveType = (eMoveType)Random.Range(1, 5);
+							break;
+						}
+						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+					}
+					_dungeon.MorphyController.MorphTo(moveType, numMoves);
+					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
+					break;
+				}
+				case eCardType.Clone:
+				{
+					// NOTE: Check if there are even cards to clone.
+					bool hasCloneableCards = false;
+					for (int iCard = 0; iCard < MAX_CARDS; iCard++)
+					{
+						if (!_cards[iCard].IsEnabled) continue;
+						else if (iCard == card.CardIndex) continue;
+						else if (_cards[iCard].CardData.isCloned) continue;
+						else
+						{
+							hasCloneableCards = true;
+							break;
+						}
+					}
+
+					if (hasCloneableCards)
+					{
+						closeDrawerAfterExecute = false;
+						int numClones = -1;
+						switch (cardData.cardTier)
+						{
+							case eCardTier.Normal: numClones = 1; break;
+							case eCardTier.Silver: numClones = 2; break;
+							case eCardTier.Gold: numClones = 3; break;
+							default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+						}
+
+						// TODO: Toggle end turn button.
+						postExecuteCardAnimActions += () =>
+						{
+							_isCloneMode = true;
+							_numToClone = numClones + 1; // NOTE: 1 is to replace the copy itself.
+						};
+					}
+					else // NOTE: Return the card.
+					{
+						isCardRejected = true;
+						rejectReasonStr = "No Cloneable Cards";
+					}
+	                break;
+				}
+				case eCardType.Smash:
+				{
+					postCloseDrawerAnimActions += () => { _dungeon.MorphyController.Smash(cardData.cardTier); };
+					break;
+				}
+				case eCardType.Draw:
+				{
+					closeDrawerAfterExecute = false;
+					int numDraws = -1;
+					switch (cardData.cardTier)
+					{
+						case eCardTier.Normal: numDraws = 2; break;
+						case eCardTier.Silver: numDraws = 3; break;
+						case eCardTier.Gold: numDraws = 5; break;
+						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+					}
+
+					postExecuteCardAnimActions += () => { DrawCard(numDraws, () => { ToggleControlBlocker(false); }); };
+					ToggleControlBlocker(true);
+					break;
+				}
+				case eCardType.Shield:
+				{
+					closeDrawerAfterExecute = false;
+					int numShield = -1;
+					switch (cardData.cardTier)
+					{
+						case eCardTier.Normal: numShield = 1; break;
+						case eCardTier.Silver: numShield = 3; break;
+						case eCardTier.Gold: numShield = 5; break;
+						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+					}
+
+					postExecuteCardAnimActions += () => { _dungeon.MorphyController.AwardShield(numShield); };
+					break;
+				}
+				case eCardType.Movement:
+				{
+					int numMoves = -1;
+					switch (cardData.cardTier)
+					{
+						case eCardTier.Normal: numMoves = 1; break;
+						case eCardTier.Silver: numMoves = 2; break;
+						case eCardTier.Gold: numMoves = 3; break;
+						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+					}
+					_dungeon.MorphyController.MorphTo(cardData.cardMoveType, numMoves);
+					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
+					break;
+				}
+				default:
+				{
+					Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+					break;
+				}
 			}
 
-			if (postExecuteCardAnimActions != null) postExecuteCardAnimActions();
-		});
+			if (isCardRejected)
+			{
+				card.ReturnCardAndUnexecute(rejectReasonStr);
+			}
+			else
+			{
+				_numCardsInHand--;
+				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
+				{
+					if (closeDrawerAfterExecute)
+					{
+						DungeonCardDrawer.EnableCardDrawer(false, true, true, postCloseDrawerAnimActions);
+					}
+
+					if (postExecuteCardAnimActions != null) postExecuteCardAnimActions();
+				});
+			}
+		}
+		#endregion
 	}
 }
