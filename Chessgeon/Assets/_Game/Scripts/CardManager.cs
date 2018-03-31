@@ -184,7 +184,7 @@ public class CardManager : MonoBehaviour
 		else cardTier = eCardTier.Normal;
 
 		// TODO: DEBUG FOR NOW. Re-balance once all is in.
-		return new CardData(cardTier, eCardType.Shield, (eMoveType)Random.Range(0, 5));
+		return new CardData(cardTier, eCardType.Joker, (eMoveType)Random.Range(0, 5));
 	}
 
 	private void SwapCards(int inCardIndexA, int inCardIndexB)
@@ -207,7 +207,32 @@ public class CardManager : MonoBehaviour
 		{
 			case eCardType.Joker:
 			{
-				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				int numMoves = -1;
+				eMoveType moveType = eMoveType.Pawn;
+				switch (cardData.cardTier)
+				{
+					case eCardTier.Normal:
+					{
+						numMoves = 1;
+						moveType = (eMoveType)Random.Range(0, 3);
+						break;
+					}
+					case eCardTier.Silver:
+					{
+						numMoves = 2;
+						moveType = (eMoveType)Random.Range(0, 4);
+						break;
+					}
+					case eCardTier.Gold:
+					{
+						numMoves = 3;
+						moveType = (eMoveType)Random.Range(1, 5);
+						break;
+					}
+					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+				}
+				_dungeon.MorphyController.MorphTo(moveType, numMoves);
+				DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
 				break;
 			}
 			case eCardType.Duplicate:
