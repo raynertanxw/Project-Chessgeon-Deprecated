@@ -97,6 +97,19 @@ public class DungeonDisplay : MonoBehaviour
 		}
 	}
 
+	private void Start()
+	{
+		ActionParallel rotateShieldsForever = new ActionParallel();
+		for (int iShield = 0; iShield < NUM_SHIELD; iShield++)
+		{
+			rotateShieldsForever.Add(new ActionRepeatForever(new RotateByAction(
+				_shieldMeshRens[iShield].transform,
+				new Vector3(0.0f, 360.0f, 0.0f),
+				7.5f)));
+		}
+		ActionHandler.RunAction(rotateShieldsForever);
+	}
+
 	private void OnDestroy()
 	{
 		if (_instance == this)
