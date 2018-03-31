@@ -244,7 +244,11 @@ public class CardManager : MonoBehaviour
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{
-					DrawCard(() => { ToggleControlBlocker(false); }, cloneCardDatas);
+					DrawCard(() =>
+					{
+						ToggleControlBlocker(false);
+						DungeonCardDrawer.ToggleEndTurnAndHideBtnInteractable(true);
+					}, cloneCardDatas);
 				});
 			}
 		}
@@ -316,7 +320,7 @@ public class CardManager : MonoBehaviour
 							default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 						}
 
-						// TODO: Toggle end turn button.
+						DungeonCardDrawer.ToggleEndTurnAndHideBtnInteractable(false);
 						postExecuteCardAnimActions += () =>
 						{
 							_isCloneMode = true;

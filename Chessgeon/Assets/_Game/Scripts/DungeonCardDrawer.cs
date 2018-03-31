@@ -186,4 +186,10 @@ public class DungeonCardDrawer : MonoBehaviour
 			}
 		}
 	}
+
+	public static void ToggleEndTurnAndHideBtnInteractable(bool inEnable)
+	{
+		_instance._endTurnBtn.interactable = inEnable;
+		_instance._hideDrawerBtn.interactable = inEnable;
+	}
 }
