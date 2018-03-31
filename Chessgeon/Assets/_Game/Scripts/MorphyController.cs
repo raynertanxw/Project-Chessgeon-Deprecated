@@ -16,8 +16,11 @@ public class MorphyController : MonoBehaviour
 
 	private bool _isDead = false;
     public bool IsDead { get { return _isDead; } }
+	// NOTE: Max health is 10.
 	private int _maxHealth = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
 	private int _health = -1;
+	private const int MAX_SHIELD = 5;
+	private int _shield = -1;
 	private int _numMovesLeft = -1;
 
 	private void Awake()
@@ -37,6 +40,7 @@ public class MorphyController : MonoBehaviour
 	public void ResetForNewGame()
 	{
 		SetHealth(_maxHealth);
+		SetShield(0);
 		_isDead = false;
 	}
 
@@ -69,6 +73,12 @@ public class MorphyController : MonoBehaviour
 			_isDead = true;
 			Dungeon.EndGame();
 		}
+	}
+
+	private void SetShield(int inShield)
+	{
+		_shield = inShield;
+		DungeonDisplay.SetShieldUI(inShield);
 	}
 
 	private void ShowPossibleMoves()
@@ -253,9 +263,25 @@ public class MorphyController : MonoBehaviour
 
 	public void TakeDamage(int inDamage)
 	{
-		int newHealth = _health - inDamage;
-		SetHealth(newHealth);
+		// NOTE: Either take shield damage or health damage.
+		if (_shield > 0)
+		{
+			int newShield = Mathf.Max(_shield - inDamage, 0);
+			SetShield(newShield);
+		}
+		else
+		{
+			int newHealth = _health - inDamage;
+			SetHealth(newHealth);
+			DungeonDisplay.PlayDamageFrameAnimation();
+		}
+
 		DungeonCamera.CameraShake(15, 0.5f, 0.2f);
-		DungeonDisplay.PlayDamageFrameAnimation();
+	}
+
+	public void AwardShield(int inShield)
+	{
+		int newShield = Mathf.Min(_shield + inShield, MAX_SHIELD);
+		SetShield(newShield);
 	}
 }

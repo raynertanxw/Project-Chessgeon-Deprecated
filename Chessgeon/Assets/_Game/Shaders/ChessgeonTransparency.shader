@@ -64,7 +64,7 @@
 				//fixed3 lighting = max(dot(i.normal, _WorldSpaceLightPos0), _Ambient);
 				//float3 color = lighting * texColor.xyz * _Color.xyz;
 				float4 texColor = tex2D(_MainTex, i.uv);
-				return fixed4(max(dot(i.normal, _WorldSpaceLightPos0), _Ambient) * texColor.xyz * _Color.xyz, texColor.a);
+				return fixed4(max(dot(i.normal, _WorldSpaceLightPos0), _Ambient) * texColor.xyz * _Color.xyz, texColor.a * _Color.a);
 			}
 			ENDCG
 		}
@@ -121,7 +121,7 @@
 				//fixed3 lighting = max(dot(i.normal, _WorldSpaceLightPos0), _Ambient);
 				//float3 color = lighting * texColor.xyz * _Color.xyz;
 				float4 texColor = tex2D(_MainTex, i.uv);
-				return fixed4(max(dot(i.normal, _WorldSpaceLightPos0), _Ambient) * texColor.xyz * _Color.xyz, texColor.a);
+				return fixed4(max(dot(i.normal, _WorldSpaceLightPos0), _Ambient) * texColor.xyz * _Color.xyz, texColor.a * _Color.a);
 			}
 			ENDCG
 		}

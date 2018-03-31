@@ -27,10 +27,15 @@ public class DungeonDisplay : MonoBehaviour
 	[Header("Meshes")]
 	[SerializeField] private Mesh _heartFullMesh = null;
 	[SerializeField] private Mesh _heartHalfMesh = null;
+	[SerializeField] private Mesh _shieldMesh = null;
 
 	private const int NUM_HEARTS = 5;
 	private MeshRenderer[] _heartMeshRens = null;
 	private MeshFilter[] _heartMeshFilters = null;
+	private const int NUM_SHIELD = 5;
+	private MeshRenderer[] _shieldMeshRens = null;
+	private MeshFilter[] _shieldMeshFilters = null;
+
 
 	private void Awake()
 	{
@@ -58,6 +63,7 @@ public class DungeonDisplay : MonoBehaviour
 
 			Debug.Assert(_heartFullMesh != null, "_heartFullMesh is not assigned.");
 			Debug.Assert(_heartHalfMesh != null, "_heartHalfMesh is not assigned.");
+			Debug.Assert(_shieldMesh != null, "_shieldMesh is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
@@ -69,9 +75,18 @@ public class DungeonDisplay : MonoBehaviour
 				_heartMeshFilters[iHeart] = _heartsHolder.GetChild(iHeart).GetComponent<MeshFilter>();
 			}
 
+			_shieldMeshRens = new MeshRenderer[NUM_SHIELD];
+			_shieldMeshFilters = new MeshFilter[NUM_SHIELD];
+			for (int iShield = 0; iShield < NUM_SHIELD; iShield++)
+			{
+				_shieldMeshRens[iShield] = _heartMeshRens[iShield].transform.GetChild(0).GetComponent<MeshRenderer>();
+				_shieldMeshFilters[iShield] = _heartMeshRens[iShield].transform.GetChild(0).GetComponent<MeshFilter>();
+			}
+
 			SetDarkOverlayVisible(false);
 			SetDamageFrameVisible(false);
 			SetHealtUI(0);
+			SetShieldUI(0);
 			HideNextFloorPanel(null, true);
 
 			_dungeon.OnFloorGenerated += () => { UpdateFloorText(_dungeon.FloorNum); };
@@ -272,6 +287,23 @@ public class DungeonDisplay : MonoBehaviour
 			else
 			{
 				curHeartFilter.mesh = null;
+			}
+		}
+	}
+
+	public static void SetShieldUI(int inShield)
+	{
+		Debug.Assert(inShield <= NUM_SHIELD, inShield + " is beyond the max shield displayable.");
+		for (int iShield = 0; iShield < NUM_SHIELD; iShield++)
+		{
+			MeshFilter curShieldFilter = _instance._shieldMeshFilters[iShield];
+			if (iShield < inShield)
+			{
+				curShieldFilter.mesh = _instance._shieldMesh;
+			}
+			else
+			{
+				curShieldFilter.mesh = null;
 			}
 		}
 	}

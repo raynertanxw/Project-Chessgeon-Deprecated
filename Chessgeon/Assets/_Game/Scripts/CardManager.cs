@@ -110,6 +110,9 @@ public class CardManager : MonoBehaviour
 				_numCardsInHand++;
 				_statTotalCardsDrawn++;
 			}
+
+			// NOTE: If didn't draw card, then just run inOnComplete.
+			if (cardsDrawn == 0 && inOnComplete != null) inOnComplete();
 		}
 
 		_isFirstDraw = false;
@@ -181,7 +184,7 @@ public class CardManager : MonoBehaviour
 		else cardTier = eCardTier.Normal;
 
 		// TODO: DEBUG FOR NOW. Re-balance once all is in.
-		return new CardData(cardTier, eCardType.Smash, (eMoveType)Random.Range(0, 5));
+		return new CardData(cardTier, eCardType.Shield, (eMoveType)Random.Range(0, 5));
 	}
 
 	private void SwapCards(int inCardIndexA, int inCardIndexB)
@@ -236,7 +239,17 @@ public class CardManager : MonoBehaviour
 			}
 			case eCardType.Shield:
 			{
-				Debug.LogWarning("case: " + cardData.cardType.ToString() + " has not been handled.");
+				closeDrawerAfterExecute = false;
+				int numShield = -1;
+				switch (cardData.cardTier)
+				{
+					case eCardTier.Normal: numShield = 1; break;
+					case eCardTier.Silver: numShield = 3; break;
+					case eCardTier.Gold: numShield = 5; break;
+					default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+				}
+
+				postExecuteCardAnimActions += () => { _dungeon.MorphyController.AwardShield(numShield); };
 				break;
 			}
 			case eCardType.Movement:
