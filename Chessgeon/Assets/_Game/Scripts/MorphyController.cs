@@ -78,6 +78,8 @@ public class MorphyController : MonoBehaviour
 	private void SetShield(int inShield)
 	{
 		_shield = inShield;
+		if (_shield > 0) _morphy.ToggleShieldVisibility(true);
+		else _morphy.ToggleShieldVisibility(false);
 		DungeonDisplay.SetShieldUI(inShield);
 	}
 

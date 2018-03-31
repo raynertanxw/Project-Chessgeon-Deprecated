@@ -12,6 +12,8 @@ public class Morphy : MonoBehaviour
 	[SerializeField] private Mesh _meshPieceKnight = null;
 	[SerializeField] private Mesh _meshPieceKing = null;
 
+	[SerializeField] private MeshRenderer _shieldMeshRen = null;
+
 	private bool _isInitialised = false;
 	private MorphyController _morphyController = null;
 	private MeshFilter _meshFilter = null;
@@ -36,6 +38,8 @@ public class Morphy : MonoBehaviour
 		Debug.Assert(_meshPieceKnight != null, "_meshPieceKnight is not assigned.");
 		Debug.Assert(_meshPieceKing != null, "_meshPieceKing is not assigned.");
 
+		Debug.Assert(_shieldMeshRen != null, "_shieldMeshRen is not assigned.");
+
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
@@ -53,6 +57,17 @@ public class Morphy : MonoBehaviour
 		else
 		{
 			_morphyController = inMorphyController;
+			ActionHandler.RunAction(new ActionParallel(
+				new ActionRepeatForever(new RotateByAction(_shieldMeshRen.transform, new Vector3(0.0f, 360.0f, 0.0f), 7.5f)),
+				new ActionRepeatForever(new PulseAction(
+					_shieldMeshRen.transform,
+					1,
+					10.0f,
+					Vector3.one * 0.95f,
+					Vector3.one * 1.05f,
+					Utils.CurveSmoothStep)))
+			);
+			ToggleShieldVisibility(false);
 			// TODO: Next time all the set up for particle systems and such? If any and all, needing to turn them off, etc.
 		}
 	}
@@ -109,6 +124,12 @@ public class Morphy : MonoBehaviour
 	{
 		_isAlive = false;
 		_meshRenderer.enabled = false;
+		ToggleShieldVisibility(false);
+	}
+
+	public void ToggleShieldVisibility(bool inIsVisible)
+	{
+		_shieldMeshRen.enabled = inIsVisible;
 	}
 
 	public void SpawnAt(Vector2Int inSpawnPos)
