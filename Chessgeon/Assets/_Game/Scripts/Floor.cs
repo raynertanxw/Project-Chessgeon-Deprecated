@@ -74,9 +74,13 @@ public class Floor
             Vector2Int morphySpawnPos = new Vector2Int(Random.Range(0, Size.x), Random.Range(0, Size.y));
             if (IsTileEmpty(morphySpawnPos))
             {
-                SetTileState(morphySpawnPos, Floor.eTileState.Morphy);
-				_morphyPos = morphySpawnPos;
-                break;
+				int heuristicDiff = Mathf.Abs(morphySpawnPos.x - StairsPos.x) + Mathf.Abs(morphySpawnPos.y - StairsPos.y);
+				if (heuristicDiff >= ((Size.x + Size.y) / 2))
+				{
+					SetTileState(morphySpawnPos, Floor.eTileState.Morphy);
+					_morphyPos = morphySpawnPos;
+					break;
+				}
             }
         }
 		_dungeon.MorphyController.SetUpPlayer();
