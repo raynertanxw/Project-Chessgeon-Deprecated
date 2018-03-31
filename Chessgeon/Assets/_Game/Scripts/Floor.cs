@@ -74,6 +74,7 @@ public class Floor
             Vector2Int morphySpawnPos = new Vector2Int(Random.Range(0, Size.x), Random.Range(0, Size.y));
             if (IsTileEmpty(morphySpawnPos))
             {
+				// NOTE: Ensures that the stairs and the player are not spawned too close to each other.
 				int heuristicDiff = Mathf.Abs(morphySpawnPos.x - StairsPos.x) + Mathf.Abs(morphySpawnPos.y - StairsPos.y);
 				if (heuristicDiff >= ((Size.x + Size.y) / 2))
 				{
