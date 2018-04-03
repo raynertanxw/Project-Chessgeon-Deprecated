@@ -66,6 +66,7 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_shieldMesh != null, "_shieldMesh is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
+			Debug.Assert(_nextFloorPanel.enabled == true, "_nextFloorPanel is not enabled.");
 
 			_heartMeshRens = new MeshRenderer[NUM_HEARTS];
 			_heartMeshFilters = new MeshFilter[NUM_HEARTS];
