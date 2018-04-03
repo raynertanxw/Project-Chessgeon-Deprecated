@@ -59,7 +59,7 @@ public class DungeonCardDrawer : MonoBehaviour
 			{
 				EnableCardDrawer(false, true);
 			};
-			_endTurnBtn.onClick.AddListener(() => { OnPlayerEndTurn.Invoke(); });
+			_endTurnBtn.onClick.AddListener(() => { TryInvokeOnPlayerEndTurn(); });
 
 			_hideDrawerBtn.onClick.AddListener(() =>
 			{
@@ -82,6 +82,20 @@ public class DungeonCardDrawer : MonoBehaviour
 		if (_instance == this)
 		{
 			_instance = null;
+		}
+	}
+
+	bool _isEndTurnBlocked = false;
+	string _endTurnBlockedReason = string.Empty;
+	private void TryInvokeOnPlayerEndTurn()
+	{
+		if (_isEndTurnBlocked)
+		{
+			DungeonPopup.PopText(_endTurnBlockedReason);
+		}
+		else
+		{
+			OnPlayerEndTurn.Invoke();
 		}
 	}
 
@@ -187,9 +201,15 @@ public class DungeonCardDrawer : MonoBehaviour
 		}
 	}
 
-	public static void ToggleEndTurnAndHideBtnInteractable(bool inEnable)
+	public static void DisableEndTurnBtn(string inBlockReason)
 	{
-		_instance._endTurnBtn.interactable = inEnable;
-		_instance._hideDrawerBtn.interactable = inEnable;
+		_instance._isEndTurnBlocked = true;
+		_instance._endTurnBlockedReason = inBlockReason;
+	}
+
+	public static void EnableEndTurnBtn()
+	{
+		_instance._isEndTurnBlocked = false;
+		_instance._endTurnBlockedReason = string.Empty;
 	}
 }

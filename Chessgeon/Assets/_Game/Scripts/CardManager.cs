@@ -244,10 +244,10 @@ public class CardManager : MonoBehaviour
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{
+					DungeonCardDrawer.EnableEndTurnBtn();
 					DrawCard(() =>
 					{
 						ToggleControlBlocker(false);
-						DungeonCardDrawer.ToggleEndTurnAndHideBtnInteractable(true);
 					}, cloneCardDatas);
 				});
 			}
@@ -320,7 +320,7 @@ public class CardManager : MonoBehaviour
 							default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 						}
 
-						DungeonCardDrawer.ToggleEndTurnAndHideBtnInteractable(false);
+						DungeonCardDrawer.DisableEndTurnBtn("Select a card to clone");
 						postExecuteCardAnimActions += () =>
 						{
 							_isCloneMode = true;
