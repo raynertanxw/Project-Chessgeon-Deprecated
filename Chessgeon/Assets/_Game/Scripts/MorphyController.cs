@@ -96,11 +96,11 @@ public class MorphyController : MonoBehaviour
 		}
 		else
 		{
-			Debug.LogWarning("No Possible Moves.");
 			_numMovesLeft = 0;
 			TransformBackToMorphy();
 			DungeonCardDrawer.EnableCardDrawer(true);
-			// TODO: Tell player that there are no possible moves.
+			DungeonPopup.PopText("No Possible Moves");
+			Debug.LogWarning("No Possible Moves");
 		}
 	}
 

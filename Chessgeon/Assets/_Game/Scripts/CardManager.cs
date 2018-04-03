@@ -219,7 +219,7 @@ public class CardManager : MonoBehaviour
 			if (cardData.isCloned)
 			{
 				cloneIsCardRejected = true;
-				cloneRejectReasonStr = "Clone Reject: Card is already cloned";
+				cloneRejectReasonStr = "Card is already cloned";
 			}
 
 			if (cloneIsCardRejected)
