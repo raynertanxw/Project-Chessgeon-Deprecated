@@ -99,8 +99,8 @@ public class MorphyController : MonoBehaviour
 			_numMovesLeft = 0;
 			TransformBackToMorphy();
 			DungeonCardDrawer.EnableCardDrawer(true);
-			DungeonPopup.PopText("No Possible Moves");
-			Debug.LogWarning("No Possible Moves");
+			DungeonPopup.PopText("No Possible " + _morphy.CurrentType.ToString() + " Moves");
+			Debug.LogWarning("No Possible " + _morphy.CurrentType.ToString() + " Moves");
 		}
 	}
 
