@@ -193,8 +193,46 @@ public class CardManager : MonoBehaviour
 		else if (cardTierRandValue < 0.2f) cardTier = eCardTier.Silver;
 		else cardTier = eCardTier.Normal;
 
-		// TODO: DEBUG FOR NOW. Re-balance once all is in.
-		return new CardData(cardTier, eCardType.Clone, false, (eMoveType)Random.Range(0, 5));
+		// Chances for movement.
+		// Movement: 70%
+		// Non Movement: 30%
+		eMoveType moveType = eMoveType.Pawn;
+		eCardType cardType = eCardType.Movement;
+		if (Random.value <= 0.7f) // Movement
+		{
+			cardType = eCardType.Movement;
+			// Chances for move types
+			// Pawn: 30%
+			// Rook: 20%
+			// Bishop: 20%
+			// Knight: 15%
+			// King: 15%
+			float moveTypeRandValue = Random.value;
+			if (moveTypeRandValue <= 0.3f) moveType = eMoveType.Pawn;
+			else if (moveTypeRandValue <= 0.5f) moveType = eMoveType.Rook;
+			else if (moveTypeRandValue <= 0.7f) moveType = eMoveType.Bishop;
+			else if (moveTypeRandValue <= 0.85f) moveType = eMoveType.Knight;
+			else moveType = eMoveType.King;
+		}
+		else
+		{
+			// Non-movement
+			// Non movement percentages
+			// Joker: 20%
+			// Shield: 20%
+			// Smash: 10%
+			// Clone: 20%
+			// Draw: 30%
+			float cardTypeRandValue = Random.value;
+			if (cardTypeRandValue <= 0.2f) cardType = eCardType.Joker;
+			else if (cardTypeRandValue <= 0.4f) cardType = eCardType.Shield;
+			else if (cardTypeRandValue <= 0.5f) cardType = eCardType.Smash;
+			else if (cardTypeRandValue <= 0.7f) cardType = eCardType.Clone;
+			else cardType = eCardType.Draw;
+			Debug.Log("cardType: " + cardTypeRandValue);
+		}
+
+		return new CardData(cardTier, cardType, false, moveType);
 	}
 
 	private void SwapCards(int inCardIndexA, int inCardIndexB)
