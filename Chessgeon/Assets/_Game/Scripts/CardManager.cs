@@ -229,7 +229,6 @@ public class CardManager : MonoBehaviour
 			else if (cardTypeRandValue <= 0.5f) cardType = eCardType.Smash;
 			else if (cardTypeRandValue <= 0.7f) cardType = eCardType.Clone;
 			else cardType = eCardType.Draw;
-			Debug.Log("cardType: " + cardTypeRandValue);
 		}
 
 		return new CardData(cardTier, cardType, false, moveType);
