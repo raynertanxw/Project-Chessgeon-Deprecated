@@ -204,13 +204,19 @@ public class Card : MonoBehaviour
 	public void AnimateCardExecuteAndDisable(DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		_isAnimatingCardExecute = true;
-		// TODO: Proper execute card animation.
 		AxisLocalRotateByAction spinCard = new AxisLocalRotateByAction(
 			_cardRectTransform,
 			Vector3.up,
-			360.0f,
-			0.4f);
-		spinCard.OnActionFinish += () =>
+			270.0f,
+			0.4f,
+			Utils.CurveExponential);
+		ScaleToAction flattenCard = new ScaleToAction(
+			_cardRectTransform,
+			Vector3.zero,
+			0.5f,
+			Utils.CurveExponential);
+		ActionParallel executeCardAnim = new ActionParallel(spinCard, flattenCard);
+		executeCardAnim.OnActionFinish += () =>
 		{
 			_isAnimatingCardExecute = false;
 			SetEnabled(false);
@@ -219,7 +225,7 @@ public class Card : MonoBehaviour
 			_cardRectTransform.localRotation = Quaternion.identity;
 			if (inOnComplete != null) inOnComplete();
 		};
-		ActionHandler.RunAction(spinCard);
+		ActionHandler.RunAction(executeCardAnim);
 	}
 
 	public void ReturnCardAndUnexecute(string inReturnReason)
