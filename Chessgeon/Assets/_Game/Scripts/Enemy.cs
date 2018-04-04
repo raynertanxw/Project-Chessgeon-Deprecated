@@ -162,14 +162,14 @@ public class Enemy : MonoBehaviour
 
 	public void ExecuteTurn(Floor inCurrentFloor, Utils.GenericVoidDelegate inOnComplete)
 	{
+		Node morphyNode = inCurrentFloor.Nodes[inCurrentFloor.MorphyPos.x, inCurrentFloor.MorphyPos.y];
 		LinkedList<Node> pathToMorphy = AStarManager.FindPath(
 			inCurrentFloor.Nodes[Pos.x, Pos.y],
-			inCurrentFloor.Nodes[inCurrentFloor.MorphyPos.x, inCurrentFloor.MorphyPos.y],
+			morphyNode,
 			inCurrentFloor,
 			Type);
 		if (pathToMorphy == null) // No path to morphy.
 		{
-			Debug.Log("No possible moves for enemy. Picking Random one.");
 			Vector2Int[] possibleMoves = inCurrentFloor.GridStratergyForMoveType(Type).CalcPossibleMoves(Pos, GridStratergy.eMoveEntity.Enemy);
 			if (possibleMoves.Length == 0)
 			{
@@ -177,15 +177,31 @@ public class Enemy : MonoBehaviour
 			}
 			else
 			{
-				Vector2Int randMovePos = possibleMoves[Random.Range(0, possibleMoves.Length)];
-				if (randMovePos == inCurrentFloor.MorphyPos)
+				// NOTE: Calc using heuristic which of the possible moves is the closest.
+				int closestMoveIndex = -1;
+				int closestHeuristic = int.MaxValue;
+				for (int iMove = 0; iMove < possibleMoves.Length; iMove++)
 				{
-					AttackMorphy(randMovePos, inOnComplete);
+					Vector2Int curMove = possibleMoves[iMove];
+					GridStratergy gridStratergy = inCurrentFloor.GridStratergy[(int)Type];
+					Node targetPosNode = inCurrentFloor.Nodes[curMove.x, curMove.y];
+					int curHeuristic = gridStratergy.HeuristicEstimatedCost(targetPosNode, morphyNode);
+					if (curHeuristic < closestHeuristic)
+					{
+						closestMoveIndex = iMove;
+						closestHeuristic = curHeuristic;
+					}
+				}
+
+				Vector2Int targetPos = possibleMoves[closestMoveIndex];
+				if (targetPos == inCurrentFloor.MorphyPos)
+				{
+					AttackMorphy(targetPos, inOnComplete);
 				}
 				else
 				{
-					inCurrentFloor.MoveEnemy(Pos, randMovePos);
-					MoveTo(randMovePos, inOnComplete);
+					inCurrentFloor.MoveEnemy(Pos, targetPos);
+					MoveTo(targetPos, inOnComplete);
 				}
 			}
 		}

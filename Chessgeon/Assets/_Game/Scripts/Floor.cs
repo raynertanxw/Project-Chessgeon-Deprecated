@@ -12,6 +12,7 @@ public class Floor
 	private Node[,] _nodes;
 	public Node[,] Nodes { get { return _nodes; } }
 	private GridStratergy[] _gridStratergy;
+	public GridStratergy[] GridStratergy { get { return _gridStratergy; } }
 
 	private Enemy[,] _enemies;
 	private Vector2Int _size;
