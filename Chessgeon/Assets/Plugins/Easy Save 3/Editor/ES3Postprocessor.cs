@@ -19,14 +19,14 @@ public class ES3Postprocessor : UnityEditor.AssetModificationProcessor
 	static ES3Postprocessor()
 	{
 		ES3Editor.ES3Window.OpenEditorWindowOnStart();
-		#if UNITY_2017_3_OR_NEWER
+		#if UNITY_2017_2_OR_NEWER
 		EditorApplication.playModeStateChanged += PlaymodeStateChanged;
 		#else
 		EditorApplication.playmodeStateChanged += PlaymodeStateChanged;
 		#endif
 	}
 
-	#if UNITY_2017_3_OR_NEWER
+	#if UNITY_2017_2_OR_NEWER
 	static void PlaymodeStateChanged(PlayModeStateChange state)
 	#else
 	static void PlaymodeStateChanged()
