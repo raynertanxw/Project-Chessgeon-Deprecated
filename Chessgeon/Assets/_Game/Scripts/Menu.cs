@@ -12,6 +12,10 @@ public class Menu : MonoBehaviour
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
+
+#if UNITY_EDITOR
+		if (!GameDataLoader.HasStartedLoadingData) GameDataLoader.TryLoadGameData();
+#endif
 	}
 
 	private void StartGame()

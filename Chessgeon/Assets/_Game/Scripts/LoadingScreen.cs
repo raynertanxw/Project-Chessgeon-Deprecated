@@ -16,7 +16,7 @@ public class LoadingScreen : MonoBehaviour
 
 	void Start()
 	{
-		StartCoroutine(LoadMainSceneAsync());
+		StartCoroutine(LoadGameDataAndMainSceneAsync());
 	}
 
 	void Update()
@@ -25,23 +25,27 @@ public class LoadingScreen : MonoBehaviour
 		_loadingIndicator.Rotate(Vector3.forward, -500.0f * Time.deltaTime);
 	}
 
-	IEnumerator LoadMainSceneAsync()
+	IEnumerator LoadGameDataAndMainSceneAsync()
 	{
 		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_DUNGEON, LoadSceneMode.Additive);
-		asyncLoad.allowSceneActivation = false; // Stops scene load at 0.9 and prevents it from being activated immediately when ready.
+		asyncLoad.allowSceneActivation = false; // NOTE: Stops scene load at 0.9 and prevents it from being activated immediately when ready.
+
+		GameDataLoader.TryLoadGameData();
 
 		while (!asyncLoad.isDone)
 		{
-			// TODO: Insert checks to see if all the scripts have been loaded, like dungeon.
-
 			if (asyncLoad.progress >= 0.9f) // If ready to be activated.
 			{
-				_loadingScreenAudioListener.enabled = false;
+				_loadingScreenAudioListener.enabled = false; // NOTE: Prevent double audio listener.
 				asyncLoad.allowSceneActivation = true;
 			}
 			yield return null;
 		}
-		yield return new WaitForSeconds(2.0f); // TODO: Artificial wait loading time.
+
+		while (!GameDataLoader.HasLoadedAllData)
+		{
+			yield return null;
+		}
 
 		Scene menuScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_DUNGEON);
 		SceneManager.MoveGameObjectToScene(this.gameObject, menuScene);
