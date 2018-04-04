@@ -22,6 +22,7 @@ public static class SaveDataLoader
 	private const string GAMEDATA_FILENAME = "gamedata.txt";
 	private const string FLOORDATA_FILENAME = "floordata.txt";
 	private const string CARDHANDDATA_FILENAME = "cardhanddata.txt";
+	private const string PERMA_UPGRADE_DATA_FILENAME = "PermaUpgradeData.txt";
 
 	// Keys
 	private const string GAMEDATA_HEALTH_KEY = "GAMEDATA_HEALTH";
@@ -137,7 +138,7 @@ public static class SaveDataLoader
 		}
 	}
 
-	public static void TryLoadSaveData()
+	public static void TryLoadAllSaveData()
 	{
 		if (!HasLoadedAllData && !HasStartedLoadingData)
 		{
@@ -147,7 +148,7 @@ public static class SaveDataLoader
 			DTJob loadSavedDataJob = new DTJob(
 				(OnComplete) =>
 				{
-					LoadSavedData(OnComplete);
+					LoadLocalSavedData(OnComplete);
 				});
 
 			DTJob loadJSONJob = new DTJob(
@@ -243,7 +244,7 @@ public static class SaveDataLoader
 		}
 	}
 
-	private static void LoadSavedData(DTJob.OnCompleteCallback inOnComplete)
+	private static void LoadLocalSavedData(DTJob.OnCompleteCallback inOnComplete)
 	{
 		if (ES2.Exists(GAMEDATA_FILENAME)
 			&& ES2.Exists(FLOORDATA_FILENAME)
@@ -304,8 +305,17 @@ public static class SaveDataLoader
 			Debug.Log("There is no save data found.");
 		}
 
-		inOnComplete();
+		if (inOnComplete != null) inOnComplete();
     }
+
+	public static void DeletLocalSavedData(DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		if (ES2.Exists(GAMEDATA_FILENAME)) ES2.Delete(GAMEDATA_FILENAME);
+		if (ES2.Exists(FLOORDATA_FILENAME)) ES2.Delete(FLOORDATA_FILENAME);
+		if (ES2.Exists(CARDHANDDATA_FILENAME)) ES2.Delete(CARDHANDDATA_FILENAME);
+
+		if (inOnComplete != null) inOnComplete();
+	}
 
 	private static IEnumerator LoadJSON(DTJob.OnCompleteCallback inOnComplete)
 	{
