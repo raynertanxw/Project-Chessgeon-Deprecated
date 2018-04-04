@@ -23,9 +23,9 @@ public class Menu : MonoBehaviour
 	{
 		if (SaveDataLoader.HasPreviousRunData)
 		{
-			// TODO: If there is save data, do a confirmation prompt here.
-			//DEBUG
-			StartNewGame();
+			_menuCanvas.PromptConfirmation("NEW GAME?",
+				"Starting a new game will result in loss of current progress.\n\nAre you sure ?",
+				StartNewGame);
 		}
 		else
 		{
