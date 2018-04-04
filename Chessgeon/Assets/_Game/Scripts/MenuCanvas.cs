@@ -26,8 +26,10 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_upgradesBtn != null, "_upgradesBtn is not assigned.");
 
 		_continueBtn.onClick.AddListener(_menu.ContinueGame);
-		_newGameBtn.onClick.AddListener(_menu.StartNewGame);
+		_newGameBtn.onClick.AddListener(_menu.TryStartNewGame);
 		_upgradesBtn.onClick.AddListener(_menu.UpgradesMenu);
+
+		SaveDataLoader.OnAllDataLoaded += CheckBtnAvailability;
 	}
 
 	public void SetVisible(bool inIsVisible)
@@ -37,5 +39,10 @@ public class MenuCanvas : MonoBehaviour
 		_isVisible = inIsVisible;
 		gameObject.SetActive(_isVisible);
 		_menuUICamera.enabled = _isVisible;
+	}
+
+	private void CheckBtnAvailability()
+	{
+		_continueBtnObject.SetActive(SaveDataLoader.HasPreviousRunData);
 	}
 }

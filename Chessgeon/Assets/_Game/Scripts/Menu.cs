@@ -19,9 +19,22 @@ public class Menu : MonoBehaviour
 	}
 
 
-	public void StartNewGame()
+	public void TryStartNewGame()
 	{
-		// TODO: If there is save data, do a confirmation prompt here.
+		if (SaveDataLoader.HasPreviousRunData)
+		{
+			// TODO: If there is save data, do a confirmation prompt here.
+			//DEBUG
+			StartNewGame();
+		}
+		else
+		{
+			StartNewGame();
+		}
+	}
+
+	private void StartNewGame()
+	{
 		SaveDataLoader.DeletLocalSavedData();
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);

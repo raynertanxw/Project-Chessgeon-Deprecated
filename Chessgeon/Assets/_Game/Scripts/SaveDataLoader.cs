@@ -9,6 +9,10 @@ public static class SaveDataLoader
 	public static bool HasStartedLoadingData { get { return _hasStartedLoadingData; } }
 	private static bool _hasLoadedAllData = false;
 	public static bool HasLoadedAllData { get { return _hasLoadedAllData; } }
+	private static bool _hasPreviousRunData = false;
+	public static bool HasPreviousRunData { get { return _hasPreviousRunData; } }
+
+	public static Utils.GenericVoidDelegate OnAllDataLoaded = null;
 
 	// Data structs
 	private static GameData _gameData;
@@ -169,6 +173,7 @@ public static class SaveDataLoader
 				{
 					_hasLoadedAllData = true;
 					Debug.Log("ALL GAME DATA LOADED");
+					if (OnAllDataLoaded != null) OnAllDataLoaded();
 				},
 				loadSavedDataJob,
 				loadJSONJob,
@@ -299,10 +304,13 @@ public static class SaveDataLoader
 			}
 
 			_cardHandData = new CardHandData(cardDatas);
+
+			_hasPreviousRunData = true;
 		}
 		else
 		{
 			Debug.Log("There is no save data found.");
+			_hasPreviousRunData = false;
 		}
 
 		if (inOnComplete != null) inOnComplete();
