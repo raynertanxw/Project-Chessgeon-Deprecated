@@ -41,7 +41,7 @@ public class Dungeon : MonoBehaviour
 	private int _floorNum = -1;
 	private Floor _floor = null;
 	public Floor CurrentFloor { get { return _floor; } }
-	public Vector2Int StairsPos { get { return _floor.StairsPos; } } // TODO: Decide if this is btr or make Floor publically accessible.
+	public Vector2Int StairsPos { get { return _floor.StairsPos; } }
 	public int FloorNum { get { return _floor.FloorNum; } }
 
 	private int _numCoins = -1;
