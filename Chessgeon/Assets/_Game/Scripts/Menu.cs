@@ -21,6 +21,7 @@ public class Menu : MonoBehaviour
 
 	public void StartNewGame()
 	{
+		// TODO: If there is save data, do a confirmation prompt here.
 		SaveDataLoader.DeletLocalSavedData();
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);
