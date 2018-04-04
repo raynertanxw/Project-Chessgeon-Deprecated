@@ -85,6 +85,7 @@ public class CardManager : MonoBehaviour
 
 	public SaveDataLoader.CardHandData GenerateCardHandData()
 	{
+		ReorganiseCards(null, false);
 		CardData[] cardDatas = new CardData[_numCardsInHand];
 		for (int iCard = 0; iCard < _numCardsInHand; iCard++)
 		{
@@ -178,7 +179,7 @@ public class CardManager : MonoBehaviour
 		_isFirstDraw = false;
 	}
 
-	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null)
+	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
 	{
 		const float REORG_ANIM_DURATION = 0.6f;
 		int firstEmptyIndex = -1;
@@ -199,11 +200,15 @@ public class CardManager : MonoBehaviour
 				if (_cards[curIndex].IsEnabled)
 				{
 					neededToReorg = true;
-					offsetZ += 0.5f;
 
 					SwapCards(curIndex, firstEmptyIndex);
 					_cards[curIndex].SetEnabled(false);
-					_cards[firstEmptyIndex].AnimateMoveToOriginFrom(_cards[curIndex].OriginLocalPos, REORG_ANIM_DURATION, offsetZ);
+					if (inIsAnimated)
+					{
+
+						offsetZ += 0.5f;
+						_cards[firstEmptyIndex].AnimateMoveToOriginFrom(_cards[curIndex].OriginLocalPos, REORG_ANIM_DURATION, offsetZ);
+					}
 					_cards[firstEmptyIndex].SetEnabled(true);
 
 					curIndex = -1;
@@ -217,9 +222,16 @@ public class CardManager : MonoBehaviour
 
 		if (neededToReorg)
 		{
-			DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
-			delayedExecution.OnActionFinish += () => { inOnComplete(); };
-			ActionHandler.RunAction(delayedExecution);
+			if (inIsAnimated)
+			{
+				DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
+				delayedExecution.OnActionFinish += () => { inOnComplete(); };
+				ActionHandler.RunAction(delayedExecution);
+			}
+			else
+			{
+				if (inOnComplete != null) inOnComplete();
+			}
 		}
 		// NOTE: DO NOT RUN inOnComplete if there is no need to reorg.
 
