@@ -120,6 +120,12 @@ public class Dungeon : MonoBehaviour
 		// TODO: Save scores and stuff.
 	}
 
+	private void SaveGame()
+	{
+		GameDataLoader.GameData gameData = new GameDataLoader.GameData(this);
+		GameDataLoader.SaveData(gameData);
+	}
+
 	private void OnMorphyReachStairs()
 	{
 		_morphyHasReachedStairs = true;
@@ -129,6 +135,9 @@ public class Dungeon : MonoBehaviour
 	{
 		_floorNum++;
 		GenerateFloor();
+		// Save each floor.
+		SaveGame();
+
 		if (inOnComplete != null) inOnComplete();
 	}
 

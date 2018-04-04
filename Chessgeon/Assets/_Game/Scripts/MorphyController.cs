@@ -19,8 +19,10 @@ public class MorphyController : MonoBehaviour
 	// NOTE: Max health is 10.
 	private int _maxHealth = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
 	private int _health = -1;
+	public int Health { get { return _health; } }
 	private const int MAX_SHIELD = 5;
 	private int _shield = -1;
+	public int Shield { get { return _shield; } }
 	private int _numMovesLeft = -1;
 
 	private void Awake()
