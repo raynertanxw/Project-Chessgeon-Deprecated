@@ -46,7 +46,7 @@ public class MorphyController : MonoBehaviour
 		_isDead = false;
 	}
 
-	public void ResetFromGameData(GameDataLoader.GameData inGameData)
+	public void ResetFromGameData(SaveDataLoader.GameData inGameData)
 	{
 		SetHealth(inGameData.Health);
 		SetShield(inGameData.Shield);

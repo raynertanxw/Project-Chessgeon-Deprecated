@@ -30,7 +30,7 @@ public class LoadingScreen : MonoBehaviour
 		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_DUNGEON, LoadSceneMode.Additive);
 		asyncLoad.allowSceneActivation = false; // NOTE: Stops scene load at 0.9 and prevents it from being activated immediately when ready.
 
-		GameDataLoader.TryLoadSaveData();
+		SaveDataLoader.TryLoadSaveData();
 
 		while (!asyncLoad.isDone)
 		{
@@ -42,7 +42,7 @@ public class LoadingScreen : MonoBehaviour
 			yield return null;
 		}
 
-		while (!GameDataLoader.HasLoadedAllData)
+		while (!SaveDataLoader.HasLoadedAllData)
 		{
 			yield return null;
 		}

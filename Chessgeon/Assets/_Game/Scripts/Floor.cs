@@ -113,7 +113,7 @@ public class Floor
 		}
 	}
 
-	public void LoadAndSetupNewFloor(GameDataLoader.FloorData inFloorData)
+	public void LoadAndSetupNewFloor(SaveDataLoader.FloorData inFloorData)
 	{
 		_floorNum = inFloorData.FloorNum;
 		_size = inFloorData.Size;
@@ -176,7 +176,7 @@ public class Floor
 		}
 	}
 
-	public GameDataLoader.FloorData GenerateFloorData()
+	public SaveDataLoader.FloorData GenerateFloorData()
 	{
 		List<Enemy> enemyList = new List<Enemy>();
 		for (int x = 0; x < Size.x; x++)
@@ -188,7 +188,7 @@ public class Floor
 			}
 		}
 
-		GameDataLoader.FloorData floorData = new GameDataLoader.FloorData(this, enemyList.ToArray());
+		SaveDataLoader.FloorData floorData = new SaveDataLoader.FloorData(this, enemyList.ToArray());
 		return floorData;
 	}
 
