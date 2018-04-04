@@ -14,26 +14,22 @@ public class Menu : MonoBehaviour
 		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
 
 #if UNITY_EDITOR
-		if (!GameDataLoader.HasStartedLoadingData) GameDataLoader.TryLoadGameData();
+		if (!GameDataLoader.HasStartedLoadingData) GameDataLoader.TryLoadSaveData();
 #endif
 	}
 
-	private void StartGame()
+
+	public void StartNewGame()
 	{
+		// TODO: Create new set of data??? Maybe don't need. But definitely delete the old set of data.
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);
 	}
 
-	public void StartNewGame()
-	{
-		// TODO: Create new set of data.
-		StartGame();
-	}
-
 	public void ContinueGame()
 	{
-		// TODO: Load back old set of data.
-		StartGame();
+		_dungeon.StartGameFromSavedData(GameDataLoader.SavedGameData, GameDataLoader.SavedFloorData);
+		_menuCanvas.SetVisible(false);
 	}
 
 	public void UpgradesMenu()

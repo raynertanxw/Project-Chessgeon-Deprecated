@@ -74,16 +74,24 @@ public class Dungeon : MonoBehaviour
 		if (HasGameStarted)
 		{
 			_dungeonFSM.Execute();
+			// DEBUG
+			if (Input.GetKeyDown(KeyCode.Space)) SaveGame();
 		}
 	}
 
-	private void GenerateFloor()
+	private void GenerateNewFloor()
 	{
 		// Do resetting.
 		_morphyHasReachedStairs = false;
 
 		_floor.GenerateAndSetupNewFloor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
 
+		OnFloorGenerated.Invoke();
+	}
+
+	private void LoadFloorFromFloorData(GameDataLoader.FloorData inFloorData)
+	{
+		_floor.LoadAndSetupNewFloor(inFloorData);
 		OnFloorGenerated.Invoke();
 	}
 
@@ -102,7 +110,26 @@ public class Dungeon : MonoBehaviour
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
 
-		GenerateFloor();
+		GenerateNewFloor();
+		_dungeonFSM.SetToStartFloorState();
+	}
+
+	public void StartGameFromSavedData(GameDataLoader.GameData inGameData, GameDataLoader.FloorData inFloorData)
+	{
+		_enemyManager.ResetForNewGame();
+
+		_morphyController.ResetFromGameData(inGameData);
+		_cardManager.ResetForNewGame(); // TODO: Load from CardData
+
+		_floorNum = inFloorData.FloorNum;
+		_morphyHasReachedStairs = false;
+		_numCoins = inGameData.NumCoins;
+		DungeonDisplay.UpdateCoinText(NumCoins);
+
+		_hasGameStarted = true;
+		_isPlayersTurn = false;
+
+		LoadFloorFromFloorData(inFloorData);
 		_dungeonFSM.SetToStartFloorState();
 	}
 
@@ -123,7 +150,8 @@ public class Dungeon : MonoBehaviour
 	private void SaveGame()
 	{
 		GameDataLoader.GameData gameData = new GameDataLoader.GameData(this);
-		GameDataLoader.SaveData(gameData);
+		GameDataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
+		GameDataLoader.SaveData(gameData, floorData);
 	}
 
 	private void OnMorphyReachStairs()
@@ -134,7 +162,7 @@ public class Dungeon : MonoBehaviour
 	public void ProgressToNextFloor(DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		_floorNum++;
-		GenerateFloor();
+		GenerateNewFloor();
 		// Save each floor.
 		SaveGame();
 

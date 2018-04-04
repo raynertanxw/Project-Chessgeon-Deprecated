@@ -33,9 +33,9 @@ public class Enemy : MonoBehaviour
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
 	private eMoveType _type = eMoveType.Pawn;
+	public eElement Element { get { return _element; } }
 	public eMoveType Type { get { return _type; } }
 	private eElement _element = eElement.Classic;
-	public eElement Element { get { return _element; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
 

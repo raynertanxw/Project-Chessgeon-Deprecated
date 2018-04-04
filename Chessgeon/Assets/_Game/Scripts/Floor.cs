@@ -13,7 +13,7 @@ public class Floor
 	public Node[,] Nodes { get { return _nodes; } }
 	private GridStratergy[] _gridStratergy;
 
-	private Enemy[,] _enemies; // TODO: Next time when moving enemies.
+	private Enemy[,] _enemies;
 	private Vector2Int _size;
 	private Vector2Int _stairsPos;
 	private Vector2Int _morphyPos;
@@ -111,6 +111,85 @@ public class Floor
 				}
 			}
 		}
+	}
+
+	public void LoadAndSetupNewFloor(GameDataLoader.FloorData inFloorData)
+	{
+		_floorNum = inFloorData.FloorNum;
+		_size = inFloorData.Size;
+
+		_nodes = new Node[Size.x, Size.y];
+		for (int x = 0; x < Size.x; x++)
+		{
+			for (int y = 0; y < Size.y; y++)
+			{
+				_nodes[x, y] = new Node(x, y, eTileState.Empty);
+			}
+		}
+
+		_stairsPos = inFloorData.StairPos;
+		SetTileState(StairsPos, eTileState.Stairs);
+
+		_dungeon.TileManager.SetUpFloorTerrain();
+
+        // Spawn the enemies.
+		_enemies = new Enemy[Size.x, Size.y];
+		for (int iEnemy = 0; iEnemy < inFloorData.EnemyPos.Length; iEnemy++)
+		{
+			Vector2Int enemyPos = inFloorData.EnemyPos[iEnemy];
+			eMoveType enemyMoveType = inFloorData.EnemyMoveType[iEnemy];
+			Enemy.eElement enemyElement = inFloorData.EnemyElement[iEnemy];
+
+			_enemies[enemyPos.x, enemyPos.y] = _dungeon.EnemyManager.SpawnEnemyAt(enemyPos, enemyMoveType, enemyElement);
+			SetTileState(enemyPos, Floor.eTileState.Enemy);
+		}
+
+		// Spawn the player.
+		_morphyPos = inFloorData.MorphyPos;
+		SetTileState(_morphyPos, Floor.eTileState.Morphy);
+		_dungeon.MorphyController.SetUpPlayer();
+
+		// TODO: Obstalces (if any)
+
+		// TODO: Special tiles (if any)
+
+
+
+
+
+		_gridStratergy = new GridStratergy[5];
+		_gridStratergy[(int)eMoveType.Pawn] = new GridStratergyPawn(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.Rook] = new GridStratergyRook(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.Bishop] = new GridStratergyBishop(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.Knight] = new GridStratergyKnight(Size.x, Size.y, this);
+		_gridStratergy[(int)eMoveType.King] = new GridStratergyKing(Size.x, Size.y, this);
+
+		for (int y = 0; y < _size.y; y++)
+		{
+			for (int x = 0; x < _size.x; x++)
+			{
+				for (int iGridStrat = 0; iGridStrat < 5; iGridStrat++)
+				{
+					_gridStratergy[iGridStrat].GetNSetNodeNeighbours(Nodes[x, y]);
+				}
+			}
+		}
+	}
+
+	public GameDataLoader.FloorData GenerateFloorData()
+	{
+		List<Enemy> enemyList = new List<Enemy>();
+		for (int x = 0; x < Size.x; x++)
+		{
+			for (int y = 0; y < Size.y; y++)
+			{
+				Enemy curEnemy = _enemies[x, y];
+				if (curEnemy != null) enemyList.Add(curEnemy);
+			}
+		}
+
+		GameDataLoader.FloorData floorData = new GameDataLoader.FloorData(this, enemyList.ToArray());
+		return floorData;
 	}
 
 	public GridStratergy GridStratergyForMoveType(eMoveType inMoveType)

@@ -10,37 +10,115 @@ public static class GameDataLoader
 	private static bool _hasLoadedAllData = false;
 	public static bool HasLoadedAllData { get { return _hasLoadedAllData; } }
 
-	// Game Data
-	private static int _health = -1;
-	public static int Health { get { return _health; } }
-	private static int _shield = -1;
-	public static int Shield { get { return _shield; } }
-	private static int _floorNum = -1;
-	public static int FloorNum { get { return _floorNum; } }
+	// Data structs
+	private static GameData _gameData;
+	public static GameData SavedGameData { get { return _gameData; } }
+	private static FloorData _floorData;
+	public static FloorData SavedFloorData { get { return _floorData; } }
 
+	// Data file names
 	private const string GAMEDATA_FILENAME = "gamedata.txt";
 	private const string FLOORDATA_FILENAME = "floordata.txt";
 	private const string CARDDATA_FILENAME = "carddata.txt";
+
 	// Keys
-	private const string HEALTH_KEY = "HEALTH";
-	private const string SHIELD_KEY = "SHIELD";
-	private const string FLOOR_NUM_KEY = "FLOOR_NUM";
+	private const string GAMEDATA_HEALTH_KEY = "GAMEDATA_HEALTH";
+	private const string GAMEDATA_SHIELD_KEY = "GAMEDATA_SHIELD";
+	private const string GAMEDATA_NUMCOINS_KEY = "GAMEDATA_NUM_COINS";
+
+	private const string FLOORDATA_FLOORNUM_KEY = "FLOORDATA_FLOORNUM";
+	private const string FLOORDATA_SIZE_KEY = "FLOORDATA_SIZE";
+	private const string FLOORDATA_STAIR_POS_KEY = "FLOORDATA_STAIR_POS";
+	private const string FLOORDATA_MORPHY_POS_KEY = "FLOORDATA_MORPHY_POS";
+	private const string FLOORDATA_ENEMY_POS_X_KEY = "FLOORDATA_ENEMY_POS_X";
+	private const string FLOORDATA_ENEMY_POS_Y_KEY = "FLOORDATA_ENEMY_POS_Y";
+	private const string FLOORDATA_ENEMY_MOVE_TYPE_KEY = "FLOORDATA_ENEMY_MOVE_TYPE";
+	private const string FLOORDATA_ENEMY_ELEMENT_KEY = "FLOORDATA_ENEMY_ELEMENT";
 
 	public struct GameData
 	{
-		public int health;
-		public int shield;
-		public int floorNum;
+		private int _health;
+		private int _shield;
+		private int _numCoins;
+		// TODO: Score.
+
+		public int Health { get { return _health; } }
+		public int Shield { get { return _shield; } }
+		public int NumCoins { get { return _numCoins; } }
 
 		public GameData(Dungeon inDungeon)
 		{
-			health = inDungeon.MorphyController.Health;
-			shield = inDungeon.MorphyController.Shield;
-			floorNum = inDungeon.FloorNum;
+			_health = inDungeon.MorphyController.Health;
+			_shield = inDungeon.MorphyController.Shield;
+			_numCoins = inDungeon.NumCoins;
+		}
+
+		public GameData(int inHealth, int inShield, int inNumCoins)
+		{
+			_health = inHealth;
+			_shield = inShield;
+			_numCoins = inNumCoins;
 		}
 	}
 
-	public static void TryLoadGameData()
+	public struct FloorData
+	{
+		private int _floorNum;
+		private Vector2Int _size;
+		private Vector2Int _stairPos;
+		private Vector2Int _morphyPos;
+		private Vector2Int[] _enemyPos;
+		private eMoveType[] _enemyMoveType;
+		private Enemy.eElement[] _enemyElement;
+
+		public int FloorNum { get { return _floorNum; } }
+		public Vector2Int Size { get { return _size; } }
+		public Vector2Int StairPos { get { return _stairPos; } }
+		public Vector2Int MorphyPos { get { return _morphyPos; } }
+		public Vector2Int[] EnemyPos { get { return _enemyPos; } }
+		public eMoveType[] EnemyMoveType { get { return _enemyMoveType; } }
+		public Enemy.eElement[] EnemyElement { get { return _enemyElement; } }
+
+		public FloorData(Floor inFloor, Enemy[] inEnemies)
+		{
+			_floorNum = inFloor.FloorNum;
+			_size = inFloor.Size;
+			_stairPos = inFloor.StairsPos;
+			_morphyPos = inFloor.MorphyPos;
+
+			int numEnemies = inEnemies.Length;
+			_enemyPos = new Vector2Int[numEnemies];
+			_enemyMoveType = new eMoveType[numEnemies];
+			_enemyElement = new Enemy.eElement[numEnemies];
+			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
+			{
+				Enemy curEnemy = inEnemies[iEnemy];
+				_enemyPos[iEnemy] = curEnemy.Pos;
+				_enemyMoveType[iEnemy] = curEnemy.Type;
+				_enemyElement[iEnemy] = curEnemy.Element;
+			}
+		}
+
+		public FloorData(
+			int inFloorNum,
+			Vector2Int inSize,
+			Vector2Int inStairPos,
+			Vector2Int inMorphyPos,
+			Vector2Int[] inEnemyPos,
+			eMoveType[] inEnemyMoveType,
+			Enemy.eElement[] inEnemyElement)
+		{
+			_floorNum = inFloorNum;
+			_size = inSize;
+			_stairPos = inStairPos;
+			_morphyPos = inMorphyPos;
+			_enemyPos = inEnemyPos;
+			_enemyMoveType = inEnemyMoveType;
+			_enemyElement = inEnemyElement;
+		}
+	}
+
+	public static void TryLoadSaveData()
 	{
 		if (!HasLoadedAllData && !HasStartedLoadingData)
 		{
@@ -85,13 +163,37 @@ public static class GameDataLoader
 		}
 	}
 
-	public static void SaveData(GameData inGameData)
+	public static void SaveData(GameData inGameData, FloorData inFloorData)
 	{
 		using (ES2Writer writer = ES2Writer.Create(GAMEDATA_FILENAME))
 		{
-			writer.Write(inGameData.health, HEALTH_KEY);
-			writer.Write(inGameData.shield, SHIELD_KEY);
-			writer.Write(inGameData.floorNum, FLOOR_NUM_KEY);
+			writer.Write(inGameData.Health, GAMEDATA_HEALTH_KEY);
+			writer.Write(inGameData.Shield, GAMEDATA_SHIELD_KEY);
+			writer.Write(inGameData.NumCoins, GAMEDATA_NUMCOINS_KEY);
+
+			writer.Save();
+		}
+
+		using (ES2Writer writer = ES2Writer.Create(FLOORDATA_FILENAME))
+		{
+			writer.Write(inFloorData.FloorNum, FLOORDATA_FLOORNUM_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inFloorData.Size), FLOORDATA_SIZE_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inFloorData.StairPos), FLOORDATA_STAIR_POS_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inFloorData.MorphyPos), FLOORDATA_MORPHY_POS_KEY);
+
+			int numEnemies = inFloorData.EnemyPos.Length;
+			int[] enemyPosX = new int[numEnemies];
+			int[] enemyPosY = new int[numEnemies];
+			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
+			{
+				enemyPosX[iEnemy] = inFloorData.EnemyPos[iEnemy].x;
+				enemyPosY[iEnemy] = inFloorData.EnemyPos[iEnemy].y;
+			}
+			writer.Write(enemyPosX, FLOORDATA_ENEMY_POS_X_KEY);
+			writer.Write(enemyPosY, FLOORDATA_ENEMY_POS_Y_KEY);
+
+			writer.Write(inFloorData.EnemyMoveType, FLOORDATA_ENEMY_MOVE_TYPE_KEY);
+			writer.Write(inFloorData.EnemyElement, FLOORDATA_ENEMY_ELEMENT_KEY);
 
 			writer.Save();
 		}
@@ -99,12 +201,36 @@ public static class GameDataLoader
 
 	private static void LoadSavedData(DTJob.OnCompleteCallback inOnComplete)
 	{
-		if (ES2.Exists(GAMEDATA_FILENAME))
+		if (ES2.Exists(GAMEDATA_FILENAME)
+			&& ES2.Exists(FLOORDATA_FILENAME))
 		{
 			ES2Data gameData = ES2.LoadAll(GAMEDATA_FILENAME);
-			if (gameData.TagExists(HEALTH_KEY)) _health = gameData.Load<int>(HEALTH_KEY);
-			if (gameData.TagExists(SHIELD_KEY)) _shield = gameData.Load<int>(SHIELD_KEY);
-			if (gameData.TagExists(FLOOR_NUM_KEY)) _floorNum = gameData.Load<int>(FLOOR_NUM_KEY);
+			ES2Data floorData = ES2.LoadAll(FLOORDATA_FILENAME);
+
+			_gameData = new GameData(
+				gameData.Load<int>(GAMEDATA_HEALTH_KEY),
+				gameData.Load<int>(GAMEDATA_SHIELD_KEY),
+				gameData.Load<int>(GAMEDATA_NUMCOINS_KEY));
+
+			Vector2Int size = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_SIZE_KEY));
+			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_STAIR_POS_KEY));
+			Vector2Int morphyPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_MORPHY_POS_KEY));
+			int[] enemyPosX = floorData.LoadArray<int>(FLOORDATA_ENEMY_POS_X_KEY);
+			int[] enemyPosY = floorData.LoadArray<int>(FLOORDATA_ENEMY_POS_Y_KEY);
+			int numEnemies = enemyPosX.Length;
+			Vector2Int[] enemyPos = new Vector2Int[numEnemies];
+			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
+			{
+				enemyPos[iEnemy] = new Vector2Int(enemyPosX[iEnemy], enemyPosY[iEnemy]);
+			}
+			_floorData = new FloorData(
+				floorData.Load<int>(FLOORDATA_FLOORNUM_KEY),
+				size,
+				stairPos,
+				morphyPos,
+				enemyPos,
+				floorData.LoadArray<eMoveType>(FLOORDATA_ENEMY_MOVE_TYPE_KEY),
+				floorData.LoadArray<Enemy.eElement>(FLOORDATA_ENEMY_ELEMENT_KEY));
 		}
 		else
 		{

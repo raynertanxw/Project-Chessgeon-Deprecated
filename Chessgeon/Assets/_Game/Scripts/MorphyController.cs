@@ -46,6 +46,13 @@ public class MorphyController : MonoBehaviour
 		_isDead = false;
 	}
 
+	public void ResetFromGameData(GameDataLoader.GameData inGameData)
+	{
+		SetHealth(inGameData.Health);
+		SetShield(inGameData.Shield);
+		_isDead = false;
+	}
+
 	public void SetUpPlayer()
 	{
 		_morphy.SpawnAt(_dungeon.CurrentFloor.MorphyPos);

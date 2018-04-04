@@ -16,6 +16,23 @@ namespace DaburuTools
 
 
 
+		#region ConvertingTypes
+		public static int[] Vector2IntToIntArray(Vector2Int inVector2Int)
+		{
+			int[] resultingIntArr = new int[2];
+			resultingIntArr[0] = inVector2Int.x;
+			resultingIntArr[1] = inVector2Int.y;
+
+			return resultingIntArr;
+		}
+		
+		public static Vector2Int IntArrayToSingleVector2Int(int[] inIntArr)
+		{
+			Debug.Assert(inIntArr.Length == 2, "inIntArr is of wrong dimensions!");
+			return new Vector2Int(inIntArr[0], inIntArr[1]);
+		}
+		#endregion
+
 		#region CommonStringFormatting
 		public static string FormatIntWithThousandSeparator(int inInt, bool inWithDecimals = false)
 		{
