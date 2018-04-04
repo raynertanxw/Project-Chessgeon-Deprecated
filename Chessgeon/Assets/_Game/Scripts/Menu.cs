@@ -28,7 +28,7 @@ public class Menu : MonoBehaviour
 
 	public void ContinueGame()
 	{
-		_dungeon.StartGameFromSavedData(SaveDataLoader.SavedGameData, SaveDataLoader.SavedFloorData);
+		_dungeon.StartGameFromSavedData(SaveDataLoader.SavedGameData, SaveDataLoader.SavedFloorData, SaveDataLoader.SavedCardHandData);
 		_menuCanvas.SetVisible(false);
 	}
 

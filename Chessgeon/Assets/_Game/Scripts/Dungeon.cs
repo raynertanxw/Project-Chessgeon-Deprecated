@@ -114,12 +114,12 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
-	public void StartGameFromSavedData(SaveDataLoader.GameData inGameData, SaveDataLoader.FloorData inFloorData)
+	public void StartGameFromSavedData(SaveDataLoader.GameData inGameData, SaveDataLoader.FloorData inFloorData, SaveDataLoader.CardHandData inCardHandData)
 	{
 		_enemyManager.ResetForNewGame();
 
 		_morphyController.ResetFromGameData(inGameData);
-		_cardManager.ResetForNewGame(); // TODO: Load from CardData
+		_cardManager.ResetFromCardHandData(inCardHandData);
 
 		_floorNum = inFloorData.FloorNum;
 		_morphyHasReachedStairs = false;
@@ -144,14 +144,15 @@ public class Dungeon : MonoBehaviour
 		GameOverCanvas.SetGameOverValues(99999, FloorNum, 321);
 		GameOverCanvas.EnableGameOverPanel(true);
 
-		// TODO: Save scores and stuff.
+		// TODO: Save scores and stuff delete save data cause there is no more game to continue.
 	}
 
 	private void SaveGame()
 	{
 		SaveDataLoader.GameData gameData = new SaveDataLoader.GameData(this);
 		SaveDataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
-		SaveDataLoader.SaveData(gameData, floorData);
+		SaveDataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
+		SaveDataLoader.SaveData(gameData, floorData, cardHandData);
 	}
 
 	private void OnMorphyReachStairs()
@@ -266,8 +267,6 @@ public class Dungeon : MonoBehaviour
 
 			public override void OnEnterState()
 			{
-				// TODO: MoveTo the camera to the player's location.
-				//		 Then move to the stairs, and then move back to player?
 				DTJob camFocusStairs = new DTJob((OnComplete) =>
 				{
 					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.StairsPos, 2.0f, OnComplete);
@@ -346,16 +345,24 @@ public class Dungeon : MonoBehaviour
 
 			public override void OnEnterState()
 			{
-				// TODO: Do the animation for indicating start of player phase.
-				//		 And draw cards for the player.
 				_dungeonFSM._dungeon._isPlayersTurn = true;
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
 					DungeonCardDrawer.EnableCardDrawer(true, true, true, OnJobComplete); },
 					playPhaseAnimJob);
-				DTJob turnDrawJob = new DTJob((OnJobComplete) => {
-					_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDraw ? 3 : 2, OnJobComplete); },
+				DTJob turnDrawJob = new DTJob((OnJobComplete) =>
+				{
+					if (_dungeonFSM.Dungeon.CardManager.SkipNextDraw)
+					{
+						_dungeonFSM.Dungeon.CardManager.NextDrawSkipped();
+						OnJobComplete();
+					}
+					else
+					{
+						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDraw ? 3 : 2, OnJobComplete);
+					}
+				},
 					enableCardDrawerJob);
 
 				DTJobList startPlayerPhase = new DTJobList(() => { _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); }, turnDrawJob);
@@ -385,7 +392,6 @@ public class Dungeon : MonoBehaviour
 
 			public override void OnEnterState()
 			{
-				// TODO: Do the animation for indicating start of enemy phase.
 				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn,
 					() =>
 					{
@@ -428,7 +434,7 @@ public class Dungeon : MonoBehaviour
 				if (_dungeonFSM.Dungeon.MorphyController.IsDead)
 				{
 					_readyToProcessNextEnemy = false;
-					// Do nothing. Player is dead so just wait for new game where this whole FSM will be recreated.
+					// NOTE: Do nothing. Player is dead so just wait for new game where this whole FSM will be recreated.
 				}
 				else
 				{

@@ -15,11 +15,13 @@ public static class SaveDataLoader
 	public static GameData SavedGameData { get { return _gameData; } }
 	private static FloorData _floorData;
 	public static FloorData SavedFloorData { get { return _floorData; } }
+	private static CardHandData _cardHandData;
+	public static CardHandData SavedCardHandData { get { return _cardHandData; } }
 
 	// Data file names
 	private const string GAMEDATA_FILENAME = "gamedata.txt";
 	private const string FLOORDATA_FILENAME = "floordata.txt";
-	private const string CARDDATA_FILENAME = "carddata.txt";
+	private const string CARDHANDDATA_FILENAME = "cardhanddata.txt";
 
 	// Keys
 	private const string GAMEDATA_HEALTH_KEY = "GAMEDATA_HEALTH";
@@ -34,6 +36,11 @@ public static class SaveDataLoader
 	private const string FLOORDATA_ENEMY_POS_Y_KEY = "FLOORDATA_ENEMY_POS_Y";
 	private const string FLOORDATA_ENEMY_MOVE_TYPE_KEY = "FLOORDATA_ENEMY_MOVE_TYPE";
 	private const string FLOORDATA_ENEMY_ELEMENT_KEY = "FLOORDATA_ENEMY_ELEMENT";
+
+	private const string CARDHANDDATA_CARD_TIER_KEY = "CARDHANDDATA_CARD_TIER";
+	private const string CARDHANDDATA_CARD_TYPE_KEY = "CARDHANDDATA_CARD_TYPE";
+	private const string CARDHANDDATA_IS_CLONED_KEY = "CARDHANDDATA_IS_CLONED";
+	private const string CARDHANDDATA_CARD_MOVE_TYPE_KEY = "CARDHANDDATA_CARD_MOVE_TYPE";
 
 	public struct GameData
 	{
@@ -118,6 +125,18 @@ public static class SaveDataLoader
 		}
 	}
 
+	public struct CardHandData
+	{
+		private CardData[] _cardDatas;
+		
+		public CardData[] CardDatas { get { return _cardDatas; } }
+
+		public CardHandData(params CardData[] inCardDatas)
+		{
+			_cardDatas = inCardDatas;
+		}
+	}
+
 	public static void TryLoadSaveData()
 	{
 		if (!HasLoadedAllData && !HasStartedLoadingData)
@@ -163,7 +182,7 @@ public static class SaveDataLoader
 		}
 	}
 
-	public static void SaveData(GameData inGameData, FloorData inFloorData)
+	public static void SaveData(GameData inGameData, FloorData inFloorData, CardHandData inCardHandData)
 	{
 		using (ES2Writer writer = ES2Writer.Create(GAMEDATA_FILENAME))
 		{
@@ -197,21 +216,50 @@ public static class SaveDataLoader
 
 			writer.Save();
 		}
+
+		using (ES2Writer writer = ES2Writer.Create(CARDHANDDATA_FILENAME))
+		{
+			int numCards = inCardHandData.CardDatas.Length;
+			eCardTier[] cardTier = new eCardTier[numCards];
+			eCardType[] cardType = new eCardType[numCards];
+			bool[] isCloned = new bool[numCards];
+			eMoveType[] cardMoveType = new eMoveType[numCards];
+
+			for (int iCard = 0; iCard < numCards; iCard++)
+			{
+				CardData curCardData = inCardHandData.CardDatas[iCard];
+				cardTier[iCard] = curCardData.cardTier;
+				cardType[iCard] = curCardData.cardType;
+				isCloned[iCard] = curCardData.isCloned;
+				cardMoveType[iCard] = curCardData.cardMoveType;
+			}
+
+			writer.Write(cardTier, CARDHANDDATA_CARD_TIER_KEY);
+			writer.Write(cardType, CARDHANDDATA_CARD_TYPE_KEY);
+			writer.Write(isCloned, CARDHANDDATA_IS_CLONED_KEY);
+			writer.Write(cardMoveType, CARDHANDDATA_CARD_MOVE_TYPE_KEY);
+
+			writer.Save();
+		}
 	}
 
 	private static void LoadSavedData(DTJob.OnCompleteCallback inOnComplete)
 	{
 		if (ES2.Exists(GAMEDATA_FILENAME)
-			&& ES2.Exists(FLOORDATA_FILENAME))
+			&& ES2.Exists(FLOORDATA_FILENAME)
+			&& ES2.Exists(CARDHANDDATA_FILENAME))
 		{
 			ES2Data gameData = ES2.LoadAll(GAMEDATA_FILENAME);
 			ES2Data floorData = ES2.LoadAll(FLOORDATA_FILENAME);
+			ES2Data cardHandData = ES2.LoadAll(CARDHANDDATA_FILENAME);
 
+			// GAMEDATA
 			_gameData = new GameData(
 				gameData.Load<int>(GAMEDATA_HEALTH_KEY),
 				gameData.Load<int>(GAMEDATA_SHIELD_KEY),
 				gameData.Load<int>(GAMEDATA_NUMCOINS_KEY));
 
+			// FLOORDATA
 			Vector2Int size = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_SIZE_KEY));
 			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_STAIR_POS_KEY));
 			Vector2Int morphyPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_MORPHY_POS_KEY));
@@ -231,6 +279,25 @@ public static class SaveDataLoader
 				enemyPos,
 				floorData.LoadArray<eMoveType>(FLOORDATA_ENEMY_MOVE_TYPE_KEY),
 				floorData.LoadArray<Enemy.eElement>(FLOORDATA_ENEMY_ELEMENT_KEY));
+
+			// CARDHANDDATA
+			eCardTier[] cardTier = cardHandData.LoadArray<eCardTier>(CARDHANDDATA_CARD_TIER_KEY);
+			eCardType[] cardType = cardHandData.LoadArray<eCardType>(CARDHANDDATA_CARD_TYPE_KEY);
+			bool[] isCloned = cardHandData.LoadArray<bool>(CARDHANDDATA_IS_CLONED_KEY);
+			eMoveType[] cardMoveType = cardHandData.LoadArray<eMoveType>(CARDHANDDATA_CARD_MOVE_TYPE_KEY);
+
+			int numCards = cardTier.Length;
+			CardData[] cardDatas = new CardData[numCards];
+			for (int iCard = 0; iCard < numCards; iCard++)
+			{
+				cardDatas[iCard] = new CardData(
+					cardTier[iCard],
+					cardType[iCard],
+					isCloned[iCard],
+					cardMoveType[iCard]);
+			}
+
+			_cardHandData = new CardHandData(cardDatas);
 		}
 		else
 		{

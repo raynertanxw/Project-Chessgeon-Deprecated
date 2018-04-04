@@ -18,6 +18,8 @@ public class CardManager : MonoBehaviour
 	private int _numCardsInHand = -1;
 	private bool _isFirstDraw = true;
 	public bool IsFirstDraw { get { return _isFirstDraw; } }
+	private bool _skipNextDraw = false;
+	public bool SkipNextDraw { get { return _skipNextDraw; } }
 
 	// TODO: Statistics
 	private int _statTotalCardsDrawn = -1;
@@ -59,9 +61,37 @@ public class CardManager : MonoBehaviour
 	public void ResetForNewGame()
 	{
 		_isFirstDraw = true;
+		_skipNextDraw = false;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
 		HideAllCards();
+	}
+
+	public void ResetFromCardHandData(SaveDataLoader.CardHandData inCardHandData)
+	{
+		_isFirstDraw = false;
+		_skipNextDraw = true;
+		_numCardsInHand = 0;
+		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
+		HideAllCards();
+
+		DrawCard(null, false, inCardHandData.CardDatas);
+	}
+
+	public void NextDrawSkipped()
+	{
+		_skipNextDraw = false;
+	}
+
+	public SaveDataLoader.CardHandData GenerateCardHandData()
+	{
+		CardData[] cardDatas = new CardData[_numCardsInHand];
+		for (int iCard = 0; iCard < _numCardsInHand; iCard++)
+		{
+			cardDatas[iCard] = _cards[iCard].CardData;
+		}
+
+		return new SaveDataLoader.CardHandData(cardDatas);
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)
@@ -84,41 +114,61 @@ public class CardManager : MonoBehaviour
 		_controlBlocker.raycastTarget = inBlocked;
 	}
 
-	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null)
+	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
 	{
 		CardData[] cardDatas = new CardData[inNumCardsDrawn];
 		for (int iCard = 0; iCard < inNumCardsDrawn; iCard++)
 		{
 			cardDatas[iCard] = GenerateRandomCardData();
 		}
-		DrawCard(inOnComplete, cardDatas);
+		DrawCard(inOnComplete, inIsAnimated, cardDatas);
 	}
-	public void DrawCard(DTJob.OnCompleteCallback inOnComplete = null, params CardData[] inCardDatas)
+	public void DrawCard(DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true, params CardData[] inCardDatas)
 	{
-		bool needReorg = ReorganiseCards(() => { DrawCard(inOnComplete, inCardDatas); });
+		bool needReorg = ReorganiseCards(() => { DrawCard(inOnComplete, inIsAnimated, inCardDatas); });
 
 		if (!needReorg)
 		{
 			int numCardsDrawn = inCardDatas.Length;
 			int cardLimit = Mathf.Min(_numCardsInHand + numCardsDrawn, MAX_CARDS);
 			int cardsDrawn = 0;
-			const float CARD_ANIM_INTERVAL = 0.5f;
-			for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
+
+			if (inIsAnimated)
 			{
-				Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
-				SetCardActive(iCard, true);
-				_cards[iCard].SetCard(inCardDatas[cardsDrawn]);
-				if ((iCard + 1) == cardLimit)
+				const float CARD_ANIM_INTERVAL = 0.5f;
+				for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
 				{
-					_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
+					Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
+					SetCardActive(iCard, true);
+					_cards[iCard].SetCard(inCardDatas[cardsDrawn]);
+					if ((iCard + 1) == cardLimit)
+					{
+						_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
+					}
+					else
+					{
+						_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL);
+					}
+					cardsDrawn++;
+					_numCardsInHand++;
+					_statTotalCardsDrawn++;
 				}
-				else
+			}
+			else
+			{
+				for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
 				{
-					_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL);
+					Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
+					SetCardActive(iCard, true);
+					_cards[iCard].SetCard(inCardDatas[cardsDrawn]);
+					if ((iCard + 1) == cardLimit)
+					{
+						if (inOnComplete != null) inOnComplete();
+					}
+					cardsDrawn++;
+					_numCardsInHand++;
+					_statTotalCardsDrawn++;
 				}
-				cardsDrawn++;
-				_numCardsInHand++;
-				_statTotalCardsDrawn++;
 			}
 
 			// NOTE: If didn't draw card, then just run inOnComplete.
@@ -285,7 +335,9 @@ public class CardManager : MonoBehaviour
 					DrawCard(() =>
 					{
 						ToggleControlBlocker(false);
-					}, cloneCardDatas);
+					},
+					true,
+					cloneCardDatas);
 				});
 			}
 		}
