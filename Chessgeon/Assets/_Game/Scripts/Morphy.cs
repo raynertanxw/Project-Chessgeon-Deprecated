@@ -140,7 +140,6 @@ public class Morphy : MonoBehaviour
 		_meshRenderer.enabled = true;
 
 		TransformBackToMorphy();
-		// TODO: Set all the health, stats, etc here?
 	}
 
 	public void MoveTo(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
