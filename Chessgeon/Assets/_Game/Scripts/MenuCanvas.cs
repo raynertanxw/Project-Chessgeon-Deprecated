@@ -6,17 +6,28 @@ using UnityEngine.UI;
 public class MenuCanvas : MonoBehaviour
 {
 	[SerializeField] private Menu _menu = null;
-	[SerializeField] private Button _startButton = null;
-	[SerializeField] private Image _backgroundPanel = null;
+	[SerializeField] private Camera _menuUICamera = null;
+	[SerializeField] private GameObject _continueBtnObject = null;
+	[SerializeField] private GameObject _upgradesBtnObject = null;
+	[SerializeField] private Button _continueBtn = null;
+	[SerializeField] private Button _newGameBtn = null;
+	[SerializeField] private Button _upgradesBtn = null;
 
 	private bool _isVisible = true;
 
 	void Awake()
 	{
 		Debug.Assert(_menu != null, "_menu is not assigned.");
-		Debug.Assert(_startButton != null, "_startButton is not assigned.");
-		Debug.Assert(_backgroundPanel != null, "_backgroundPanel is not assigned.");
-		_startButton.onClick.AddListener(_menu.StartGame);
+		Debug.Assert(_menuUICamera != null, "_menuUICamera is not assigned.");
+		Debug.Assert(_continueBtnObject != null, "_continueBtnObject is not assigned.");
+		Debug.Assert(_upgradesBtnObject != null, "_upgradesBtnObject is not assigned.");
+		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
+		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
+		Debug.Assert(_upgradesBtn != null, "_upgradesBtn is not assigned.");
+
+		_continueBtn.onClick.AddListener(_menu.ContinueGame);
+		_newGameBtn.onClick.AddListener(_menu.StartNewGame);
+		_upgradesBtn.onClick.AddListener(_menu.UpgradesMenu);
 	}
 
 	public void SetVisible(bool inIsVisible)
@@ -24,7 +35,7 @@ public class MenuCanvas : MonoBehaviour
 		if (_isVisible == inIsVisible) return;
 
 		_isVisible = inIsVisible;
-		_startButton.gameObject.SetActive(_isVisible);
-		_backgroundPanel.gameObject.SetActive(_isVisible);
+		gameObject.SetActive(_isVisible);
+		_menuUICamera.enabled = _isVisible;
 	}
 }

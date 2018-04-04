@@ -14,10 +14,28 @@ public class Menu : MonoBehaviour
 		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
 	}
 
-	public void StartGame()
+	private void StartGame()
 	{
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);
+	}
+
+	public void StartNewGame()
+	{
+		// TODO: Create new set of data.
+		StartGame();
+	}
+
+	public void ContinueGame()
+	{
+		// TODO: Load back old set of data.
+		StartGame();
+	}
+
+	public void UpgradesMenu()
+	{
+		// TODO: Implement this.
+		Debug.LogWarning("NOT YET IMPLEMENTED.");
 	}
 
 	public void ReturnToMainMenu()
