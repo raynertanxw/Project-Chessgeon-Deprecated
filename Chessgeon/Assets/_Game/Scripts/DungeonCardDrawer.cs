@@ -99,6 +99,27 @@ public class DungeonCardDrawer : MonoBehaviour
 		}
 	}
 
+	private struct EnableCardDrawerCall
+	{
+		private bool _isEnabled;
+		private bool _isAnimated;
+		private bool _hideShowDrawerBtn;
+		private DTJob.OnCompleteCallback _onComplete;
+
+		public bool IsEnabled { get { return _isEnabled; } }
+		public bool IsAnimated { get { return _isAnimated; } }
+		public bool HideShowDrawerBtn { get { return _hideShowDrawerBtn; } }
+		public DTJob.OnCompleteCallback OnComplete { get { return _onComplete; } }
+
+		public EnableCardDrawerCall(bool inIsEnabled, bool inIsAnimated, bool inHideShowDrawerBtn, DTJob.OnCompleteCallback inOnComplete)
+		{
+			_isEnabled = inIsEnabled;
+			_isAnimated = inIsAnimated;
+			_hideShowDrawerBtn = inHideShowDrawerBtn;
+			_onComplete = inOnComplete;
+		}
+	}
+	private Queue<EnableCardDrawerCall> _enableCardDrawerCallQueue= new Queue<EnableCardDrawerCall>();
 	private bool _cardDrawerAnimPlaying = false;
 	public static void EnableCardDrawer(bool inIsEnabled, bool inIsAnimated = true, bool inHideShowDrawerBtn = true, DTJob.OnCompleteCallback inOnComplete = null)
 	{
@@ -124,9 +145,20 @@ public class DungeonCardDrawer : MonoBehaviour
 			{
 				_instance._showDrawerBtn.interactable = true;
 			}
+
+			// NOTE: See if got any queued calls.
+			if (_instance._enableCardDrawerCallQueue.Count > 0)
+			{
+				EnableCardDrawerCall queuedCall = _instance._enableCardDrawerCallQueue.Dequeue();
+				EnableCardDrawer(queuedCall.IsEnabled, queuedCall.IsAnimated, queuedCall.HideShowDrawerBtn, queuedCall.OnComplete);
+			}
 		};
 
-		if (!_instance._cardDrawerAnimPlaying)
+		if (_instance._cardDrawerAnimPlaying)
+		{
+			_instance._enableCardDrawerCallQueue.Enqueue(new EnableCardDrawerCall(inIsEnabled, inIsAnimated, inHideShowDrawerBtn, inOnComplete));
+		}
+		else
 		{
 			Vector2 newAnchorPos = _instance._cardDrawerRectTransform.anchoredPosition;
 			Vector3 btnOpenScale = Vector3.one;

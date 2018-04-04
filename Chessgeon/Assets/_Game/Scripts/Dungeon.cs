@@ -210,7 +210,7 @@ public class Dungeon : MonoBehaviour
 
 		private void ChangeState(eDungeonState inNewState)
 		{
-			Debug.Log("Changing State from: " + _currentState + " to " + inNewState.ToString());
+			//Debug.Log("Changing State from: " + _currentState + " to " + inNewState.ToString());
 			if (_currentState != null) _currentState.ExitState();
 			_currentState = _dungeonStates[inNewState];
 			_currentState.OnEnterState();

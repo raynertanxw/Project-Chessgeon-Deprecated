@@ -130,7 +130,8 @@ public class Card : MonoBehaviour
 		_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
 
 		PointerEventData ptrEventData = (PointerEventData)data;
-		if (ptrEventData.position.y > Screen.height / 2.0f) // If released in top half of screen.
+		if (ptrEventData.position.y > Screen.height / 2.0f // If released in top half of screen.
+			&& !_isAnimatingCardExecute) // NOTE: Prevents double execution from clicking while execute anim is running.
 		{
 			if (OnCardExecute != null) OnCardExecute(_cardIndex);
 		}
