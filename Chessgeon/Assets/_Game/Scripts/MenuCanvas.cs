@@ -95,8 +95,8 @@ public class MenuCanvas : MonoBehaviour
 
 		_upgradesPanelCloseBtn.onClick.AddListener(DismissUpgradesPanel);
 
-		SaveDataLoader.OnAllDataLoaded += CheckBtnAvailability;
-		SaveDataLoader.OnAllDataLoaded += UpdateGemtext;
+		DataLoader.OnAllDataLoaded += CheckBtnAvailability;
+		DataLoader.OnAllDataLoaded += UpdateGemtext;
 
 		DismissConfirmationPanel();
 		DismissUpgradesPanel();
@@ -133,12 +133,12 @@ public class MenuCanvas : MonoBehaviour
 
 	private void CheckBtnAvailability()
 	{
-		_continueBtnObject.SetActive(SaveDataLoader.HasPreviousRunData);
+		_continueBtnObject.SetActive(DataLoader.HasPreviousRunData);
 	}
 
 	private void UpdateGemtext()
 	{
-		_gemText.text = ChessgeonUtils.FormatGemString(SaveDataLoader.SavedPersistentData.NumGems);
+		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPersistentData.NumGems);
 	}
 
 	private void OpenUpgradesPanel()

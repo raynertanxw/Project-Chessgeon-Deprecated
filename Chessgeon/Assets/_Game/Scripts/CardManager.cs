@@ -67,7 +67,7 @@ public class CardManager : MonoBehaviour
 		HideAllCards();
 	}
 
-	public void ResetFromCardHandData(SaveDataLoader.CardHandData inCardHandData)
+	public void ResetFromCardHandData(DataLoader.CardHandData inCardHandData)
 	{
 		_isFirstDraw = false;
 		_skipNextDraw = true;
@@ -83,7 +83,7 @@ public class CardManager : MonoBehaviour
 		_skipNextDraw = false;
 	}
 
-	public SaveDataLoader.CardHandData GenerateCardHandData()
+	public DataLoader.CardHandData GenerateCardHandData()
 	{
 		ReorganiseCards(null, false);
 		CardData[] cardDatas = new CardData[_numCardsInHand];
@@ -92,7 +92,7 @@ public class CardManager : MonoBehaviour
 			cardDatas[iCard] = _cards[iCard].CardData;
 		}
 
-		return new SaveDataLoader.CardHandData(cardDatas);
+		return new DataLoader.CardHandData(cardDatas);
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)

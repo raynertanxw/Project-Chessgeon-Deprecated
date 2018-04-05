@@ -89,7 +89,7 @@ public class Dungeon : MonoBehaviour
 		OnFloorGenerated.Invoke();
 	}
 
-	private void LoadFloorFromFloorData(SaveDataLoader.FloorData inFloorData)
+	private void LoadFloorFromFloorData(DataLoader.FloorData inFloorData)
 	{
 		_floor.LoadAndSetupNewFloor(inFloorData);
 		OnFloorGenerated.Invoke();
@@ -114,7 +114,7 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
-	public void StartGameFromSavedData(SaveDataLoader.GameData inGameData, SaveDataLoader.FloorData inFloorData, SaveDataLoader.CardHandData inCardHandData)
+	public void StartGameFromSavedData(DataLoader.GameData inGameData, DataLoader.FloorData inFloorData, DataLoader.CardHandData inCardHandData)
 	{
 		_enemyManager.ResetForNewGame();
 
@@ -149,10 +149,10 @@ public class Dungeon : MonoBehaviour
 
 	private void SaveGame()
 	{
-		SaveDataLoader.GameData gameData = new SaveDataLoader.GameData(this);
-		SaveDataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
-		SaveDataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
-		SaveDataLoader.SavePreviousRunData(gameData, floorData, cardHandData);
+		DataLoader.GameData gameData = new DataLoader.GameData(this);
+		DataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
+		DataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
+		DataLoader.SavePreviousRunData(gameData, floorData, cardHandData);
 	}
 
 	private void OnMorphyReachStairs()

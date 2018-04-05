@@ -14,14 +14,14 @@ public class Menu : MonoBehaviour
 		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
 
 #if UNITY_EDITOR
-		if (!SaveDataLoader.HasStartedLoadingData) SaveDataLoader.TryLoadAllSaveData();
+		if (!DataLoader.HasStartedLoadingData) DataLoader.TryLoadAllSaveData();
 #endif
 	}
 
 
 	public void TryStartNewGame()
 	{
-		if (SaveDataLoader.HasPreviousRunData)
+		if (DataLoader.HasPreviousRunData)
 		{
 			_menuCanvas.PromptConfirmation("NEW GAME?",
 				"Starting a new game will result in loss of current progress.\n\nAre you sure ?",
@@ -35,14 +35,14 @@ public class Menu : MonoBehaviour
 
 	private void StartNewGame()
 	{
-		SaveDataLoader.DeletePreviousRunData();
+		DataLoader.DeletePreviousRunData();
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);
 	}
 
 	public void ContinueGame()
 	{
-		_dungeon.StartGameFromSavedData(SaveDataLoader.SavedGameData, SaveDataLoader.SavedFloorData, SaveDataLoader.SavedCardHandData);
+		_dungeon.StartGameFromSavedData(DataLoader.SavedGameData, DataLoader.SavedFloorData, DataLoader.SavedCardHandData);
 		_menuCanvas.SetVisible(false);
 	}
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DaburuTools;
 
-public static class SaveDataLoader
+public static class DataLoader
 {
 	private static bool _hasStartedLoadingData = false;
 	public static bool HasStartedLoadingData { get { return _hasStartedLoadingData; } }
