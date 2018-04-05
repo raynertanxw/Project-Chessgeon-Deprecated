@@ -30,6 +30,9 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Button _confirmationConfirmBtn = null;
 	[SerializeField] private Button _confirmationCancelBtn = null;
 
+	[Header("Upgrades Panel")]
+	[SerializeField] private GameObject _upgradesPanelObject = null;
+
 
 	private bool _isVisible = true;
 
@@ -56,6 +59,8 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_confirmationCancelBtnText != null, "_confirmationCancelBtnText is not assigned.");
 		Debug.Assert(_confirmationConfirmBtn != null, "_confirmationConfirmBtn is not assigned.");
 		Debug.Assert(_confirmationCancelBtn != null, "_confirmationCancelBtn is not assigned.");
+
+		Debug.Assert(_upgradesPanelObject != null, "_upgradesPanelObject is not assigned.");
 
 		gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
