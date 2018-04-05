@@ -16,8 +16,8 @@ public class MorphyController : MonoBehaviour
 
 	private bool _isDead = false;
     public bool IsDead { get { return _isDead; } }
-	// NOTE: Max health is 10.
-	private int _maxHealth = 6; // TODO: Read this from player save data? Cause there are "upgrades" to health.
+	private const int BASE_HEALTH = 6;
+	private int MAX_HEALTH { get { return BASE_HEALTH + DataLoader.SavedPersistentData.UpgradeLevelHealth; } }
 	private int _health = -1;
 	public int Health { get { return _health; } }
 	private const int MAX_SHIELD = 5;
@@ -41,7 +41,7 @@ public class MorphyController : MonoBehaviour
 
 	public void ResetForNewGame()
 	{
-		SetHealth(_maxHealth);
+		SetHealth(MAX_HEALTH);
 		SetShield(0);
 		_isDead = false;
 	}

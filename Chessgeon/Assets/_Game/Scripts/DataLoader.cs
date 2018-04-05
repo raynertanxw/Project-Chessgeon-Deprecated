@@ -25,6 +25,9 @@ public static class DataLoader
 	private static PersistentData _persistentData;
 	public static PersistentData SavedPersistentData { get { return _persistentData; } }
 
+	private static UpgradesData _upgradesData;
+	public static UpgradesData LoadedUpgradesData { get { return _upgradesData; } }
+
 	// Data file names
 	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
 	private const string FLOOR_DATA_FILENAME = "FloorData.txt";
@@ -52,34 +55,101 @@ public static class DataLoader
 	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
 
 	private const string PERSISTENT_DATA_NUM_GEMS_KEY = "PERSISTENT_DATA_NUM_GEMS";
+	private const string PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH";
+	private const string PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP";
+	private const string PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE";
+	private const string PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER";
 
+	#region Data Structs
 	public struct PersistentData
 	{
 		private int _numGems;
+		private int _upgradeLevelHealth;
+		private int _upgradeLevelCoinDrop;
+		private int _upgradeLevelShopPrice;
+		private int _upgradeLevelCardTier;
 		
 		public int NumGems { get { return _numGems; } }
+		public int UpgradeLevelHealth { get { return _upgradeLevelHealth; } }
+		public int UpgradeLevelCoinDrop { get { return _upgradeLevelCoinDrop; } }
+		public int UpgradeLevelShopPrice { get { return _upgradeLevelShopPrice; } }
+		public int UpgradeLevelCardTier { get { return _upgradeLevelCardTier; } }
 
-		public PersistentData(int inNumGems)
+		public PersistentData(
+			int inNumGems,
+			int inUpgradeLevelHealth,
+			int inUpgradeLevelCoinDrop,
+			int inUpgradeLevelShopPrice,
+			int inUpgradeLevelCardTier)
 		{
 			_numGems = inNumGems;
+			_upgradeLevelHealth = inUpgradeLevelHealth;
+			_upgradeLevelCoinDrop = inUpgradeLevelCoinDrop;
+			_upgradeLevelShopPrice = inUpgradeLevelShopPrice;
+			_upgradeLevelCardTier = inUpgradeLevelCardTier;
 		}
 
-		public void AwardGems(int inNumGemsAwarded)
+		public void AwardGems(int inNumGemsAwarded) { _numGems += inNumGemsAwarded; }
+		public bool SpendGems(int inNumGemsToSpend)
 		{
-			_numGems += inNumGemsAwarded;
-		}
-
-		public bool DeductGems(int inNumGemsDeducted)
-		{
-			if (_numGems - inNumGemsDeducted >= 0)
-			{
-				_numGems -= inNumGemsDeducted;
-				return true;
-			}
-			else
+			int numGemsAfterSpending = _persistentData.NumGems - inNumGemsToSpend;
+			if (numGemsAfterSpending < 0)
 			{
 				return false;
 			}
+			else
+			{
+				_numGems = numGemsAfterSpending;
+				return true;
+			}
+		}
+		public void UpgradeHealth() { _upgradeLevelHealth++; }
+		public void UpgradeCoinDrop() { _upgradeLevelCoinDrop++; }
+		public void UpgradeShopPrice() { _upgradeLevelShopPrice++; }
+		public void UpgradeCardTier() { _upgradeLevelCardTier++; }
+	}
+
+	public struct UpgradesData
+	{
+		private int _numHealthUpgradeLevels;
+		private int _numCoinDropUpgradeLevels;
+		private int _numShopPriceUpgradeLevels;
+		private int _numCardTierUpgradeLevels;
+
+		private int[] _healthUpgradeCosts;
+		private int[] _coinDropUpgradeCosts;
+		private int[] _shopPriceUpgradeCosts;
+		private int[] _cardTierUpgradeCosts;
+
+		public int NumHealthUpgradeLevels { get { return _numHealthUpgradeLevels; } }
+		public int NumCoinDropUpgradeLevels { get { return _numCoinDropUpgradeLevels; } }
+		public int NumShopPriceUpgradeLevels { get { return _numShopPriceUpgradeLevels; } }
+		public int NumCardTierUpgradeLevels { get { return _numCardTierUpgradeLevels; } }
+
+		public int[] HealthUpgradeCosts { get { return _healthUpgradeCosts; } }
+		public int[] CoinDropUpgradeCosts { get { return _coinDropUpgradeCosts; } }
+		public int[] ShopPriceUpgradeCosts { get { return _shopPriceUpgradeCosts; } }
+		public int[] CardTierUpgradeCosts { get { return _cardTierUpgradeCosts; } }
+
+		public UpgradesData(
+			int inNumHealthUpgradeLevels,
+			int inNumCoinDropUpgradeLevels,
+			int inNumShopPriceUpgradeLevels,
+			int inNumCardTierUpgradeLevels,
+			int[] inHealthUpgradeCosts,
+			int[] inCoinDropUpgradeCosts,
+			int[] inShopPriceUpgradeCosts,
+			int[] inCardTierUpgradeCosts)
+		{
+			_numHealthUpgradeLevels = inNumHealthUpgradeLevels;
+			_numCoinDropUpgradeLevels = inNumCoinDropUpgradeLevels;
+			_numShopPriceUpgradeLevels = inNumShopPriceUpgradeLevels;
+			_numCardTierUpgradeLevels = inNumCardTierUpgradeLevels;
+
+			_healthUpgradeCosts = inHealthUpgradeCosts;
+			_coinDropUpgradeCosts = inCoinDropUpgradeCosts;
+			_shopPriceUpgradeCosts = inShopPriceUpgradeCosts;
+			_cardTierUpgradeCosts = inCardTierUpgradeCosts;
 		}
 	}
 
@@ -177,6 +247,7 @@ public static class DataLoader
 			_cardDatas = inCardDatas;
 		}
 	}
+	#endregion
 
 	public static void TryLoadData()
 	{
@@ -369,9 +440,13 @@ public static class DataLoader
 
 	public static void SavePersistentData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		using (ES2Writer writer = ES2Writer.Create(PERSISTENT_DATA_NUM_GEMS_KEY))
+		using (ES2Writer writer = ES2Writer.Create(PERSISTENT_DATA_FILENAME))
 		{
 			writer.Write(_persistentData.NumGems, PERSISTENT_DATA_NUM_GEMS_KEY);
+			writer.Write(_persistentData.UpgradeLevelHealth, PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY);
+			writer.Write(_persistentData.UpgradeLevelCoinDrop, PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY);
+			writer.Write(_persistentData.UpgradeLevelShopPrice, PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY);
+			writer.Write(_persistentData.UpgradeLevelCardTier, PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY);
 
 			writer.Save();
 		}
@@ -385,12 +460,21 @@ public static class DataLoader
 		{
 			ES2Data persistentData = ES2.LoadAll(PERSISTENT_DATA_FILENAME);
 
+			// TODO: Create a TryLoad<T> that will return 0 if failed to load. Safer for future updates and all that.
 			_persistentData = new PersistentData(
-				persistentData.Load<int>(PERSISTENT_DATA_NUM_GEMS_KEY));
+				persistentData.Load<int>(PERSISTENT_DATA_NUM_GEMS_KEY),
+				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY),
+				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY),
+				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY),
+				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY));
 		}
 		else // If no have, create empty. Basically new player.
 		{
 			_persistentData = new PersistentData(
+				0,
+				0,
+				0,
+				0,
 				0);
 		}
 
@@ -426,7 +510,28 @@ public static class DataLoader
 				JSONNode shopPriceUpgradeNode = upgradesNode[UPGRADES_SHOP_PRICE_KEY];
 				JSONNode cardTierUpgradeNode = upgradesNode[UPGRADES_CARD_TIER_KEY];
 
+				JSONArray healthCostsJSONArr = healthUpgradeNode[UPGRADES_COST_KEY].AsArray;
+				JSONArray coinDropCostsJSONArr = coinDropUpgradeNode[UPGRADES_COST_KEY].AsArray;
+				JSONArray shopPriceCostsJSONArr = shopPriceUpgradeNode[UPGRADES_COST_KEY].AsArray;
+				JSONArray cardTierCostsJSONArr = cardTierUpgradeNode[UPGRADES_COST_KEY].AsArray;
+				int[] healthCosts = new int[healthCostsJSONArr.Count];
+				int[] coinDropCosts = new int[coinDropCostsJSONArr.Count];
+				int[] shopPriceCosts = new int[shopPriceCostsJSONArr.Count];
+				int[] cardTierCosts = new int[cardTierCostsJSONArr.Count];
+				for (int iCost = 0; iCost < healthCosts.Length; iCost++) healthCosts[iCost] = healthCostsJSONArr[iCost].AsInt;
+				for (int iCost = 0; iCost < coinDropCosts.Length; iCost++) coinDropCosts[iCost] = coinDropCostsJSONArr[iCost].AsInt;
+				for (int iCost = 0; iCost < shopPriceCosts.Length; iCost++) shopPriceCosts[iCost] = shopPriceCostsJSONArr[iCost].AsInt;
+				for (int iCost = 0; iCost < cardTierCosts.Length; iCost++) cardTierCosts[iCost] = cardTierCostsJSONArr[iCost].AsInt;
 
+				_upgradesData = new UpgradesData(
+					healthUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
+					coinDropUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
+					shopPriceUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
+					cardTierUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
+					healthCosts,
+					coinDropCosts,
+					shopPriceCosts,
+					cardTierCosts);
 				
 				inOnComplete();
 			}
@@ -447,4 +552,11 @@ public static class DataLoader
 
 		inOnComplete();
 	}
+
+	public static void AwardGems(int inNumGemsAwarded) { _persistentData.AwardGems(inNumGemsAwarded); }
+	public static bool SpendGems(int inNumGemsToSpend) { return _persistentData.SpendGems(inNumGemsToSpend); }
+	public static void UpgradeHealth() { _persistentData.UpgradeHealth(); }
+	public static void UpgradeCoinDrop() { _persistentData.UpgradeCoinDrop(); }
+	public static void UpgradeShopPrice() { _persistentData.UpgradeShopPrice(); }
+	public static void UpgradeCardTier() { _persistentData.UpgradeCardTier(); }
 }

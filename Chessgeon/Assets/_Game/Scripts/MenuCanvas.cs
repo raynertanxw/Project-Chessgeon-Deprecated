@@ -21,6 +21,12 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Button _infoBtn = null;
 	[SerializeField] private Text _gemText = null;
 
+	[Header("Information Panel")]
+	[SerializeField] private GameObject _informationPanelObject = null;
+	[SerializeField] private Text _informationTitleText = null;
+	[SerializeField] private Text _informationInfoText = null;
+	[SerializeField] private Button _informationDismissBtn = null;
+
 	[Header("Confirmation Panel")]
 	[SerializeField] private GameObject _confirmationPanelObject = null;
 	[SerializeField] private Text _confirmationTitleText = null;
@@ -64,6 +70,11 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_infoBtn != null, "_infoBtn is not assigned.");
 		Debug.Assert(_gemText != null, "_gemText is not assigned.");
 
+		Debug.Assert(_informationPanelObject != null, "_informationPanelObject is not assigned.");
+		Debug.Assert(_informationTitleText != null, "_informationTitleText is not assigned.");
+		Debug.Assert(_informationInfoText != null, "_informationInfoText is not assigned.");
+		Debug.Assert(_informationDismissBtn != null, "_informationDismissBtn is not assigned.");
+
 		Debug.Assert(_confirmationPanelObject != null, "_confirmationPanelObject is not assigned.");
 		Debug.Assert(_confirmationTitleText != null, "_confirmationTitleText is not assigned.");
 		Debug.Assert(_confirmationInfoText != null, "_confirmationInfoText is not assigned.");
@@ -93,11 +104,20 @@ public class MenuCanvas : MonoBehaviour
 		_newGameBtn.onClick.AddListener(_menu.TryStartNewGame);
 		_upgradesBtn.onClick.AddListener(OpenUpgradesPanel);
 
+		_informationDismissBtn.onClick.AddListener(DismissInformationPanel);
+		_confirmationCancelBtn.onClick.AddListener(DismissConfirmationPanel);
 		_upgradesPanelCloseBtn.onClick.AddListener(DismissUpgradesPanel);
 
-		DataLoader.OnAllDataLoaded += CheckBtnAvailability;
-		DataLoader.OnAllDataLoaded += UpdateGemtext;
+		_healthUpgradeBtn.onClick.AddListener(TryUpgradeHealth);
+		_coinDropUpgradeBtn.onClick.AddListener(TryUpgradeCoinDrop);
+		_shopPriceUpgradeBtn.onClick.AddListener(TryUpgradeShopPrice);
+		_cardTierUpgradeBtn.onClick.AddListener(TryUpgradeCardTier);
 
+		DataLoader.OnAllDataLoaded += CheckBtnAvailability;
+		DataLoader.OnAllDataLoaded += UpdateGemText;
+		DataLoader.OnAllDataLoaded += UpdateUpgradesPanelText;
+
+		DismissInformationPanel();
 		DismissConfirmationPanel();
 		DismissUpgradesPanel();
 	}
@@ -109,6 +129,14 @@ public class MenuCanvas : MonoBehaviour
 		_isVisible = inIsVisible;
 		gameObject.SetActive(_isVisible);
 		_menuUICamera.enabled = _isVisible;
+	}
+
+	public void PopupInformation(string inTitleText, string inInfoText)
+	{
+		_informationTitleText.text = inTitleText;
+		_informationInfoText.text = inInfoText;
+
+		_informationPanelObject.SetActive(true);
 	}
 
 	public void PromptConfirmation(string inTitleText, string inInfoText, Utils.GenericVoidDelegate inOnConfirm, string confirmBtnText = "CONFIRM", string cancelBtnText = "CANCEL")
@@ -125,9 +153,6 @@ public class MenuCanvas : MonoBehaviour
 			DismissConfirmationPanel();
 		});
 
-		_confirmationCancelBtn.onClick.RemoveAllListeners();
-		_confirmationCancelBtn.onClick.AddListener(() => { DismissConfirmationPanel(); });
-
 		_confirmationPanelObject.SetActive(true);
 	}
 
@@ -136,15 +161,43 @@ public class MenuCanvas : MonoBehaviour
 		_continueBtnObject.SetActive(DataLoader.HasPreviousRunData);
 	}
 
-	private void UpdateGemtext()
+	private void UpdateGemText()
 	{
 		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPersistentData.NumGems);
 	}
 
+	private void UpdateUpgradesPanelText()
+	{
+		DataLoader.PersistentData persistentData = DataLoader.SavedPersistentData;
+		DataLoader.UpgradesData upgradesData = DataLoader.LoadedUpgradesData;
+
+		_healthUpgradeStateText.text = persistentData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
+		_coinDropUpgradeStateText.text = persistentData.UpgradeLevelCoinDrop + "/" + upgradesData.NumCoinDropUpgradeLevels;
+		_shopPriceUpgradeStateText.text = persistentData.UpgradeLevelShopPrice + "/" + upgradesData.NumShopPriceUpgradeLevels;
+		_cardTierUpgradeStateText.text = persistentData.UpgradeLevelCardTier + "/" + upgradesData.NumCardTierUpgradeLevels;
+
+		if (persistentData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels) _healthUpgradeCostText.text = "MAX";
+		else _healthUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.HealthUpgradeCosts[persistentData.UpgradeLevelHealth]);
+
+		if (persistentData.UpgradeLevelCoinDrop == upgradesData.NumCoinDropUpgradeLevels) _coinDropUpgradeCostText.text = "MAX";
+		else _coinDropUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CoinDropUpgradeCosts[persistentData.UpgradeLevelCoinDrop]);
+
+		if (persistentData.UpgradeLevelShopPrice == upgradesData.NumShopPriceUpgradeLevels) _shopPriceUpgradeCostText.text = "MAX";
+		else _shopPriceUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.ShopPriceUpgradeCosts[persistentData.UpgradeLevelShopPrice]);
+
+		if (persistentData.UpgradeLevelCardTier == upgradesData.NumCardTierUpgradeLevels) _cardTierUpgradeCostText.text = "MAX";
+		else _cardTierUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CardTierUpgradeCosts[persistentData.UpgradeLevelCardTier]);
+	}
+
 	private void OpenUpgradesPanel()
 	{
-		// TODO: read from save data and update all the values.
+		UpdateUpgradesPanelText();
 		_upgradesPanelObject.SetActive(true);
+	}
+
+	private void DismissInformationPanel()
+	{
+		_informationPanelObject.SetActive(false);
 	}
 
 	private void DismissConfirmationPanel()
@@ -156,4 +209,71 @@ public class MenuCanvas : MonoBehaviour
 	{
 		_upgradesPanelObject.SetActive(false);
 	}
+
+	#region UpgradeFuncs
+	private void TryUpgradeHealth()
+	{
+		DataLoader.PersistentData persistentData = DataLoader.SavedPersistentData;
+		DataLoader.UpgradesData upgradesData = DataLoader.LoadedUpgradesData;
+		if (persistentData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
+		{
+			// NOTE: Do nothing cause already max!
+		}
+		else
+		{
+			int cost = upgradesData.HealthUpgradeCosts[persistentData.UpgradeLevelHealth];
+			if (persistentData.NumGems < cost) InformNotEnoughGemsForUpgrade();
+			else
+			{
+				PromptConfirmation(
+					"BUY UPGRADE",
+					"Spend " + ChessgeonUtils.FormatGemString(cost) + " GEMs to upgrade max health?",
+					() =>
+					{
+						if (DataLoader.SpendGems(cost))
+						{
+							DataLoader.UpgradeHealth();
+							SaveUpgrade();
+						}
+						else
+						{
+							Debug.LogError("NOT ENOUGH GEMS TO SPEND!");
+						}
+					});
+			}
+		}
+	}
+
+	private void TryUpgradeCoinDrop()
+	{
+		// TODO: Implement this.
+	}
+
+	private void TryUpgradeShopPrice()
+	{
+		// TODO: Implement this.
+	}
+
+	private void TryUpgradeCardTier()
+	{
+		// TODO: Implement this.
+	}
+
+	private void InformNotEnoughGemsForUpgrade()
+	{
+		PopupInformation("OOPS...", "Not enough GEMs to purchase upgrade!");
+
+		// TODO: REMOVE THIS DEBUG
+		DataLoader.AwardGems(Random.Range(50, 150));
+		UpdateGemText();
+		DataLoader.SavePersistentData();
+	}
+
+	private void SaveUpgrade()
+	{
+		DataLoader.SavePersistentData();
+		UpdateGemText();
+		UpdateUpgradesPanelText();
+	}
+	#endregion
 }
