@@ -13,4 +13,9 @@ public static class ChessgeonUtils
 	{
 		return Utils.FormatIntWithThousandSeparator(inNumCoins);
 	}
+
+	public static string FormatGemString(int inNumGems)
+	{
+		return Utils.FormatIntWithThousandSeparator(inNumGems);
+	}
 }

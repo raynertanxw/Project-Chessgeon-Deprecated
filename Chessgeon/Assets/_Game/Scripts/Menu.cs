@@ -35,7 +35,7 @@ public class Menu : MonoBehaviour
 
 	private void StartNewGame()
 	{
-		SaveDataLoader.DeletLocalSavedData();
+		SaveDataLoader.DeletePreviousRunData();
 		_dungeon.ResetAndStartGame();
 		_menuCanvas.SetVisible(false);
 	}

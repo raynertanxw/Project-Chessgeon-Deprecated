@@ -15,6 +15,7 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Button _continueBtn = null;
 	[SerializeField] private Button _newGameBtn = null;
 	[SerializeField] private Button _upgradesBtn = null;
+	[SerializeField] private Text _gemText = null;
 
 	[Header("Confirmation Panel")]
 	[SerializeField] private GameObject _confirmationPanelObject = null;
@@ -38,6 +39,7 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
 		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
 		Debug.Assert(_upgradesBtn != null, "_upgradesBtn is not assigned.");
+		Debug.Assert(_gemText != null, "_gemText is not assigned.");
 
 		Debug.Assert(_confirmationPanelObject != null, "_confirmationPanelObject is not assigned.");
 		Debug.Assert(_confirmationTitleText != null, "_confirmationTitleText is not assigned.");
@@ -52,6 +54,7 @@ public class MenuCanvas : MonoBehaviour
 		_upgradesBtn.onClick.AddListener(_menu.UpgradesMenu);
 
 		SaveDataLoader.OnAllDataLoaded += CheckBtnAvailability;
+		SaveDataLoader.OnAllDataLoaded += UpdateGemtext;
 
 		DismissConfirmationPanel();
 	}
@@ -88,6 +91,11 @@ public class MenuCanvas : MonoBehaviour
 	private void CheckBtnAvailability()
 	{
 		_continueBtnObject.SetActive(SaveDataLoader.HasPreviousRunData);
+	}
+
+	private void UpdateGemtext()
+	{
+		_gemText.text = ChessgeonUtils.FormatGemString(SaveDataLoader.SavedPersistentData.NumGems);
 	}
 
 	private void DismissConfirmationPanel()

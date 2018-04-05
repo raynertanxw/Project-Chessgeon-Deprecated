@@ -22,11 +22,14 @@ public static class SaveDataLoader
 	private static CardHandData _cardHandData;
 	public static CardHandData SavedCardHandData { get { return _cardHandData; } }
 
+	private static PersistentData _persistentData;
+	public static PersistentData SavedPersistentData { get { return _persistentData; } }
+
 	// Data file names
 	private const string GAMEDATA_FILENAME = "gamedata.txt";
 	private const string FLOORDATA_FILENAME = "floordata.txt";
 	private const string CARDHANDDATA_FILENAME = "cardhanddata.txt";
-	private const string PERMA_UPGRADE_DATA_FILENAME = "PermaUpgradeData.txt";
+	private const string PERSISTENT_DATA_FILENAME = "PersistentData.txt";
 
 	// Keys
 	private const string GAMEDATA_HEALTH_KEY = "GAMEDATA_HEALTH";
@@ -46,6 +49,38 @@ public static class SaveDataLoader
 	private const string CARDHANDDATA_CARD_TYPE_KEY = "CARDHANDDATA_CARD_TYPE";
 	private const string CARDHANDDATA_IS_CLONED_KEY = "CARDHANDDATA_IS_CLONED";
 	private const string CARDHANDDATA_CARD_MOVE_TYPE_KEY = "CARDHANDDATA_CARD_MOVE_TYPE";
+
+	private const string PERSISTENTDATA_NUMGEMS_KEY = "PERSISTENTDATA_NUMGEMS";
+
+	public struct PersistentData
+	{
+		private int _numGems;
+		
+		public int NumGems { get { return _numGems; } }
+
+		public PersistentData(int inNumGems)
+		{
+			_numGems = inNumGems;
+		}
+
+		public void AwardGems(int inNumGemsAwarded)
+		{
+			_numGems += inNumGemsAwarded;
+		}
+
+		public bool DeductGems(int inNumGemsDeducted)
+		{
+			if (_numGems - inNumGemsDeducted >= 0)
+			{
+				_numGems -= inNumGemsDeducted;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
 
 	public struct GameData
 	{
@@ -149,10 +184,16 @@ public static class SaveDataLoader
 			Debug.Log("Started TryLoadGameData");
 			_hasStartedLoadingData = true;
 
-			DTJob loadSavedDataJob = new DTJob(
+			DTJob loadPreviousRunDataJob = new DTJob(
 				(OnComplete) =>
 				{
-					LoadLocalSavedData(OnComplete);
+					LoadPreviousRunData(OnComplete);
+				});
+
+			DTJob loadPersistentDataJob = new DTJob(
+				(OnComplete) =>
+				{
+					LoadPersistentData(OnComplete);
 				});
 
 			DTJob loadJSONJob = new DTJob(
@@ -175,7 +216,8 @@ public static class SaveDataLoader
 					Debug.Log("ALL GAME DATA LOADED");
 					if (OnAllDataLoaded != null) OnAllDataLoaded();
 				},
-				loadSavedDataJob,
+				loadPreviousRunDataJob,
+				loadPersistentDataJob,
 				loadJSONJob,
 				artificialTimeDelayJob);
 
@@ -188,7 +230,7 @@ public static class SaveDataLoader
 		}
 	}
 
-	public static void SaveData(GameData inGameData, FloorData inFloorData, CardHandData inCardHandData)
+	public static void SavePreviousRunData(GameData inGameData, FloorData inFloorData, CardHandData inCardHandData)
 	{
 		using (ES2Writer writer = ES2Writer.Create(GAMEDATA_FILENAME))
 		{
@@ -249,7 +291,7 @@ public static class SaveDataLoader
 		}
 	}
 
-	private static void LoadLocalSavedData(DTJob.OnCompleteCallback inOnComplete)
+	private static void LoadPreviousRunData(DTJob.OnCompleteCallback inOnComplete)
 	{
 		if (ES2.Exists(GAMEDATA_FILENAME)
 			&& ES2.Exists(FLOORDATA_FILENAME)
@@ -316,11 +358,41 @@ public static class SaveDataLoader
 		if (inOnComplete != null) inOnComplete();
     }
 
-	public static void DeletLocalSavedData(DTJob.OnCompleteCallback inOnComplete = null)
+	public static void DeletePreviousRunData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		if (ES2.Exists(GAMEDATA_FILENAME)) ES2.Delete(GAMEDATA_FILENAME);
 		if (ES2.Exists(FLOORDATA_FILENAME)) ES2.Delete(FLOORDATA_FILENAME);
 		if (ES2.Exists(CARDHANDDATA_FILENAME)) ES2.Delete(CARDHANDDATA_FILENAME);
+
+		if (inOnComplete != null) inOnComplete();
+	}
+
+	public static void SavePersistentData(DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		using (ES2Writer writer = ES2Writer.Create(PERSISTENTDATA_NUMGEMS_KEY))
+		{
+			writer.Write(_persistentData.NumGems, PERSISTENTDATA_NUMGEMS_KEY);
+
+			writer.Save();
+		}
+
+		if (inOnComplete != null) inOnComplete();
+	}
+
+	private static void LoadPersistentData(DTJob.OnCompleteCallback inOnComplete = null)
+	{
+		if (ES2.Exists(PERSISTENT_DATA_FILENAME))
+		{
+			ES2Data persistentData = ES2.LoadAll(PERSISTENT_DATA_FILENAME);
+
+			_persistentData = new PersistentData(
+				persistentData.Load<int>(PERSISTENTDATA_NUMGEMS_KEY));
+		}
+		else // If no have, create empty. Basically new player.
+		{
+			_persistentData = new PersistentData(
+				0);
+		}
 
 		if (inOnComplete != null) inOnComplete();
 	}

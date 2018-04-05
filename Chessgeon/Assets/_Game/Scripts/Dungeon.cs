@@ -152,7 +152,7 @@ public class Dungeon : MonoBehaviour
 		SaveDataLoader.GameData gameData = new SaveDataLoader.GameData(this);
 		SaveDataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
 		SaveDataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
-		SaveDataLoader.SaveData(gameData, floorData, cardHandData);
+		SaveDataLoader.SavePreviousRunData(gameData, floorData, cardHandData);
 	}
 
 	private void OnMorphyReachStairs()
