@@ -14,7 +14,7 @@ public class Menu : MonoBehaviour
 		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
 
 #if UNITY_EDITOR
-		if (!DataLoader.HasStartedLoadingData) DataLoader.TryLoadAllSaveData();
+		if (!DataLoader.HasStartedLoadingData) DataLoader.TryLoadData();
 #endif
 	}
 
@@ -42,7 +42,7 @@ public class Menu : MonoBehaviour
 
 	public void ContinueGame()
 	{
-		_dungeon.StartGameFromSavedData(DataLoader.SavedGameData, DataLoader.SavedFloorData, DataLoader.SavedCardHandData);
+		_dungeon.StartGameFromPrevRun(DataLoader.SavedPrevRunData, DataLoader.SavedFloorData, DataLoader.SavedCardHandData);
 		_menuCanvas.SetVisible(false);
 	}
 

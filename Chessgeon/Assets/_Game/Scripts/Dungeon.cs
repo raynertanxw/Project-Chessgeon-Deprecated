@@ -114,16 +114,16 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
-	public void StartGameFromSavedData(DataLoader.GameData inGameData, DataLoader.FloorData inFloorData, DataLoader.CardHandData inCardHandData)
+	public void StartGameFromPrevRun(DataLoader.PrevRunData inPrevRunData, DataLoader.FloorData inFloorData, DataLoader.CardHandData inCardHandData)
 	{
 		_enemyManager.ResetForNewGame();
 
-		_morphyController.ResetFromGameData(inGameData);
+		_morphyController.ResetFromPrevRunData(inPrevRunData);
 		_cardManager.ResetFromCardHandData(inCardHandData);
 
 		_floorNum = inFloorData.FloorNum;
 		_morphyHasReachedStairs = false;
-		_numCoins = inGameData.NumCoins;
+		_numCoins = inPrevRunData.NumCoins;
 		DungeonDisplay.UpdateCoinText(NumCoins);
 
 		_hasGameStarted = true;
@@ -149,10 +149,10 @@ public class Dungeon : MonoBehaviour
 
 	private void SaveGame()
 	{
-		DataLoader.GameData gameData = new DataLoader.GameData(this);
+		DataLoader.PrevRunData prevRunData = new DataLoader.PrevRunData(this);
 		DataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
 		DataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
-		DataLoader.SavePreviousRunData(gameData, floorData, cardHandData);
+		DataLoader.SavePreviousRunData(prevRunData, floorData, cardHandData);
 	}
 
 	private void OnMorphyReachStairs()

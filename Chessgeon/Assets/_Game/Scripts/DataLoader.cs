@@ -15,8 +15,8 @@ public static class DataLoader
 	public static Utils.GenericVoidDelegate OnAllDataLoaded = null;
 
 	// Data structs
-	private static GameData _gameData;
-	public static GameData SavedGameData { get { return _gameData; } }
+	private static PrevRunData _prevRunData;
+	public static PrevRunData SavedPrevRunData { get { return _prevRunData; } }
 	private static FloorData _floorData;
 	public static FloorData SavedFloorData { get { return _floorData; } }
 	private static CardHandData _cardHandData;
@@ -26,32 +26,32 @@ public static class DataLoader
 	public static PersistentData SavedPersistentData { get { return _persistentData; } }
 
 	// Data file names
-	private const string GAMEDATA_FILENAME = "gamedata.txt";
-	private const string FLOORDATA_FILENAME = "floordata.txt";
-	private const string CARDHANDDATA_FILENAME = "cardhanddata.txt";
+	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
+	private const string FLOOR_DATA_FILENAME = "FloorData.txt";
+	private const string CARD_HAND_DATA_FILENAME = "CardhandData.txt";
 	private const string PERSISTENT_DATA_FILENAME = "PersistentData.txt";
 	private const string GAME_DATA_JSON_FILENAME = "GameDataJson.txt";
 
 	// Keys
-	private const string GAMEDATA_HEALTH_KEY = "GAMEDATA_HEALTH";
-	private const string GAMEDATA_SHIELD_KEY = "GAMEDATA_SHIELD";
-	private const string GAMEDATA_NUMCOINS_KEY = "GAMEDATA_NUM_COINS";
+	private const string PREV_RUN_DATA_HEALTH_KEY = "PREV_RUN_DATA_HEALTH";
+	private const string PREV_RUN_DATA_SHIELD_KEY = "PREV_RUN_DATA_SHIELD";
+	private const string PREV_RUN_DATA_NUMCOINS_KEY = "PREV_RUN_DATA_NUM_COINS";
 
-	private const string FLOORDATA_FLOORNUM_KEY = "FLOORDATA_FLOORNUM";
-	private const string FLOORDATA_SIZE_KEY = "FLOORDATA_SIZE";
-	private const string FLOORDATA_STAIR_POS_KEY = "FLOORDATA_STAIR_POS";
-	private const string FLOORDATA_MORPHY_POS_KEY = "FLOORDATA_MORPHY_POS";
-	private const string FLOORDATA_ENEMY_POS_X_KEY = "FLOORDATA_ENEMY_POS_X";
-	private const string FLOORDATA_ENEMY_POS_Y_KEY = "FLOORDATA_ENEMY_POS_Y";
-	private const string FLOORDATA_ENEMY_MOVE_TYPE_KEY = "FLOORDATA_ENEMY_MOVE_TYPE";
-	private const string FLOORDATA_ENEMY_ELEMENT_KEY = "FLOORDATA_ENEMY_ELEMENT";
+	private const string FLOOR_DATA_FLOORNUM_KEY = "FLOOR_DATA_FLOORNUM";
+	private const string FLOOR_DATA_SIZE_KEY = "FLOOR_DATA_SIZE";
+	private const string FLOOR_DATA_STAIR_POS_KEY = "FLOOR_DATA_STAIR_POS";
+	private const string FLOOR_DATA_MORPHY_POS_KEY = "FLOOR_DATA_MORPHY_POS";
+	private const string FLOOR_DATA_ENEMY_POS_X_KEY = "FLOOR_DATA_ENEMY_POS_X";
+	private const string FLOOR_DATA_ENEMY_POS_Y_KEY = "FLOOR_DATA_ENEMY_POS_Y";
+	private const string FLOOR_DATA_ENEMY_MOVE_TYPE_KEY = "FLOOR_DATA_ENEMY_MOVE_TYPE";
+	private const string FLOOR_DATA_ENEMY_ELEMENT_KEY = "FLOOR_DATA_ENEMY_ELEMENT";
 
-	private const string CARDHANDDATA_CARD_TIER_KEY = "CARDHANDDATA_CARD_TIER";
-	private const string CARDHANDDATA_CARD_TYPE_KEY = "CARDHANDDATA_CARD_TYPE";
-	private const string CARDHANDDATA_IS_CLONED_KEY = "CARDHANDDATA_IS_CLONED";
-	private const string CARDHANDDATA_CARD_MOVE_TYPE_KEY = "CARDHANDDATA_CARD_MOVE_TYPE";
+	private const string CARD_HAND_DATA_CARD_TIER_KEY = "CARD_HAND_DATA_CARD_TIER";
+	private const string CARD_HAND_DATA_CARD_TYPE_KEY = "CARD_HAND_DATA_CARD_TYPE";
+	private const string CARD_HAND_DATA_IS_CLONED_KEY = "CARD_HAND_DATA_IS_CLONED";
+	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
 
-	private const string PERSISTENTDATA_NUMGEMS_KEY = "PERSISTENTDATA_NUMGEMS";
+	private const string PERSISTENT_DATA_NUM_GEMS_KEY = "PERSISTENT_DATA_NUM_GEMS";
 
 	public struct PersistentData
 	{
@@ -83,7 +83,7 @@ public static class DataLoader
 		}
 	}
 
-	public struct GameData
+	public struct PrevRunData
 	{
 		private int _health;
 		private int _shield;
@@ -94,14 +94,14 @@ public static class DataLoader
 		public int Shield { get { return _shield; } }
 		public int NumCoins { get { return _numCoins; } }
 
-		public GameData(Dungeon inDungeon)
+		public PrevRunData(Dungeon inDungeon)
 		{
 			_health = inDungeon.MorphyController.Health;
 			_shield = inDungeon.MorphyController.Shield;
 			_numCoins = inDungeon.NumCoins;
 		}
 
-		public GameData(int inHealth, int inShield, int inNumCoins)
+		public PrevRunData(int inHealth, int inShield, int inNumCoins)
 		{
 			_health = inHealth;
 			_shield = inShield;
@@ -178,11 +178,10 @@ public static class DataLoader
 		}
 	}
 
-	public static void TryLoadAllSaveData()
+	public static void TryLoadData()
 	{
 		if (!HasLoadedAllData && !HasStartedLoadingData)
 		{
-			Debug.Log("Started TryLoadGameData");
 			_hasStartedLoadingData = true;
 
 			DTJob loadPreviousRunDataJob = new DTJob(
@@ -214,7 +213,7 @@ public static class DataLoader
 				() =>
 				{
 					_hasLoadedAllData = true;
-					Debug.Log("ALL GAME DATA LOADED");
+					Debug.Log("ALL DATA LOADED");
 					if (OnAllDataLoaded != null) OnAllDataLoaded();
 				},
 				loadPreviousRunDataJob,
@@ -231,23 +230,23 @@ public static class DataLoader
 		}
 	}
 
-	public static void SavePreviousRunData(GameData inGameData, FloorData inFloorData, CardHandData inCardHandData)
+	public static void SavePreviousRunData(PrevRunData inPrevRunData, FloorData inFloorData, CardHandData inCardHandData)
 	{
-		using (ES2Writer writer = ES2Writer.Create(GAMEDATA_FILENAME))
+		using (ES2Writer writer = ES2Writer.Create(PREV_RUN_DATA_FILENAME))
 		{
-			writer.Write(inGameData.Health, GAMEDATA_HEALTH_KEY);
-			writer.Write(inGameData.Shield, GAMEDATA_SHIELD_KEY);
-			writer.Write(inGameData.NumCoins, GAMEDATA_NUMCOINS_KEY);
+			writer.Write(inPrevRunData.Health, PREV_RUN_DATA_HEALTH_KEY);
+			writer.Write(inPrevRunData.Shield, PREV_RUN_DATA_SHIELD_KEY);
+			writer.Write(inPrevRunData.NumCoins, PREV_RUN_DATA_NUMCOINS_KEY);
 
 			writer.Save();
 		}
 
-		using (ES2Writer writer = ES2Writer.Create(FLOORDATA_FILENAME))
+		using (ES2Writer writer = ES2Writer.Create(FLOOR_DATA_FILENAME))
 		{
-			writer.Write(inFloorData.FloorNum, FLOORDATA_FLOORNUM_KEY);
-			writer.Write(Utils.Vector2IntToIntArray(inFloorData.Size), FLOORDATA_SIZE_KEY);
-			writer.Write(Utils.Vector2IntToIntArray(inFloorData.StairPos), FLOORDATA_STAIR_POS_KEY);
-			writer.Write(Utils.Vector2IntToIntArray(inFloorData.MorphyPos), FLOORDATA_MORPHY_POS_KEY);
+			writer.Write(inFloorData.FloorNum, FLOOR_DATA_FLOORNUM_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inFloorData.Size), FLOOR_DATA_SIZE_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inFloorData.StairPos), FLOOR_DATA_STAIR_POS_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inFloorData.MorphyPos), FLOOR_DATA_MORPHY_POS_KEY);
 
 			int numEnemies = inFloorData.EnemyPos.Length;
 			int[] enemyPosX = new int[numEnemies];
@@ -257,16 +256,16 @@ public static class DataLoader
 				enemyPosX[iEnemy] = inFloorData.EnemyPos[iEnemy].x;
 				enemyPosY[iEnemy] = inFloorData.EnemyPos[iEnemy].y;
 			}
-			writer.Write(enemyPosX, FLOORDATA_ENEMY_POS_X_KEY);
-			writer.Write(enemyPosY, FLOORDATA_ENEMY_POS_Y_KEY);
+			writer.Write(enemyPosX, FLOOR_DATA_ENEMY_POS_X_KEY);
+			writer.Write(enemyPosY, FLOOR_DATA_ENEMY_POS_Y_KEY);
 
-			writer.Write(inFloorData.EnemyMoveType, FLOORDATA_ENEMY_MOVE_TYPE_KEY);
-			writer.Write(inFloorData.EnemyElement, FLOORDATA_ENEMY_ELEMENT_KEY);
+			writer.Write(inFloorData.EnemyMoveType, FLOOR_DATA_ENEMY_MOVE_TYPE_KEY);
+			writer.Write(inFloorData.EnemyElement, FLOOR_DATA_ENEMY_ELEMENT_KEY);
 
 			writer.Save();
 		}
 
-		using (ES2Writer writer = ES2Writer.Create(CARDHANDDATA_FILENAME))
+		using (ES2Writer writer = ES2Writer.Create(CARD_HAND_DATA_FILENAME))
 		{
 			int numCards = inCardHandData.CardDatas.Length;
 			eCardTier[] cardTier = new eCardTier[numCards];
@@ -283,10 +282,10 @@ public static class DataLoader
 				cardMoveType[iCard] = curCardData.cardMoveType;
 			}
 
-			writer.Write(cardTier, CARDHANDDATA_CARD_TIER_KEY);
-			writer.Write(cardType, CARDHANDDATA_CARD_TYPE_KEY);
-			writer.Write(isCloned, CARDHANDDATA_IS_CLONED_KEY);
-			writer.Write(cardMoveType, CARDHANDDATA_CARD_MOVE_TYPE_KEY);
+			writer.Write(cardTier, CARD_HAND_DATA_CARD_TIER_KEY);
+			writer.Write(cardType, CARD_HAND_DATA_CARD_TYPE_KEY);
+			writer.Write(isCloned, CARD_HAND_DATA_IS_CLONED_KEY);
+			writer.Write(cardMoveType, CARD_HAND_DATA_CARD_MOVE_TYPE_KEY);
 
 			writer.Save();
 		}
@@ -294,26 +293,26 @@ public static class DataLoader
 
 	private static void LoadPreviousRunData(DTJob.OnCompleteCallback inOnComplete)
 	{
-		if (ES2.Exists(GAMEDATA_FILENAME)
-			&& ES2.Exists(FLOORDATA_FILENAME)
-			&& ES2.Exists(CARDHANDDATA_FILENAME))
+		if (ES2.Exists(PREV_RUN_DATA_FILENAME)
+			&& ES2.Exists(FLOOR_DATA_FILENAME)
+			&& ES2.Exists(CARD_HAND_DATA_FILENAME))
 		{
-			ES2Data gameData = ES2.LoadAll(GAMEDATA_FILENAME);
-			ES2Data floorData = ES2.LoadAll(FLOORDATA_FILENAME);
-			ES2Data cardHandData = ES2.LoadAll(CARDHANDDATA_FILENAME);
+			ES2Data prevRunData = ES2.LoadAll(PREV_RUN_DATA_FILENAME);
+			ES2Data floorData = ES2.LoadAll(FLOOR_DATA_FILENAME);
+			ES2Data cardHandData = ES2.LoadAll(CARD_HAND_DATA_FILENAME);
 
-			// GAMEDATA
-			_gameData = new GameData(
-				gameData.Load<int>(GAMEDATA_HEALTH_KEY),
-				gameData.Load<int>(GAMEDATA_SHIELD_KEY),
-				gameData.Load<int>(GAMEDATA_NUMCOINS_KEY));
+			// PREV_RUN_DATA
+			_prevRunData = new PrevRunData(
+				prevRunData.Load<int>(PREV_RUN_DATA_HEALTH_KEY),
+				prevRunData.Load<int>(PREV_RUN_DATA_SHIELD_KEY),
+				prevRunData.Load<int>(PREV_RUN_DATA_NUMCOINS_KEY));
 
-			// FLOORDATA
-			Vector2Int size = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_SIZE_KEY));
-			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_STAIR_POS_KEY));
-			Vector2Int morphyPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOORDATA_MORPHY_POS_KEY));
-			int[] enemyPosX = floorData.LoadArray<int>(FLOORDATA_ENEMY_POS_X_KEY);
-			int[] enemyPosY = floorData.LoadArray<int>(FLOORDATA_ENEMY_POS_Y_KEY);
+			// FLOOR_DATA
+			Vector2Int size = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_SIZE_KEY));
+			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_STAIR_POS_KEY));
+			Vector2Int morphyPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_MORPHY_POS_KEY));
+			int[] enemyPosX = floorData.LoadArray<int>(FLOOR_DATA_ENEMY_POS_X_KEY);
+			int[] enemyPosY = floorData.LoadArray<int>(FLOOR_DATA_ENEMY_POS_Y_KEY);
 			int numEnemies = enemyPosX.Length;
 			Vector2Int[] enemyPos = new Vector2Int[numEnemies];
 			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
@@ -321,19 +320,19 @@ public static class DataLoader
 				enemyPos[iEnemy] = new Vector2Int(enemyPosX[iEnemy], enemyPosY[iEnemy]);
 			}
 			_floorData = new FloorData(
-				floorData.Load<int>(FLOORDATA_FLOORNUM_KEY),
+				floorData.Load<int>(FLOOR_DATA_FLOORNUM_KEY),
 				size,
 				stairPos,
 				morphyPos,
 				enemyPos,
-				floorData.LoadArray<eMoveType>(FLOORDATA_ENEMY_MOVE_TYPE_KEY),
-				floorData.LoadArray<Enemy.eElement>(FLOORDATA_ENEMY_ELEMENT_KEY));
+				floorData.LoadArray<eMoveType>(FLOOR_DATA_ENEMY_MOVE_TYPE_KEY),
+				floorData.LoadArray<Enemy.eElement>(FLOOR_DATA_ENEMY_ELEMENT_KEY));
 
-			// CARDHANDDATA
-			eCardTier[] cardTier = cardHandData.LoadArray<eCardTier>(CARDHANDDATA_CARD_TIER_KEY);
-			eCardType[] cardType = cardHandData.LoadArray<eCardType>(CARDHANDDATA_CARD_TYPE_KEY);
-			bool[] isCloned = cardHandData.LoadArray<bool>(CARDHANDDATA_IS_CLONED_KEY);
-			eMoveType[] cardMoveType = cardHandData.LoadArray<eMoveType>(CARDHANDDATA_CARD_MOVE_TYPE_KEY);
+			// CARD_HAND_DATA
+			eCardTier[] cardTier = cardHandData.LoadArray<eCardTier>(CARD_HAND_DATA_CARD_TIER_KEY);
+			eCardType[] cardType = cardHandData.LoadArray<eCardType>(CARD_HAND_DATA_CARD_TYPE_KEY);
+			bool[] isCloned = cardHandData.LoadArray<bool>(CARD_HAND_DATA_IS_CLONED_KEY);
+			eMoveType[] cardMoveType = cardHandData.LoadArray<eMoveType>(CARD_HAND_DATA_CARD_MOVE_TYPE_KEY);
 
 			int numCards = cardTier.Length;
 			CardData[] cardDatas = new CardData[numCards];
@@ -361,18 +360,18 @@ public static class DataLoader
 
 	public static void DeletePreviousRunData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		if (ES2.Exists(GAMEDATA_FILENAME)) ES2.Delete(GAMEDATA_FILENAME);
-		if (ES2.Exists(FLOORDATA_FILENAME)) ES2.Delete(FLOORDATA_FILENAME);
-		if (ES2.Exists(CARDHANDDATA_FILENAME)) ES2.Delete(CARDHANDDATA_FILENAME);
+		if (ES2.Exists(PREV_RUN_DATA_FILENAME)) ES2.Delete(PREV_RUN_DATA_FILENAME);
+		if (ES2.Exists(FLOOR_DATA_FILENAME)) ES2.Delete(FLOOR_DATA_FILENAME);
+		if (ES2.Exists(CARD_HAND_DATA_FILENAME)) ES2.Delete(CARD_HAND_DATA_FILENAME);
 
 		if (inOnComplete != null) inOnComplete();
 	}
 
 	public static void SavePersistentData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		using (ES2Writer writer = ES2Writer.Create(PERSISTENTDATA_NUMGEMS_KEY))
+		using (ES2Writer writer = ES2Writer.Create(PERSISTENT_DATA_NUM_GEMS_KEY))
 		{
-			writer.Write(_persistentData.NumGems, PERSISTENTDATA_NUMGEMS_KEY);
+			writer.Write(_persistentData.NumGems, PERSISTENT_DATA_NUM_GEMS_KEY);
 
 			writer.Save();
 		}
@@ -387,7 +386,7 @@ public static class DataLoader
 			ES2Data persistentData = ES2.LoadAll(PERSISTENT_DATA_FILENAME);
 
 			_persistentData = new PersistentData(
-				persistentData.Load<int>(PERSISTENTDATA_NUMGEMS_KEY));
+				persistentData.Load<int>(PERSISTENT_DATA_NUM_GEMS_KEY));
 		}
 		else // If no have, create empty. Basically new player.
 		{
@@ -426,6 +425,8 @@ public static class DataLoader
 				JSONNode coinDropUpgradeNode = upgradesNode[UPGRADES_COIN_DROP_KEY];
 				JSONNode shopPriceUpgradeNode = upgradesNode[UPGRADES_SHOP_PRICE_KEY];
 				JSONNode cardTierUpgradeNode = upgradesNode[UPGRADES_CARD_TIER_KEY];
+
+
 				
 				inOnComplete();
 			}
@@ -436,7 +437,6 @@ public static class DataLoader
 	// DEBUG
 	private static IEnumerator ArtificialTimeDelay(DTJob.OnCompleteCallback inOnComplete)
 	{
-		Debug.Log("Started ArtificialTimeDelayJob");
 		float timer = 0.0f;
 		while (true)
 		{
