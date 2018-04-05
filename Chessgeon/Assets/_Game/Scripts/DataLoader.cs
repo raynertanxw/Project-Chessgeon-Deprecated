@@ -30,6 +30,7 @@ public static class DataLoader
 	private const string FLOORDATA_FILENAME = "floordata.txt";
 	private const string CARDHANDDATA_FILENAME = "cardhanddata.txt";
 	private const string PERSISTENT_DATA_FILENAME = "PersistentData.txt";
+	private const string GAME_DATA_JSON_FILENAME = "GameDataJson.txt";
 
 	// Keys
 	private const string GAMEDATA_HEALTH_KEY = "GAMEDATA_HEALTH";
@@ -399,17 +400,37 @@ public static class DataLoader
 
 	private static IEnumerator LoadJSON(DTJob.OnCompleteCallback inOnComplete)
 	{
-		// TODO: Implement this when I actually get the proper CDN up and running.
-
-		Debug.Log("Started LoadJSON job");
-		using (WWW www = new WWW("http://www.rainblastgames.com"))
+		// TODO: Caching system to save the JSON.
+		const string gameDataJsonURL = "https://storage.googleapis.com/rainblastgames-chessgeon-cdn/CDN/GameDataJson.txt";
+		using (WWW www = new WWW(gameDataJsonURL))
 		{
 			yield return www;
-			Debug.Log(www.text);
-			inOnComplete();
+
+			if (!string.IsNullOrEmpty(www.error))
+			{
+				Debug.LogError(www.error);
+			}
+			else
+			{
+				const string UPGRADES_KEY = "upgrades";
+				const string UPGRADES_NUM_LEVELS_KEY = "num levels";
+				const string UPGRADES_COST_KEY = "cost";
+				const string UPGRADES_HEALTH_KEY = "health";
+				const string UPGRADES_COIN_DROP_KEY = "coin drop";
+				const string UPGRADES_SHOP_PRICE_KEY = "shop price";
+				const string UPGRADES_CARD_TIER_KEY = "card tier";
+				JSONNode gameDataRootNode = JSON.Parse(www.text);
+				JSONNode upgradesNode = gameDataRootNode[UPGRADES_KEY];
+
+				JSONNode healthUpgradeNode = upgradesNode[UPGRADES_HEALTH_KEY];
+				JSONNode coinDropUpgradeNode = upgradesNode[UPGRADES_COIN_DROP_KEY];
+				JSONNode shopPriceUpgradeNode = upgradesNode[UPGRADES_SHOP_PRICE_KEY];
+				JSONNode cardTierUpgradeNode = upgradesNode[UPGRADES_CARD_TIER_KEY];
+				
+				inOnComplete();
+			}
 		}
 	}
-
 
 	// TODO: Remove this debug.
 	// DEBUG

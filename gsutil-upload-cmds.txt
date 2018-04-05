@@ -1,0 +1,8 @@
+To copy whole CDN folder into rainblastgames-chessgeon-cdn:
+gsutil cp -r D:\Work\GIT_Repositories\Project-Chessgeon\CDN gs://rainblastgames-chessgeon-cdn
+
+Grant anyone on internet READ access by default in bucket:
+gsutil defacl ch -u AllUsers:R gs://rainblastgames-chessgeon-cdn
+
+Make all objects currently in bucket READ access to anyone on internet:
+gsutil -m acl set -R -a public-read gs://rainblastgames-chessgeon-cdn
