@@ -32,7 +32,19 @@ public class MenuCanvas : MonoBehaviour
 
 	[Header("Upgrades Panel")]
 	[SerializeField] private GameObject _upgradesPanelObject = null;
-
+	[SerializeField] private Button _upgradesPanelCloseBtn = null;
+	[SerializeField] private Text _healthUpgradeStateText = null;
+	[SerializeField] private Text _coinDropUpgradeStateText = null;
+	[SerializeField] private Text _shopPriceUpgradeStateText = null;
+	[SerializeField] private Text _cardTierUpgradeStateText = null;
+	[SerializeField] private Text _healthUpgradeCostText = null;
+	[SerializeField] private Text _coinDropUpgradeCostText = null;
+	[SerializeField] private Text _shopPriceUpgradeCostText = null;
+	[SerializeField] private Text _cardTierUpgradeCostText = null;
+	[SerializeField] private Button _healthUpgradeBtn = null;
+	[SerializeField] private Button _coinDropUpgradeBtn = null;
+	[SerializeField] private Button _shopPriceUpgradeBtn = null;
+	[SerializeField] private Button _cardTierUpgradeBtn = null;
 
 	private bool _isVisible = true;
 
@@ -61,17 +73,33 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_confirmationCancelBtn != null, "_confirmationCancelBtn is not assigned.");
 
 		Debug.Assert(_upgradesPanelObject != null, "_upgradesPanelObject is not assigned.");
+		Debug.Assert(_upgradesPanelCloseBtn != null, "_upgradesPanelCloseBtn is not assigned.");
+		Debug.Assert(_healthUpgradeStateText != null, "_healthUpgradeStateText is not assigned.");
+		Debug.Assert(_coinDropUpgradeStateText != null, "_coinDropUpgradeStateText is not assigned.");
+		Debug.Assert(_shopPriceUpgradeStateText != null, "_shopPriceUpgradeStateText is not assigned.");
+		Debug.Assert(_cardTierUpgradeStateText != null, "_cardTierUpgradeStateText is not assigned.");
+		Debug.Assert(_healthUpgradeCostText != null, "_healthUpgradeCostText is not assigned.");
+		Debug.Assert(_coinDropUpgradeCostText != null, "_coinDropUpgradeCostText is not assigned.");
+		Debug.Assert(_shopPriceUpgradeCostText != null, "_shopPriceUpgradeCosttext is not assigned.");
+		Debug.Assert(_cardTierUpgradeCostText != null, "_cardTierUpgradeCostText is not assigned.");
+		Debug.Assert(_healthUpgradeBtn != null, "_healthUpgradeBtn is not assigned.");
+		Debug.Assert(_coinDropUpgradeBtn != null, "_coinDropUpgradeBtn is not assigned.");
+		Debug.Assert(_shopPriceUpgradeBtn != null, "_shopPriceUpgradeBtn is not assigned.");
+		Debug.Assert(_cardTierUpgradeBtn != null, "_cardTierUpgradeBtn is not assigned.");
 
 		gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
 		_continueBtn.onClick.AddListener(_menu.ContinueGame);
 		_newGameBtn.onClick.AddListener(_menu.TryStartNewGame);
-		_upgradesBtn.onClick.AddListener(_menu.UpgradesMenu);
+		_upgradesBtn.onClick.AddListener(OpenUpgradesPanel);
+
+		_upgradesPanelCloseBtn.onClick.AddListener(DismissUpgradesPanel);
 
 		SaveDataLoader.OnAllDataLoaded += CheckBtnAvailability;
 		SaveDataLoader.OnAllDataLoaded += UpdateGemtext;
 
 		DismissConfirmationPanel();
+		DismissUpgradesPanel();
 	}
 
 	public void SetVisible(bool inIsVisible)
@@ -113,8 +141,19 @@ public class MenuCanvas : MonoBehaviour
 		_gemText.text = ChessgeonUtils.FormatGemString(SaveDataLoader.SavedPersistentData.NumGems);
 	}
 
+	private void OpenUpgradesPanel()
+	{
+		// TODO: read from save data and update all the values.
+		_upgradesPanelObject.SetActive(true);
+	}
+
 	private void DismissConfirmationPanel()
 	{
 		_confirmationPanelObject.SetActive(false);
+	}
+
+	private void DismissUpgradesPanel()
+	{
+		_upgradesPanelObject.SetActive(false);
 	}
 }

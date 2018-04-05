@@ -46,12 +46,6 @@ public class Menu : MonoBehaviour
 		_menuCanvas.SetVisible(false);
 	}
 
-	public void UpgradesMenu()
-	{
-		// TODO: Implement this.
-		Debug.LogWarning("NOT YET IMPLEMENTED.");
-	}
-
 	public void ReturnToMainMenu()
 	{
 		_menuCanvas.SetVisible(true);
