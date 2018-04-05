@@ -15,6 +15,10 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Button _continueBtn = null;
 	[SerializeField] private Button _newGameBtn = null;
 	[SerializeField] private Button _upgradesBtn = null;
+	[SerializeField] private Button _leaderboardBtn = null;
+	[SerializeField] private Button _achievementBtn = null;
+	[SerializeField] private Button _settingsBtn = null;
+	[SerializeField] private Button _infoBtn = null;
 	[SerializeField] private Text _gemText = null;
 
 	[Header("Confirmation Panel")]
@@ -39,6 +43,10 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
 		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
 		Debug.Assert(_upgradesBtn != null, "_upgradesBtn is not assigned.");
+		Debug.Assert(_leaderboardBtn != null, "_leaderboardBtn is not assigned.");
+		Debug.Assert(_achievementBtn != null, "_achievementBtn is not assigned.");
+		Debug.Assert(_settingsBtn != null, "_settingsBtn is not assigned.");
+		Debug.Assert(_infoBtn != null, "_infoBtn is not assigned.");
 		Debug.Assert(_gemText != null, "_gemText is not assigned.");
 
 		Debug.Assert(_confirmationPanelObject != null, "_confirmationPanelObject is not assigned.");
