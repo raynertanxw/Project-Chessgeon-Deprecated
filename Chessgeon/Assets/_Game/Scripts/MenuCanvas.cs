@@ -49,6 +49,8 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_confirmationConfirmBtn != null, "_confirmationConfirmBtn is not assigned.");
 		Debug.Assert(_confirmationCancelBtn != null, "_confirmationCancelBtn is not assigned.");
 
+		gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
+
 		_continueBtn.onClick.AddListener(_menu.ContinueGame);
 		_newGameBtn.onClick.AddListener(_menu.TryStartNewGame);
 		_upgradesBtn.onClick.AddListener(_menu.UpgradesMenu);
