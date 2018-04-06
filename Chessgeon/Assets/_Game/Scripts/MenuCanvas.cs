@@ -156,12 +156,12 @@ public class MenuCanvas : MonoBehaviour
 		_confirmationPanelObject.SetActive(true);
 	}
 
-	private void CheckBtnAvailability()
+	public void CheckBtnAvailability()
 	{
 		_continueBtnObject.SetActive(DataLoader.HasPreviousRunData);
 	}
 
-	private void UpdateGemText()
+	public void UpdateGemText()
 	{
 		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPersistentData.NumGems);
 	}

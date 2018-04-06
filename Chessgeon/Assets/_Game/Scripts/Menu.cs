@@ -48,6 +48,8 @@ public class Menu : MonoBehaviour
 
 	public void ReturnToMainMenu()
 	{
+		_menuCanvas.CheckBtnAvailability();
+		_menuCanvas.UpdateGemText();
 		_menuCanvas.SetVisible(true);
 	}
 }

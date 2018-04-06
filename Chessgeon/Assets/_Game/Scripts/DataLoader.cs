@@ -365,6 +365,7 @@ public static class DataLoader
 		_prevRunData = inPrevRunData;
 		_floorData = inFloorData;
 		_cardHandData = inCardHandData;
+		_hasPreviousRunData = true;
 	}
 
 	private static void LoadPreviousRunData(DTJob.OnCompleteCallback inOnComplete)
@@ -439,6 +440,8 @@ public static class DataLoader
 		if (ES2.Exists(PREV_RUN_DATA_FILENAME)) ES2.Delete(PREV_RUN_DATA_FILENAME);
 		if (ES2.Exists(FLOOR_DATA_FILENAME)) ES2.Delete(FLOOR_DATA_FILENAME);
 		if (ES2.Exists(CARD_HAND_DATA_FILENAME)) ES2.Delete(CARD_HAND_DATA_FILENAME);
+
+		_hasPreviousRunData = false;
 
 		if (inOnComplete != null) inOnComplete();
 	}
