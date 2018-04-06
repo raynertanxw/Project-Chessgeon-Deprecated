@@ -124,6 +124,7 @@ public class DungeonPauseCanvas : MonoBehaviour
 		else
 		{
 			Debug.LogWarning("Pause btn _isEnabled is already " + inIsEnabled);
+			if (inOnComplete != null) inOnComplete();
 		}
 	}
 }
