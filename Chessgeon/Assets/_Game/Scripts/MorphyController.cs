@@ -37,6 +37,8 @@ public class MorphyController : MonoBehaviour
 		_morphy.Initialise(this);
 
 		_morphy.Hide();
+
+		OnMorphyReachStairs += () => { DungeonPauseCanvas.SetEnablePauseBtn(false); };
 	}
 
 	public void ResetForNewGame()
@@ -297,5 +299,7 @@ public class MorphyController : MonoBehaviour
 	{
 		int newShield = Mathf.Min(_shield + inShield, MAX_SHIELD);
 		SetShield(newShield);
+
+		if (newShield == MAX_SHIELD) DungeonPopup.PopText("Shields at MAX!");
 	}
 }

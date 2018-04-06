@@ -86,6 +86,11 @@ public class DungeonPauseCanvas : MonoBehaviour
 		SetEnablePauseBtn(false, null, false);
 	}
 
+	public static void SetInteractablePauseBtn(bool inIsInteractable)
+	{
+		_instance._pauseBtn.interactable = inIsInteractable;
+	}
+
 	public static void SetEnablePauseBtn(bool inIsEnabled, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
 	{
 		if (inIsEnabled != _instance._isEnabled)

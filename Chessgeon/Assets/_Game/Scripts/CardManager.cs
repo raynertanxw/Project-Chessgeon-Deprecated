@@ -119,7 +119,9 @@ public class CardManager : MonoBehaviour
 
 	public void ToggleControlBlocker(bool inBlocked)
 	{
+		Debug.Log("BLOCKED: " + inBlocked);
 		_controlBlocker.raycastTarget = inBlocked;
+		DungeonPauseCanvas.SetInteractablePauseBtn(!inBlocked);
 	}
 
 	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
