@@ -106,18 +106,30 @@ public class DungeonCamera : MonoBehaviour
 		_camMaxZ = _dungeon.CurrentFloor.Size.y - 5.5f;
 	}
 
-	public static void FocusCameraToTile(Vector2Int inPos, float inDuration, DTJob.OnCompleteCallback inOnComplete = null) { FocusCameraToTile(inPos.x, inPos.y, inDuration, inOnComplete); }
-	public static void FocusCameraToTile(int inX, int inY, float inDuration, DTJob.OnCompleteCallback inOnComplete = null)
+	public static void FocusCameraToTile(Vector2Int inPos, float inDuration, DTJob.OnCompleteCallback inOnComplete = null, bool inIsCardDrawerOpen = false) { FocusCameraToTile(inPos.x, inPos.y, inDuration, inOnComplete, inIsCardDrawerOpen); }
+	public static void FocusCameraToTile(int inX, int inY, float inDuration, DTJob.OnCompleteCallback inOnComplete = null, bool inIsCardDrawerOpen = false)
 	{
 		// Note: Assumes that the y and x euler degrees are acute angles.
 		Vector3 tileTransformPos = _instance._dungeon.TileManager.GetTileTransformPosition(inX, inY);
 		float hyp = (_instance.transform.position.y - tileTransformPos.y) / Mathf.Tan(_instance.transform.eulerAngles.x * Mathf.Deg2Rad);
-		float diffX = hyp * Mathf.Sin(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
-		float diffZ = hyp * Mathf.Cos(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
+		float sinY = Mathf.Sin(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
+		float cosY = Mathf.Cos(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
+		float diffX = hyp * sinY;
+		float diffZ = hyp * cosY;
 		Vector3 targetPos = new Vector3(
 			tileTransformPos.x - diffX,
 			_instance.transform.position.y,
 			tileTransformPos.z - diffZ);
+		if (inIsCardDrawerOpen)
+		{
+			const float offsetHyp = 2.0f;
+			Vector3 cardDrawerOffset = new Vector3(
+				-offsetHyp * sinY,
+				0.0f,
+				-offsetHyp * cosY
+				);
+			targetPos += cardDrawerOffset;
+		}
 		targetPos = _instance.RestrictToCameraBounds(targetPos);
 
 		MoveToAction moveToFocus = new MoveToAction(_instance.transform, targetPos, inDuration, Utils.CurveSmoothStep);

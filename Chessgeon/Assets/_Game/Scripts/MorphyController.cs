@@ -121,7 +121,10 @@ public class MorphyController : MonoBehaviour
 		Utils.GenericVoidDelegate onFinishMove;
 		if (_numMovesLeft > 0)
 		{
-			onFinishMove = () => { ShowPossibleMoves(); };
+			onFinishMove = () =>
+			{
+				ShowPossibleMoves();
+			};
 		}
 		else
 		{

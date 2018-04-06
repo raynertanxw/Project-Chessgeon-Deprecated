@@ -390,7 +390,7 @@ public class CardManager : MonoBehaviour
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 					_dungeon.MorphyController.MorphTo(moveType, numMoves);
-					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
+					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f, null, true);
 					break;
 				}
 				case eCardType.Clone:
@@ -482,7 +482,7 @@ public class CardManager : MonoBehaviour
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 					_dungeon.MorphyController.MorphTo(cardData.cardMoveType, numMoves);
-					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f);
+					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f, null, true);
 					break;
 				}
 				default:

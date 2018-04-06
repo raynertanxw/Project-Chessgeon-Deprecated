@@ -365,10 +365,15 @@ public class Dungeon : MonoBehaviour
 				},
 					enableCardDrawerJob);
 
-				DTJobList startPlayerPhase = new DTJobList(() => { _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); }, turnDrawJob);
-				startPlayerPhase.ExecuteAllJobs();
+				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
+				{
+					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete, true);
+				}, playPhaseAnimJob);
 
-				DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f);
+				DTJobList startPlayerPhase = new DTJobList(() =>
+				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); },
+				turnDrawJob, focusOnPlayerJob);
+				startPlayerPhase.ExecuteAllJobs();
 			}
 
 			public override void ExitState()
