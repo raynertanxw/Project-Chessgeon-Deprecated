@@ -360,6 +360,11 @@ public static class DataLoader
 
 			writer.Save();
 		}
+
+		// NOTE: Updates the currently loaded data.
+		_prevRunData = inPrevRunData;
+		_floorData = inFloorData;
+		_cardHandData = inCardHandData;
 	}
 
 	private static void LoadPreviousRunData(DTJob.OnCompleteCallback inOnComplete)

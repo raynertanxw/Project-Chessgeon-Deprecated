@@ -98,6 +98,7 @@ public class Dungeon : MonoBehaviour
 	public void ResetAndStartGame()
 	{
 		// TODO: Reset all of the UI?
+		DungeonCardDrawer.EnableCardDrawer(false, false);
 		_morphyController.ResetForNewGame();
 		_enemyManager.ResetForNewGame();
 		_cardManager.ResetForNewGame();
@@ -116,6 +117,7 @@ public class Dungeon : MonoBehaviour
 
 	public void StartGameFromPrevRun(DataLoader.PrevRunData inPrevRunData, DataLoader.FloorData inFloorData, DataLoader.CardHandData inCardHandData)
 	{
+		DungeonCardDrawer.EnableCardDrawer(false, false);
 		_enemyManager.ResetForNewGame();
 
 		_morphyController.ResetFromPrevRunData(inPrevRunData);
@@ -147,7 +149,7 @@ public class Dungeon : MonoBehaviour
 		// TODO: Save scores and stuff delete save data cause there is no more game to continue.
 	}
 
-	private void SaveGame()
+	public void SaveGame()
 	{
 		DataLoader.PrevRunData prevRunData = new DataLoader.PrevRunData(this);
 		DataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
@@ -365,6 +367,11 @@ public class Dungeon : MonoBehaviour
 				},
 					enableCardDrawerJob);
 
+				DTJob enablePauseBtn = new DTJob((OnJobComplete) =>
+					{
+						DungeonPauseCanvas.SetEnablePauseBtn(true, OnJobComplete);
+					}, turnDrawJob);
+
 				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
 				{
 					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete, true);
@@ -372,7 +379,7 @@ public class Dungeon : MonoBehaviour
 
 				DTJobList startPlayerPhase = new DTJobList(() =>
 				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); },
-				turnDrawJob, focusOnPlayerJob);
+				turnDrawJob, focusOnPlayerJob, enablePauseBtn);
 				startPlayerPhase.ExecuteAllJobs();
 			}
 

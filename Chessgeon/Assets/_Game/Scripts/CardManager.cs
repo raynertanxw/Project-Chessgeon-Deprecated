@@ -7,6 +7,7 @@ using DaburuTools;
 public class CardManager : MonoBehaviour
 {
 	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private Image _blockingImage = null;
 	[SerializeField] private Image _controlBlocker = null;
 
 	[Header("Card Texture")]
@@ -29,6 +30,7 @@ public class CardManager : MonoBehaviour
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 		Debug.Assert(_cardTextures.Length == (3 * 5) + (3 * 5), "There is a mismatch in number of textures and number of cards.");
+		Debug.Assert(_blockingImage != null, "_blockingImage is not assigned.");
 		Debug.Assert(_controlBlocker != null, "_controlBlocker is not assigned.");
 
 		_cards = new Card[MAX_CARDS];
@@ -38,6 +40,11 @@ public class CardManager : MonoBehaviour
 			_cards[iCard].SetCardIndex(iCard);
 			_cards[iCard].OnCardExecute += TryExecuteAndDiscardCard;
 		}
+
+		DungeonPauseCanvas.OnIsPausedChanged += () =>
+		{
+			_blockingImage.raycastTarget = !DungeonPauseCanvas.IsPaused;
+		};
 
 		_isFirstDraw = true;
 		_numCardsInHand = 0;

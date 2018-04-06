@@ -109,45 +109,54 @@ public class Card : MonoBehaviour
 
 	public void EventTriggerOnPointerDown(BaseEventData data)
 	{
-		_isDragging = true;
-		_cardRectTransform.localPosition += Vector3.forward * -HOLDING_CARD_Z_OFFSET;
+		if (!DungeonPauseCanvas.IsPaused)
+		{
+			_isDragging = true;
+			_cardRectTransform.localPosition += Vector3.forward * -HOLDING_CARD_Z_OFFSET;
 
-		_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
-		_desiredCardLocalPos = _cardRectTransform.localPosition;
-		_tiltIntertia = Vector2.zero;
-		_prevFrameLocalPos = _cardRectTransform.localPosition;
-		_lerpSpeed = DRAGGING_LERP_SPEED;
+			_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
+			_desiredCardLocalPos = _cardRectTransform.localPosition;
+			_tiltIntertia = Vector2.zero;
+			_prevFrameLocalPos = _cardRectTransform.localPosition;
+			_lerpSpeed = DRAGGING_LERP_SPEED;
+		}
 	}
 
 	public void EventTriggerOnPointerUp(BaseEventData data)
 	{
-		_isDragging = false;
-		Vector3 originZ = _cardRectTransform.localPosition;
-		originZ.z = _originZ;
-		_cardRectTransform.localPosition = originZ;
-
-		_desiredCardLocalPos = _originLocalPos;
-		_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
-
-		PointerEventData ptrEventData = (PointerEventData)data;
-		if (ptrEventData.position.y > Screen.height / 2.0f // If released in top half of screen.
-			&& !_isAnimatingCardExecute) // NOTE: Prevents double execution from clicking while execute anim is running.
+		if (!DungeonPauseCanvas.IsPaused)
 		{
-			if (OnCardExecute != null) OnCardExecute(_cardIndex);
+			_isDragging = false;
+			Vector3 originZ = _cardRectTransform.localPosition;
+			originZ.z = _originZ;
+			_cardRectTransform.localPosition = originZ;
+
+			_desiredCardLocalPos = _originLocalPos;
+			_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
+
+			PointerEventData ptrEventData = (PointerEventData)data;
+			if (ptrEventData.position.y > Screen.height / 2.0f // If released in top half of screen.
+				&& !_isAnimatingCardExecute) // NOTE: Prevents double execution from clicking while execute anim is running.
+			{
+				if (OnCardExecute != null) OnCardExecute(_cardIndex);
+			}
 		}
 	}
 
 	public void EventTriggerOnDrag(BaseEventData data)
 	{
-		PointerEventData ptrEventData = (PointerEventData)data;
-		_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
-		_desiredCardWorldPos.z = _cardRectTransform.position.z;
+		if (!DungeonPauseCanvas.IsPaused)
+		{
+			PointerEventData ptrEventData = (PointerEventData)data;
+			_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
+			_desiredCardWorldPos.z = _cardRectTransform.position.z;
 
-		Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
-		tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
-		_tiltIntertia += tiltIntertiaDelta;
-		_tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
-		_prevFrameLocalPos = _cardRectTransform.localPosition;
+			Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
+			tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
+			_tiltIntertia += tiltIntertiaDelta;
+			_tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
+			_prevFrameLocalPos = _cardRectTransform.localPosition;
+		}
 	}
 
 	public void SetCard(eCardTier inCardTier, eCardType inCardType, bool inIsCloned = false, eMoveType inMoveType = eMoveType.Pawn)

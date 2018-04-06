@@ -95,6 +95,7 @@ public class DungeonCardDrawer : MonoBehaviour
 		}
 		else
 		{
+			DungeonPauseCanvas.SetEnablePauseBtn(false);
 			OnPlayerEndTurn.Invoke();
 		}
 	}
