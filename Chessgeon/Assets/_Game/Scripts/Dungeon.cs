@@ -367,11 +367,6 @@ public class Dungeon : MonoBehaviour
 				},
 					enableCardDrawerJob);
 
-				DTJob enablePauseBtn = new DTJob((OnJobComplete) =>
-					{
-						DungeonPauseCanvas.SetEnablePauseBtn(true, OnJobComplete);
-					}, turnDrawJob);
-
 				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
 				{
 					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete, true);
@@ -379,7 +374,7 @@ public class Dungeon : MonoBehaviour
 
 				DTJobList startPlayerPhase = new DTJobList(() =>
 				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); },
-				turnDrawJob, focusOnPlayerJob, enablePauseBtn);
+				turnDrawJob, focusOnPlayerJob);
 				startPlayerPhase.ExecuteAllJobs();
 			}
 

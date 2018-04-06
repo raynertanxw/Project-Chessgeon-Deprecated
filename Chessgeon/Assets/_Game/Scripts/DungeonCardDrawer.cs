@@ -136,6 +136,7 @@ public class DungeonCardDrawer : MonoBehaviour
 		{
 			_instance._cardDrawerAnimPlaying = false;
 			if (inOnComplete != null) inOnComplete();
+			DungeonPauseCanvas.SetEnablePauseBtn(inIsEnabled, null, inIsAnimated);
 
 			if (inIsEnabled)
 			{
