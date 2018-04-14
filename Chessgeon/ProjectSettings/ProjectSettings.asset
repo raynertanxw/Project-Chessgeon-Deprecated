@@ -54,7 +54,7 @@ PlayerSettings:
   tizenShowActivityIndicatorOnLoading: -1
   iosAppInBackgroundBehavior: 0
   displayResolutionDialog: 1
-  iosAllowHTTPDownload: 1
+  iosAllowHTTPDownload: 0
   allowedAutorotateToPortrait: 1
   allowedAutorotateToPortraitUpsideDown: 1
   allowedAutorotateToLandscapeRight: 1
@@ -149,7 +149,9 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: com.tanxuewenrayner.Chessgeon
-  buildNumber: {}
+    iOS: com.tanxuewenrayner.Chessgeon
+  buildNumber:
+    iOS: 1
   AndroidBundleVersionCode: 9000
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
@@ -220,7 +222,7 @@ PlayerSettings:
   appleDeveloperTeamID: 
   iOSManualSigningProvisioningProfileID: 
   tvOSManualSigningProvisioningProfileID: 
-  appleEnableAutomaticSigning: 0
+  appleEnableAutomaticSigning: 1
   AndroidTargetDevice: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
@@ -517,6 +519,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
+    4: CHESSGEON_DEBUG
     7: CHESSGEON_DEBUG
   platformArchitecture: {}
   scriptingBackend: {}
