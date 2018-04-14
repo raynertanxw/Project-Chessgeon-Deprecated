@@ -273,13 +273,6 @@ public static class DataLoader
 					CoroutineUtility.StartCoroutineImmediate(LoadJSON(OnComplete));
 				});
 
-			// DEBUG job
-			DTJob artificialTimeDelayJob = new DTJob(
-				(OnComplete) =>
-				{
-					CoroutineUtility.StartCoroutineImmediate(ArtificialTimeDelay(OnComplete));
-				});
-
 			DTJobList loadDataJobList = new DTJobList(
 				() =>
 				{
@@ -289,8 +282,7 @@ public static class DataLoader
 				},
 				loadPreviousRunDataJob,
 				loadPersistentDataJob,
-				loadJSONJob,
-				artificialTimeDelayJob);
+				loadJSONJob);
 
 
 			loadDataJobList.ExecuteAllJobs();
@@ -544,21 +536,6 @@ public static class DataLoader
 				inOnComplete();
 			}
 		}
-	}
-
-	// TODO: Remove this debug.
-	// DEBUG
-	private static IEnumerator ArtificialTimeDelay(DTJob.OnCompleteCallback inOnComplete)
-	{
-		float timer = 0.0f;
-		while (true)
-		{
-			timer += Time.deltaTime;
-			if (timer < 1.5f) yield return null;
-			else break;
-		}
-
-		inOnComplete();
 	}
 
 	public static void AwardGems(int inNumGemsAwarded) { _persistentData.AwardGems(inNumGemsAwarded); }

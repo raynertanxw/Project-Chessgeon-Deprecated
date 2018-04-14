@@ -6,17 +6,26 @@ using UnityEngine.SceneManagement;
 public class LoadingScreen : MonoBehaviour
 {
 	[SerializeField] private AudioListener _loadingScreenAudioListener = null;
-    // TODO: Proper loading bar
+    [SerializeField] private RectTransform _loadingBarFill = null;
 
 	void Awake()
 	{
-		Debug.Assert(_loadingScreenAudioListener != null, "_loadingScreenAudioListener in LoadingScreen.cs was not assigned.");
+		Debug.Assert(_loadingScreenAudioListener != null, "_loadingScreenAudioListener is not assigned.");
+        Debug.Assert(_loadingBarFill != null, "_loadingBarFill is not assigned.");
+
+        UpdateLoadingBarProgress(0.0f);
 	}
 
 	void Start()
 	{
 		StartCoroutine(LoadDataAndMainSceneAsync());
 	}
+
+    // TODO: Make this a weighted function and add array of tasks with weights on progress.
+    private void UpdateLoadingBarProgress(float inProgress)
+    {
+        _loadingBarFill.anchorMax = new Vector2(inProgress, 1.0f);
+    }
 
 	IEnumerator LoadDataAndMainSceneAsync()
 	{
@@ -29,6 +38,7 @@ public class LoadingScreen : MonoBehaviour
 		{
 			if (asyncLoad.progress >= 0.9f) // If ready to be activated.
 			{
+                UpdateLoadingBarProgress(asyncLoad.progress);
 				_loadingScreenAudioListener.enabled = false; // NOTE: Prevent double audio listener.
 				asyncLoad.allowSceneActivation = true;
 			}
@@ -42,6 +52,9 @@ public class LoadingScreen : MonoBehaviour
 
 		Scene menuScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_DUNGEON);
 		SceneManager.MoveGameObjectToScene(this.gameObject, menuScene);
+        UpdateLoadingBarProgress(1.0f);
+        // NOTE: Wait for a short while so that we can see the fully loaded bar.
+        yield return new WaitForSeconds(0.1f);
 		StartCoroutine(UnloadLoadingScreenSceneAsync());
 	}
 
