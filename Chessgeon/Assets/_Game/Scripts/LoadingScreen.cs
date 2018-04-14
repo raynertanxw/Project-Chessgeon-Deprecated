@@ -6,23 +6,16 @@ using UnityEngine.SceneManagement;
 public class LoadingScreen : MonoBehaviour
 {
 	[SerializeField] private AudioListener _loadingScreenAudioListener = null;
-	[SerializeField] private Transform _loadingIndicator = null;
+    // TODO: Proper loading bar
 
 	void Awake()
 	{
 		Debug.Assert(_loadingScreenAudioListener != null, "_loadingScreenAudioListener in LoadingScreen.cs was not assigned.");
-		Debug.Assert(_loadingIndicator != null, "_loadingIndicator in LoadingScreen.cs was not assigned.");
 	}
 
 	void Start()
 	{
 		StartCoroutine(LoadDataAndMainSceneAsync());
-	}
-
-	void Update()
-	{
-		// TODO: Just a temporary placeholder for loading indication.
-		_loadingIndicator.Rotate(Vector3.forward, -500.0f * Time.deltaTime);
 	}
 
 	IEnumerator LoadDataAndMainSceneAsync()

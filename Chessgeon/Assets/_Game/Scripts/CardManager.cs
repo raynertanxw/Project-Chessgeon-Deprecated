@@ -49,11 +49,11 @@ public class CardManager : MonoBehaviour
 		_isFirstDraw = true;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
-		ToggleControlBlocker(true);
 	}
 
-	private void Start()
-	{
+    private void Start()
+    {
+		ToggleControlBlocker(true);
 		HideAllCards();
 	}
 
