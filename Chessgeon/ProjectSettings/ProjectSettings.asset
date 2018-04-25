@@ -519,7 +519,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
-    4: CHESSGEON_DEBUG
+    4: 
     7: 
   platformArchitecture: {}
   scriptingBackend: {}
