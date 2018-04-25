@@ -520,7 +520,7 @@ PlayerSettings:
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
     4: CHESSGEON_DEBUG
-    7: CHESSGEON_DEBUG
+    7: 
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}
