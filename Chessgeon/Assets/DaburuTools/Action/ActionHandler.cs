@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-//using UnityEngine.SceneManagement;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace DaburuTools
@@ -19,21 +18,26 @@ namespace DaburuTools
 		void Awake()
 		{
 			if (_instance == null)
+			{
 				_instance = this;
-			else
-				Destroy(this.gameObject);
 
-			SetUpActionHandler();
+				DontDestroyOnLoad(this.gameObject);
+                SetUpActionHandler();
+			}
+			else if (_instance != this)
+			{
+				GameObject.Destroy(this.gameObject);
+			}
+		}
+
+		void OnDestroy()
+		{
+			if (_instance == this) _instance = null;
 		}
 
 		void Update()
 		{
 			_masterActionParallel.RunAction();
-		}
-
-		void OnDestroy()
-		{
-			_instance = null;
 		}
 
 		#region Client Functions
