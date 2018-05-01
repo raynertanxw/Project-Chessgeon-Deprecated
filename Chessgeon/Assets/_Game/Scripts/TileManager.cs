@@ -22,6 +22,7 @@ public class TileManager : MonoBehaviour
 
 	private DungeonTile[,] _dungeonTiles = null;
 	private SelectableTile[] _selectableTiles = null;
+    private Dictionary<int, SelectableTile> _selectableTileDict = null;
 
 	private void Awake()
 	{
@@ -44,6 +45,7 @@ public class TileManager : MonoBehaviour
 		}
 
 		_selectableTiles = new SelectableTile[8];
+        _selectableTileDict = new Dictionary<int, SelectableTile>();
 		for (int iSelectable = 0; iSelectable < _selectableTiles.Length; iSelectable++)
 		{
 			SelectableTile newSelectableTile = GameObject.Instantiate(_prefabSelectableTile).GetComponent<SelectableTile>();
@@ -51,10 +53,28 @@ public class TileManager : MonoBehaviour
 			newSelectableTile.Initialise(this);
 
 			_selectableTiles[iSelectable] = newSelectableTile;
+            _selectableTileDict.Add(newSelectableTile.gameObject.GetInstanceID(), newSelectableTile);
 		}
 
 		HideAllTiles();
 	}
+
+    RaycastHit _hitInfo;
+    Ray _ray;
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _hitInfo = new RaycastHit();
+            _ray = DungeonCamera.ActiveCamera.ScreenPointToRay(Input.mousePosition);
+
+            const float MAX_DIST = 1000.0f;
+            if (Physics.Raycast(_ray, out _hitInfo, MAX_DIST, Constants.LAYER_MASK_DUNGEON_INTERACTABLE))
+            {
+                _selectableTileDict[_hitInfo.collider.gameObject.GetInstanceID()].SelectTile();
+            }
+        }
+    }
 
 	private void HideAllTiles()
 	{

@@ -35,7 +35,7 @@ public class SelectableTile : MonoBehaviour
 		}
 	}
 
-	private void OnMouseDown()
+    public void SelectTile()
 	{
 		OnTileSelected(_tilePos);
 		OnTileSelected = null;

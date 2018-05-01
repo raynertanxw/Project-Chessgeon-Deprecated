@@ -10,4 +10,7 @@ public static class Constants
 	public const string SCENE_NAME_DUNGEON = "SCENE_Dungeon";
 
 	public const string LAYER_NAME_UI = "UI";
+    public const string LAYER_NAME_DUNGEON_INTERACTABLE = "Dungeon Interactable";
+
+    public static readonly LayerMask LAYER_MASK_DUNGEON_INTERACTABLE = 1 << LayerMask.NameToLayer(LAYER_NAME_DUNGEON_INTERACTABLE);
 }

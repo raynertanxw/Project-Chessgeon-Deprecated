@@ -10,8 +10,9 @@ public class DungeonCamera : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 
 	private Camera _dungeonCamera = null;
+    public static Camera ActiveCamera { get { return _instance._dungeonCamera; } }
 
-	private readonly Quaternion _cameraYRotOffset = Quaternion.AngleAxis(20.0f, Vector3.up);
+    private readonly Quaternion _cameraYRotOffset = Quaternion.AngleAxis(20.0f, Vector3.up);
 
 	// TODO: Make this a scroll sensitivity in options.
 	private float _dragSpeed = 10.0f;
