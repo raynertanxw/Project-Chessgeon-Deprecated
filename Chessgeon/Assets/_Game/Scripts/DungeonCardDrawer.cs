@@ -16,9 +16,11 @@ public class DungeonCardDrawer : MonoBehaviour
 	[SerializeField] private RectTransform _cardDrawerRectTransform = null;
 	[SerializeField] private RectTransform _endTurnBtnMesh = null;
 	[SerializeField] private RectTransform _hideDrawerBtnMesh = null;
+    [SerializeField] private RectTransform _shopBtnMesh = null;
 	[SerializeField] private RectTransform _showDrawerBtnMesh = null;
 	[SerializeField] private Button _endTurnBtn = null;
 	[SerializeField] private Button _hideDrawerBtn = null;
+    [SerializeField] private Button _shopBtn = null;
 	[SerializeField] private Button _showDrawerBtn = null;
 
 	[Header("Animation Graphs")]
@@ -44,9 +46,11 @@ public class DungeonCardDrawer : MonoBehaviour
 			Debug.Assert(_cardDrawerRectTransform != null, "_cardDrawer is not assigned.");
 			Debug.Assert(_endTurnBtnMesh != null, "_endTurnBtnMesh is not assigned.");
 			Debug.Assert(_hideDrawerBtnMesh != null, "_hideDrawerBtnMesh is not assigned.");
+            Debug.Assert(_shopBtnMesh != null, "_shopBtnMesh is not assigned.");
 			Debug.Assert(_showDrawerBtnMesh != null, "_showDrawerBtnMesh is not assigned.");
 			Debug.Assert(_endTurnBtn != null, "_endTurnBtn is not assigned.");
 			Debug.Assert(_hideDrawerBtn != null, "_hideDrawerBtn is not assigned.");
+            Debug.Assert(_shopBtn != null, "_shopBtn is not assigned.");
 			Debug.Assert(_showDrawerBtn != null, "_showDrawerBtn is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
@@ -65,6 +69,11 @@ public class DungeonCardDrawer : MonoBehaviour
 			{
 				EnableCardDrawer(false, true, false);
 			});
+
+            _shopBtn.onClick.AddListener(() =>
+            {
+                Debug.Log("Shop button clicked!");
+            });
 
 			_showDrawerBtn.onClick.AddListener(() =>
 			{
@@ -130,6 +139,7 @@ public class DungeonCardDrawer : MonoBehaviour
 		// Disable all btns on drawer for safety reasons.
 		_instance._endTurnBtn.interactable = false;
 		_instance._hideDrawerBtn.interactable = false;
+        _instance._shopBtn.interactable = false;
 		_instance._showDrawerBtn.interactable = false;
 		if (!inIsEnabled) DungeonPauseCanvas.SetEnablePauseBtn(inIsEnabled, null, inIsAnimated);
 
@@ -143,6 +153,7 @@ public class DungeonCardDrawer : MonoBehaviour
 				DungeonPauseCanvas.SetEnablePauseBtn(inIsEnabled, null, inIsAnimated);
 				_instance._endTurnBtn.interactable = true;
 				_instance._hideDrawerBtn.interactable = true;
+                _instance._shopBtn.interactable = true;
 			}
 			else if (!inHideShowDrawerBtn)
 			{
@@ -192,7 +203,8 @@ public class DungeonCardDrawer : MonoBehaviour
 				const float BTN_SCALE_ANIM_TIME = 0.25f;
 				ActionParallel animateButtonScales = new ActionParallel(
 					new ScaleToAction(_instance._endTurnBtnMesh, inIsEnabled ? btnOpenScale : btnCloseScale, BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigBobber : _instance._bigDipper),
-					new ScaleToAction(_instance._hideDrawerBtnMesh, inIsEnabled ? btnOpenScale : btnCloseScale,  BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigBobber : _instance._bigDipper)
+					new ScaleToAction(_instance._hideDrawerBtnMesh, inIsEnabled ? btnOpenScale : btnCloseScale,  BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigBobber : _instance._bigDipper),
+					new ScaleToAction(_instance._shopBtnMesh, inIsEnabled ? btnOpenScale : btnCloseScale,  BTN_SCALE_ANIM_TIME, inIsEnabled ? _instance._bigBobber : _instance._bigDipper)
 				);
 				ScaleToAction showDrawerBtnScale;
 				if (inHideShowDrawerBtn)
@@ -223,6 +235,7 @@ public class DungeonCardDrawer : MonoBehaviour
 				_instance._cardDrawerRectTransform.anchoredPosition = newAnchorPos;
 				_instance._endTurnBtnMesh.localScale = inIsEnabled ? btnOpenScale : btnCloseScale;
 				_instance._hideDrawerBtnMesh.localScale = inIsEnabled ? btnOpenScale : btnCloseScale;
+                _instance._shopBtnMesh.localScale = inIsEnabled ? btnOpenScale : btnCloseScale;
 				if (inHideShowDrawerBtn)
 				{
 					_instance._showDrawerBtnMesh.localScale = btnCloseScale;
