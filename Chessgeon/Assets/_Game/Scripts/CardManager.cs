@@ -17,10 +17,12 @@ public class CardManager : MonoBehaviour
 
 	private const int MAX_CARDS = 7;
 	private int _numCardsInHand = -1;
-	private bool _isFirstDraw = true;
-	public bool IsFirstDraw { get { return _isFirstDraw; } }
+	private bool _isFirstDrawOfGame = true;
+	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
 	private bool _skipNextDraw = false;
 	public bool SkipNextDraw { get { return _skipNextDraw; } }
+    private bool _hasDoneFirstTurnDraw = false;
+    public bool HasDoneFirstTurnDraw { get { return _hasDoneFirstTurnDraw; } }
 
 	// TODO: Statistics
 	private int _statTotalCardsDrawn = -1;
@@ -46,7 +48,8 @@ public class CardManager : MonoBehaviour
 			_blockingImage.raycastTarget = !DungeonPauseCanvas.IsPaused;
 		};
 
-		_isFirstDraw = true;
+		_isFirstDrawOfGame = true;
+        _hasDoneFirstTurnDraw = false;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
 	}
@@ -67,7 +70,8 @@ public class CardManager : MonoBehaviour
 
 	public void ResetForNewGame()
 	{
-		_isFirstDraw = true;
+		_isFirstDrawOfGame = true;
+        _hasDoneFirstTurnDraw = false;
 		_skipNextDraw = false;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
@@ -76,7 +80,8 @@ public class CardManager : MonoBehaviour
 
 	public void ResetFromCardHandData(DataLoader.CardHandData inCardHandData)
 	{
-		_isFirstDraw = false;
+		_isFirstDrawOfGame = inCardHandData.IsFirstDrawOfGame;
+        _hasDoneFirstTurnDraw = inCardHandData.HasDoneFirstTurnDraw;
 		_skipNextDraw = true;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
@@ -90,6 +95,16 @@ public class CardManager : MonoBehaviour
 		_skipNextDraw = false;
 	}
 
+    public void DoneFirstTurnDraw()
+    {
+        _hasDoneFirstTurnDraw = true;
+    }
+
+    public void ProgressNextFloor()
+    {
+        _hasDoneFirstTurnDraw = false;
+    }
+
 	public DataLoader.CardHandData GenerateCardHandData()
 	{
 		ReorganiseCards(null, false);
@@ -99,7 +114,7 @@ public class CardManager : MonoBehaviour
 			cardDatas[iCard] = _cards[iCard].CardData;
 		}
 
-		return new DataLoader.CardHandData(cardDatas);
+		return new DataLoader.CardHandData(_isFirstDrawOfGame, _hasDoneFirstTurnDraw, cardDatas);
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)
@@ -185,7 +200,7 @@ public class CardManager : MonoBehaviour
 			if (cardsDrawn == 0 && inOnComplete != null) inOnComplete();
 		}
 
-		_isFirstDraw = false;
+		_isFirstDrawOfGame = false;
 	}
 
 	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)

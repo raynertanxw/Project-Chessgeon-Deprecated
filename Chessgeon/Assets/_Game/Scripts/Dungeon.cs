@@ -164,6 +164,7 @@ public class Dungeon : MonoBehaviour
 
 	public void ProgressToNextFloor(DTJob.OnCompleteCallback inOnComplete = null)
 	{
+        _cardManager.ProgressNextFloor();
 		_floorNum++;
 		GenerateNewFloor();
 		// Save each floor.
@@ -355,14 +356,16 @@ public class Dungeon : MonoBehaviour
 					playPhaseAnimJob);
 				DTJob turnDrawJob = new DTJob((OnJobComplete) =>
 				{
-					if (_dungeonFSM.Dungeon.CardManager.SkipNextDraw)
+					if (_dungeonFSM.Dungeon.CardManager.HasDoneFirstTurnDraw
+                        && _dungeonFSM.Dungeon.CardManager.SkipNextDraw)
 					{
 						_dungeonFSM.Dungeon.CardManager.NextDrawSkipped();
 						OnJobComplete();
 					}
 					else
 					{
-						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDraw ? 3 : 2, OnJobComplete);
+                        if (!_dungeonFSM.Dungeon.CardManager.HasDoneFirstTurnDraw) _dungeonFSM.Dungeon.CardManager.DoneFirstTurnDraw();
+						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame ? 3 : 2, OnJobComplete);
 					}
 				},
 					enableCardDrawerJob);
