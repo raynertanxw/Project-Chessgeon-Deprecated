@@ -25,8 +25,8 @@ public static class DataLoader
 	private static PersistentData _persistentData;
 	public static PersistentData SavedPersistentData { get { return _persistentData; } }
 
-	private static UpgradesData _upgradesData;
-	public static UpgradesData LoadedUpgradesData { get { return _upgradesData; } }
+	private static UpgradeData _upgradesData;
+	public static UpgradeData LoadedUpgradesData { get { return _upgradesData; } }
 
 	// Data file names
 	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
@@ -491,7 +491,7 @@ public static class DataLoader
 				for (int iCost = 0; iCost < shopPriceCosts.Length; iCost++) shopPriceCosts[iCost] = shopPriceCostsJSONArr[iCost].AsInt;
 				for (int iCost = 0; iCost < cardTierCosts.Length; iCost++) cardTierCosts[iCost] = cardTierCostsJSONArr[iCost].AsInt;
 
-				_upgradesData = new UpgradesData(
+				_upgradesData = new UpgradeData(
 					healthUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
 					coinDropUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
 					shopPriceUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,

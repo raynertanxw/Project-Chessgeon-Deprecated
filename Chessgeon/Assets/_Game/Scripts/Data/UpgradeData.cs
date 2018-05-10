@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct UpgradesData
+public struct UpgradeData
 {
     private int _numHealthUpgradeLevels;
     private int _numCoinDropUpgradeLevels;
@@ -24,7 +24,7 @@ public struct UpgradesData
     public int[] ShopPriceUpgradeCosts { get { return _shopPriceUpgradeCosts; } }
     public int[] CardTierUpgradeCosts { get { return _cardTierUpgradeCosts; } }
 
-    public UpgradesData(
+    public UpgradeData(
         int inNumHealthUpgradeLevels,
         int inNumCoinDropUpgradeLevels,
         int inNumShopPriceUpgradeLevels,
