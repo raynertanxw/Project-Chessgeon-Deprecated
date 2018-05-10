@@ -2599,7 +2599,6 @@ GameObject:
   - component: {fileID: 272575306}
   - component: {fileID: 272575305}
   - component: {fileID: 272575304}
-  - component: {fileID: 272575303}
   m_Layer: 5
   m_Name: Shop Canvas
   m_TagString: Untagged
@@ -2626,24 +2625,6 @@ RectTransform:
   m_AnchoredPosition: {x: 21.35, y: 0}
   m_SizeDelta: {x: 1080, y: 1920}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &272575303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 272575301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6e4385aad26d2649a45037ae802b976, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dungeon: {fileID: 1426320895}
-  _menu: {fileID: 1385113401}
-  _pauseBtnObject: {fileID: 0}
-  _pausePanelObject: {fileID: 254507249}
-  _pauseBtn: {fileID: 0}
-  _resumeBtn: {fileID: 0}
-  _mainMenuBtn: {fileID: 0}
 --- !u!114 &272575304
 MonoBehaviour:
   m_ObjectHideFlags: 0
