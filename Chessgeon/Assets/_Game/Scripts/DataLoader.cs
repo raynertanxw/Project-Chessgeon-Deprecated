@@ -22,8 +22,8 @@ public static class DataLoader
 	private static CardHandData _cardHandData;
 	public static CardHandData SavedCardHandData { get { return _cardHandData; } }
 
-	private static PersistentData _persistentData;
-	public static PersistentData SavedPersistentData { get { return _persistentData; } }
+	private static PlayerData _playerData;
+	public static PlayerData SavedPlayerData { get { return _playerData; } }
 
 	private static UpgradeData _upgradesData;
 	public static UpgradeData LoadedUpgradesData { get { return _upgradesData; } }
@@ -63,7 +63,7 @@ public static class DataLoader
 	private const string PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER";
 
 	#region Data Structs
-	public struct PersistentData
+	public struct PlayerData
 	{
 		private int _numGems;
 		private int _upgradeLevelHealth;
@@ -77,7 +77,7 @@ public static class DataLoader
 		public int UpgradeLevelShopPrice { get { return _upgradeLevelShopPrice; } }
 		public int UpgradeLevelCardTier { get { return _upgradeLevelCardTier; } }
 
-		public PersistentData(
+		public PlayerData(
 			int inNumGems,
 			int inUpgradeLevelHealth,
 			int inUpgradeLevelCoinDrop,
@@ -94,7 +94,7 @@ public static class DataLoader
 		public void AwardGems(int inNumGemsAwarded) { _numGems += inNumGemsAwarded; }
 		public bool SpendGems(int inNumGemsToSpend)
 		{
-			int numGemsAfterSpending = _persistentData.NumGems - inNumGemsToSpend;
+			int numGemsAfterSpending = _playerData.NumGems - inNumGemsToSpend;
 			if (numGemsAfterSpending < 0)
 			{
 				return false;
@@ -410,11 +410,11 @@ public static class DataLoader
 	{
 		using (ES2Writer writer = ES2Writer.Create(PERSISTENT_DATA_FILENAME))
 		{
-			writer.Write(_persistentData.NumGems, PERSISTENT_DATA_NUM_GEMS_KEY);
-			writer.Write(_persistentData.UpgradeLevelHealth, PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY);
-			writer.Write(_persistentData.UpgradeLevelCoinDrop, PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY);
-			writer.Write(_persistentData.UpgradeLevelShopPrice, PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY);
-			writer.Write(_persistentData.UpgradeLevelCardTier, PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY);
+			writer.Write(_playerData.NumGems, PERSISTENT_DATA_NUM_GEMS_KEY);
+			writer.Write(_playerData.UpgradeLevelHealth, PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY);
+			writer.Write(_playerData.UpgradeLevelCoinDrop, PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY);
+			writer.Write(_playerData.UpgradeLevelShopPrice, PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY);
+			writer.Write(_playerData.UpgradeLevelCardTier, PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY);
 
 			writer.Save();
 		}
@@ -429,7 +429,7 @@ public static class DataLoader
 			ES2Data persistentData = ES2.LoadAll(PERSISTENT_DATA_FILENAME);
 
 			// TODO: Create a TryLoad<T> that will return 0 if failed to load. Safer for future updates and all that.
-			_persistentData = new PersistentData(
+			_playerData = new PlayerData(
 				persistentData.Load<int>(PERSISTENT_DATA_NUM_GEMS_KEY),
 				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY),
 				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY),
@@ -438,7 +438,7 @@ public static class DataLoader
 		}
 		else // If no have, create empty. Basically new player.
 		{
-			_persistentData = new PersistentData(
+			_playerData = new PlayerData(
 				0,
 				0,
 				0,
@@ -506,10 +506,10 @@ public static class DataLoader
 		}
 	}
 
-	public static void AwardGems(int inNumGemsAwarded) { _persistentData.AwardGems(inNumGemsAwarded); }
-	public static bool SpendGems(int inNumGemsToSpend) { return _persistentData.SpendGems(inNumGemsToSpend); }
-	public static void UpgradeHealth() { _persistentData.UpgradeHealth(); }
-	public static void UpgradeCoinDrop() { _persistentData.UpgradeCoinDrop(); }
-	public static void UpgradeShopPrice() { _persistentData.UpgradeShopPrice(); }
-	public static void UpgradeCardTier() { _persistentData.UpgradeCardTier(); }
+	public static void AwardGems(int inNumGemsAwarded) { _playerData.AwardGems(inNumGemsAwarded); }
+	public static bool SpendGems(int inNumGemsToSpend) { return _playerData.SpendGems(inNumGemsToSpend); }
+	public static void UpgradeHealth() { _playerData.UpgradeHealth(); }
+	public static void UpgradeCoinDrop() { _playerData.UpgradeCoinDrop(); }
+	public static void UpgradeShopPrice() { _playerData.UpgradeShopPrice(); }
+	public static void UpgradeCardTier() { _playerData.UpgradeCardTier(); }
 }

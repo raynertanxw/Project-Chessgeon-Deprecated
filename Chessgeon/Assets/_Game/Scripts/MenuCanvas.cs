@@ -163,12 +163,12 @@ public class MenuCanvas : MonoBehaviour
 
 	public void UpdateGemText()
 	{
-		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPersistentData.NumGems);
+		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPlayerData.NumGems);
 	}
 
 	private void UpdateUpgradesPanelText()
 	{
-		DataLoader.PersistentData persistentData = DataLoader.SavedPersistentData;
+		DataLoader.PlayerData persistentData = DataLoader.SavedPlayerData;
 		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
 
 		_healthUpgradeStateText.text = persistentData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
@@ -213,7 +213,7 @@ public class MenuCanvas : MonoBehaviour
 	#region UpgradeFuncs
 	private void TryUpgradeHealth()
 	{
-		DataLoader.PersistentData persistentData = DataLoader.SavedPersistentData;
+		DataLoader.PlayerData persistentData = DataLoader.SavedPlayerData;
 		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
 		if (persistentData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
 		{
