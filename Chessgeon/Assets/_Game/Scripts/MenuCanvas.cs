@@ -168,25 +168,25 @@ public class MenuCanvas : MonoBehaviour
 
 	private void UpdateUpgradesPanelText()
 	{
-		DataLoader.PlayerData persistentData = DataLoader.SavedPlayerData;
+		DataLoader.PlayerData playerData = DataLoader.SavedPlayerData;
 		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
 
-		_healthUpgradeStateText.text = persistentData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
-		_coinDropUpgradeStateText.text = persistentData.UpgradeLevelCoinDrop + "/" + upgradesData.NumCoinDropUpgradeLevels;
-		_shopPriceUpgradeStateText.text = persistentData.UpgradeLevelShopPrice + "/" + upgradesData.NumShopPriceUpgradeLevels;
-		_cardTierUpgradeStateText.text = persistentData.UpgradeLevelCardTier + "/" + upgradesData.NumCardTierUpgradeLevels;
+		_healthUpgradeStateText.text = playerData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
+		_coinDropUpgradeStateText.text = playerData.UpgradeLevelCoinDrop + "/" + upgradesData.NumCoinDropUpgradeLevels;
+		_shopPriceUpgradeStateText.text = playerData.UpgradeLevelShopPrice + "/" + upgradesData.NumShopPriceUpgradeLevels;
+		_cardTierUpgradeStateText.text = playerData.UpgradeLevelCardTier + "/" + upgradesData.NumCardTierUpgradeLevels;
 
-		if (persistentData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels) _healthUpgradeCostText.text = "MAX";
-		else _healthUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.HealthUpgradeCosts[persistentData.UpgradeLevelHealth]);
+		if (playerData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels) _healthUpgradeCostText.text = "MAX";
+		else _healthUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.HealthUpgradeCosts[playerData.UpgradeLevelHealth]);
 
-		if (persistentData.UpgradeLevelCoinDrop == upgradesData.NumCoinDropUpgradeLevels) _coinDropUpgradeCostText.text = "MAX";
-		else _coinDropUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CoinDropUpgradeCosts[persistentData.UpgradeLevelCoinDrop]);
+		if (playerData.UpgradeLevelCoinDrop == upgradesData.NumCoinDropUpgradeLevels) _coinDropUpgradeCostText.text = "MAX";
+		else _coinDropUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CoinDropUpgradeCosts[playerData.UpgradeLevelCoinDrop]);
 
-		if (persistentData.UpgradeLevelShopPrice == upgradesData.NumShopPriceUpgradeLevels) _shopPriceUpgradeCostText.text = "MAX";
-		else _shopPriceUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.ShopPriceUpgradeCosts[persistentData.UpgradeLevelShopPrice]);
+		if (playerData.UpgradeLevelShopPrice == upgradesData.NumShopPriceUpgradeLevels) _shopPriceUpgradeCostText.text = "MAX";
+		else _shopPriceUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.ShopPriceUpgradeCosts[playerData.UpgradeLevelShopPrice]);
 
-		if (persistentData.UpgradeLevelCardTier == upgradesData.NumCardTierUpgradeLevels) _cardTierUpgradeCostText.text = "MAX";
-		else _cardTierUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CardTierUpgradeCosts[persistentData.UpgradeLevelCardTier]);
+		if (playerData.UpgradeLevelCardTier == upgradesData.NumCardTierUpgradeLevels) _cardTierUpgradeCostText.text = "MAX";
+		else _cardTierUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CardTierUpgradeCosts[playerData.UpgradeLevelCardTier]);
 	}
 
 	private void OpenUpgradesPanel()
@@ -213,16 +213,16 @@ public class MenuCanvas : MonoBehaviour
 	#region UpgradeFuncs
 	private void TryUpgradeHealth()
 	{
-		DataLoader.PlayerData persistentData = DataLoader.SavedPlayerData;
+		DataLoader.PlayerData playerData = DataLoader.SavedPlayerData;
 		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
-		if (persistentData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
+		if (playerData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
 		{
 			// NOTE: Do nothing cause already max!
 		}
 		else
 		{
-			int cost = upgradesData.HealthUpgradeCosts[persistentData.UpgradeLevelHealth];
-			if (persistentData.NumGems < cost) InformNotEnoughGemsForUpgrade();
+			int cost = upgradesData.HealthUpgradeCosts[playerData.UpgradeLevelHealth];
+			if (playerData.NumGems < cost) InformNotEnoughGemsForUpgrade();
 			else
 			{
 				PromptConfirmation(
@@ -266,12 +266,12 @@ public class MenuCanvas : MonoBehaviour
 		// TODO: REMOVE THIS DEBUG
 		DataLoader.AwardGems(Random.Range(50, 150));
 		UpdateGemText();
-		DataLoader.SavePersistentData();
+		DataLoader.SavePlayerData();
 	}
 
 	private void SaveUpgrade()
 	{
-		DataLoader.SavePersistentData();
+		DataLoader.SavePlayerData();
 		UpdateGemText();
 		UpdateUpgradesPanelText();
 	}

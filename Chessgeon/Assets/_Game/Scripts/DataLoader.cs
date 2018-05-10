@@ -32,7 +32,7 @@ public static class DataLoader
 	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
 	private const string FLOOR_DATA_FILENAME = "FloorData.txt";
 	private const string CARD_HAND_DATA_FILENAME = "CardhandData.txt";
-	private const string PERSISTENT_DATA_FILENAME = "PersistentData.txt";
+	private const string PLAYER_DATA_FILENAME = "PlayerData.txt";
 	private const string GAME_DATA_JSON_FILENAME = "GameDataJson.txt";
 
 	// Keys
@@ -56,11 +56,11 @@ public static class DataLoader
 	private const string CARD_HAND_DATA_IS_CLONED_KEY = "CARD_HAND_DATA_IS_CLONED";
 	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
 
-	private const string PERSISTENT_DATA_NUM_GEMS_KEY = "PERSISTENT_DATA_NUM_GEMS";
-	private const string PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH";
-	private const string PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP";
-	private const string PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE";
-	private const string PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY = "PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER";
+	private const string PLAYER_DATA_NUM_GEMS_KEY = "PLAYER_DATA_NUM_GEMS";
+	private const string PLAYER_DATA_UPGRADE_LEVEL_HEALTH_KEY = "PLAYER_DATA_UPGRADE_LEVEL_HEALTH";
+	private const string PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP_KEY = "PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP";
+	private const string PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY = "PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE";
+	private const string PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER_KEY = "PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER";
 
 	#region Data Structs
 	public struct PlayerData
@@ -225,10 +225,10 @@ public static class DataLoader
 					LoadPreviousRunData(OnComplete);
 				});
 
-			DTJob loadPersistentDataJob = new DTJob(
+			DTJob loadPlayerDataJob = new DTJob(
 				(OnComplete) =>
 				{
-					LoadPersistentData(OnComplete);
+					LoadPlayerData(OnComplete);
 				});
 
 			DTJob loadJSONJob = new DTJob(
@@ -245,7 +245,7 @@ public static class DataLoader
 					if (OnAllDataLoaded != null) OnAllDataLoaded();
 				},
 				loadPreviousRunDataJob,
-				loadPersistentDataJob,
+				loadPlayerDataJob,
 				loadJSONJob);
 
 
@@ -406,15 +406,15 @@ public static class DataLoader
 		if (inOnComplete != null) inOnComplete();
 	}
 
-	public static void SavePersistentData(DTJob.OnCompleteCallback inOnComplete = null)
+	public static void SavePlayerData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		using (ES2Writer writer = ES2Writer.Create(PERSISTENT_DATA_FILENAME))
+		using (ES2Writer writer = ES2Writer.Create(PLAYER_DATA_FILENAME))
 		{
-			writer.Write(_playerData.NumGems, PERSISTENT_DATA_NUM_GEMS_KEY);
-			writer.Write(_playerData.UpgradeLevelHealth, PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY);
-			writer.Write(_playerData.UpgradeLevelCoinDrop, PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY);
-			writer.Write(_playerData.UpgradeLevelShopPrice, PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY);
-			writer.Write(_playerData.UpgradeLevelCardTier, PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY);
+			writer.Write(_playerData.NumGems, PLAYER_DATA_NUM_GEMS_KEY);
+			writer.Write(_playerData.UpgradeLevelHealth, PLAYER_DATA_UPGRADE_LEVEL_HEALTH_KEY);
+			writer.Write(_playerData.UpgradeLevelCoinDrop, PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP_KEY);
+			writer.Write(_playerData.UpgradeLevelShopPrice, PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY);
+			writer.Write(_playerData.UpgradeLevelCardTier, PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER_KEY);
 
 			writer.Save();
 		}
@@ -422,19 +422,19 @@ public static class DataLoader
 		if (inOnComplete != null) inOnComplete();
 	}
 
-	private static void LoadPersistentData(DTJob.OnCompleteCallback inOnComplete = null)
+	private static void LoadPlayerData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		if (ES2.Exists(PERSISTENT_DATA_FILENAME))
+		if (ES2.Exists(PLAYER_DATA_FILENAME))
 		{
-			ES2Data persistentData = ES2.LoadAll(PERSISTENT_DATA_FILENAME);
+			ES2Data playerData = ES2.LoadAll(PLAYER_DATA_FILENAME);
 
 			// TODO: Create a TryLoad<T> that will return 0 if failed to load. Safer for future updates and all that.
 			_playerData = new PlayerData(
-				persistentData.Load<int>(PERSISTENT_DATA_NUM_GEMS_KEY),
-				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_HEALTH_KEY),
-				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_COIN_DROP_KEY),
-				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY),
-				persistentData.Load<int>(PERSISTENT_DATA_UPGRADE_LEVEL_CARD_TIER_KEY));
+				playerData.Load<int>(PLAYER_DATA_NUM_GEMS_KEY),
+				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_HEALTH_KEY),
+				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP_KEY),
+				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY),
+				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER_KEY));
 		}
 		else // If no have, create empty. Basically new player.
 		{
