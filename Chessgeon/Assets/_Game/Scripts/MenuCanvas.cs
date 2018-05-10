@@ -169,7 +169,7 @@ public class MenuCanvas : MonoBehaviour
 	private void UpdateUpgradesPanelText()
 	{
 		DataLoader.PersistentData persistentData = DataLoader.SavedPersistentData;
-		DataLoader.UpgradesData upgradesData = DataLoader.LoadedUpgradesData;
+		UpgradesData upgradesData = DataLoader.LoadedUpgradesData;
 
 		_healthUpgradeStateText.text = persistentData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
 		_coinDropUpgradeStateText.text = persistentData.UpgradeLevelCoinDrop + "/" + upgradesData.NumCoinDropUpgradeLevels;
@@ -214,7 +214,7 @@ public class MenuCanvas : MonoBehaviour
 	private void TryUpgradeHealth()
 	{
 		DataLoader.PersistentData persistentData = DataLoader.SavedPersistentData;
-		DataLoader.UpgradesData upgradesData = DataLoader.LoadedUpgradesData;
+		UpgradesData upgradesData = DataLoader.LoadedUpgradesData;
 		if (persistentData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
 		{
 			// NOTE: Do nothing cause already max!
