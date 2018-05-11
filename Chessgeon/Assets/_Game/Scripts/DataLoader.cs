@@ -44,7 +44,6 @@ public static class DataLoader
 	private const string FLOOR_DATA_ENEMY_POS_X_KEY = "FLOOR_DATA_ENEMY_POS_X";
 	private const string FLOOR_DATA_ENEMY_POS_Y_KEY = "FLOOR_DATA_ENEMY_POS_Y";
 	private const string FLOOR_DATA_ENEMY_MOVE_TYPE_KEY = "FLOOR_DATA_ENEMY_MOVE_TYPE";
-	private const string FLOOR_DATA_ENEMY_ELEMENT_KEY = "FLOOR_DATA_ENEMY_ELEMENT";
 
     private const string CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY = "CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME";
     private const string CARD_HAND_DATA_HAS_DONE_FIRST_TURN_DRAW_KEY = "CARD_HAND_DATA_HAS_DONE_FIRST_TURN_DRAW";
@@ -90,7 +89,6 @@ public static class DataLoader
 		private Vector2Int _morphyPos;
 		private Vector2Int[] _enemyPos;
 		private eMoveType[] _enemyMoveType;
-		private Enemy.eElement[] _enemyElement;
 
 		public int FloorNum { get { return _floorNum; } }
 		public Vector2Int Size { get { return _size; } }
@@ -98,7 +96,6 @@ public static class DataLoader
 		public Vector2Int MorphyPos { get { return _morphyPos; } }
 		public Vector2Int[] EnemyPos { get { return _enemyPos; } }
 		public eMoveType[] EnemyMoveType { get { return _enemyMoveType; } }
-		public Enemy.eElement[] EnemyElement { get { return _enemyElement; } }
 
 		public FloorData(Floor inFloor, Enemy[] inEnemies)
 		{
@@ -110,13 +107,11 @@ public static class DataLoader
 			int numEnemies = inEnemies.Length;
 			_enemyPos = new Vector2Int[numEnemies];
 			_enemyMoveType = new eMoveType[numEnemies];
-			_enemyElement = new Enemy.eElement[numEnemies];
 			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
 			{
 				Enemy curEnemy = inEnemies[iEnemy];
 				_enemyPos[iEnemy] = curEnemy.Pos;
 				_enemyMoveType[iEnemy] = curEnemy.Type;
-				_enemyElement[iEnemy] = curEnemy.Element;
 			}
 		}
 
@@ -126,8 +121,7 @@ public static class DataLoader
 			Vector2Int inStairPos,
 			Vector2Int inMorphyPos,
 			Vector2Int[] inEnemyPos,
-			eMoveType[] inEnemyMoveType,
-			Enemy.eElement[] inEnemyElement)
+			eMoveType[] inEnemyMoveType)
 		{
 			_floorNum = inFloorNum;
 			_size = inSize;
@@ -135,7 +129,6 @@ public static class DataLoader
 			_morphyPos = inMorphyPos;
 			_enemyPos = inEnemyPos;
 			_enemyMoveType = inEnemyMoveType;
-			_enemyElement = inEnemyElement;
 		}
 	}
 
@@ -232,7 +225,6 @@ public static class DataLoader
 			writer.Write(enemyPosY, FLOOR_DATA_ENEMY_POS_Y_KEY);
 
 			writer.Write(inFloorData.EnemyMoveType, FLOOR_DATA_ENEMY_MOVE_TYPE_KEY);
-			writer.Write(inFloorData.EnemyElement, FLOOR_DATA_ENEMY_ELEMENT_KEY);
 
 			writer.Save();
 		}
@@ -305,8 +297,7 @@ public static class DataLoader
 				stairPos,
 				morphyPos,
 				enemyPos,
-				floorData.LoadArray<eMoveType>(FLOOR_DATA_ENEMY_MOVE_TYPE_KEY),
-				floorData.LoadArray<Enemy.eElement>(FLOOR_DATA_ENEMY_ELEMENT_KEY));
+				floorData.LoadArray<eMoveType>(FLOOR_DATA_ENEMY_MOVE_TYPE_KEY));
 
             // CARD_HAND_DATA
             bool isFirstDrawOfGame = cardHandData.Load<bool>(CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);

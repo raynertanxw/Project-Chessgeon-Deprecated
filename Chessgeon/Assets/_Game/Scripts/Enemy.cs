@@ -5,20 +5,6 @@ using DaburuTools;
 
 public class Enemy : MonoBehaviour
 {
-	public enum eElement { Classic, Stone, Glass, Gold, Slime, Ice, Fire, Cursed }
-	private static EnemyElementStratergy[] _elementStratergies =
-	{
-		new EnemyElementStratergyClassic(),
-		new EnemyElementStratergyStone(),
-		new EnemyElementStratergyGlass(),
-		new EnemyElementStratergyGold(),
-		new EnemyElementStratergySlime(),
-		new EnemyElementStratergyIce(),
-		new EnemyElementStratergyFire(),
-		new EnemyElementStratergyCursed()
-	};
-	private EnemyElementStratergy CurrentElementStratergy { get { return _elementStratergies[(int)_element]; } }
-
 	[SerializeField] private Mesh _meshPiecePawn = null;
 	[SerializeField] private Mesh _meshPieceRook = null;
 	[SerializeField] private Mesh _meshPieceBishop = null;
@@ -33,9 +19,7 @@ public class Enemy : MonoBehaviour
 	private bool _isAlive = false;
 	public bool IsAlive { get { return _isAlive; } }
 	private eMoveType _type = eMoveType.Pawn;
-	public eElement Element { get { return _element; } }
 	public eMoveType Type { get { return _type; } }
-	private eElement _element = eElement.Classic;
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
 
@@ -66,13 +50,7 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	public void SetEnemy(eMoveType inType, eElement inElement)
-	{
-		SetEnemyElement(inElement);
-		SetEnemyType(inType);
-	}
-
-	public void SetEnemyType(eMoveType inType)
+	public void SetType(eMoveType inType)
 	{
 		_type = inType;
 
@@ -111,13 +89,6 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	public void SetEnemyElement(eElement inElement)
-	{
-		_element = inElement;
-
-		// TODO: Implement this!
-	}
-
 	public void Kill()
 	{
 		_isAlive = false;
@@ -127,7 +98,7 @@ public class Enemy : MonoBehaviour
 		// TODO: Replace and give card instead.
 		DelayAction delayGiveCard = new DelayAction(0.2f);
 		delayGiveCard.OnActionStart += () => { GiveCard(); };
-		ActionHandler.RunAction(new ActionRepeat(delayGiveCard, CurrentElementStratergy.GetNumCardsReward()));
+		ActionHandler.RunAction(new ActionRepeat(delayGiveCard, 1));
 	}
 
 	private void GiveCard()
@@ -248,7 +219,7 @@ public class Enemy : MonoBehaviour
 			morphyTransformPos + (Vector3.up * 2.0f),
 			0.075f,
 			Utils.CurveExponential);
-		slamDown.OnActionFinish += () => { _enemyManager.Dungeon.MorphyController.TakeDamage(CurrentElementStratergy.GetDamagePower()); };
+		slamDown.OnActionFinish += () => { _enemyManager.Dungeon.MorphyController.TakeDamage(1); };
 		MoveToAction moveBack = new MoveToAction(
 			this.transform,
 			originPos,

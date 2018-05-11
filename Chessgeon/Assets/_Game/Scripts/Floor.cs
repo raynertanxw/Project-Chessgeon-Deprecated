@@ -139,9 +139,8 @@ public class Floor
 		{
 			Vector2Int enemyPos = inFloorData.EnemyPos[iEnemy];
 			eMoveType enemyMoveType = inFloorData.EnemyMoveType[iEnemy];
-			Enemy.eElement enemyElement = inFloorData.EnemyElement[iEnemy];
 
-			_enemies[enemyPos.x, enemyPos.y] = _dungeon.EnemyManager.SpawnEnemyAt(enemyPos, enemyMoveType, enemyElement);
+			_enemies[enemyPos.x, enemyPos.y] = _dungeon.EnemyManager.SpawnEnemyAt(enemyPos, enemyMoveType);
 			SetTileState(enemyPos, Floor.eTileState.Enemy);
 		}
 

@@ -34,9 +34,9 @@ public class EnemyManager : MonoBehaviour
     {
         eMoveType enemyType = (eMoveType)Random.Range(0, 5);
 
-		return SpawnEnemyAt(inSpawnPos, enemyType, Enemy.eElement.Classic);
+		return SpawnEnemyAt(inSpawnPos, enemyType);
     }
-	public Enemy SpawnEnemyAt(Vector2Int inSpawnPos, eMoveType inMoveType, Enemy.eElement inElement)
+	public Enemy SpawnEnemyAt(Vector2Int inSpawnPos, eMoveType inMoveType)
     {
         Enemy currentEnemy = null;
         for (int iEnemy = 0; iEnemy < _enemies.Length; iEnemy++)
@@ -46,7 +46,7 @@ public class EnemyManager : MonoBehaviour
         Debug.Assert(currentEnemy != null, "Could not get a non-alive enemy! Is whole list exhuasted?");
 
         Debug.Assert(_dungeon.CurrentFloor.IsTileEmpty(inSpawnPos), "Tile " + inSpawnPos + " is not empty!");
-        currentEnemy.SetEnemy(inMoveType, inElement);
+        currentEnemy.SetType(inMoveType);
         currentEnemy.SpawnAt(inSpawnPos);
 
 		return currentEnemy;
