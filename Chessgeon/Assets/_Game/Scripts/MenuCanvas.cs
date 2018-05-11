@@ -11,10 +11,8 @@ public class MenuCanvas : MonoBehaviour
 
 	[Header("Main Menu UI")]
 	[SerializeField] private GameObject _continueBtnObject = null;
-	[SerializeField] private GameObject _upgradesBtnObject = null;
 	[SerializeField] private Button _continueBtn = null;
 	[SerializeField] private Button _newGameBtn = null;
-	[SerializeField] private Button _upgradesBtn = null;
 	[SerializeField] private Button _leaderboardBtn = null;
 	[SerializeField] private Button _achievementBtn = null;
 	[SerializeField] private Button _settingsBtn = null;
@@ -36,22 +34,6 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Button _confirmationConfirmBtn = null;
 	[SerializeField] private Button _confirmationCancelBtn = null;
 
-	[Header("Upgrades Panel")]
-	[SerializeField] private GameObject _upgradesPanelObject = null;
-	[SerializeField] private Button _upgradesPanelCloseBtn = null;
-	[SerializeField] private Text _healthUpgradeStateText = null;
-	[SerializeField] private Text _coinDropUpgradeStateText = null;
-	[SerializeField] private Text _shopPriceUpgradeStateText = null;
-	[SerializeField] private Text _cardTierUpgradeStateText = null;
-	[SerializeField] private Text _healthUpgradeCostText = null;
-	[SerializeField] private Text _coinDropUpgradeCostText = null;
-	[SerializeField] private Text _shopPriceUpgradeCostText = null;
-	[SerializeField] private Text _cardTierUpgradeCostText = null;
-	[SerializeField] private Button _healthUpgradeBtn = null;
-	[SerializeField] private Button _coinDropUpgradeBtn = null;
-	[SerializeField] private Button _shopPriceUpgradeBtn = null;
-	[SerializeField] private Button _cardTierUpgradeBtn = null;
-
 	private bool _isVisible = true;
 
 	void Awake()
@@ -60,10 +42,8 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_menuUICamera != null, "_menuUICamera is not assigned.");
 
 		Debug.Assert(_continueBtnObject != null, "_continueBtnObject is not assigned.");
-		Debug.Assert(_upgradesBtnObject != null, "_upgradesBtnObject is not assigned.");
 		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
 		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
-		Debug.Assert(_upgradesBtn != null, "_upgradesBtn is not assigned.");
 		Debug.Assert(_leaderboardBtn != null, "_leaderboardBtn is not assigned.");
 		Debug.Assert(_achievementBtn != null, "_achievementBtn is not assigned.");
 		Debug.Assert(_settingsBtn != null, "_settingsBtn is not assigned.");
@@ -83,43 +63,19 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_confirmationConfirmBtn != null, "_confirmationConfirmBtn is not assigned.");
 		Debug.Assert(_confirmationCancelBtn != null, "_confirmationCancelBtn is not assigned.");
 
-		Debug.Assert(_upgradesPanelObject != null, "_upgradesPanelObject is not assigned.");
-		Debug.Assert(_upgradesPanelCloseBtn != null, "_upgradesPanelCloseBtn is not assigned.");
-		Debug.Assert(_healthUpgradeStateText != null, "_healthUpgradeStateText is not assigned.");
-		Debug.Assert(_coinDropUpgradeStateText != null, "_coinDropUpgradeStateText is not assigned.");
-		Debug.Assert(_shopPriceUpgradeStateText != null, "_shopPriceUpgradeStateText is not assigned.");
-		Debug.Assert(_cardTierUpgradeStateText != null, "_cardTierUpgradeStateText is not assigned.");
-		Debug.Assert(_healthUpgradeCostText != null, "_healthUpgradeCostText is not assigned.");
-		Debug.Assert(_coinDropUpgradeCostText != null, "_coinDropUpgradeCostText is not assigned.");
-		Debug.Assert(_shopPriceUpgradeCostText != null, "_shopPriceUpgradeCosttext is not assigned.");
-		Debug.Assert(_cardTierUpgradeCostText != null, "_cardTierUpgradeCostText is not assigned.");
-		Debug.Assert(_healthUpgradeBtn != null, "_healthUpgradeBtn is not assigned.");
-		Debug.Assert(_coinDropUpgradeBtn != null, "_coinDropUpgradeBtn is not assigned.");
-		Debug.Assert(_shopPriceUpgradeBtn != null, "_shopPriceUpgradeBtn is not assigned.");
-		Debug.Assert(_cardTierUpgradeBtn != null, "_cardTierUpgradeBtn is not assigned.");
-
 		gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
 
 		_continueBtn.onClick.AddListener(_menu.ContinueGame);
 		_newGameBtn.onClick.AddListener(_menu.TryStartNewGame);
-		_upgradesBtn.onClick.AddListener(OpenUpgradesPanel);
 
 		_informationDismissBtn.onClick.AddListener(DismissInformationPanel);
 		_confirmationCancelBtn.onClick.AddListener(DismissConfirmationPanel);
-		_upgradesPanelCloseBtn.onClick.AddListener(DismissUpgradesPanel);
-
-		_healthUpgradeBtn.onClick.AddListener(TryUpgradeHealth);
-		_coinDropUpgradeBtn.onClick.AddListener(TryUpgradeCoinDrop);
-		_shopPriceUpgradeBtn.onClick.AddListener(TryUpgradeShopPrice);
-		_cardTierUpgradeBtn.onClick.AddListener(TryUpgradeCardTier);
 
 		DataLoader.OnAllDataLoaded += CheckBtnAvailability;
 		DataLoader.OnAllDataLoaded += UpdateGemText;
-		DataLoader.OnAllDataLoaded += UpdateUpgradesPanelText;
 
 		DismissInformationPanel();
 		DismissConfirmationPanel();
-		DismissUpgradesPanel();
 	}
 
 	public void SetVisible(bool inIsVisible)
@@ -166,35 +122,6 @@ public class MenuCanvas : MonoBehaviour
 		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPlayerData.NumGems);
 	}
 
-	private void UpdateUpgradesPanelText()
-	{
-		PlayerData playerData = DataLoader.SavedPlayerData;
-		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
-
-		_healthUpgradeStateText.text = playerData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
-		_coinDropUpgradeStateText.text = playerData.UpgradeLevelCoinDrop + "/" + upgradesData.NumCoinDropUpgradeLevels;
-		_shopPriceUpgradeStateText.text = playerData.UpgradeLevelShopPrice + "/" + upgradesData.NumShopPriceUpgradeLevels;
-		_cardTierUpgradeStateText.text = playerData.UpgradeLevelCardTier + "/" + upgradesData.NumCardTierUpgradeLevels;
-
-		if (playerData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels) _healthUpgradeCostText.text = "MAX";
-		else _healthUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.HealthUpgradeCosts[playerData.UpgradeLevelHealth]);
-
-		if (playerData.UpgradeLevelCoinDrop == upgradesData.NumCoinDropUpgradeLevels) _coinDropUpgradeCostText.text = "MAX";
-		else _coinDropUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CoinDropUpgradeCosts[playerData.UpgradeLevelCoinDrop]);
-
-		if (playerData.UpgradeLevelShopPrice == upgradesData.NumShopPriceUpgradeLevels) _shopPriceUpgradeCostText.text = "MAX";
-		else _shopPriceUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.ShopPriceUpgradeCosts[playerData.UpgradeLevelShopPrice]);
-
-		if (playerData.UpgradeLevelCardTier == upgradesData.NumCardTierUpgradeLevels) _cardTierUpgradeCostText.text = "MAX";
-		else _cardTierUpgradeCostText.text = ChessgeonUtils.FormatGemString(upgradesData.CardTierUpgradeCosts[playerData.UpgradeLevelCardTier]);
-	}
-
-	private void OpenUpgradesPanel()
-	{
-		UpdateUpgradesPanelText();
-		_upgradesPanelObject.SetActive(true);
-	}
-
 	private void DismissInformationPanel()
 	{
 		_informationPanelObject.SetActive(false);
@@ -204,76 +131,4 @@ public class MenuCanvas : MonoBehaviour
 	{
 		_confirmationPanelObject.SetActive(false);
 	}
-
-	private void DismissUpgradesPanel()
-	{
-		_upgradesPanelObject.SetActive(false);
-	}
-
-	#region UpgradeFuncs
-	private void TryUpgradeHealth()
-	{
-		PlayerData playerData = DataLoader.SavedPlayerData;
-		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
-		if (playerData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
-		{
-			// NOTE: Do nothing cause already max!
-		}
-		else
-		{
-			int cost = upgradesData.HealthUpgradeCosts[playerData.UpgradeLevelHealth];
-			if (playerData.NumGems < cost) InformNotEnoughGemsForUpgrade();
-			else
-			{
-				PromptConfirmation(
-					"BUY UPGRADE",
-					"Spend " + ChessgeonUtils.FormatGemString(cost) + " GEMs to upgrade max health?",
-					() =>
-					{
-						if (DataLoader.SpendGems(cost))
-						{
-							DataLoader.UpgradeHealth();
-							SaveUpgrade();
-						}
-						else
-						{
-							Debug.LogError("NOT ENOUGH GEMS TO SPEND!");
-						}
-					});
-			}
-		}
-	}
-
-	private void TryUpgradeCoinDrop()
-	{
-		// TODO: Implement this.
-	}
-
-	private void TryUpgradeShopPrice()
-	{
-		// TODO: Implement this.
-	}
-
-	private void TryUpgradeCardTier()
-	{
-		// TODO: Implement this.
-	}
-
-	private void InformNotEnoughGemsForUpgrade()
-	{
-		PopupInformation("OOPS...", "Not enough GEMs to purchase upgrade!");
-
-		// TODO: REMOVE THIS DEBUG
-		DataLoader.AwardGems(Random.Range(50, 150));
-		UpdateGemText();
-		DataLoader.SavePlayerData();
-	}
-
-	private void SaveUpgrade()
-	{
-		DataLoader.SavePlayerData();
-		UpdateGemText();
-		UpdateUpgradesPanelText();
-	}
-	#endregion
 }

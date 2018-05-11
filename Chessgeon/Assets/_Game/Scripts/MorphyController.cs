@@ -16,8 +16,7 @@ public class MorphyController : MonoBehaviour
 
 	private bool _isDead = false;
     public bool IsDead { get { return _isDead; } }
-	private const int BASE_HEALTH = 6;
-	private int MAX_HEALTH { get { return BASE_HEALTH + DataLoader.SavedPlayerData.UpgradeLevelHealth; } }
+	private const int START_HEALTH = 6;
 	private int _health = -1;
 	public int Health { get { return _health; } }
 	private const int MAX_SHIELD = 5;
@@ -43,7 +42,7 @@ public class MorphyController : MonoBehaviour
 
 	public void ResetForNewGame()
 	{
-		SetHealth(MAX_HEALTH);
+		SetHealth(START_HEALTH);
 		SetShield(0);
 		_isDead = false;
 	}

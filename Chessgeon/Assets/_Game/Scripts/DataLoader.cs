@@ -25,9 +25,6 @@ public static class DataLoader
 	private static PlayerData _playerData;
 	public static PlayerData SavedPlayerData { get { return _playerData; } }
 
-	private static UpgradeData _upgradesData;
-	public static UpgradeData LoadedUpgradesData { get { return _upgradesData; } }
-
 	// Data file names
 	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
 	private const string FLOOR_DATA_FILENAME = "FloorData.txt";
@@ -57,14 +54,8 @@ public static class DataLoader
 	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
 
 	private const string PLAYER_DATA_NUM_GEMS_KEY = "PLAYER_DATA_NUM_GEMS";
-	private const string PLAYER_DATA_UPGRADE_LEVEL_HEALTH_KEY = "PLAYER_DATA_UPGRADE_LEVEL_HEALTH";
-	private const string PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP_KEY = "PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP";
-	private const string PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY = "PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE";
-	private const string PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER_KEY = "PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER";
 
 	#region Data Structs
-	
-
 	public struct PrevRunData
 	{
 		private int _health;
@@ -365,10 +356,6 @@ public static class DataLoader
 		using (ES2Writer writer = ES2Writer.Create(PLAYER_DATA_FILENAME))
 		{
 			writer.Write(_playerData.NumGems, PLAYER_DATA_NUM_GEMS_KEY);
-			writer.Write(_playerData.UpgradeLevelHealth, PLAYER_DATA_UPGRADE_LEVEL_HEALTH_KEY);
-			writer.Write(_playerData.UpgradeLevelCoinDrop, PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP_KEY);
-			writer.Write(_playerData.UpgradeLevelShopPrice, PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY);
-			writer.Write(_playerData.UpgradeLevelCardTier, PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER_KEY);
 
 			writer.Save();
 		}
@@ -382,22 +369,12 @@ public static class DataLoader
 		{
 			ES2Data playerData = ES2.LoadAll(PLAYER_DATA_FILENAME);
 
-			// TODO: Create a TryLoad<T> that will return 0 if failed to load. Safer for future updates and all that.
-			_playerData = new PlayerData(
-				playerData.Load<int>(PLAYER_DATA_NUM_GEMS_KEY),
-				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_HEALTH_KEY),
-				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_COIN_DROP_KEY),
-				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_SHOP_PRICE_KEY),
-				playerData.Load<int>(PLAYER_DATA_UPGRADE_LEVEL_CARD_TIER_KEY));
+            // TODO: Create a TryLoad<T> that will return 0 if failed to load. Safer for future updates and all that.
+            _playerData = new PlayerData(playerData.Load<int>(PLAYER_DATA_NUM_GEMS_KEY));
 		}
 		else // If no have, create empty. Basically new player.
 		{
-			_playerData = new PlayerData(
-				0,
-				0,
-				0,
-				0,
-				0);
+			_playerData = new PlayerData(0);
 		}
 
 		if (inOnComplete != null) inOnComplete();
@@ -417,44 +394,9 @@ public static class DataLoader
 			}
 			else
 			{
-				const string UPGRADES_KEY = "upgrades";
-				const string UPGRADES_NUM_LEVELS_KEY = "num levels";
-				const string UPGRADES_COST_KEY = "cost";
-				const string UPGRADES_HEALTH_KEY = "health";
-				const string UPGRADES_COIN_DROP_KEY = "coin drop";
-				const string UPGRADES_SHOP_PRICE_KEY = "shop price";
-				const string UPGRADES_CARD_TIER_KEY = "card tier";
-				JSONNode gameDataRootNode = JSON.Parse(www.text);
-				JSONNode upgradesNode = gameDataRootNode[UPGRADES_KEY];
-
-				JSONNode healthUpgradeNode = upgradesNode[UPGRADES_HEALTH_KEY];
-				JSONNode coinDropUpgradeNode = upgradesNode[UPGRADES_COIN_DROP_KEY];
-				JSONNode shopPriceUpgradeNode = upgradesNode[UPGRADES_SHOP_PRICE_KEY];
-				JSONNode cardTierUpgradeNode = upgradesNode[UPGRADES_CARD_TIER_KEY];
-
-				JSONArray healthCostsJSONArr = healthUpgradeNode[UPGRADES_COST_KEY].AsArray;
-				JSONArray coinDropCostsJSONArr = coinDropUpgradeNode[UPGRADES_COST_KEY].AsArray;
-				JSONArray shopPriceCostsJSONArr = shopPriceUpgradeNode[UPGRADES_COST_KEY].AsArray;
-				JSONArray cardTierCostsJSONArr = cardTierUpgradeNode[UPGRADES_COST_KEY].AsArray;
-				int[] healthCosts = new int[healthCostsJSONArr.Count];
-				int[] coinDropCosts = new int[coinDropCostsJSONArr.Count];
-				int[] shopPriceCosts = new int[shopPriceCostsJSONArr.Count];
-				int[] cardTierCosts = new int[cardTierCostsJSONArr.Count];
-				for (int iCost = 0; iCost < healthCosts.Length; iCost++) healthCosts[iCost] = healthCostsJSONArr[iCost].AsInt;
-				for (int iCost = 0; iCost < coinDropCosts.Length; iCost++) coinDropCosts[iCost] = coinDropCostsJSONArr[iCost].AsInt;
-				for (int iCost = 0; iCost < shopPriceCosts.Length; iCost++) shopPriceCosts[iCost] = shopPriceCostsJSONArr[iCost].AsInt;
-				for (int iCost = 0; iCost < cardTierCosts.Length; iCost++) cardTierCosts[iCost] = cardTierCostsJSONArr[iCost].AsInt;
-
-				_upgradesData = new UpgradeData(
-					healthUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
-					coinDropUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
-					shopPriceUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
-					cardTierUpgradeNode[UPGRADES_NUM_LEVELS_KEY].AsInt,
-					healthCosts,
-					coinDropCosts,
-					shopPriceCosts,
-					cardTierCosts);
-				
+                Debug.Log("DOING NOTHING TO PROCESS GAMEDATAJSON");
+                Debug.Log(www.text);
+			
 				inOnComplete();
 			}
 		}
@@ -462,8 +404,4 @@ public static class DataLoader
 
 	public static void AwardGems(int inNumGemsAwarded) { _playerData.AwardGems(inNumGemsAwarded); }
 	public static bool SpendGems(int inNumGemsToSpend) { return _playerData.SpendGems(inNumGemsToSpend); }
-	public static void UpgradeHealth() { _playerData.UpgradeHealth(); }
-	public static void UpgradeCoinDrop() { _playerData.UpgradeCoinDrop(); }
-	public static void UpgradeShopPrice() { _playerData.UpgradeShopPrice(); }
-	public static void UpgradeCardTier() { _playerData.UpgradeCardTier(); }
 }
