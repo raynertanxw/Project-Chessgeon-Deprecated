@@ -77,7 +77,7 @@ public class CardManager : MonoBehaviour
 	{
 		_isFirstDrawOfGame = inCardHandData.IsFirstDrawOfGame;
         _hasDoneFirstTurnDraw = inCardHandData.HasDoneFirstTurnDraw;
-		_skipNextDraw = true;
+		_skipNextDraw = _hasDoneFirstTurnDraw ? true : false;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
 		HideAllCards();
