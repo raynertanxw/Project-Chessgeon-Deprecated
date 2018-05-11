@@ -168,7 +168,7 @@ public class MenuCanvas : MonoBehaviour
 
 	private void UpdateUpgradesPanelText()
 	{
-		DataLoader.PlayerData playerData = DataLoader.SavedPlayerData;
+		PlayerData playerData = DataLoader.SavedPlayerData;
 		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
 
 		_healthUpgradeStateText.text = playerData.UpgradeLevelHealth + "/" + upgradesData.NumHealthUpgradeLevels;
@@ -213,7 +213,7 @@ public class MenuCanvas : MonoBehaviour
 	#region UpgradeFuncs
 	private void TryUpgradeHealth()
 	{
-		DataLoader.PlayerData playerData = DataLoader.SavedPlayerData;
+		PlayerData playerData = DataLoader.SavedPlayerData;
 		UpgradeData upgradesData = DataLoader.LoadedUpgradesData;
 		if (playerData.UpgradeLevelHealth == upgradesData.NumHealthUpgradeLevels)
 		{
