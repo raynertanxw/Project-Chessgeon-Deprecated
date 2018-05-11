@@ -104,7 +104,6 @@ public class DungeonCardDrawer : MonoBehaviour
 		}
 		else
 		{
-			DungeonPauseCanvas.SetEnablePauseBtn(false);
 			OnPlayerEndTurn.Invoke();
 		}
 	}
@@ -141,7 +140,6 @@ public class DungeonCardDrawer : MonoBehaviour
 		_instance._hideDrawerBtn.interactable = false;
         _instance._shopBtn.interactable = false;
 		_instance._showDrawerBtn.interactable = false;
-		if (!inIsEnabled) DungeonPauseCanvas.SetEnablePauseBtn(inIsEnabled, null, inIsAnimated);
 
 		Utils.GenericVoidDelegate onCompleteAnim = () =>
 		{
@@ -150,7 +148,6 @@ public class DungeonCardDrawer : MonoBehaviour
 
 			if (inIsEnabled)
 			{
-				DungeonPauseCanvas.SetEnablePauseBtn(inIsEnabled, null, inIsAnimated);
 				_instance._endTurnBtn.interactable = true;
 				_instance._hideDrawerBtn.interactable = true;
                 _instance._shopBtn.interactable = true;
@@ -253,13 +250,11 @@ public class DungeonCardDrawer : MonoBehaviour
 	{
 		_instance._isEndTurnBlocked = true;
 		_instance._endTurnBlockedReason = inBlockReason;
-		DungeonPauseCanvas.SetInteractablePauseBtn(false);
 	}
 
 	public static void EnableEndTurnBtn()
 	{
 		_instance._isEndTurnBlocked = false;
 		_instance._endTurnBlockedReason = string.Empty;
-		DungeonPauseCanvas.SetInteractablePauseBtn(true);
 	}
 }

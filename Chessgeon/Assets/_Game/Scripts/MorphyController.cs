@@ -36,8 +36,6 @@ public class MorphyController : MonoBehaviour
 		_morphy.Initialise(this);
 
 		_morphy.Hide();
-
-		OnMorphyReachStairs += () => { DungeonPauseCanvas.SetEnablePauseBtn(false); };
 	}
 
 	public void ResetForNewGame()

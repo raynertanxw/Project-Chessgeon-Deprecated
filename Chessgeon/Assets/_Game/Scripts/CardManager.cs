@@ -43,11 +43,6 @@ public class CardManager : MonoBehaviour
 			_cards[iCard].OnCardExecute += TryExecuteAndDiscardCard;
 		}
 
-		DungeonPauseCanvas.OnIsPausedChanged += () =>
-		{
-			_blockingImage.raycastTarget = !DungeonPauseCanvas.IsPaused;
-		};
-
 		_isFirstDrawOfGame = true;
         _hasDoneFirstTurnDraw = false;
 		_numCardsInHand = 0;
@@ -136,7 +131,6 @@ public class CardManager : MonoBehaviour
 	{
 		Debug.Log("BLOCKED: " + inBlocked);
 		_controlBlocker.raycastTarget = inBlocked;
-		DungeonPauseCanvas.SetInteractablePauseBtn(!inBlocked);
 	}
 
 	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
