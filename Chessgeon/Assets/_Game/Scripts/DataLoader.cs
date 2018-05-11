@@ -35,7 +35,6 @@ public static class DataLoader
 	// Keys
 	private const string PREV_RUN_DATA_HEALTH_KEY = "PREV_RUN_DATA_HEALTH";
 	private const string PREV_RUN_DATA_SHIELD_KEY = "PREV_RUN_DATA_SHIELD";
-	private const string PREV_RUN_DATA_NUMCOINS_KEY = "PREV_RUN_DATA_NUM_COINS";
 
 	private const string FLOOR_DATA_FLOORNUM_KEY = "FLOOR_DATA_FLOORNUM";
 	private const string FLOOR_DATA_SIZE_KEY = "FLOOR_DATA_SIZE";
@@ -59,25 +58,21 @@ public static class DataLoader
 	{
 		private int _health;
 		private int _shield;
-		private int _numCoins;
 		// TODO: Score.
 
 		public int Health { get { return _health; } }
 		public int Shield { get { return _shield; } }
-		public int NumCoins { get { return _numCoins; } }
 
 		public PrevRunData(Dungeon inDungeon)
 		{
 			_health = inDungeon.MorphyController.Health;
 			_shield = inDungeon.MorphyController.Shield;
-			_numCoins = inDungeon.NumCoins;
 		}
 
-		public PrevRunData(int inHealth, int inShield, int inNumCoins)
+		public PrevRunData(int inHealth, int inShield)
 		{
 			_health = inHealth;
 			_shield = inShield;
-			_numCoins = inNumCoins;
 		}
 	}
 
@@ -201,7 +196,6 @@ public static class DataLoader
 		{
 			writer.Write(inPrevRunData.Health, PREV_RUN_DATA_HEALTH_KEY);
 			writer.Write(inPrevRunData.Shield, PREV_RUN_DATA_SHIELD_KEY);
-			writer.Write(inPrevRunData.NumCoins, PREV_RUN_DATA_NUMCOINS_KEY);
 
 			writer.Save();
 		}
@@ -276,8 +270,7 @@ public static class DataLoader
 			// PREV_RUN_DATA
 			_prevRunData = new PrevRunData(
 				prevRunData.Load<int>(PREV_RUN_DATA_HEALTH_KEY),
-				prevRunData.Load<int>(PREV_RUN_DATA_SHIELD_KEY),
-				prevRunData.Load<int>(PREV_RUN_DATA_NUMCOINS_KEY));
+				prevRunData.Load<int>(PREV_RUN_DATA_SHIELD_KEY));
 
 			// FLOOR_DATA
 			Vector2Int size = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_SIZE_KEY));

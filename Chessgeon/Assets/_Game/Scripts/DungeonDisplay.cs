@@ -20,7 +20,6 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private RectTransform _heartsHolder = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
-	[SerializeField] private Text _coinText = null;
 	[SerializeField] private Image _nextFloorPanel = null;
 	[SerializeField] private Text _nextFloorText = null;
 
@@ -29,10 +28,10 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Mesh _heartHalfMesh = null;
 	[SerializeField] private Mesh _shieldMesh = null;
 
-	private const int NUM_HEARTS = 5;
+	private const int NUM_HEARTS = 3;
 	private MeshRenderer[] _heartMeshRens = null;
 	private MeshFilter[] _heartMeshFilters = null;
-	private const int NUM_SHIELD = 5;
+	private const int NUM_SHIELD = 3;
 	private MeshRenderer[] _shieldMeshRens = null;
 	private MeshFilter[] _shieldMeshFilters = null;
 
@@ -57,7 +56,6 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_heartsHolder != null, "_heartsHolder is not assigned.");
 			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
-			Debug.Assert(_coinText != null, "_coinText is not assigned.");
 			Debug.Assert(_nextFloorPanel != null, "_nextFloorPanel is not assigned.");
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
 
@@ -326,12 +324,6 @@ public class DungeonDisplay : MonoBehaviour
 	{
 		Debug.Assert(inFloorNum > 0, "inFloor is out of range: " + inFloorNum);
 		_floorText.text = ChessgeonUtils.FormatFloorString(inFloorNum);
-	}
-
-	public static void UpdateCoinText(int inNumCoins)
-	{
-		Debug.Assert(inNumCoins > -1, "inNumCoins is out of range: " + inNumCoins);
-		_instance._coinText.text = ChessgeonUtils.FormatCoinString(inNumCoins);
 	}
 	#endregion
 }
