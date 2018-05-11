@@ -124,24 +124,15 @@ public class Enemy : MonoBehaviour
 		// TODO: Points and stuff.
 		_meshRenderer.enabled = false;
 
-		// TODO: Use action repeat to give multiple coins.
-		DelayAction giveCoin = new DelayAction(0.2f);
-		giveCoin.OnActionStart += () => { GiveCoin(); };
-		ActionHandler.RunAction(new ActionRepeat(giveCoin, CurrentElementStratergy.GetNumCoinsReward()));
+		// TODO: Replace and give card instead.
+		DelayAction delayGiveCard = new DelayAction(0.2f);
+		delayGiveCard.OnActionStart += () => { GiveCard(); };
+		ActionHandler.RunAction(new ActionRepeat(delayGiveCard, CurrentElementStratergy.GetNumCardsReward()));
 	}
 
-	private void GiveCoin()
+	private void GiveCard()
 	{
-		GameObject coinInstance = _enemyManager.Dungeon.CoinPool.GetInstance();
-		coinInstance.transform.position = transform.position + Vector3.up * 2.0f;
-
-		MoveByAction moveCoinUp = new MoveByAction(coinInstance.transform, Vector3.up * 2.0f, 0.3f);
-		// TODO: Play get coin sound.
-		moveCoinUp.OnActionStart += () => { _enemyManager.Dungeon.CoinPool.EnableObject(coinInstance, true); };
-		moveCoinUp.OnActionFinish += () => { _enemyManager.Dungeon.CoinPool.EnableObject(coinInstance, false); };
-		ActionHandler.RunAction(moveCoinUp);
-
-		_enemyManager.Dungeon.EarnCoins(1);
+		Debug.Log("Give Card");
 	}
 
 	public void Remove()

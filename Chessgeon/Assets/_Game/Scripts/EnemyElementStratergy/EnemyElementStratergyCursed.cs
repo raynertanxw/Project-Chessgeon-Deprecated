@@ -19,7 +19,7 @@ public class EnemyElementStratergyCursed : EnemyElementStratergy
 		return 999;
 	}
 
-	public override int GetNumCoinsReward()
+	public override int GetNumCardsReward()
 	{
 		return 6;
 	}
