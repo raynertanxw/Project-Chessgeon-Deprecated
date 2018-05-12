@@ -45,7 +45,6 @@ public static class DataLoader
 	private const string FLOOR_DATA_ENEMY_MOVE_TYPE_KEY = "FLOOR_DATA_ENEMY_MOVE_TYPE";
 
     private const string CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY = "CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME";
-    private const string CARD_HAND_DATA_HAS_DONE_FIRST_TURN_DRAW_KEY = "CARD_HAND_DATA_HAS_DONE_FIRST_TURN_DRAW";
 	private const string CARD_HAND_DATA_CARD_TIER_KEY = "CARD_HAND_DATA_CARD_TIER";
 	private const string CARD_HAND_DATA_CARD_TYPE_KEY = "CARD_HAND_DATA_CARD_TYPE";
 	private const string CARD_HAND_DATA_IS_CLONED_KEY = "CARD_HAND_DATA_IS_CLONED";
@@ -130,17 +129,14 @@ public static class DataLoader
 	public struct CardHandData
 	{
         private bool _isFirstDrawOfGame;
-        private bool _hasDoneFirstTurnDraw;
 		private CardData[] _cardDatas;
 		
         public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
-        public bool HasDoneFirstTurnDraw { get { return _hasDoneFirstTurnDraw; } }
 		public CardData[] CardDatas { get { return _cardDatas; } }
 
-		public CardHandData(bool inIsFirstDrawOfGame, bool inHasDoneFirstTurnDraw, params CardData[] inCardDatas)
+		public CardHandData(bool inIsFirstDrawOfGame, params CardData[] inCardDatas)
 		{
             _isFirstDrawOfGame = inIsFirstDrawOfGame;
-            _hasDoneFirstTurnDraw = inHasDoneFirstTurnDraw;
 			_cardDatas = inCardDatas;
 		}
 	}
@@ -241,7 +237,6 @@ public static class DataLoader
 			}
 
             writer.Write(inCardHandData.IsFirstDrawOfGame, CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);
-            writer.Write(inCardHandData.HasDoneFirstTurnDraw, CARD_HAND_DATA_HAS_DONE_FIRST_TURN_DRAW_KEY);
 			writer.Write(cardTier, CARD_HAND_DATA_CARD_TIER_KEY);
 			writer.Write(cardType, CARD_HAND_DATA_CARD_TYPE_KEY);
 			writer.Write(isCloned, CARD_HAND_DATA_IS_CLONED_KEY);
@@ -294,7 +289,6 @@ public static class DataLoader
 
             // CARD_HAND_DATA
             bool isFirstDrawOfGame = cardHandData.Load<bool>(CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);
-            bool hasDoneFirstTurnDraw = cardHandData.Load<bool>(CARD_HAND_DATA_HAS_DONE_FIRST_TURN_DRAW_KEY);
 			eCardTier[] cardTier = cardHandData.LoadArray<eCardTier>(CARD_HAND_DATA_CARD_TIER_KEY);
 			eCardType[] cardType = cardHandData.LoadArray<eCardType>(CARD_HAND_DATA_CARD_TYPE_KEY);
 			bool[] isCloned = cardHandData.LoadArray<bool>(CARD_HAND_DATA_IS_CLONED_KEY);
@@ -311,7 +305,7 @@ public static class DataLoader
 					cardMoveType[iCard]);
 			}
 
-			_cardHandData = new CardHandData(isFirstDrawOfGame, hasDoneFirstTurnDraw, cardDatas);
+			_cardHandData = new CardHandData(isFirstDrawOfGame, cardDatas);
 
 			_hasPreviousRunData = true;
 		}

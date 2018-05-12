@@ -17,12 +17,10 @@ public class CardManager : MonoBehaviour
 
 	private const int MAX_CARDS = 7;
 	private int _numCardsInHand = -1;
-	private bool _isFirstDrawOfGame = true;
-	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
 	private bool _skipNextDraw = false;
 	public bool SkipNextDraw { get { return _skipNextDraw; } }
-    private bool _hasDoneFirstTurnDraw = false;
-    public bool HasDoneFirstTurnDraw { get { return _hasDoneFirstTurnDraw; } }
+	private bool _isFirstDrawOfGame = true;
+	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
 
 	// TODO: Statistics
 	private int _statTotalCardsDrawn = -1;
@@ -44,7 +42,6 @@ public class CardManager : MonoBehaviour
 		}
 
 		_isFirstDrawOfGame = true;
-        _hasDoneFirstTurnDraw = false;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
 	}
@@ -63,10 +60,14 @@ public class CardManager : MonoBehaviour
 		}
 	}
 
+	public void SkippedNextDraw()
+	{
+		_skipNextDraw = false;
+	}
+
 	public void ResetForNewGame()
 	{
 		_isFirstDrawOfGame = true;
-        _hasDoneFirstTurnDraw = false;
 		_skipNextDraw = false;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0;
@@ -76,29 +77,13 @@ public class CardManager : MonoBehaviour
 	public void ResetFromCardHandData(DataLoader.CardHandData inCardHandData)
 	{
 		_isFirstDrawOfGame = inCardHandData.IsFirstDrawOfGame;
-        _hasDoneFirstTurnDraw = inCardHandData.HasDoneFirstTurnDraw;
-		_skipNextDraw = _hasDoneFirstTurnDraw ? true : false;
+		_skipNextDraw = true;
 		_numCardsInHand = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
 		HideAllCards();
 
 		DrawCard(null, false, inCardHandData.CardDatas);
 	}
-
-	public void NextDrawSkipped()
-	{
-		_skipNextDraw = false;
-	}
-
-    public void DoneFirstTurnDraw()
-    {
-        _hasDoneFirstTurnDraw = true;
-    }
-
-    public void ProgressNextFloor()
-    {
-        _hasDoneFirstTurnDraw = false;
-    }
 
 	public DataLoader.CardHandData GenerateCardHandData()
 	{
@@ -109,7 +94,7 @@ public class CardManager : MonoBehaviour
 			cardDatas[iCard] = _cards[iCard].CardData;
 		}
 
-		return new DataLoader.CardHandData(_isFirstDrawOfGame, _hasDoneFirstTurnDraw, cardDatas);
+		return new DataLoader.CardHandData(_isFirstDrawOfGame, cardDatas);
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)

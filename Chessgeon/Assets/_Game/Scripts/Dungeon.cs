@@ -142,6 +142,7 @@ public class Dungeon : MonoBehaviour
 		DataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
 		DataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
 		DataLoader.SavePreviousRunData(prevRunData, floorData, cardHandData);
+		Debug.Log("Game Saved!");
 	}
 
 	private void OnMorphyReachStairs()
@@ -151,7 +152,6 @@ public class Dungeon : MonoBehaviour
 
 	public void ProgressToNextFloor(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-        _cardManager.ProgressNextFloor();
 		_floorNum++;
 		GenerateNewFloor();
 		// Save each floor.
@@ -328,18 +328,22 @@ public class Dungeon : MonoBehaviour
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob turnDrawJob = new DTJob((OnJobComplete) =>
 				{
-					if (_dungeonFSM.Dungeon.CardManager.HasDoneFirstTurnDraw
-                        && _dungeonFSM.Dungeon.CardManager.SkipNextDraw)
+					if (_dungeonFSM.Dungeon.CardManager.SkipNextDraw)
 					{
-						_dungeonFSM.Dungeon.CardManager.NextDrawSkipped();
+						_dungeonFSM.Dungeon.CardManager.SkippedNextDraw();
 						OnJobComplete();
 					}
 					else
 					{
-                        if (!_dungeonFSM.Dungeon.CardManager.HasDoneFirstTurnDraw) _dungeonFSM.Dungeon.CardManager.DoneFirstTurnDraw();
-						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame ? 3 : 2, OnJobComplete);
+						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame ? 3 : 1, OnJobComplete);
 					}
 				}, playPhaseAnimJob);
+
+				DTJob saveDataJob = new DTJob((OnJobComplete) =>
+				{
+					_dungeonFSM.Dungeon.SaveGame();
+					OnJobComplete();
+				}, turnDrawJob);
 
 				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
 				{
@@ -348,7 +352,7 @@ public class Dungeon : MonoBehaviour
 
 				DTJobList startPlayerPhase = new DTJobList(() =>
 				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); DungeonCardDrawer.EnableEndTurnBtn(); },
-				turnDrawJob, focusOnPlayerJob);
+				turnDrawJob, focusOnPlayerJob, saveDataJob);
 				startPlayerPhase.ExecuteAllJobs();
 			}
 
