@@ -105,7 +105,7 @@ public class Dungeon : MonoBehaviour
 		_enemyManager.ResetForNewGame();
 
 		_morphyController.ResetFromPrevRunData(inPrevRunData);
-		_cardManager.ResetFromCardHandData(inPrevRunData);
+		_cardManager.ResetFromPrevRunData(inPrevRunData);
 
 		_floorNum = inPrevRunData.FloorNum;
 		_isFloorCleared = false;

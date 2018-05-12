@@ -69,7 +69,7 @@ public class CardManager : MonoBehaviour
 		HideAllCards();
 	}
 
-	public void ResetFromCardHandData(RunData inPrevRunData)
+	public void ResetFromPrevRunData(RunData inPrevRunData)
 	{
 		_isFirstDrawOfGame = inPrevRunData.IsFirstDrawOfGame;
 		_numCardsInHand = 0;
