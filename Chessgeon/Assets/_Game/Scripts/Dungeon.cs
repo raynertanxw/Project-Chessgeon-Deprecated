@@ -91,7 +91,6 @@ public class Dungeon : MonoBehaviour
 	public void ResetAndStartGame()
 	{
 		// TODO: Reset all of the UI?
-		DungeonCardDrawer.EnableCardDrawer(false, false);
 		_morphyController.ResetForNewGame();
 		_enemyManager.ResetForNewGame();
 		_cardManager.ResetForNewGame();
@@ -108,7 +107,6 @@ public class Dungeon : MonoBehaviour
 
 	public void StartGameFromPrevRun(DataLoader.PrevRunData inPrevRunData, DataLoader.FloorData inFloorData, DataLoader.CardHandData inCardHandData)
 	{
-		DungeonCardDrawer.EnableCardDrawer(false, false);
 		_enemyManager.ResetForNewGame();
 
 		_morphyController.ResetFromPrevRunData(inPrevRunData);
@@ -328,9 +326,6 @@ public class Dungeon : MonoBehaviour
 				_dungeonFSM._dungeon._isPlayersTurn = true;
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
-				DTJob enableCardDrawerJob = new DTJob((OnJobComplete) => {
-					DungeonCardDrawer.EnableCardDrawer(true, true, true, OnJobComplete); },
-					playPhaseAnimJob);
 				DTJob turnDrawJob = new DTJob((OnJobComplete) =>
 				{
 					if (_dungeonFSM.Dungeon.CardManager.HasDoneFirstTurnDraw
@@ -344,8 +339,7 @@ public class Dungeon : MonoBehaviour
                         if (!_dungeonFSM.Dungeon.CardManager.HasDoneFirstTurnDraw) _dungeonFSM.Dungeon.CardManager.DoneFirstTurnDraw();
 						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame ? 3 : 2, OnJobComplete);
 					}
-				},
-					enableCardDrawerJob);
+				}, playPhaseAnimJob);
 
 				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
 				{
@@ -353,7 +347,7 @@ public class Dungeon : MonoBehaviour
 				}, playPhaseAnimJob);
 
 				DTJobList startPlayerPhase = new DTJobList(() =>
-				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); },
+				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); DungeonCardDrawer.EnableEndTurnBtn(); },
 				turnDrawJob, focusOnPlayerJob);
 				startPlayerPhase.ExecuteAllJobs();
 			}

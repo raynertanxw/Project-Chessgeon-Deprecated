@@ -374,7 +374,6 @@ public class CardManager : MonoBehaviour
 		#region NormalExecutionMode
 		else
 		{
-			bool closeDrawerAfterExecute = true;
 			Utils.GenericVoidDelegate postExecuteCardAnimActions = null;
 			DTJob.OnCompleteCallback postCloseDrawerAnimActions = null;
 			bool isCardRejected = false;
@@ -429,7 +428,6 @@ public class CardManager : MonoBehaviour
 
 					if (hasCloneableCards)
 					{
-						closeDrawerAfterExecute = false;
 						int numClones = -1;
 						switch (cardData.cardTier)
 						{
@@ -460,7 +458,6 @@ public class CardManager : MonoBehaviour
 				}
 				case eCardType.Draw:
 				{
-					closeDrawerAfterExecute = false;
 					int numDraws = -1;
 					switch (cardData.cardTier)
 					{
@@ -476,7 +473,6 @@ public class CardManager : MonoBehaviour
 				}
 				case eCardType.Shield:
 				{
-					closeDrawerAfterExecute = false;
 					int numShield = -1;
 					switch (cardData.cardTier)
 					{
@@ -519,11 +515,6 @@ public class CardManager : MonoBehaviour
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{
-					if (closeDrawerAfterExecute)
-					{
-						DungeonCardDrawer.EnableCardDrawer(false, true, true, postCloseDrawerAnimActions);
-					}
-
 					if (postExecuteCardAnimActions != null) postExecuteCardAnimActions();
 				});
 			}

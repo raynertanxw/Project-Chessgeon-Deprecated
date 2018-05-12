@@ -106,7 +106,6 @@ public class MorphyController : MonoBehaviour
 		{
 			_numMovesLeft = 0;
 			TransformBackToMorphy();
-			DungeonCardDrawer.EnableCardDrawer(true);
 			DungeonPopup.PopText("No Possible " + _morphy.CurrentType.ToString() + " Moves");
 			Debug.LogWarning("No Possible " + _morphy.CurrentType.ToString() + " Moves");
 		}
@@ -130,7 +129,6 @@ public class MorphyController : MonoBehaviour
 			onFinishMove = () =>
 			{
 				TransformBackToMorphy();
-				DungeonCardDrawer.EnableCardDrawer(true);
 			};
 		}
 
@@ -271,7 +269,7 @@ public class MorphyController : MonoBehaviour
 			Debug.Assert(enemies[iTarget] != null);
 		}
 
-		_morphy.SmashAttack(enemies, () => { DungeonCardDrawer.EnableCardDrawer(true); });
+		_morphy.SmashAttack(enemies, null);
 	}
 
 	public void TakeDamage(int inDamage)
