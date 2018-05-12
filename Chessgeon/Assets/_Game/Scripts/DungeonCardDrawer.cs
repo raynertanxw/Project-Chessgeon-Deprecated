@@ -35,8 +35,7 @@ public class DungeonCardDrawer : MonoBehaviour
 			Debug.Assert(_endTurnBtnMesh != null, "_endTurnBtnMesh is not assigned.");
 			Debug.Assert(_endTurnBtn != null, "_endTurnBtn is not assigned.");
 
-			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
-
+			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 			_endTurnBtn.onClick.AddListener(() => { TryInvokeOnPlayerEndTurn(); });
 		}
 		else if (_instance != this)

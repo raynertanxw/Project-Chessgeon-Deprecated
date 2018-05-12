@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DaburuTools;
 
 public class BoardScroller : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class BoardScroller : MonoBehaviour
 		{
 			_instance = this;
 
-			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(DaburuTools.Utils.GetDesignWidthFromDesignHeight(1920.0f), 1920.0f);
+			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 		}
 		else if (_instance != this)
 		{

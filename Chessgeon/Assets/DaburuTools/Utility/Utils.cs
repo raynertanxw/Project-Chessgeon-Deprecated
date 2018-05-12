@@ -16,6 +16,12 @@ namespace DaburuTools
             float designWidth = inDesignHeight / Screen.height * Screen.width;
             return designWidth;
         }
+		
+		public static float GetDesignHeightFromDesignWidth(float inDesignWidth)
+		{
+			float designHeight = inDesignWidth / Screen.width * Screen.height;
+			return designHeight;
+		}
 
 
 

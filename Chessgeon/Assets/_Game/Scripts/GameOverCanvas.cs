@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DaburuTools;
 
 public class GameOverCanvas : MonoBehaviour 
 {
@@ -50,6 +51,8 @@ public class GameOverCanvas : MonoBehaviour
 			Debug.Assert(_gameOverPanelMeshRen != null, "_gameOverPanelMeshRen is not assigned.");
 			Debug.Assert(_startOverBtnMeshRen != null, "_startOverBtnMeshRen is not assigned.");
 			Debug.Assert(_exitBtnMeshRen != null, "_exitBtnMeshRen is not assigned.");
+
+			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 
 			EnableGameOverPanel(false);
 

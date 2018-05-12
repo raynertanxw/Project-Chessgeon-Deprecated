@@ -4,6 +4,10 @@ using UnityEngine;
 
 public static class Constants
 {
+	public const float DESIGN_WIDTH = 1080.0f;
+	public const float DESIGN_HEIGHT = 1920.0f;
+	public const float DESIGN_ORTHO_SIZE = 9.6f;
+
 	public const int SCENE_LOADINGSCREEN = 0;
 	public const int SCENE_DUNGEON = 1;
 	public const string SCENE_NAME_LOADINGSCREEN = "SCENE_LoadingScreen";

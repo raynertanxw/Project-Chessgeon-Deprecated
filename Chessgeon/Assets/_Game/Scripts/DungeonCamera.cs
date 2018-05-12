@@ -29,12 +29,19 @@ public class DungeonCamera : MonoBehaviour
 	{
 		if (_instance == null)
 		{
-			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 			_instance = this;
 			_dungeonCamera = this.GetComponent<Camera>();
+			Debug.Assert(_dungeonCamera != null, "Could not grab reference to Camera component.");
 			int cullMaskANDLayerUI = (_dungeonCamera.cullingMask & (1 << LayerMask.NameToLayer(Constants.LAYER_NAME_UI)));
 			Debug.Assert(cullMaskANDLayerUI == 0, "Dungeon Cam should not have UI in it's culling mask.");
+			Debug.Assert(_dungeonCamera.depth == 0, "Dungeon Cam not set to correct depth. Depth should be lower than UICamera.");
 			_dungeon.OnFloorGenerated += CalcCameraBounds;
+
+			float scalePercentage = _dungeonCamera.orthographicSize / Constants.DESIGN_ORTHO_SIZE;
+			float designHeight = Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH);
+			_dungeonCamera.orthographicSize = designHeight * scalePercentage / 200.0f;
+
+			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 			BoardScroller.OnDrag += OnDrag;
 			BoardScroller.OnBeginDrag += OnBeginDrag;
