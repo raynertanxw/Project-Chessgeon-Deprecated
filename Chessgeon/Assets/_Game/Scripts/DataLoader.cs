@@ -15,10 +15,8 @@ public static class DataLoader
 	public static Utils.GenericVoidDelegate OnAllDataLoaded = null;
 
 	// Data structs
-	private static PrevRunData _prevRunData;
-	public static PrevRunData SavedPrevRunData { get { return _prevRunData; } }
-	private static FloorData _floorData;
-	public static FloorData SavedFloorData { get { return _floorData; } }
+	private static RunData _prevRunData;
+	public static RunData PrevRunData { get { return _prevRunData; } }
 	private static CardHandData _cardHandData;
 	public static CardHandData SavedCardHandData { get { return _cardHandData; } }
 
@@ -26,23 +24,10 @@ public static class DataLoader
 	public static PlayerData SavedPlayerData { get { return _playerData; } }
 
 	// Data file names
-	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
-	private const string FLOOR_DATA_FILENAME = "FloorData.txt";
 	private const string CARD_HAND_DATA_FILENAME = "CardhandData.txt";
 	private const string GAME_DATA_JSON_FILENAME = "GameDataJson.txt";
 
 	// Keys
-	private const string PREV_RUN_DATA_HEALTH_KEY = "PREV_RUN_DATA_HEALTH";
-	private const string PREV_RUN_DATA_SHIELD_KEY = "PREV_RUN_DATA_SHIELD";
-
-	private const string FLOOR_DATA_FLOORNUM_KEY = "FLOOR_DATA_FLOORNUM";
-	private const string FLOOR_DATA_SIZE_KEY = "FLOOR_DATA_SIZE";
-	private const string FLOOR_DATA_STAIR_POS_KEY = "FLOOR_DATA_STAIR_POS";
-	private const string FLOOR_DATA_MORPHY_POS_KEY = "FLOOR_DATA_MORPHY_POS";
-	private const string FLOOR_DATA_ENEMY_POS_X_KEY = "FLOOR_DATA_ENEMY_POS_X";
-	private const string FLOOR_DATA_ENEMY_POS_Y_KEY = "FLOOR_DATA_ENEMY_POS_Y";
-	private const string FLOOR_DATA_ENEMY_MOVE_TYPE_KEY = "FLOOR_DATA_ENEMY_MOVE_TYPE";
-
     private const string CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY = "CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME";
 	private const string CARD_HAND_DATA_CARD_TIER_KEY = "CARD_HAND_DATA_CARD_TIER";
 	private const string CARD_HAND_DATA_CARD_TYPE_KEY = "CARD_HAND_DATA_CARD_TYPE";
@@ -50,78 +35,6 @@ public static class DataLoader
 	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
 
 	#region Data Structs
-	public struct PrevRunData
-	{
-		private int _health;
-		private int _shield;
-		// TODO: Score.
-
-		public int Health { get { return _health; } }
-		public int Shield { get { return _shield; } }
-
-		public PrevRunData(Dungeon inDungeon)
-		{
-			_health = inDungeon.MorphyController.Health;
-			_shield = inDungeon.MorphyController.Shield;
-		}
-
-		public PrevRunData(int inHealth, int inShield)
-		{
-			_health = inHealth;
-			_shield = inShield;
-		}
-	}
-
-	public struct FloorData
-	{
-		private int _floorNum;
-		private Vector2Int _size;
-		private Vector2Int _stairPos;
-		private Vector2Int _morphyPos;
-		private Vector2Int[] _enemyPos;
-		private eMoveType[] _enemyMoveType;
-
-		public int FloorNum { get { return _floorNum; } }
-		public Vector2Int Size { get { return _size; } }
-		public Vector2Int StairPos { get { return _stairPos; } }
-		public Vector2Int MorphyPos { get { return _morphyPos; } }
-		public Vector2Int[] EnemyPos { get { return _enemyPos; } }
-		public eMoveType[] EnemyMoveType { get { return _enemyMoveType; } }
-
-		public FloorData(Floor inFloor, Enemy[] inEnemies)
-		{
-			_floorNum = inFloor.FloorNum;
-			_size = inFloor.Size;
-			_stairPos = inFloor.StairsPos;
-			_morphyPos = inFloor.MorphyPos;
-
-			int numEnemies = inEnemies.Length;
-			_enemyPos = new Vector2Int[numEnemies];
-			_enemyMoveType = new eMoveType[numEnemies];
-			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
-			{
-				Enemy curEnemy = inEnemies[iEnemy];
-				_enemyPos[iEnemy] = curEnemy.Pos;
-				_enemyMoveType[iEnemy] = curEnemy.Type;
-			}
-		}
-
-		public FloorData(
-			int inFloorNum,
-			Vector2Int inSize,
-			Vector2Int inStairPos,
-			Vector2Int inMorphyPos,
-			Vector2Int[] inEnemyPos,
-			eMoveType[] inEnemyMoveType)
-		{
-			_floorNum = inFloorNum;
-			_size = inSize;
-			_stairPos = inStairPos;
-			_morphyPos = inMorphyPos;
-			_enemyPos = inEnemyPos;
-			_enemyMoveType = inEnemyMoveType;
-		}
-	}
 
 	public struct CardHandData
 	{
@@ -183,35 +96,30 @@ public static class DataLoader
 		}
 	}
 
-	public static void SavePreviousRunData(PrevRunData inPrevRunData, FloorData inFloorData, CardHandData inCardHandData)
+	public static void SavePreviousRunData(RunData inPrevRunData, CardHandData inCardHandData)
 	{
-		using (ES2Writer writer = ES2Writer.Create(PREV_RUN_DATA_FILENAME))
+		using (ES2Writer writer = ES2Writer.Create(RunData.FILENAME))
 		{
-			writer.Write(inPrevRunData.Health, PREV_RUN_DATA_HEALTH_KEY);
-			writer.Write(inPrevRunData.Shield, PREV_RUN_DATA_SHIELD_KEY);
+			writer.Write(inPrevRunData.Health, RunData.HEALTH_KEY);
+			writer.Write(inPrevRunData.Shield, RunData.SHIELD_KEY);
 
-			writer.Save();
-		}
+			writer.Write(inPrevRunData.FloorNum, RunData.FLOOR_NUM_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inPrevRunData.FloorSize), RunData.FLOOR_SIZE_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inPrevRunData.StairPos), RunData.STAIR_POS_KEY);
+			writer.Write(Utils.Vector2IntToIntArray(inPrevRunData.MorphyPos), RunData.MORPHY_POS_KEY);
 
-		using (ES2Writer writer = ES2Writer.Create(FLOOR_DATA_FILENAME))
-		{
-			writer.Write(inFloorData.FloorNum, FLOOR_DATA_FLOORNUM_KEY);
-			writer.Write(Utils.Vector2IntToIntArray(inFloorData.Size), FLOOR_DATA_SIZE_KEY);
-			writer.Write(Utils.Vector2IntToIntArray(inFloorData.StairPos), FLOOR_DATA_STAIR_POS_KEY);
-			writer.Write(Utils.Vector2IntToIntArray(inFloorData.MorphyPos), FLOOR_DATA_MORPHY_POS_KEY);
-
-			int numEnemies = inFloorData.EnemyPos.Length;
+			int numEnemies = inPrevRunData.EnemyPos.Length;
 			int[] enemyPosX = new int[numEnemies];
 			int[] enemyPosY = new int[numEnemies];
 			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
 			{
-				enemyPosX[iEnemy] = inFloorData.EnemyPos[iEnemy].x;
-				enemyPosY[iEnemy] = inFloorData.EnemyPos[iEnemy].y;
+				enemyPosX[iEnemy] = inPrevRunData.EnemyPos[iEnemy].x;
+				enemyPosY[iEnemy] = inPrevRunData.EnemyPos[iEnemy].y;
 			}
-			writer.Write(enemyPosX, FLOOR_DATA_ENEMY_POS_X_KEY);
-			writer.Write(enemyPosY, FLOOR_DATA_ENEMY_POS_Y_KEY);
+			writer.Write(enemyPosX, RunData.ENEMY_POS_X_KEY);
+			writer.Write(enemyPosY, RunData.ENEMY_POS_Y_KEY);
 
-			writer.Write(inFloorData.EnemyMoveType, FLOOR_DATA_ENEMY_MOVE_TYPE_KEY);
+			writer.Write(inPrevRunData.EnemyMoveType, RunData.ENEMY_MOVE_TYPE_KEY);
 
 			writer.Save();
 		}
@@ -244,48 +152,44 @@ public static class DataLoader
 
 		// NOTE: Updates the currently loaded data.
 		_prevRunData = inPrevRunData;
-		_floorData = inFloorData;
 		_cardHandData = inCardHandData;
 		_hasPreviousRunData = true;
 	}
 
 	private static void LoadPreviousRunData(DTJob.OnCompleteCallback inOnComplete)
 	{
-		if (ES2.Exists(PREV_RUN_DATA_FILENAME)
-			&& ES2.Exists(FLOOR_DATA_FILENAME)
+		if (ES2.Exists(RunData.FILENAME)
 			&& ES2.Exists(CARD_HAND_DATA_FILENAME))
 		{
-			ES2Data prevRunData = ES2.LoadAll(PREV_RUN_DATA_FILENAME);
-			ES2Data floorData = ES2.LoadAll(FLOOR_DATA_FILENAME);
+			ES2Data prevRunData = ES2.LoadAll(RunData.FILENAME);
 			ES2Data cardHandData = ES2.LoadAll(CARD_HAND_DATA_FILENAME);
 
-			// PREV_RUN_DATA
-			_prevRunData = new PrevRunData(
-				prevRunData.Load<int>(PREV_RUN_DATA_HEALTH_KEY),
-				prevRunData.Load<int>(PREV_RUN_DATA_SHIELD_KEY));
-
-			// FLOOR_DATA
-			Vector2Int size = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_SIZE_KEY));
-			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_STAIR_POS_KEY));
-			Vector2Int morphyPos = Utils.IntArrayToSingleVector2Int(floorData.LoadArray<int>(FLOOR_DATA_MORPHY_POS_KEY));
-			int[] enemyPosX = floorData.LoadArray<int>(FLOOR_DATA_ENEMY_POS_X_KEY);
-			int[] enemyPosY = floorData.LoadArray<int>(FLOOR_DATA_ENEMY_POS_Y_KEY);
+			Vector2Int size = Utils.IntArrayToSingleVector2Int(TryLoadArray<int>(prevRunData, RunData.FLOOR_SIZE_KEY));
+			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(TryLoadArray<int>(prevRunData, RunData.STAIR_POS_KEY));
+			Vector2Int morphyPos = Utils.IntArrayToSingleVector2Int(TryLoadArray<int>(prevRunData, RunData.MORPHY_POS_KEY));
+			int[] enemyPosX = TryLoadArray<int>(prevRunData, RunData.ENEMY_POS_X_KEY);
+			int[] enemyPosY = TryLoadArray<int>(prevRunData, RunData.ENEMY_POS_Y_KEY);
 			int numEnemies = enemyPosX.Length;
 			Vector2Int[] enemyPos = new Vector2Int[numEnemies];
 			for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
 			{
 				enemyPos[iEnemy] = new Vector2Int(enemyPosX[iEnemy], enemyPosY[iEnemy]);
 			}
-			_floorData = new FloorData(
-				floorData.Load<int>(FLOOR_DATA_FLOORNUM_KEY),
+
+			// PREV_RUN_DATA
+			_prevRunData = new RunData(
+				TryLoadInt(prevRunData, RunData.HEALTH_KEY),
+				TryLoadInt(prevRunData, RunData.SHIELD_KEY),
+
+				TryLoadInt(prevRunData, RunData.FLOOR_NUM_KEY),
 				size,
 				stairPos,
 				morphyPos,
 				enemyPos,
-				floorData.LoadArray<eMoveType>(FLOOR_DATA_ENEMY_MOVE_TYPE_KEY));
+				TryLoadArray<eMoveType>(prevRunData, RunData.ENEMY_MOVE_TYPE_KEY));
 
-            // CARD_HAND_DATA
-            bool isFirstDrawOfGame = cardHandData.Load<bool>(CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);
+			// CARD_HAND_DATA
+			bool isFirstDrawOfGame = cardHandData.Load<bool>(CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);
 			eCardTier[] cardTier = cardHandData.LoadArray<eCardTier>(CARD_HAND_DATA_CARD_TIER_KEY);
 			eCardType[] cardType = cardHandData.LoadArray<eCardType>(CARD_HAND_DATA_CARD_TYPE_KEY);
 			bool[] isCloned = cardHandData.LoadArray<bool>(CARD_HAND_DATA_IS_CLONED_KEY);
@@ -317,8 +221,7 @@ public static class DataLoader
 
 	public static void DeletePreviousRunData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		if (ES2.Exists(PREV_RUN_DATA_FILENAME)) ES2.Delete(PREV_RUN_DATA_FILENAME);
-		if (ES2.Exists(FLOOR_DATA_FILENAME)) ES2.Delete(FLOOR_DATA_FILENAME);
+		if (ES2.Exists(RunData.FILENAME)) ES2.Delete(RunData.FILENAME);
 		if (ES2.Exists(CARD_HAND_DATA_FILENAME)) ES2.Delete(CARD_HAND_DATA_FILENAME);
 
 		_hasPreviousRunData = false;
@@ -389,6 +292,17 @@ public static class DataLoader
 		{
 			Debug.LogWarning("Key " + inKey + " does not exist!");
 			return -1;
+		}
+	}
+
+	private static T[] TryLoadArray<T>(ES2Data inData, string inKey)
+	{
+		if (inData.TagExists(inKey))
+			return inData.LoadArray<T>(inKey);
+		else
+		{
+			Debug.LogWarning("Key " + inKey + " does not exist!");
+			return new T[0];
 		}
 	}
 	#endregion

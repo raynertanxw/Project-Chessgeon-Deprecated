@@ -114,10 +114,10 @@ public class Floor
 		}
 	}
 
-	public void LoadAndSetupNewFloor(DataLoader.FloorData inFloorData)
+	public void LoadAndSetupNewFloor(RunData inPrevRunData)
 	{
-		_floorNum = inFloorData.FloorNum;
-		_size = inFloorData.Size;
+		_floorNum = inPrevRunData.FloorNum;
+		_size = inPrevRunData.FloorSize;
 
 		_nodes = new Node[Size.x, Size.y];
 		for (int x = 0; x < Size.x; x++)
@@ -128,24 +128,24 @@ public class Floor
 			}
 		}
 
-		_stairsPos = inFloorData.StairPos;
+		_stairsPos = inPrevRunData.StairPos;
 		SetTileState(StairsPos, eTileState.Stairs);
 
 		_dungeon.TileManager.SetUpFloorTerrain();
 
         // Spawn the enemies.
 		_enemies = new Enemy[Size.x, Size.y];
-		for (int iEnemy = 0; iEnemy < inFloorData.EnemyPos.Length; iEnemy++)
+		for (int iEnemy = 0; iEnemy < inPrevRunData.EnemyPos.Length; iEnemy++)
 		{
-			Vector2Int enemyPos = inFloorData.EnemyPos[iEnemy];
-			eMoveType enemyMoveType = inFloorData.EnemyMoveType[iEnemy];
+			Vector2Int enemyPos = inPrevRunData.EnemyPos[iEnemy];
+			eMoveType enemyMoveType = inPrevRunData.EnemyMoveType[iEnemy];
 
 			_enemies[enemyPos.x, enemyPos.y] = _dungeon.EnemyManager.SpawnEnemyAt(enemyPos, enemyMoveType);
 			SetTileState(enemyPos, Floor.eTileState.Enemy);
 		}
 
 		// Spawn the player.
-		_morphyPos = inFloorData.MorphyPos;
+		_morphyPos = inPrevRunData.MorphyPos;
 		SetTileState(_morphyPos, Floor.eTileState.Morphy);
 		_dungeon.MorphyController.SetUpPlayer();
 
@@ -174,22 +174,6 @@ public class Floor
 				}
 			}
 		}
-	}
-
-	public DataLoader.FloorData GenerateFloorData()
-	{
-		List<Enemy> enemyList = new List<Enemy>();
-		for (int x = 0; x < Size.x; x++)
-		{
-			for (int y = 0; y < Size.y; y++)
-			{
-				Enemy curEnemy = _enemies[x, y];
-				if (curEnemy != null) enemyList.Add(curEnemy);
-			}
-		}
-
-		DataLoader.FloorData floorData = new DataLoader.FloorData(this, enemyList.ToArray());
-		return floorData;
 	}
 
 	public GridStratergy GridStratergyForMoveType(eMoveType inMoveType)

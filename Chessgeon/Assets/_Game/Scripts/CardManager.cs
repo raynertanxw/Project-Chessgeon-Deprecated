@@ -80,6 +80,7 @@ public class CardManager : MonoBehaviour
 		DrawCard(null, false, inCardHandData.CardDatas);
 	}
 
+	// TODO Just turn this func to produce carddata[] then don't really need this func anymore.
 	public DataLoader.CardHandData GenerateCardHandData()
 	{
 		ReorganiseCards(null, false);

@@ -42,7 +42,7 @@ public class Menu : MonoBehaviour
 
 	public void ContinueGame()
 	{
-		_dungeon.StartGameFromPrevRun(DataLoader.SavedPrevRunData, DataLoader.SavedFloorData, DataLoader.SavedCardHandData);
+		_dungeon.StartGameFromPrevRun(DataLoader.PrevRunData, DataLoader.SavedCardHandData);
 		_menuCanvas.SetVisible(false);
 	}
 

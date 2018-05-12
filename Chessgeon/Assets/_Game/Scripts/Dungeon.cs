@@ -83,12 +83,6 @@ public class Dungeon : MonoBehaviour
 		OnFloorGenerated.Invoke();
 	}
 
-	private void LoadFloorFromFloorData(DataLoader.FloorData inFloorData)
-	{
-		_floor.LoadAndSetupNewFloor(inFloorData);
-		OnFloorGenerated.Invoke();
-	}
-
 	public void ResetAndStartGame()
 	{
 		// TODO: Reset all of the UI?
@@ -106,20 +100,21 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
-	public void StartGameFromPrevRun(DataLoader.PrevRunData inPrevRunData, DataLoader.FloorData inFloorData, DataLoader.CardHandData inCardHandData)
+	public void StartGameFromPrevRun(RunData inPrevRunData, DataLoader.CardHandData inCardHandData)
 	{
 		_enemyManager.ResetForNewGame();
 
 		_morphyController.ResetFromPrevRunData(inPrevRunData);
 		_cardManager.ResetFromCardHandData(inCardHandData);
 
-		_floorNum = inFloorData.FloorNum;
+		_floorNum = inPrevRunData.FloorNum;
 		_isFloorCleared = false;
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
 
-		LoadFloorFromFloorData(inFloorData);
+		_floor.LoadAndSetupNewFloor(inPrevRunData);
+		OnFloorGenerated.Invoke();
 		_dungeonFSM.SetToStartFloorState();
 	}
 
@@ -144,10 +139,9 @@ public class Dungeon : MonoBehaviour
 
 	public void SaveGame()
 	{
-		DataLoader.PrevRunData prevRunData = new DataLoader.PrevRunData(this);
-		DataLoader.FloorData floorData = CurrentFloor.GenerateFloorData();
+		RunData prevRunData = new RunData(this, CurrentFloor, EnemyManager.GetArrayOfAliveEnemies());
 		DataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
-		DataLoader.SavePreviousRunData(prevRunData, floorData, cardHandData);
+		DataLoader.SavePreviousRunData(prevRunData, cardHandData);
 		Debug.Log("Game Saved!");
 	}
 
