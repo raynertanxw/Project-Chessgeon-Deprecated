@@ -149,7 +149,7 @@ public class MorphyController : MonoBehaviour
 		_dungeon.CurrentFloor.MoveMorphyTo(inTargetPos);
 	}
 
-	public void Smash(eCardTier inCardTier)
+	public void Smash(eCardTier inCardTier, Utils.GenericVoidDelegate inOnComplete = null)
 	{
 		List<Vector2Int> targetTiles = new List<Vector2Int>();
 
@@ -268,7 +268,7 @@ public class MorphyController : MonoBehaviour
 			Debug.Assert(enemies[iTarget] != null);
 		}
 
-		_morphy.SmashAttack(enemies, null);
+		_morphy.SmashAttack(enemies, inOnComplete);
 	}
 
 	public void TakeDamage(int inDamage)

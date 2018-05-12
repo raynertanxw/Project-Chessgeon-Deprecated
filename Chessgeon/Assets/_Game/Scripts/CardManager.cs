@@ -371,7 +371,6 @@ public class CardManager : MonoBehaviour
 		else
 		{
 			Utils.GenericVoidDelegate postExecuteCardAnimActions = null;
-			DTJob.OnCompleteCallback postCloseDrawerAnimActions = null;
 			bool isCardRejected = false;
 			string rejectReasonStr = string.Empty;
 			switch (cardData.cardType)
@@ -449,7 +448,7 @@ public class CardManager : MonoBehaviour
 				}
 				case eCardType.Smash:
 				{
-					postCloseDrawerAnimActions += () => { _dungeon.MorphyController.Smash(cardData.cardTier); };
+					postExecuteCardAnimActions += () => { _dungeon.MorphyController.Smash(cardData.cardTier); };
 					break;
 				}
 				case eCardType.Draw:
