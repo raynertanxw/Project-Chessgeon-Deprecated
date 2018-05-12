@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour
 
 	private void GiveCard()
 	{
-		Debug.Log("Give Card");
+		_enemyManager.Dungeon.CardManager.DrawCard(1);
 	}
 
 	public void Remove()
