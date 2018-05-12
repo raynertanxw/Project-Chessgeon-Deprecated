@@ -4,6 +4,9 @@ using UnityEngine;
 
 public struct PlayerData
 {
+	public const string FILENAME = "PlayerData";
+	public const string NUM_GEMS_KEY = "NUM_GEMS";
+
     private int _numGems;
 
     public int NumGems { get { return _numGems; } }

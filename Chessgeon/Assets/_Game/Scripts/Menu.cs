@@ -14,7 +14,7 @@ public class Menu : MonoBehaviour
 		Debug.Assert(_menuCanvas != null, "_menuCanvas is not assigned.");
 
 #if UNITY_EDITOR
-		if (!DataLoader.HasStartedLoadingData) DataLoader.TryLoadData();
+		if (!DataLoader.HasStartedLoadingData) DataLoader.TryLoadAllData();
 #endif
 	}
 

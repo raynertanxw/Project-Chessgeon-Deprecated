@@ -29,7 +29,6 @@ public static class DataLoader
 	private const string PREV_RUN_DATA_FILENAME = "PrevRunData.txt";
 	private const string FLOOR_DATA_FILENAME = "FloorData.txt";
 	private const string CARD_HAND_DATA_FILENAME = "CardhandData.txt";
-	private const string PLAYER_DATA_FILENAME = "PlayerData.txt";
 	private const string GAME_DATA_JSON_FILENAME = "GameDataJson.txt";
 
 	// Keys
@@ -49,8 +48,6 @@ public static class DataLoader
 	private const string CARD_HAND_DATA_CARD_TYPE_KEY = "CARD_HAND_DATA_CARD_TYPE";
 	private const string CARD_HAND_DATA_IS_CLONED_KEY = "CARD_HAND_DATA_IS_CLONED";
 	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
-
-	private const string PLAYER_DATA_NUM_GEMS_KEY = "PLAYER_DATA_NUM_GEMS";
 
 	#region Data Structs
 	public struct PrevRunData
@@ -142,7 +139,7 @@ public static class DataLoader
 	}
 	#endregion
 
-	public static void TryLoadData()
+	public static void TryLoadAllData()
 	{
 		if (!HasLoadedAllData && !HasStartedLoadingData)
 		{
@@ -331,9 +328,9 @@ public static class DataLoader
 
 	public static void SavePlayerData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		using (ES2Writer writer = ES2Writer.Create(PLAYER_DATA_FILENAME))
+		using (ES2Writer writer = ES2Writer.Create(PlayerData.FILENAME))
 		{
-			writer.Write(_playerData.NumGems, PLAYER_DATA_NUM_GEMS_KEY);
+			writer.Write(_playerData.NumGems, PlayerData.NUM_GEMS_KEY);
 
 			writer.Save();
 		}
@@ -343,12 +340,11 @@ public static class DataLoader
 
 	private static void LoadPlayerData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		if (ES2.Exists(PLAYER_DATA_FILENAME))
+		if (ES2.Exists(PlayerData.FILENAME))
 		{
-			ES2Data playerData = ES2.LoadAll(PLAYER_DATA_FILENAME);
+			ES2Data playerData = ES2.LoadAll(PlayerData.FILENAME);
 
-            // TODO: Create a TryLoad<T> that will return 0 if failed to load. Safer for future updates and all that.
-            _playerData = new PlayerData(playerData.Load<int>(PLAYER_DATA_NUM_GEMS_KEY));
+			_playerData = new PlayerData(TryLoadInt(playerData, PlayerData.NUM_GEMS_KEY));
 		}
 		else // If no have, create empty. Basically new player.
 		{
@@ -357,6 +353,10 @@ public static class DataLoader
 
 		if (inOnComplete != null) inOnComplete();
 	}
+
+	// TODO: Save immediately when calling these gem functions.
+	public static void AwardGems(int inNumGemsAwarded) { _playerData.AwardGems(inNumGemsAwarded); }
+	public static bool SpendGems(int inNumGemsToSpend) { return _playerData.SpendGems(inNumGemsToSpend); }
 
 	private static IEnumerator LoadJSON(DTJob.OnCompleteCallback inOnComplete)
 	{
@@ -380,6 +380,16 @@ public static class DataLoader
 		}
 	}
 
-	public static void AwardGems(int inNumGemsAwarded) { _playerData.AwardGems(inNumGemsAwarded); }
-	public static bool SpendGems(int inNumGemsToSpend) { return _playerData.SpendGems(inNumGemsToSpend); }
+	#region Helper Functions
+	private static int TryLoadInt(ES2Data inData, string inKey)
+	{
+		if (inData.TagExists(inKey))
+			return inData.Load<int>(inKey);
+		else
+		{
+			Debug.LogWarning("Key " + inKey + " does not exist!");
+			return -1;
+		}
+	}
+	#endregion
 }
