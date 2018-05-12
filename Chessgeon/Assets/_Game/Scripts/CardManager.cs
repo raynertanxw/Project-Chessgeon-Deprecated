@@ -154,7 +154,7 @@ public class CardManager : MonoBehaviour
 
 			if (inIsAnimated)
 			{
-				const float CARD_ANIM_INTERVAL = 0.5f;
+				const float CARD_ANIM_INTERVAL = 0.2f;
 				for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
 				{
 					Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
