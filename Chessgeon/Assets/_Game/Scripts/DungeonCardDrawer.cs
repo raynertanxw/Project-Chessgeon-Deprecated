@@ -17,8 +17,6 @@ public class DungeonCardDrawer : MonoBehaviour
 	[SerializeField] private RectTransform _endTurnBtnMesh = null;
 	[SerializeField] private Button _endTurnBtn = null;
 
-	public static Utils.GenericVoidDelegate OnPlayerEndTurn;
-
 	private void Awake()
 	{
 		if (_instance == null)
@@ -57,12 +55,13 @@ public class DungeonCardDrawer : MonoBehaviour
 	{
 		if (!_endTurnBtn.interactable)
 		{
+			// TODO: Isn't this kind of redundant???
 			DungeonPopup.PopText(_endTurnBlockedReason);
 		}
 		else
 		{
 			DisableEndTurnBtn("Enemy Phase in Progress!");
-			OnPlayerEndTurn.Invoke();
+			_dungeon.OnEndPlayerTurn();
 		}
 	}
 

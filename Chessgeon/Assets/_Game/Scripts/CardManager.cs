@@ -17,10 +17,12 @@ public class CardManager : MonoBehaviour
 
 	private const int MAX_CARDS = 7;
 	private int _numCardsInHand = -1;
+	public int NumCardsInHand { get { return _numCardsInHand; } }
 	private bool _skipNextDraw = false;
 	public bool SkipNextDraw { get { return _skipNextDraw; } }
 	private bool _isFirstDrawOfGame = true;
 	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
+	private int _numCardsUsedInTurn = -1;
 
 	// TODO: Statistics
 	private int _statTotalCardsDrawn = -1;
@@ -42,8 +44,7 @@ public class CardManager : MonoBehaviour
 		}
 
 		_isFirstDrawOfGame = true;
-		_numCardsInHand = 0;
-		_statTotalCardsDrawn = 0;
+		_dungeon.OnEndPlayerTurn += OnPlayerEndTurn;
 	}
 
     private void Start()
@@ -70,6 +71,7 @@ public class CardManager : MonoBehaviour
 		_isFirstDrawOfGame = true;
 		_skipNextDraw = false;
 		_numCardsInHand = 0;
+		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0;
 		HideAllCards();
 	}
@@ -79,6 +81,7 @@ public class CardManager : MonoBehaviour
 		_isFirstDrawOfGame = inCardHandData.IsFirstDrawOfGame;
 		_skipNextDraw = true;
 		_numCardsInHand = 0;
+		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
 		HideAllCards();
 
@@ -307,6 +310,16 @@ public class CardManager : MonoBehaviour
 		_cards[inCardIndexB].SetCard(cardDataA);
 	}
 
+	private void OnPlayerEndTurn()
+	{
+		if (_numCardsUsedInTurn < 1)
+		{
+			DrawCard(1);
+		}
+
+		_numCardsUsedInTurn = 0;
+	}
+
 	private bool _isCloneMode = false;
 	private int _numToClone = -1;
 	private void TryExecuteAndDiscardCard(int inCardIndex)
@@ -497,6 +510,7 @@ public class CardManager : MonoBehaviour
 			}
 			else
 			{
+				_numCardsUsedInTurn++;
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{

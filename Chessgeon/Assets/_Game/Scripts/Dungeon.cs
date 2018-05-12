@@ -45,6 +45,7 @@ public class Dungeon : MonoBehaviour
 	private DungeonFSM _dungeonFSM = null;
 
 	public Utils.GenericVoidDelegate OnFloorGenerated;
+	public Utils.GenericVoidDelegate OnEndPlayerTurn;
 
 	private void Awake()
 	{
@@ -122,6 +123,11 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
+	public void PlayerEndTurn()
+	{
+		if (OnEndPlayerTurn != null) OnEndPlayerTurn();
+	}
+
 	public void EndGame()
 	{
 		_hasGameStarted = false;
@@ -154,7 +160,6 @@ public class Dungeon : MonoBehaviour
 	{
 		_floorNum++;
 		GenerateNewFloor();
-		// Save each floor.
 		SaveGame();
 
 		if (inOnComplete != null) inOnComplete();
@@ -315,7 +320,7 @@ public class Dungeon : MonoBehaviour
 			public DungeonStatePlayerPhase(DungeonFSM inDungeonFSM)
 			{
 				_dungeonFSM = inDungeonFSM;
-				DungeonCardDrawer.OnPlayerEndTurn += () =>
+				_dungeonFSM.Dungeon.OnEndPlayerTurn += () =>
 					{
 						_dungeonFSM.ChangeState(eDungeonState.EnemyPhase);
 					};
@@ -328,14 +333,13 @@ public class Dungeon : MonoBehaviour
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob turnDrawJob = new DTJob((OnJobComplete) =>
 				{
-					if (_dungeonFSM.Dungeon.CardManager.SkipNextDraw)
+					if (_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame)
 					{
-						_dungeonFSM.Dungeon.CardManager.SkippedNextDraw();
-						OnJobComplete();
+						_dungeonFSM.Dungeon.CardManager.DrawCard(3, OnJobComplete);
 					}
 					else
 					{
-						_dungeonFSM.Dungeon.CardManager.DrawCard(_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame ? 3 : 1, OnJobComplete);
+						OnJobComplete();
 					}
 				}, playPhaseAnimJob);
 
