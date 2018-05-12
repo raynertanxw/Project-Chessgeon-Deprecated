@@ -16,10 +16,10 @@ public class MorphyController : MonoBehaviour
 
 	private bool _isDead = false;
     public bool IsDead { get { return _isDead; } }
-	private const int START_HEALTH = 6;
+	private const int START_HEALTH = 3;
 	private int _health = -1;
 	public int Health { get { return _health; } }
-	private const int MAX_SHIELD = 5;
+	private const int MAX_SHIELD = 3;
 	private int _shield = -1;
 	public int Shield { get { return _shield; } }
 	private int _numMovesLeft = -1;

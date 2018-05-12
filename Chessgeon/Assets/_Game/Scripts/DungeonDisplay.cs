@@ -24,8 +24,7 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Text _nextFloorText = null;
 
 	[Header("Meshes")]
-	[SerializeField] private Mesh _heartFullMesh = null;
-	[SerializeField] private Mesh _heartHalfMesh = null;
+	[SerializeField] private Mesh _heartMesh = null;
 	[SerializeField] private Mesh _shieldMesh = null;
 
 	private const int NUM_HEARTS = 3;
@@ -59,8 +58,7 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_nextFloorPanel != null, "_nextFloorPanel is not assigned.");
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
 
-			Debug.Assert(_heartFullMesh != null, "_heartFullMesh is not assigned.");
-			Debug.Assert(_heartHalfMesh != null, "_heartHalfMesh is not assigned.");
+			Debug.Assert(_heartMesh != null, "_heartFullMesh is not assigned.");
 			Debug.Assert(_shieldMesh != null, "_shieldMesh is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH)); Debug.Assert(_nextFloorPanel.enabled == true, "_nextFloorPanel is not enabled.");
@@ -280,20 +278,13 @@ public class DungeonDisplay : MonoBehaviour
 	#region HUD Update Functions
 	public static void SetHealtUI(int inHealth)
 	{
-		Debug.Assert(inHealth <= NUM_HEARTS * 2, inHealth + " is beyond the max health displayble.");
-		int numHeartsToDisplay = inHealth / 2;
-		int halfHeartIndex = (inHealth % 2 == 1) ? numHeartsToDisplay : -1;
+		Debug.Assert(inHealth <= NUM_HEARTS, inHealth + " is beyond the max health displayble.");
 		for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
 		{
 			MeshFilter curHeartFilter = _instance._heartMeshFilters[iHeart];
-			if (iHeart < numHeartsToDisplay)
+			if (iHeart < inHealth)
 			{
-				curHeartFilter.mesh = _instance._heartFullMesh;
-			}
-			else if (iHeart == numHeartsToDisplay &&
-				iHeart == halfHeartIndex)
-			{
-				curHeartFilter.mesh = _instance._heartHalfMesh;
+				curHeartFilter.mesh = _instance._heartMesh;
 			}
 			else
 			{

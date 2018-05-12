@@ -7136,8 +7136,7 @@ MonoBehaviour:
   _floorText: {fileID: 407445038}
   _nextFloorPanel: {fileID: 1345998904}
   _nextFloorText: {fileID: 523922689}
-  _heartFullMesh: {fileID: 4300000, guid: ff5829826d513d246bc23c42a75b34ea, type: 3}
-  _heartHalfMesh: {fileID: 4300000, guid: 65d3facc09e9e9044bea45827cbbddc9, type: 3}
+  _heartMesh: {fileID: 4300000, guid: ff5829826d513d246bc23c42a75b34ea, type: 3}
   _shieldMesh: {fileID: 4300000, guid: a626588a3f969804ba0a32d25a3c646e, type: 3}
 --- !u!114 &1443654488
 MonoBehaviour:
