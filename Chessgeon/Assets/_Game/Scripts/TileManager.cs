@@ -38,7 +38,7 @@ public class TileManager : MonoBehaviour
 				DungeonTile newDungeonTile = GameObject.Instantiate(_prefabDungeonTile).GetComponent<DungeonTile>();
 				newDungeonTile.transform.SetParent(this.transform);
 				newDungeonTile.Initialise(this, x, y);
-				newDungeonTile.SetTile(DungeonTile.eType.Basic, DungeonTile.eZone.Classic);
+				newDungeonTile.SetType(DungeonTile.eType.Basic);
 
 				_dungeonTiles[x, y] = newDungeonTile;
 			}
@@ -109,13 +109,13 @@ public class TileManager : MonoBehaviour
 		{
 			for (int x = 0; x < (_dungeon.CurrentFloor.Size.x); x++)
 			{
-				_dungeonTiles[x, y].SetTileType(DungeonTile.eType.Basic);
+				_dungeonTiles[x, y].SetType(DungeonTile.eType.Basic);
 				_dungeonTiles[x, y].SetVisible(true);
 			}
 		}
 
 		// Set the stairs tile.
-		_dungeonTiles[_dungeon.CurrentFloor.StairsPos.x, _dungeon.CurrentFloor.StairsPos.y].SetTileType(DungeonTile.eType.Stairs);
+		_dungeonTiles[_dungeon.CurrentFloor.StairsPos.x, _dungeon.CurrentFloor.StairsPos.y].SetType(DungeonTile.eType.Stairs);
 
 		// TODO: Obstalces (if any)
 

@@ -5,7 +5,6 @@ using UnityEngine;
 public class DungeonTile : MonoBehaviour
 {
 	public enum eType { Basic, Wall, Stairs };
-	public enum eZone { Classic };
 
 	[SerializeField] private Mesh _meshTileBasic = null;
 	[SerializeField] private Mesh _meshTileWall = null;
@@ -21,8 +20,6 @@ public class DungeonTile : MonoBehaviour
 	private int _indexY = -1;
 	private eType _type = eType.Basic;
 	public eType Type { get { return _type; } }
-	private eZone _zone = eZone.Classic;
-	public eZone Zone { get { return _zone; } }
 
 	private void Awake()
 	{
@@ -55,14 +52,7 @@ public class DungeonTile : MonoBehaviour
 		}
 	}
 
-	public void SetTile(eType inType, eZone inZone)
-	{
-		SetTileZone(inZone);
-		SetTileType(inType);
-	}
-
-	// TODO: Remember to change the material based on the zone!
-	public void SetTileType(eType inType)
+	public void SetType(eType inType)
 	{
 		_type = inType;
 
@@ -91,24 +81,6 @@ public class DungeonTile : MonoBehaviour
 			default:
 			{
 				Debug.LogWarning("case: " + inType.ToString() + "has not been handled.");
-				break;
-			}
-		}
-	}
-
-	public void SetTileZone(eZone inZone)
-	{
-		_zone = inZone;
-
-		switch (inZone)
-		{
-			case eZone.Classic:
-			{
-				break;
-			}
-			default:
-			{
-				Debug.LogWarning("case: " + inZone.ToString() + "has not been handled.");
 				break;
 			}
 		}

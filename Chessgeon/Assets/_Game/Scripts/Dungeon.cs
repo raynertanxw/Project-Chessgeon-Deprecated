@@ -78,7 +78,7 @@ public class Dungeon : MonoBehaviour
 		// Do resetting.
 		_isFloorCleared = false;
 
-		_floor.GenerateAndSetupNewFloor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
+		_floor.GenerateAndSetupNewFloor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, _floorNum);
 
 		OnFloorGenerated.Invoke();
 	}

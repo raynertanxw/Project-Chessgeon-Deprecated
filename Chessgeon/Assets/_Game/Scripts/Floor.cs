@@ -30,7 +30,7 @@ public class Floor
 		_dungeon = inDungeon;
 	}
 
-	public void GenerateAndSetupNewFloor(int inMinX, int inMaxX, int inMinY, int inMaxY, DungeonTile.eZone inZone, int inFloorNum)
+	public void GenerateAndSetupNewFloor(int inMinX, int inMaxX, int inMinY, int inMaxY, int inFloorNum)
 	{
 		_floorNum = inFloorNum;
 
