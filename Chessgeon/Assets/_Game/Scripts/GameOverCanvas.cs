@@ -88,6 +88,8 @@ public class GameOverCanvas : MonoBehaviour
 		_instance._gameOverPanelMeshRen.enabled = inEnabled;
 		_instance._startOverBtnMeshRen.enabled = inEnabled;
 		_instance._exitBtnMeshRen.enabled = inEnabled;
+
+		_instance._gameOverPanelMeshRen.gameObject.SetActive(inEnabled);
 	}
 
 	public static void SetGameOverValues(int inScore, int inFloor, int inGold)
