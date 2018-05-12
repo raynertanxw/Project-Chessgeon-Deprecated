@@ -43,6 +43,7 @@ public class CardManager : MonoBehaviour
 
 		_isFirstDrawOfGame = true;
 		_dungeon.OnEndPlayerTurn += OnPlayerEndTurn;
+		_dungeon.OnFloorCleared += () => { ToggleControlBlocker(true); };
 	}
 
     private void Start()

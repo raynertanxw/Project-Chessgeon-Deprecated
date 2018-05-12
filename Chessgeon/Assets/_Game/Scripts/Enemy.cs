@@ -95,15 +95,15 @@ public class Enemy : MonoBehaviour
 		// TODO: Points and stuff.
 		_meshRenderer.enabled = false;
 
-		// TODO: Replace and give card instead.
-		DelayAction delayGiveCard = new DelayAction(0.2f);
-		delayGiveCard.OnActionStart += () => { GiveCard(); };
-		ActionHandler.RunAction(new ActionRepeat(delayGiveCard, 1));
+		_enemyManager.Dungeon.CardManager.DrawCard(1, CheckIfFloorCleared);
 	}
 
-	private void GiveCard()
+	private void CheckIfFloorCleared()
 	{
-		_enemyManager.Dungeon.CardManager.DrawCard(1);
+		if (_enemyManager.GetArrayOfAliveEnemies().Length < 1)
+		{
+			_enemyManager.Dungeon.ClearFloor();
+		}
 	}
 
 	public void Remove()
