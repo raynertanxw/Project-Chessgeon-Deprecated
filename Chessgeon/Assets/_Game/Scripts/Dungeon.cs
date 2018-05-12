@@ -435,6 +435,8 @@ public class Dungeon : MonoBehaviour
 	}
 	#endregion
 
+#if CHESSGEON_RELEASE
+#else
 	#region AStarDebug
 	private LinkedList<Node> _debugPath = null;
 	private eMoveType _debugMoveType = eMoveType.Knight;
@@ -479,10 +481,13 @@ public class Dungeon : MonoBehaviour
 				}
 				if (firstEnemy != null) break;
 			}
-			_debugPath = AStarManager.FindPath(CurrentFloor.Nodes[firstEnemy.Pos.x, firstEnemy.Pos.y],
-				CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
-				CurrentFloor,
-				_debugMoveType);
+			if (firstEnemy != null)
+			{
+				_debugPath = AStarManager.FindPath(CurrentFloor.Nodes[firstEnemy.Pos.x, firstEnemy.Pos.y],
+					CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
+					CurrentFloor,
+					_debugMoveType);
+			}
 		}
 
 		if (_debugPath != null)
@@ -499,4 +504,5 @@ public class Dungeon : MonoBehaviour
 		}
 	}
 	#endregion
+#endif
 }
