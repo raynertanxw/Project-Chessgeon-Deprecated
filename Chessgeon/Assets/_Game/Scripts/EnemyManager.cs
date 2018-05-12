@@ -25,7 +25,7 @@ public class EnemyManager : MonoBehaviour
 			_enemies[iEnemy] = newEnemy;
 		}
 
-		_dungeon.MorphyController.OnMorphyReachStairs += RemoveAllEnemies;
+		_dungeon.OnFloorCleared += RemoveAllEnemies;
 
 		RemoveAllEnemies();
 	}

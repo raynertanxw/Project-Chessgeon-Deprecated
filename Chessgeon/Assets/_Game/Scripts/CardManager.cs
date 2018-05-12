@@ -230,9 +230,12 @@ public class CardManager : MonoBehaviour
 		{
 			if (inIsAnimated)
 			{
-				DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
-				delayedExecution.OnActionFinish += () => { inOnComplete(); };
-				ActionHandler.RunAction(delayedExecution);
+				if (inOnComplete != null)
+				{
+					DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
+					delayedExecution.OnActionFinish += () => { inOnComplete(); };
+					ActionHandler.RunAction(delayedExecution);
+				}
 			}
 			else
 			{
@@ -315,6 +318,10 @@ public class CardManager : MonoBehaviour
 		if (_numCardsUsedInTurn < 1)
 		{
 			DrawCard(1);
+		}
+		else
+		{
+			ReorganiseCards();
 		}
 
 		_numCardsUsedInTurn = 0;

@@ -29,8 +29,8 @@ public class Dungeon : MonoBehaviour
 	public int MaxY { get { return DUNGEON_MAX_Y; } }
 	public int MaxNumEnemies { get { return DUNGEON_MAX_ENEMIES; } }
 
-	private bool _morphyHasReachedStairs = false;
-	public bool MorphyHasReachedStairs { get { return _morphyHasReachedStairs; } }
+	private bool _isFloorCleared = false;
+	public bool IsFloorCleared { get { return _isFloorCleared; } }
 	private bool _hasGameStarted = false;
 	public bool HasGameStarted { get { return _hasGameStarted; } }
 	private bool _isPlayersTurn = false;
@@ -46,6 +46,7 @@ public class Dungeon : MonoBehaviour
 
 	public Utils.GenericVoidDelegate OnFloorGenerated;
 	public Utils.GenericVoidDelegate OnEndPlayerTurn;
+	public Utils.GenericVoidDelegate OnFloorCleared;
 
 	private void Awake()
 	{
@@ -54,7 +55,6 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 		Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
 
-		_morphyController.OnMorphyReachStairs += OnMorphyReachStairs;
 		_floor = new Floor(this);
 	}
 
@@ -76,7 +76,7 @@ public class Dungeon : MonoBehaviour
 	private void GenerateNewFloor()
 	{
 		// Do resetting.
-		_morphyHasReachedStairs = false;
+		_isFloorCleared = false;
 
 		_floor.GenerateAndSetupNewFloor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, DungeonTile.eZone.Classic, _floorNum);
 
@@ -97,7 +97,7 @@ public class Dungeon : MonoBehaviour
 		_cardManager.ResetForNewGame();
 
 		_floorNum = 1;
-		_morphyHasReachedStairs = false;
+		_isFloorCleared = false;
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
@@ -114,7 +114,7 @@ public class Dungeon : MonoBehaviour
 		_cardManager.ResetFromCardHandData(inCardHandData);
 
 		_floorNum = inFloorData.FloorNum;
-		_morphyHasReachedStairs = false;
+		_isFloorCleared = false;
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
@@ -151,9 +151,10 @@ public class Dungeon : MonoBehaviour
 		Debug.Log("Game Saved!");
 	}
 
-	private void OnMorphyReachStairs()
+	public void ClearFloor()
 	{
-		_morphyHasReachedStairs = true;
+		_isFloorCleared = true;
+		if (OnFloorCleared != null) OnFloorCleared();
 	}
 
 	public void ProgressToNextFloor(DTJob.OnCompleteCallback inOnComplete = null)
@@ -369,7 +370,7 @@ public class Dungeon : MonoBehaviour
 
 			public override void ExecuteState()
 			{
-				if (_dungeonFSM.Dungeon.MorphyHasReachedStairs) _dungeonFSM.ChangeState(eDungeonState.EndFloor);
+				if (_dungeonFSM.Dungeon.IsFloorCleared) _dungeonFSM.ChangeState(eDungeonState.EndFloor);
 			}
 		}
 		private class DungeonStateEnemyPhase : DungeonState

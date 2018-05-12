@@ -11,7 +11,6 @@ public class MorphyController : MonoBehaviour
 	public Dungeon Dungeon { get { return _dungeon; } }
 	public Vector2Int MorphyPos { get { return _morphy.Pos; } }
 
-	public Utils.GenericVoidDelegate OnMorphyReachStairs;
 	private Morphy _morphy = null;
 
 	private bool _isDead = false;
@@ -134,7 +133,7 @@ public class MorphyController : MonoBehaviour
 
 		if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
 		{
-			OnMorphyReachStairs.Invoke();
+			_dungeon.ClearFloor();
 		}
 		else if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
 		{
