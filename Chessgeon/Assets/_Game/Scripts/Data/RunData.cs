@@ -17,6 +17,12 @@ public struct RunData
 	public const string ENEMY_POS_Y_KEY = "ENEMY_POS_Y";
 	public const string ENEMY_MOVE_TYPE_KEY = "ENEMY_MOVE_TYPE";
 
+	public const string IS_FIRST_DRAW_OF_GAME_KEY = "IS_FIRST_DRAW_OF_GAME";
+	public const string CARD_TIER_KEY = "CARD_TIER";
+	public const string CARD_TYPE_KEY = "CARD_TYPE";
+	public const string CARD_IS_CLONED_KEY = "CARD_IS_CLONED";
+	public const string CARD_MOVE_TYPE_KEY = "CARD_MOVE_TYPE";
+
 
 
 	private int _health;
@@ -30,6 +36,9 @@ public struct RunData
 	private Vector2Int[] _enemyPos;
 	private eMoveType[] _enemyMoveType;
 
+	private bool _isFirstDrawOfGame;
+	private CardData[] _cardDatas;
+
 
 
 	public int Health { get { return _health; } }
@@ -41,6 +50,9 @@ public struct RunData
 	public Vector2Int MorphyPos { get { return _morphyPos; } }
 	public Vector2Int[] EnemyPos { get { return _enemyPos; } }
 	public eMoveType[] EnemyMoveType { get { return _enemyMoveType; } }
+
+	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
+	public CardData[] CardDatas { get { return _cardDatas; } }
 
 	public RunData(Dungeon inDungeon,
 		Floor inFloor, Enemy[] inEnemies)
@@ -63,6 +75,10 @@ public struct RunData
 			_enemyPos[iEnemy] = curEnemy.Pos;
 			_enemyMoveType[iEnemy] = curEnemy.Type;
 		}
+
+		// Cards
+		_isFirstDrawOfGame = inDungeon.CardManager.IsFirstDrawOfGame;
+		_cardDatas = inDungeon.CardManager.GenerateCardHandData();
 	}
 
 	public RunData(
@@ -74,7 +90,10 @@ public struct RunData
 		Vector2Int inStairPos,
 		Vector2Int inMorphyPos,
 		Vector2Int[] inEnemyPos,
-		eMoveType[] inEnemyMoveType)
+		eMoveType[] inEnemyMoveType,
+		
+		bool inIsFirstDrawOfGame,
+		CardData[] inCardDatas)
 	{
 		_health = inHealth;
 		_shield = inShield;
@@ -85,5 +104,8 @@ public struct RunData
 		_morphyPos = inMorphyPos;
 		_enemyPos = inEnemyPos;
 		_enemyMoveType = inEnemyMoveType;
+
+		_isFirstDrawOfGame = inIsFirstDrawOfGame;
+		_cardDatas = inCardDatas;
 	}
 }

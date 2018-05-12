@@ -100,12 +100,12 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
-	public void StartGameFromPrevRun(RunData inPrevRunData, DataLoader.CardHandData inCardHandData)
+	public void StartGameFromPrevRun(RunData inPrevRunData)
 	{
 		_enemyManager.ResetForNewGame();
 
 		_morphyController.ResetFromPrevRunData(inPrevRunData);
-		_cardManager.ResetFromCardHandData(inCardHandData);
+		_cardManager.ResetFromCardHandData(inPrevRunData);
 
 		_floorNum = inPrevRunData.FloorNum;
 		_isFloorCleared = false;
@@ -140,8 +140,7 @@ public class Dungeon : MonoBehaviour
 	public void SaveGame()
 	{
 		RunData prevRunData = new RunData(this, CurrentFloor, EnemyManager.GetArrayOfAliveEnemies());
-		DataLoader.CardHandData cardHandData = CardManager.GenerateCardHandData();
-		DataLoader.SavePreviousRunData(prevRunData, cardHandData);
+		DataLoader.SavePreviousRunData(prevRunData);
 		Debug.Log("Game Saved!");
 	}
 

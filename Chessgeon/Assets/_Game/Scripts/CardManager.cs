@@ -69,19 +69,18 @@ public class CardManager : MonoBehaviour
 		HideAllCards();
 	}
 
-	public void ResetFromCardHandData(DataLoader.CardHandData inCardHandData)
+	public void ResetFromCardHandData(RunData inPrevRunData)
 	{
-		_isFirstDrawOfGame = inCardHandData.IsFirstDrawOfGame;
+		_isFirstDrawOfGame = inPrevRunData.IsFirstDrawOfGame;
 		_numCardsInHand = 0;
 		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
 		HideAllCards();
 
-		DrawCard(null, false, inCardHandData.CardDatas);
+		DrawCard(null, false, inPrevRunData.CardDatas);
 	}
 
-	// TODO Just turn this func to produce carddata[] then don't really need this func anymore.
-	public DataLoader.CardHandData GenerateCardHandData()
+	public CardData[] GenerateCardHandData()
 	{
 		ReorganiseCards(null, false);
 		CardData[] cardDatas = new CardData[_numCardsInHand];
@@ -90,7 +89,7 @@ public class CardManager : MonoBehaviour
 			cardDatas[iCard] = _cards[iCard].CardData;
 		}
 
-		return new DataLoader.CardHandData(_isFirstDrawOfGame, cardDatas);
+		return cardDatas;
 	}
 
 	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)

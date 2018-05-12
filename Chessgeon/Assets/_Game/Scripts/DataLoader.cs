@@ -17,40 +17,11 @@ public static class DataLoader
 	// Data structs
 	private static RunData _prevRunData;
 	public static RunData PrevRunData { get { return _prevRunData; } }
-	private static CardHandData _cardHandData;
-	public static CardHandData SavedCardHandData { get { return _cardHandData; } }
-
 	private static PlayerData _playerData;
 	public static PlayerData SavedPlayerData { get { return _playerData; } }
 
 	// Data file names
-	private const string CARD_HAND_DATA_FILENAME = "CardhandData.txt";
 	private const string GAME_DATA_JSON_FILENAME = "GameDataJson.txt";
-
-	// Keys
-    private const string CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY = "CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME";
-	private const string CARD_HAND_DATA_CARD_TIER_KEY = "CARD_HAND_DATA_CARD_TIER";
-	private const string CARD_HAND_DATA_CARD_TYPE_KEY = "CARD_HAND_DATA_CARD_TYPE";
-	private const string CARD_HAND_DATA_IS_CLONED_KEY = "CARD_HAND_DATA_IS_CLONED";
-	private const string CARD_HAND_DATA_CARD_MOVE_TYPE_KEY = "CARD_HAND_DATA_CARD_MOVE_TYPE";
-
-	#region Data Structs
-
-	public struct CardHandData
-	{
-        private bool _isFirstDrawOfGame;
-		private CardData[] _cardDatas;
-		
-        public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
-		public CardData[] CardDatas { get { return _cardDatas; } }
-
-		public CardHandData(bool inIsFirstDrawOfGame, params CardData[] inCardDatas)
-		{
-            _isFirstDrawOfGame = inIsFirstDrawOfGame;
-			_cardDatas = inCardDatas;
-		}
-	}
-	#endregion
 
 	public static void TryLoadAllData()
 	{
@@ -96,13 +67,14 @@ public static class DataLoader
 		}
 	}
 
-	public static void SavePreviousRunData(RunData inPrevRunData, CardHandData inCardHandData)
+	public static void SavePreviousRunData(RunData inPrevRunData)
 	{
 		using (ES2Writer writer = ES2Writer.Create(RunData.FILENAME))
 		{
 			writer.Write(inPrevRunData.Health, RunData.HEALTH_KEY);
 			writer.Write(inPrevRunData.Shield, RunData.SHIELD_KEY);
 
+			// Floor
 			writer.Write(inPrevRunData.FloorNum, RunData.FLOOR_NUM_KEY);
 			writer.Write(Utils.Vector2IntToIntArray(inPrevRunData.FloorSize), RunData.FLOOR_SIZE_KEY);
 			writer.Write(Utils.Vector2IntToIntArray(inPrevRunData.StairPos), RunData.STAIR_POS_KEY);
@@ -121,12 +93,8 @@ public static class DataLoader
 
 			writer.Write(inPrevRunData.EnemyMoveType, RunData.ENEMY_MOVE_TYPE_KEY);
 
-			writer.Save();
-		}
-
-		using (ES2Writer writer = ES2Writer.Create(CARD_HAND_DATA_FILENAME))
-		{
-			int numCards = inCardHandData.CardDatas.Length;
+			// Cards
+			int numCards = inPrevRunData.CardDatas.Length;
 			eCardTier[] cardTier = new eCardTier[numCards];
 			eCardType[] cardType = new eCardType[numCards];
 			bool[] isCloned = new bool[numCards];
@@ -134,35 +102,32 @@ public static class DataLoader
 
 			for (int iCard = 0; iCard < numCards; iCard++)
 			{
-				CardData curCardData = inCardHandData.CardDatas[iCard];
+				CardData curCardData = inPrevRunData.CardDatas[iCard];
 				cardTier[iCard] = curCardData.cardTier;
 				cardType[iCard] = curCardData.cardType;
 				isCloned[iCard] = curCardData.isCloned;
 				cardMoveType[iCard] = curCardData.cardMoveType;
 			}
 
-            writer.Write(inCardHandData.IsFirstDrawOfGame, CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);
-			writer.Write(cardTier, CARD_HAND_DATA_CARD_TIER_KEY);
-			writer.Write(cardType, CARD_HAND_DATA_CARD_TYPE_KEY);
-			writer.Write(isCloned, CARD_HAND_DATA_IS_CLONED_KEY);
-			writer.Write(cardMoveType, CARD_HAND_DATA_CARD_MOVE_TYPE_KEY);
+            writer.Write(inPrevRunData.IsFirstDrawOfGame, RunData.IS_FIRST_DRAW_OF_GAME_KEY);
+			writer.Write(cardTier, RunData.CARD_TIER_KEY);
+			writer.Write(cardType, RunData.CARD_TYPE_KEY);
+			writer.Write(isCloned, RunData.CARD_IS_CLONED_KEY);
+			writer.Write(cardMoveType, RunData.CARD_MOVE_TYPE_KEY);
 
 			writer.Save();
 		}
 
 		// NOTE: Updates the currently loaded data.
 		_prevRunData = inPrevRunData;
-		_cardHandData = inCardHandData;
 		_hasPreviousRunData = true;
 	}
 
 	private static void LoadPreviousRunData(DTJob.OnCompleteCallback inOnComplete)
 	{
-		if (ES2.Exists(RunData.FILENAME)
-			&& ES2.Exists(CARD_HAND_DATA_FILENAME))
+		if (ES2.Exists(RunData.FILENAME))
 		{
 			ES2Data prevRunData = ES2.LoadAll(RunData.FILENAME);
-			ES2Data cardHandData = ES2.LoadAll(CARD_HAND_DATA_FILENAME);
 
 			Vector2Int size = Utils.IntArrayToSingleVector2Int(TryLoadArray<int>(prevRunData, RunData.FLOOR_SIZE_KEY));
 			Vector2Int stairPos = Utils.IntArrayToSingleVector2Int(TryLoadArray<int>(prevRunData, RunData.STAIR_POS_KEY));
@@ -176,24 +141,11 @@ public static class DataLoader
 				enemyPos[iEnemy] = new Vector2Int(enemyPosX[iEnemy], enemyPosY[iEnemy]);
 			}
 
-			// PREV_RUN_DATA
-			_prevRunData = new RunData(
-				TryLoad<int>(prevRunData, RunData.HEALTH_KEY),
-				TryLoad<int>(prevRunData, RunData.SHIELD_KEY),
-
-				TryLoad<int>(prevRunData, RunData.FLOOR_NUM_KEY),
-				size,
-				stairPos,
-				morphyPos,
-				enemyPos,
-				TryLoadArray<eMoveType>(prevRunData, RunData.ENEMY_MOVE_TYPE_KEY));
-
-			// CARD_HAND_DATA
-			bool isFirstDrawOfGame = cardHandData.Load<bool>(CARD_HAND_DATA_IS_FIRST_DRAW_OF_GAME_KEY);
-			eCardTier[] cardTier = cardHandData.LoadArray<eCardTier>(CARD_HAND_DATA_CARD_TIER_KEY);
-			eCardType[] cardType = cardHandData.LoadArray<eCardType>(CARD_HAND_DATA_CARD_TYPE_KEY);
-			bool[] isCloned = cardHandData.LoadArray<bool>(CARD_HAND_DATA_IS_CLONED_KEY);
-			eMoveType[] cardMoveType = cardHandData.LoadArray<eMoveType>(CARD_HAND_DATA_CARD_MOVE_TYPE_KEY);
+			bool isFirstDrawOfGame = TryLoad<bool>(prevRunData, RunData.IS_FIRST_DRAW_OF_GAME_KEY);
+			eCardTier[] cardTier = TryLoadArray<eCardTier>(prevRunData, RunData.CARD_TIER_KEY);
+			eCardType[] cardType = TryLoadArray<eCardType>(prevRunData, RunData.CARD_TYPE_KEY);
+			bool[] isCloned = TryLoadArray<bool>(prevRunData, RunData.CARD_IS_CLONED_KEY);
+			eMoveType[] cardMoveType = TryLoadArray<eMoveType>(prevRunData, RunData.CARD_MOVE_TYPE_KEY);
 
 			int numCards = cardTier.Length;
 			CardData[] cardDatas = new CardData[numCards];
@@ -206,7 +158,20 @@ public static class DataLoader
 					cardMoveType[iCard]);
 			}
 
-			_cardHandData = new CardHandData(isFirstDrawOfGame, cardDatas);
+			// Constructing the previous RunData
+			_prevRunData = new RunData(
+				TryLoad<int>(prevRunData, RunData.HEALTH_KEY),
+				TryLoad<int>(prevRunData, RunData.SHIELD_KEY),
+
+				TryLoad<int>(prevRunData, RunData.FLOOR_NUM_KEY),
+				size,
+				stairPos,
+				morphyPos,
+				enemyPos,
+				TryLoadArray<eMoveType>(prevRunData, RunData.ENEMY_MOVE_TYPE_KEY),
+				
+				isFirstDrawOfGame,
+				cardDatas);
 
 			_hasPreviousRunData = true;
 		}
@@ -222,8 +187,6 @@ public static class DataLoader
 	public static void DeletePreviousRunData(DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		if (ES2.Exists(RunData.FILENAME)) ES2.Delete(RunData.FILENAME);
-		if (ES2.Exists(CARD_HAND_DATA_FILENAME)) ES2.Delete(CARD_HAND_DATA_FILENAME);
-
 		_hasPreviousRunData = false;
 
 		if (inOnComplete != null) inOnComplete();
