@@ -343,7 +343,7 @@ public class Dungeon : MonoBehaviour
 
 				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
 				{
-					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete, true);
+					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete);
 				}, playPhaseAnimJob);
 
 				DTJobList startPlayerPhase = new DTJobList(() =>
