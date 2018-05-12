@@ -54,24 +54,24 @@ public struct RunData
 	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
 	public CardData[] CardDatas { get { return _cardDatas; } }
 
-	public RunData(Dungeon inDungeon,
-		Floor inFloor, Enemy[] inEnemies)
+	public RunData(Dungeon inDungeon)
 	{
 		_health = inDungeon.MorphyController.Health;
 		_shield = inDungeon.MorphyController.Shield;
 
 		// Floor
-		_floorNum = inFloor.FloorNum;
-		_floorSize = inFloor.Size;
-		_stairPos = inFloor.StairsPos;
-		_morphyPos = inFloor.MorphyPos;
+		_floorNum = inDungeon.CurrentFloor.FloorNum;
+		_floorSize = inDungeon.CurrentFloor.Size;
+		_stairPos = inDungeon.CurrentFloor.StairsPos;
+		_morphyPos = inDungeon.CurrentFloor.MorphyPos;
 
-		int numEnemies = inEnemies.Length;
+		Enemy[] enemiesAlive = inDungeon.EnemyManager.GetArrayOfAliveEnemies();
+		int numEnemies = enemiesAlive.Length;
 		_enemyPos = new Vector2Int[numEnemies];
 		_enemyMoveType = new eMoveType[numEnemies];
 		for (int iEnemy = 0; iEnemy < numEnemies; iEnemy++)
 		{
-			Enemy curEnemy = inEnemies[iEnemy];
+			Enemy curEnemy = enemiesAlive[iEnemy];
 			_enemyPos[iEnemy] = curEnemy.Pos;
 			_enemyMoveType[iEnemy] = curEnemy.Type;
 		}

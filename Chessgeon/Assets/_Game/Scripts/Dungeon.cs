@@ -139,7 +139,7 @@ public class Dungeon : MonoBehaviour
 
 	public void SaveGame()
 	{
-		RunData prevRunData = new RunData(this, CurrentFloor, EnemyManager.GetArrayOfAliveEnemies());
+		RunData prevRunData = new RunData(this);
 		DataLoader.SavePreviousRunData(prevRunData);
 		Debug.Log("Game Saved!");
 	}
