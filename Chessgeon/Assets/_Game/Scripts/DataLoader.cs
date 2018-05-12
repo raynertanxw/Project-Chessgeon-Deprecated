@@ -178,10 +178,10 @@ public static class DataLoader
 
 			// PREV_RUN_DATA
 			_prevRunData = new RunData(
-				TryLoadInt(prevRunData, RunData.HEALTH_KEY),
-				TryLoadInt(prevRunData, RunData.SHIELD_KEY),
+				TryLoad<int>(prevRunData, RunData.HEALTH_KEY),
+				TryLoad<int>(prevRunData, RunData.SHIELD_KEY),
 
-				TryLoadInt(prevRunData, RunData.FLOOR_NUM_KEY),
+				TryLoad<int>(prevRunData, RunData.FLOOR_NUM_KEY),
 				size,
 				stairPos,
 				morphyPos,
@@ -247,7 +247,7 @@ public static class DataLoader
 		{
 			ES2Data playerData = ES2.LoadAll(PlayerData.FILENAME);
 
-			_playerData = new PlayerData(TryLoadInt(playerData, PlayerData.NUM_GEMS_KEY));
+			_playerData = new PlayerData(TryLoad<int>(playerData, PlayerData.NUM_GEMS_KEY));
 		}
 		else // If no have, create empty. Basically new player.
 		{
@@ -284,14 +284,14 @@ public static class DataLoader
 	}
 
 	#region Helper Functions
-	private static int TryLoadInt(ES2Data inData, string inKey)
+	private static T TryLoad<T>(ES2Data inData, string inKey)
 	{
 		if (inData.TagExists(inKey))
-			return inData.Load<int>(inKey);
+			return inData.Load<T>(inKey);
 		else
 		{
 			Debug.LogWarning("Key " + inKey + " does not exist!");
-			return -1;
+			return default(T);
 		}
 	}
 
