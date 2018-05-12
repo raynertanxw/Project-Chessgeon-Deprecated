@@ -18,8 +18,6 @@ public class CardManager : MonoBehaviour
 	private const int MAX_CARDS = 7;
 	private int _numCardsInHand = -1;
 	public int NumCardsInHand { get { return _numCardsInHand; } }
-	private bool _skipNextDraw = false;
-	public bool SkipNextDraw { get { return _skipNextDraw; } }
 	private bool _isFirstDrawOfGame = true;
 	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
 	private int _numCardsUsedInTurn = -1;
@@ -61,15 +59,9 @@ public class CardManager : MonoBehaviour
 		}
 	}
 
-	public void SkippedNextDraw()
-	{
-		_skipNextDraw = false;
-	}
-
 	public void ResetForNewGame()
 	{
 		_isFirstDrawOfGame = true;
-		_skipNextDraw = false;
 		_numCardsInHand = 0;
 		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0;
@@ -79,7 +71,6 @@ public class CardManager : MonoBehaviour
 	public void ResetFromCardHandData(DataLoader.CardHandData inCardHandData)
 	{
 		_isFirstDrawOfGame = inCardHandData.IsFirstDrawOfGame;
-		_skipNextDraw = true;
 		_numCardsInHand = 0;
 		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
