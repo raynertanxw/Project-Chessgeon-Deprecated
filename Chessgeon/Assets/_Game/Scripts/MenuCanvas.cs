@@ -70,8 +70,8 @@ public class MenuCanvas : MonoBehaviour
 		_informationDismissBtn.onClick.AddListener(DismissInformationPanel);
 		_confirmationCancelBtn.onClick.AddListener(DismissConfirmationPanel);
 
-		DataLoader.OnAllDataLoaded += CheckBtnAvailability;
-		DataLoader.OnAllDataLoaded += UpdateGemText;
+		GameData.OnAllDataLoaded += CheckBtnAvailability;
+		GameData.OnAllDataLoaded += UpdateGemText;
 
 		DismissInformationPanel();
 		DismissConfirmationPanel();
@@ -113,12 +113,12 @@ public class MenuCanvas : MonoBehaviour
 
 	public void CheckBtnAvailability()
 	{
-		_continueBtnObject.SetActive(DataLoader.HasPreviousRunData);
+		_continueBtnObject.SetActive(GameData.HasPreviousRunData);
 	}
 
 	public void UpdateGemText()
 	{
-		_gemText.text = ChessgeonUtils.FormatGemString(DataLoader.SavedPlayerData.NumGems);
+		_gemText.text = ChessgeonUtils.FormatGemString(GameData.SavedPlayerData.NumGems);
 	}
 
 	private void DismissInformationPanel()
