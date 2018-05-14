@@ -141,15 +141,15 @@ public class ChessgeonBuildScript
 
             string buildPath = Path.Combine(buildDirectory, outputFileName);
             // The actual build happens here!
-            string message = BuildPipeline.BuildPlayer(scenes, buildPath, buildTarget, buildOptions);
+			UnityEditor.Build.Reporting.BuildReport buildReport = BuildPipeline.BuildPlayer(scenes, buildPath, buildTarget, buildOptions);
 
-            if (string.IsNullOrEmpty(message))
+			if (buildReport.summary.totalErrors < 1)
             {
                 Debug.Log("Chessgeon " + inBuildScheme.ToString() + " build completed successfully.");
             }
             else
             {
-                EditorUtility.DisplayDialog("Oops!", "Error encountered while building: " + message, "ok");
+				EditorUtility.DisplayDialog("Oops!", "Error encountered while building: " + buildReport.summary.ToString(), "ok");
             }
         }
         catch (Exception e)
