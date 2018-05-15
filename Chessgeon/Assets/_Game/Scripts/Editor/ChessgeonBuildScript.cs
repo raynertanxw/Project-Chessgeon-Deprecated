@@ -15,6 +15,8 @@ public enum eBuildScheme { RELEASE, DEBUG };
 
 public class ChessgeonBuildScript
 {
+	public const string RUN_IN_IOS_SIMULATOR_KEY = "RUN_IN_IOS_SIMULATOR";
+
 #if UNITY_ANDROID
     private static BuildTargetGroup buildTargetGroup = BuildTargetGroup.Android;
     private static BuildTarget buildTarget = BuildTarget.Android;
@@ -100,6 +102,16 @@ public class ChessgeonBuildScript
             {
                 throw new System.Exception("Are you sure you want to change targetOSVersion to " + PlayerSettings.iOS.targetOSVersionString + "?");
             }
+
+			if (EditorPrefs.HasKey(RUN_IN_IOS_SIMULATOR_KEY)
+				&& EditorPrefs.GetBool(RUN_IN_IOS_SIMULATOR_KEY))
+			{
+				PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+			}
+			else
+			{
+				PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
+			}
 #endif
             #endregion
 
