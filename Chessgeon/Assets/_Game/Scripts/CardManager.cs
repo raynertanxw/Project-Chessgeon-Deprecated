@@ -385,32 +385,34 @@ public class CardManager : MonoBehaviour
 			{
 				case eCardType.Joker:
 				{
-					int numMoves = -1;
-					eMoveType moveType = eMoveType.Pawn;
-					switch (cardData.cardTier)
-					{
-						case eCardTier.Normal:
-						{
-							numMoves = 1;
-							moveType = (eMoveType)Random.Range(0, 3);
-							break;
-						}
-						case eCardTier.Silver:
-						{
-							numMoves = 2;
-							moveType = (eMoveType)Random.Range(0, 4);
-							break;
-						}
-						case eCardTier.Gold:
-						{
-							numMoves = 3;
-							moveType = (eMoveType)Random.Range(1, 5);
-							break;
-						}
-						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-					}
-					_dungeon.MorphyController.MorphTo(moveType, numMoves);
-					DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f, null);
+					ToggleControlBlocker(true);
+					DungeonCardDrawer.DisableEndTurnBtn("Finish all movements first");
+                    int numMoves = -1;
+                    eMoveType moveType = eMoveType.Pawn;
+                    switch (cardData.cardTier)
+                    {
+                        case eCardTier.Normal:
+                        {
+                            numMoves = 1;
+                            moveType = (eMoveType)Random.Range(0, 3);
+                            break;
+                        }
+                        case eCardTier.Silver:
+                        {
+                            numMoves = 2;
+                            moveType = (eMoveType)Random.Range(0, 4);
+                            break;
+                        }
+                        case eCardTier.Gold:
+                        {
+                            numMoves = 3;
+                            moveType = (eMoveType)Random.Range(1, 5);
+                            break;
+                        }
+                        default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+                    }
+                    _dungeon.MorphyController.MorphTo(moveType, numMoves);
+                    DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, 0.6f, null);
 					break;
 				}
 				case eCardType.Clone:
@@ -456,7 +458,16 @@ public class CardManager : MonoBehaviour
 				}
 				case eCardType.Smash:
 				{
-					postExecuteCardAnimActions += () => { _dungeon.MorphyController.Smash(cardData.cardTier); };
+					ToggleControlBlocker(true);
+					DungeonCardDrawer.DisableEndTurnBtn("Wait for Smash animation to finish!");
+					postExecuteCardAnimActions += () =>
+					{
+						_dungeon.MorphyController.Smash(cardData.cardTier, () =>
+						{
+							ToggleControlBlocker(false);
+							DungeonCardDrawer.EnableEndTurnBtn();
+						});
+					};
 					break;
 				}
 				case eCardType.Draw:
@@ -470,8 +481,14 @@ public class CardManager : MonoBehaviour
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 
-					postExecuteCardAnimActions += () => { DrawCard(numDraws, () => { ToggleControlBlocker(false); }); };
 					ToggleControlBlocker(true);
+					DungeonCardDrawer.DisableEndTurnBtn("Wait for draw card animation");
+                    postExecuteCardAnimActions += () => { DrawCard(numDraws, () => 
+						{
+							ToggleControlBlocker(false);
+							DungeonCardDrawer.EnableEndTurnBtn();
+						});
+					};
 					break;
 				}
 				case eCardType.Shield:
@@ -490,6 +507,8 @@ public class CardManager : MonoBehaviour
 				}
 				case eCardType.Movement:
 				{
+					ToggleControlBlocker(true);
+					DungeonCardDrawer.DisableEndTurnBtn("Finish all movements first");
 					int numMoves = -1;
 					switch (cardData.cardTier)
 					{

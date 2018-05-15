@@ -68,6 +68,8 @@ public class MorphyController : MonoBehaviour
 	{
 		_morphy.TransformBackToMorphy();
 		_dungeon.TileManager.HideAllSelectableTiles();
+		_dungeon.CardManager.ToggleControlBlocker(false);
+		DungeonCardDrawer.EnableEndTurnBtn();
 	}
 
 	private void SetHealth(int inHealth)
