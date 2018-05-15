@@ -23,7 +23,7 @@ public class ChessgeonBuildScript
     private static BuildTarget buildTarget = BuildTarget.iOS;
 #endif
 
-    public static void BuildChessgeon(eBuildScheme inBuildScheme)
+    public static void BuildChessgeon(eBuildScheme inBuildScheme, bool inAllowAppendXCodeProj = false)
     {
         try
         {
@@ -92,10 +92,11 @@ public class ChessgeonBuildScript
             //         break;
             // }
 			PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+			PlayerSettings.iOS.appleDeveloperTeamID = "FW239ETS58";
             PlayerSettings.iOS.buildNumber = VersionClass.REVISION;
             PlayerSettings.iOS.allowHTTPDownload = false;
 
-            if (PlayerSettings.iOS.targetOSVersionString != "7.0")
+            if (PlayerSettings.iOS.targetOSVersionString != "8.0")
             {
                 throw new System.Exception("Are you sure you want to change targetOSVersion to " + PlayerSettings.iOS.targetOSVersionString + "?");
             }
@@ -109,16 +110,24 @@ public class ChessgeonBuildScript
                 EditorMenuItems.SCENE_PATH_DUNGEON
             };
 
-            string outputFileName;
+			string outputFileName;
             string buildDirectory;
             BuildOptions buildOptions = BuildOptions.ShowBuiltPlayer;
+#if UNITY_EDITOR_WIN
+            //buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop) + "\\Chessgeon\\BUILDS";
+			buildDirectory = "D:\\Work\\GIT_Repositories\\Project-Chessgeon\\Builds";
+            UnityEngine.Debug.Log("WINDOWS BUILD DIR --> " + buildDirectory);
+#elif UNITY_EDITOR_OSX
+            //buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/Desktop/Chessgeon/BUILDS/";
+			buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/Documents/Unity Projects/BUILDS/Project-Chessgeon/";
+            UnityEngine.Debug.Log("OSX BUILD DIR --> " + buildDirectory);
+#endif
 #if UNITY_ANDROID
             outputFileName = "Chessgeon_" + inBuildScheme.ToString() + "_v" + VersionClass.BUNDLE_VERSION + "_r" + VersionClass.REVISION + ".apk";
-            buildDirectory = "D:\\Work\\GIT_Repositories\\Project-Chessgeon\\Builds";
             buildOptions |= BuildOptions.AutoRunPlayer;
 #elif UNITY_IOS
-            outputFileName = "Chessgeon_xcode/";
-            buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/Documents/Unity Projects/BUILDS/Project-Chessgeon/";
+			outputFileName = "Chessgeon_xcode" + inBuildScheme.ToString() + "_v" + VersionClass.BUNDLE_VERSION + "_r" + VersionClass.REVISION + "/";
+			if (inAllowAppendXCodeProj) buildOptions |= BuildOptions.AcceptExternalModificationsToPlayer;
 #endif
 
             if (!Directory.Exists(buildDirectory)) Directory.CreateDirectory(buildDirectory);
