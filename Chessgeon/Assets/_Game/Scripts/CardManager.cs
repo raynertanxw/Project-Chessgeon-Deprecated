@@ -9,6 +9,8 @@ public class CardManager : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 	[SerializeField] private Image _blockingImage = null;
 	[SerializeField] private Image _controlBlocker = null;
+	[SerializeField] private Transform _cardUseThresholdPoint = null;
+	[SerializeField] private Camera _UICam = null;
 
 	[Header("Card Texture")]
 	[SerializeField] private Texture[] _cardTextures = null;
@@ -26,12 +28,16 @@ public class CardManager : MonoBehaviour
 	private int _statTotalCardsDrawn = -1;
 	public int StatTotalCardsDrawn { get { return _statTotalCardsDrawn; } }
 
+	public float CardUseYThreshold { get; private set; }
+
 	private void Awake()
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 		Debug.Assert(_cardTextures.Length == (3 * 5) + (3 * 5), "There is a mismatch in number of textures and number of cards.");
 		Debug.Assert(_blockingImage != null, "_blockingImage is not assigned.");
 		Debug.Assert(_controlBlocker != null, "_controlBlocker is not assigned.");
+		Debug.Assert(_cardUseThresholdPoint != null, "_cardUseThresholdPoint is not assigned.");
+		Debug.Assert(_UICam != null, "_UICam is not assigned.");
 
 		_cards = new Card[MAX_CARDS];
 		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
@@ -44,10 +50,11 @@ public class CardManager : MonoBehaviour
 		_isFirstDrawOfGame = true;
 		_dungeon.OnEndPlayerTurn += OnPlayerEndTurn;
 		_dungeon.OnFloorCleared += () => { ToggleControlBlocker(true); };
-	}
+    }
 
     private void Start()
     {
+		CardUseYThreshold = _UICam.WorldToScreenPoint(_cardUseThresholdPoint.position).y; // NOTE: Must be after awake so canvas can scale properly.
 		ToggleControlBlocker(true);
 		HideAllCards();
 	}

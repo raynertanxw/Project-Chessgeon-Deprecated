@@ -130,8 +130,7 @@ public class Card : MonoBehaviour
 		_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
 
 		PointerEventData ptrEventData = (PointerEventData)data;
-		const float SCREEN_HEIGHT_THRESHOLD = 0.23f;
-		if ((ptrEventData.position.y / Screen.height) > SCREEN_HEIGHT_THRESHOLD
+		if (ptrEventData.position.y > _cardManager.CardUseYThreshold
 			&& !_isAnimatingCardExecute) // NOTE: Prevents double execution from clicking while execute anim is running.
 		{
 			if (OnCardExecute != null) OnCardExecute(_cardIndex);
