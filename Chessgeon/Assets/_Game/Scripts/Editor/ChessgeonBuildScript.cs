@@ -170,6 +170,16 @@ public class ChessgeonBuildScript
             }
             else
             {
+				string buildStepsMessages = "";
+				for (int iStep = 0; iStep < buildReport.steps.Length; iStep++)
+				{
+					UnityEditor.Build.Reporting.BuildStepMessage[] stepMsgs = buildReport.steps[iStep].messages;
+					for (int iMsg = 0; iMsg < stepMsgs.Length; iMsg++)
+					{
+						buildStepsMessages += stepMsgs[iMsg].content + "\n";
+					}
+					buildStepsMessages += "\n";
+				}
 				EditorUtility.DisplayDialog("Oops!", "Error encountered while building: " + buildReport.summary.ToString(), "ok");
             }
         }
