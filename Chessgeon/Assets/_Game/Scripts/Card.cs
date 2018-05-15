@@ -56,7 +56,8 @@ public class Card : MonoBehaviour
 	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(25.0f, 12.5f);
 	private const float TILT_INTERTIA_DRAG = 5.0f; 
 	private const float MAX_TILT = 35.0f;
-	private readonly Vector3 DRAG_SCALE = new Vector3(2.0f, 2.0f, 1.0f);
+	private const float MAX_TILT_DELTA = 5.0f;
+	private readonly Vector3 DRAG_SCALE = new Vector3(2.5f, 2.5f, 1.0f);
 	private const float SCALE_LERP_SPEED = 20.0f;
 	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 2.5f, 0.0f);
 
@@ -102,7 +103,7 @@ public class Card : MonoBehaviour
 				_cardRectTransform.localScale = Vector3.Lerp(_cardRectTransform.localScale, Vector3.one, Time.deltaTime * SCALE_LERP_SPEED);
 			}
 
-			_cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
+            _cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
 			_tiltIntertia = Vector2.Lerp(_tiltIntertia, Vector2.zero, Time.deltaTime * TILT_INTERTIA_DRAG);
 		}
 	}
@@ -143,10 +144,11 @@ public class Card : MonoBehaviour
 		_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
 		_desiredCardWorldPos.z = _cardRectTransform.position.z;
 
-		Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
-		tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
-		_tiltIntertia += tiltIntertiaDelta;
-		_tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
+	    Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
+	    tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
+		tiltIntertiaDelta = Vector2.ClampMagnitude(tiltIntertiaDelta, MAX_TILT_DELTA);
+        _tiltIntertia += tiltIntertiaDelta;
+        _tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
 	}
 
