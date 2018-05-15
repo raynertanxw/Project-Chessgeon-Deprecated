@@ -131,10 +131,11 @@ public class Dungeon : MonoBehaviour
 
 		// TODO: Disable some UI and stuff?
 		//		 Present GameOver panel and such
-		GameOverCanvas.SetGameOverValues(99999, FloorNum, 321);
+		GameOverCanvas.SetGameOverValues(99999, FloorNum);
 		GameOverCanvas.EnableGameOverPanel(true);
 
 		// TODO: Save scores and stuff delete save data cause there is no more game to continue.
+		// Which will also prevent them from cheating.
 	}
 
 	public void SaveGame()

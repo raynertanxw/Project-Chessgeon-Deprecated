@@ -20,7 +20,6 @@ public class GameOverCanvas : MonoBehaviour
 	[SerializeField] private Text _gameOverText = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
-	[SerializeField] private Text _goldText = null;
 
 	[Header("Mesh Renderers")]
 	[SerializeField] private MeshRenderer _gameOverPanelMeshRen = null;
@@ -46,7 +45,6 @@ public class GameOverCanvas : MonoBehaviour
 			Debug.Assert(_gameOverText != null, "_gameOverText is not assigned.");
 			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
-			Debug.Assert(_goldText != null, "_goldText is not assigned.");
 
 			Debug.Assert(_gameOverPanelMeshRen != null, "_gameOverPanelMeshRen is not assigned.");
 			Debug.Assert(_startOverBtnMeshRen != null, "_startOverBtnMeshRen is not assigned.");
@@ -83,7 +81,6 @@ public class GameOverCanvas : MonoBehaviour
 		_instance._gameOverText.enabled = inEnabled;
 		_instance._scoreText.enabled = inEnabled;
 		_instance._floorText.enabled = inEnabled;
-		_instance._goldText.enabled = inEnabled;
 
 		_instance._gameOverPanelMeshRen.enabled = inEnabled;
 		_instance._startOverBtnMeshRen.enabled = inEnabled;
@@ -92,12 +89,11 @@ public class GameOverCanvas : MonoBehaviour
 		_instance._gameOverPanelMeshRen.gameObject.SetActive(inEnabled);
 	}
 
-	public static void SetGameOverValues(int inScore, int inFloor, int inGold)
+	public static void SetGameOverValues(int inScore, int inFloor)
 	{
 		// TODO: Format the int to txts!
 		_instance._scoreText.text = "SCORE: " + String.Format("{0:n0}", inScore);
 		_instance._floorText.text = "FLOOR: " + inFloor.ToString();
-		_instance._goldText.text = "GOLD : " + String.Format("{0:n0}", inGold);
 	}
 
 	private void ExitToMainMenu()
