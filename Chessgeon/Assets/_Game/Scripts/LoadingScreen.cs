@@ -8,6 +8,8 @@ public class LoadingScreen : MonoBehaviour
 	[SerializeField] private AudioListener _loadingScreenAudioListener = null;
     [SerializeField] private RectTransform _loadingBarFill = null;
 
+	private const float MIN_LOADING_TIME = 1.0f;
+
 	void Awake()
 	{
 		Application.targetFrameRate = 60;
@@ -31,6 +33,7 @@ public class LoadingScreen : MonoBehaviour
 
 	IEnumerator LoadDataAndMainSceneAsync()
 	{
+		float loadStartTime = Time.time;
 		AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(Constants.SCENE_DUNGEON, LoadSceneMode.Additive);
 		asyncLoad.allowSceneActivation = false; // NOTE: Stops scene load at 0.9 and prevents it from being activated immediately when ready.
 
@@ -54,7 +57,18 @@ public class LoadingScreen : MonoBehaviour
 
 		Scene menuScene = SceneManager.GetSceneByBuildIndex(Constants.SCENE_DUNGEON);
 		SceneManager.MoveGameObjectToScene(this.gameObject, menuScene);
-        UpdateLoadingBarProgress(1.0f);
+
+		UpdateLoadingBarProgress(0.95f);
+		float loadEndTime = Time.time;
+        while (true)
+        {
+			if (loadEndTime - loadStartTime > MIN_LOADING_TIME)
+				break;
+
+            loadEndTime = Time.time;
+			yield return null;
+        }
+		UpdateLoadingBarProgress(1.0f);
         // NOTE: Wait for a short while so that we can see the fully loaded bar.
         yield return new WaitForSeconds(0.1f);
 		StartCoroutine(UnloadLoadingScreenSceneAsync());

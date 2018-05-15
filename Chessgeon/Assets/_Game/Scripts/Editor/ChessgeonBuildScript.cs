@@ -15,6 +15,8 @@ public enum eBuildScheme { RELEASE, DEBUG };
 
 public class ChessgeonBuildScript
 {
+	public const string RUN_IN_IOS_SIMULATOR_KEY = "RUN_IN_IOS_SIMULATOR";
+
 #if UNITY_ANDROID
     private static BuildTargetGroup buildTargetGroup = BuildTargetGroup.Android;
     private static BuildTarget buildTarget = BuildTarget.Android;
@@ -23,7 +25,7 @@ public class ChessgeonBuildScript
     private static BuildTarget buildTarget = BuildTarget.iOS;
 #endif
 
-    public static void BuildChessgeon(eBuildScheme inBuildScheme)
+    public static void BuildChessgeon(eBuildScheme inBuildScheme, bool inAllowAppendXCodeProj = false)
     {
         try
         {
@@ -92,13 +94,24 @@ public class ChessgeonBuildScript
             //         break;
             // }
 			PlayerSettings.iOS.appleEnableAutomaticSigning = true;
+			PlayerSettings.iOS.appleDeveloperTeamID = "FW239ETS58";
             PlayerSettings.iOS.buildNumber = VersionClass.REVISION;
             PlayerSettings.iOS.allowHTTPDownload = false;
 
-            if (PlayerSettings.iOS.targetOSVersionString != "7.0")
+            if (PlayerSettings.iOS.targetOSVersionString != "8.0")
             {
                 throw new System.Exception("Are you sure you want to change targetOSVersion to " + PlayerSettings.iOS.targetOSVersionString + "?");
             }
+
+			if (EditorPrefs.HasKey(RUN_IN_IOS_SIMULATOR_KEY)
+				&& EditorPrefs.GetBool(RUN_IN_IOS_SIMULATOR_KEY))
+			{
+				PlayerSettings.iOS.sdkVersion = iOSSdkVersion.SimulatorSDK;
+			}
+			else
+			{
+				PlayerSettings.iOS.sdkVersion = iOSSdkVersion.DeviceSDK;
+			}
 #endif
             #endregion
 
@@ -109,16 +122,24 @@ public class ChessgeonBuildScript
                 EditorMenuItems.SCENE_PATH_DUNGEON
             };
 
-            string outputFileName;
+			string outputFileName;
             string buildDirectory;
             BuildOptions buildOptions = BuildOptions.ShowBuiltPlayer;
+#if UNITY_EDITOR_WIN
+            //buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop) + "\\Chessgeon\\BUILDS";
+			buildDirectory = "D:\\Work\\GIT_Repositories\\Project-Chessgeon\\Builds";
+            UnityEngine.Debug.Log("WINDOWS BUILD DIR --> " + buildDirectory);
+#elif UNITY_EDITOR_OSX
+            //buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/Desktop/Chessgeon/BUILDS/";
+			buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/Documents/Unity Projects/BUILDS/Project-Chessgeon/";
+            UnityEngine.Debug.Log("OSX BUILD DIR --> " + buildDirectory);
+#endif
 #if UNITY_ANDROID
             outputFileName = "Chessgeon_" + inBuildScheme.ToString() + "_v" + VersionClass.BUNDLE_VERSION + "_r" + VersionClass.REVISION + ".apk";
-            buildDirectory = "D:\\Work\\GIT_Repositories\\Project-Chessgeon\\Builds";
             buildOptions |= BuildOptions.AutoRunPlayer;
 #elif UNITY_IOS
-            outputFileName = "Chessgeon_xcode/";
-            buildDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal) + "/Documents/Unity Projects/BUILDS/Project-Chessgeon/";
+			outputFileName = "Chessgeon_xcode" + inBuildScheme.ToString() + "_v" + VersionClass.BUNDLE_VERSION + "_r" + VersionClass.REVISION + "/";
+			if (inAllowAppendXCodeProj) buildOptions |= BuildOptions.AcceptExternalModificationsToPlayer;
 #endif
 
             if (!Directory.Exists(buildDirectory)) Directory.CreateDirectory(buildDirectory);
@@ -149,6 +170,16 @@ public class ChessgeonBuildScript
             }
             else
             {
+				string buildStepsMessages = "";
+				for (int iStep = 0; iStep < buildReport.steps.Length; iStep++)
+				{
+					UnityEditor.Build.Reporting.BuildStepMessage[] stepMsgs = buildReport.steps[iStep].messages;
+					for (int iMsg = 0; iMsg < stepMsgs.Length; iMsg++)
+					{
+						buildStepsMessages += stepMsgs[iMsg].content + "\n";
+					}
+					buildStepsMessages += "\n";
+				}
 				EditorUtility.DisplayDialog("Oops!", "Error encountered while building: " + buildReport.summary.ToString(), "ok");
             }
         }
