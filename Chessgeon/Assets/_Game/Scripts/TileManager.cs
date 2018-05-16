@@ -1,13 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class TileManager : MonoBehaviour
 {
 	[SerializeField] private GameObject _prefabDungeonTile = null;
 	[SerializeField] private GameObject _prefabSelectableTile = null;
 	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private GameObject _selectableTileBlocker = null;
 	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private const float TILE_WIDTH = 1.0f;
@@ -29,6 +32,7 @@ public class TileManager : MonoBehaviour
 		Debug.Assert(_prefabDungeonTile != null, "_prefabDungeonTile is not assigned.");
 		Debug.Assert(_prefabSelectableTile != null, "_prefabSelectableTile is not assigned.");
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
+		Debug.Assert(_selectableTileBlocker != null, "_selectableTileBlocker is not assigned.");
 
 		_dungeonTiles = new DungeonTile[_dungeon.MaxX, _dungeon.MaxY];
 		for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
@@ -65,14 +69,36 @@ public class TileManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _hitInfo = new RaycastHit();
-            _ray = DungeonCamera.ActiveCamera.ScreenPointToRay(Input.mousePosition);
+			PointerEventData pointerData = new PointerEventData(EventSystem.current);
+			pointerData.position = Input.mousePosition;
+			
+			List<RaycastResult> results = new List<RaycastResult>();
+			EventSystem.current.RaycastAll(pointerData, results);
+			
+			bool blocked = false;
+			if (results.Count > 0)
+			{
+				for (int iHit = 0; iHit < results.Count; iHit++)
+				{
+					if (results[iHit].gameObject.name == _selectableTileBlocker.name)
+					{
+						blocked = true;
+						break;
+					}
+				}
+			}
 
-            const float MAX_DIST = 1000.0f;
-            if (Physics.Raycast(_ray, out _hitInfo, MAX_DIST, Constants.LAYER_MASK_DUNGEON_INTERACTABLE))
-            {
-                _selectableTileDict[_hitInfo.collider.gameObject.GetInstanceID()].SelectTile();
-            }
+			if (!blocked)
+			{
+				_hitInfo = new RaycastHit();
+
+				const float MAX_DIST = 1000.0f;
+				_ray = DungeonCamera.ActiveCamera.ScreenPointToRay(Input.mousePosition);
+				if (Physics.Raycast(_ray, out _hitInfo, MAX_DIST, Constants.LAYER_MASK_DUNGEON_INTERACTABLE))
+				{
+					_selectableTileDict[_hitInfo.collider.gameObject.GetInstanceID()].SelectTile();
+				}
+			}
         }
     }
 
