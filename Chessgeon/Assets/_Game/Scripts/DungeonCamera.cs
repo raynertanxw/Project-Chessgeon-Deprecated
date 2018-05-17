@@ -22,6 +22,8 @@ public class DungeonCamera : MonoBehaviour
 	private float _camMinZ;
 	private float _camMaxZ;
 
+	private Vector2Int _lastRequestedTileToFocus;
+	public static Vector2Int LastRequestedTileToFocus { get { return _instance._lastRequestedTileToFocus; } }
 	private bool _isFocusingOnTile = false;
 	private bool _isShaking = false;
 
@@ -45,6 +47,8 @@ public class DungeonCamera : MonoBehaviour
 
 			BoardScroller.OnDrag += OnDrag;
 			BoardScroller.OnBeginDrag += OnBeginDrag;
+
+			_lastRequestedTileToFocus = new Vector2Int(-1, -1);
 		}
 		else if (_instance != this)
 		{
@@ -71,6 +75,7 @@ public class DungeonCamera : MonoBehaviour
 	private void OnBeginDrag(Vector2 inPointerPos)
 	{
 		_prevFramPos = ConvertPointerPosToPercentage(inPointerPos);
+		_lastRequestedTileToFocus = new Vector2Int(-1, -1);
 	}
 
 	private void OnDrag(Vector2 inPointerPos)
@@ -118,6 +123,7 @@ public class DungeonCamera : MonoBehaviour
 	public static void FocusCameraToTile(int inX, int inY, float inDuration, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		// Note: Assumes that the y and x euler degrees are acute angles.
+		_instance._lastRequestedTileToFocus = new Vector2Int(inX, inY);
 		Vector3 tileTransformPos = _instance._dungeon.TileManager.GetTileTransformPosition(inX, inY);
 		float hyp = (_instance.transform.position.y - tileTransformPos.y) / Mathf.Tan(_instance.transform.eulerAngles.x * Mathf.Deg2Rad);
 		float sinY = Mathf.Sin(_instance.transform.eulerAngles.y * Mathf.Deg2Rad);
@@ -128,16 +134,6 @@ public class DungeonCamera : MonoBehaviour
 			tileTransformPos.x - diffX,
 			_instance.transform.position.y,
 			tileTransformPos.z - diffZ);
-		//if (inIsCardDrawerOpen)
-		//{
-		//	const float offsetHyp = 2.0f;
-		//	Vector3 cardDrawerOffset = new Vector3(
-		//		-offsetHyp * sinY,
-		//		0.0f,
-		//		-offsetHyp * cosY
-		//		);
-		//	targetPos += cardDrawerOffset;
-		//}
 		targetPos = _instance.RestrictToCameraBounds(targetPos);
 
 		MoveToAction moveToFocus = new MoveToAction(_instance.transform, targetPos, inDuration, Utils.CurveSmoothStep);

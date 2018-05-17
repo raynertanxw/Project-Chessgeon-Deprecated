@@ -40,14 +40,14 @@ public class MorphyController : MonoBehaviour
 	public void ResetForNewGame()
 	{
 		SetHealth(START_HEALTH);
-		SetShield(0);
+		SetShield(0, null);
 		_isDead = false;
 	}
 
 	public void ResetFromPrevRunData(RunData inPrevRunData)
 	{
 		SetHealth(inPrevRunData.Health);
-		SetShield(inPrevRunData.Shield);
+		SetShield(inPrevRunData.Shield, null);
 		_isDead = false;
 	}
 
@@ -84,11 +84,11 @@ public class MorphyController : MonoBehaviour
 		}
 	}
 
-	private void SetShield(int inShield)
+	private void SetShield(int inShield, DTJob.OnCompleteCallback inOnComplete)
 	{
 		_shield = inShield;
-		if (_shield > 0) _morphy.ToggleShieldVisibility(true);
-		else _morphy.ToggleShieldVisibility(false);
+		if (_shield > 0) _morphy.ToggleShieldVisibility(true, true, inOnComplete);
+		else _morphy.ToggleShieldVisibility(false, true, inOnComplete);
 		DungeonDisplay.SetShieldUI(inShield);
 	}
 
@@ -279,7 +279,7 @@ public class MorphyController : MonoBehaviour
 		if (_shield > 0)
 		{
 			int newShield = Mathf.Max(_shield - inDamage, 0);
-			SetShield(newShield);
+			SetShield(newShield, null);
 		}
 		else
 		{
@@ -291,10 +291,10 @@ public class MorphyController : MonoBehaviour
 		DungeonCamera.CameraShake(15, 0.5f, 0.2f);
 	}
 
-	public void AwardShield(int inShield)
+	public void AwardShield(int inShield, DTJob.OnCompleteCallback inOnComplete)
 	{
 		int newShield = Mathf.Min(_shield + inShield, MAX_SHIELD);
-		SetShield(newShield);
+		SetShield(newShield, inOnComplete);
 
 		if (newShield == MAX_SHIELD) DungeonPopup.PopText("Shields at MAX!");
 	}

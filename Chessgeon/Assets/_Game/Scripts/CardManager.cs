@@ -301,6 +301,7 @@ public class CardManager : MonoBehaviour
 			else cardType = eCardType.Draw;
 		}
 
+		return new CardData(eCardTier.Normal, eCardType.Shield, false, moveType);
 		return new CardData(cardTier, cardType, false, moveType);
 	}
 
@@ -501,8 +502,19 @@ public class CardManager : MonoBehaviour
 						case eCardTier.Gold: numShield = 5; break;
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
-
-					postExecuteCardAnimActions += () => { _dungeon.MorphyController.AwardShield(numShield); };
+					ToggleControlBlocker(true);
+					postExecuteCardAnimActions += () =>
+						{
+							float focusDuration = 0.6f;
+							if (DungeonCamera.LastRequestedTileToFocus == _dungeon.MorphyController.MorphyPos) focusDuration = 0.01f;
+							DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, focusDuration, () =>
+							{
+								_dungeon.MorphyController.AwardShield(numShield, () =>
+								{
+									ToggleControlBlocker(false);
+								});
+							});
+						};
 					break;
 				}
 				case eCardType.Movement:

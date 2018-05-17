@@ -28,7 +28,6 @@ public class Morphy : MonoBehaviour
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
 
-
 	private void Awake()
 	{
 		Debug.Assert(_meshMorphy != null, "_meshMorphy is not assigned.");
@@ -57,17 +56,18 @@ public class Morphy : MonoBehaviour
 		else
 		{
 			_morphyController = inMorphyController;
-			ActionHandler.RunAction(new ActionParallel(
-				new ActionRepeatForever(new RotateByAction(_shieldMeshRen.transform, new Vector3(0.0f, 360.0f, 0.0f), 7.5f)),
-				new ActionRepeatForever(new PulseAction(
-					_shieldMeshRen.transform,
-					1,
-					10.0f,
-					Vector3.one * 0.95f,
-					Vector3.one * 1.05f,
-					Utils.CurveSmoothStep)))
-			);
-			ToggleShieldVisibility(false);
+			//ActionHandler.RunAction(new ActionParallel(
+			//	new ActionRepeatForever(new RotateByAction(_shieldMeshRen.transform, new Vector3(0.0f, 360.0f, 0.0f), 7.5f)),
+			//	new ActionRepeatForever(new PulseAction(
+			//		_shieldMeshRen.transform,
+			//		1,
+			//		10.0f,
+			//		Vector3.one * 0.95f,
+			//		Vector3.one * 1.05f,
+			//		Utils.CurveSmoothStep)))
+			//);
+			ActionHandler.RunAction(new ActionRepeatForever(new RotateByAction(_shieldMeshRen.transform, new Vector3(0.0f, 360.0f, 0.0f), 7.5f)));
+			ToggleShieldVisibility(false, false, null);
 			// TODO: Next time all the set up for particle systems and such? If any and all, needing to turn them off, etc.
 		}
 	}
@@ -124,12 +124,58 @@ public class Morphy : MonoBehaviour
 	{
 		_isAlive = false;
 		_meshRenderer.enabled = false;
-		ToggleShieldVisibility(false);
+		ToggleShieldVisibility(false, false, null);
 	}
 
-	public void ToggleShieldVisibility(bool inIsVisible)
+	public void ToggleShieldVisibility(bool inIsVisible, bool inIsAimated = true, DTJob.OnCompleteCallback inOnComplete = null)
 	{
-		_shieldMeshRen.enabled = inIsVisible;
+		if (inIsAimated)
+		{
+			Transform shieldTransform = _shieldMeshRen.transform;
+			if (!_shieldMeshRen.enabled && inIsVisible)
+			{
+				_shieldMeshRen.enabled = inIsVisible;
+				shieldTransform.localScale = Vector3.zero;
+				ScaleToAction scaleUp = new ScaleToAction(shieldTransform, Vector3.one, 0.5f, Utils.CurveBobber);
+				if (inOnComplete != null) scaleUp.OnActionFinish += () => { inOnComplete(); };
+				ActionHandler.RunAction(scaleUp);
+			}
+			else if (_shieldMeshRen.enabled & !inIsVisible)
+			{
+				shieldTransform.localScale = Vector3.one;
+				ScaleToAction scaleUp = new ScaleToAction(shieldTransform, Vector3.one * 3.0f, 0.2f, Utils.CurveInverseExponential);
+				ScaleToAction scaleDown = new ScaleToAction(shieldTransform, Vector3.zero, 0.1f, Utils.CurveExponential);
+				ActionSequence loseShieldSeq = new ActionSequence(scaleUp, scaleDown);
+				if (inOnComplete != null) loseShieldSeq.OnActionFinish += () =>
+				{
+					_shieldMeshRen.enabled = inIsVisible;
+					inOnComplete();
+				};
+				ActionHandler.RunAction(loseShieldSeq);
+			}
+			else if (inIsVisible)
+			{
+				PulseAction pulse = new PulseAction(
+                    _shieldMeshRen.transform,
+                    1,
+                    0.2f,
+                    Vector3.one,
+                    Vector3.one * 1.1f,
+					Utils.CurveInverseSmoothStep);
+				if (inOnComplete != null) pulse.OnActionFinish += () => { inOnComplete(); };
+				ActionHandler.RunAction(pulse);
+			}
+			else
+			{
+				if (inOnComplete != null) inOnComplete();
+                _shieldMeshRen.enabled = inIsVisible;
+			}
+		}
+		else
+		{
+			if (inOnComplete != null) inOnComplete();
+			_shieldMeshRen.enabled = inIsVisible;
+        }
 	}
 
 	public void SpawnAt(Vector2Int inSpawnPos)
