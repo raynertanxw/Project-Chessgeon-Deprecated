@@ -301,7 +301,6 @@ public class CardManager : MonoBehaviour
 			else cardType = eCardType.Draw;
 		}
 
-		return new CardData(eCardTier.Normal, eCardType.Shield, false, moveType);
 		return new CardData(cardTier, cardType, false, moveType);
 	}
 
