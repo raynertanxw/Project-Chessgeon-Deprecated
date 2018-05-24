@@ -110,6 +110,7 @@ public static class GameData
 			}
 
             writer.Write(inPrevRunData.IsFirstDrawOfGame, RunData.IS_FIRST_DRAW_OF_GAME_KEY);
+			writer.Write(inPrevRunData.IsFirstDrawOfFloor, RunData.IS_FIRST_DRAW_OF_FLOOR_KEY);
 			writer.Write(cardTier, RunData.CARD_TIER_KEY);
 			writer.Write(cardType, RunData.CARD_TYPE_KEY);
 			writer.Write(isCloned, RunData.CARD_IS_CLONED_KEY);
@@ -142,6 +143,7 @@ public static class GameData
 			}
 
 			bool isFirstDrawOfGame = TryLoad<bool>(prevRunData, RunData.IS_FIRST_DRAW_OF_GAME_KEY);
+			bool isFirstDrawOfFloor = TryLoad<bool>(prevRunData, RunData.IS_FIRST_DRAW_OF_FLOOR_KEY);
 			eCardTier[] cardTier = TryLoadArray<eCardTier>(prevRunData, RunData.CARD_TIER_KEY);
 			eCardType[] cardType = TryLoadArray<eCardType>(prevRunData, RunData.CARD_TYPE_KEY);
 			bool[] isCloned = TryLoadArray<bool>(prevRunData, RunData.CARD_IS_CLONED_KEY);
@@ -171,6 +173,7 @@ public static class GameData
 				TryLoadArray<eMoveType>(prevRunData, RunData.ENEMY_MOVE_TYPE_KEY),
 				
 				isFirstDrawOfGame,
+				isFirstDrawOfFloor,
 				cardDatas);
 
 			_hasPreviousRunData = true;

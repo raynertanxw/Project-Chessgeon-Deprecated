@@ -22,6 +22,10 @@ public class CardManager : MonoBehaviour
 	public int NumCardsInHand { get { return _numCardsInHand; } }
 	private bool _isFirstDrawOfGame = true;
 	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
+	private bool _isFirstDrawOfFloor = true;
+	public bool IsFirstDrawOfFloor { get { return _isFirstDrawOfFloor; } }
+    private bool _shouldSkipDraw = false;
+    public bool ShouldSkipDraw { get { return _shouldSkipDraw; } }
 	private int _numCardsUsedInTurn = -1;
 
 	// TODO: Statistics
@@ -48,8 +52,13 @@ public class CardManager : MonoBehaviour
 		}
 
 		_isFirstDrawOfGame = true;
+		_isFirstDrawOfFloor = true;
+		_shouldSkipDraw = false;
 		_dungeon.OnEndPlayerTurn += OnPlayerEndTurn;
-		_dungeon.OnFloorCleared += () => { ToggleControlBlocker(true); };
+		_dungeon.OnFloorCleared += () => {
+			_isFirstDrawOfFloor = true;
+			ToggleControlBlocker(true);
+		};
     }
 
     private void Start()
@@ -70,6 +79,8 @@ public class CardManager : MonoBehaviour
 	public void ResetForNewGame()
 	{
 		_isFirstDrawOfGame = true;
+		_isFirstDrawOfFloor = true;
+		_shouldSkipDraw = false;
 		_numCardsInHand = 0;
 		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0;
@@ -79,12 +90,26 @@ public class CardManager : MonoBehaviour
 	public void ResetFromPrevRunData(RunData inPrevRunData)
 	{
 		_isFirstDrawOfGame = inPrevRunData.IsFirstDrawOfGame;
+		_isFirstDrawOfFloor = inPrevRunData.IsFirstDrawOfFloor;
+		_shouldSkipDraw = true;
 		_numCardsInHand = 0;
 		_numCardsUsedInTurn = 0;
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
 		HideAllCards();
 
 		DrawCard(null, false, inPrevRunData.CardDatas);
+	}
+
+	public void HasSkippedDraw()
+	{
+		Debug.Assert(_shouldSkipDraw, "Calling HasSkippedDraw when _shouldSkipDraw is already false!");
+		_shouldSkipDraw = false;
+	}
+
+	public void HasDoneFirstDrawOfFloor()
+	{
+		Debug.Assert(_isFirstDrawOfFloor, "Calling HasDoneFirstDrawOfFloor when _isFirstDrawOfFloor is already false!");
+		_isFirstDrawOfFloor = false;
 	}
 
 	public CardData[] GenerateCardHandData()
@@ -316,7 +341,9 @@ public class CardManager : MonoBehaviour
 	{
 		if (_numCardsUsedInTurn < 1)
 		{
-			DrawCard(1);
+			// NOTE: Used to draw card only if did not use any cards.
+            // Took it out for now since you're drawing no matter what.
+			//DrawCard(1);
 		}
 		else
 		{

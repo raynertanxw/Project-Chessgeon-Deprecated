@@ -69,7 +69,7 @@ public class Dungeon : MonoBehaviour
 		{
 			_dungeonFSM.Execute();
 			// DEBUG
-			if (Input.GetKeyDown(KeyCode.Space)) SaveGame();
+			//if (Input.GetKeyDown(KeyCode.Space)) SaveGame();
 		}
 	}
 
@@ -330,11 +330,22 @@ public class Dungeon : MonoBehaviour
 				{
 					if (_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfGame)
 					{
-						_dungeonFSM.Dungeon.CardManager.DrawCard(3, OnJobComplete);
+						_dungeonFSM.Dungeon.CardManager.HasDoneFirstDrawOfFloor();
+                        _dungeonFSM.Dungeon.CardManager.DrawCard(3, OnJobComplete);
 					}
-					else
+					else if (_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfFloor)
 					{
-						OnJobComplete();
+						_dungeonFSM.Dungeon.CardManager.HasDoneFirstDrawOfFloor();
+                        _dungeonFSM.Dungeon.CardManager.DrawCard(1, OnJobComplete);
+					}
+                    else if (_dungeonFSM.Dungeon.CardManager.ShouldSkipDraw)
+                    {
+                        _dungeonFSM.Dungeon.CardManager.HasSkippedDraw();
+                        if (OnJobComplete != null) OnJobComplete();
+                    }
+					else
+                    {
+                        _dungeonFSM.Dungeon.CardManager.DrawCard(1, OnJobComplete);
 					}
 				}, playPhaseAnimJob);
 

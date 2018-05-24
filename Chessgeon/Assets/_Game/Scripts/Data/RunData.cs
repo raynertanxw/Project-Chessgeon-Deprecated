@@ -18,6 +18,7 @@ public struct RunData
 	public const string ENEMY_MOVE_TYPE_KEY = "ENEMY_MOVE_TYPE";
 
 	public const string IS_FIRST_DRAW_OF_GAME_KEY = "IS_FIRST_DRAW_OF_GAME";
+	public const string IS_FIRST_DRAW_OF_FLOOR_KEY = "IS_FIRST_DRAW_OF_FLOOR";
 	public const string CARD_TIER_KEY = "CARD_TIER";
 	public const string CARD_TYPE_KEY = "CARD_TYPE";
 	public const string CARD_IS_CLONED_KEY = "CARD_IS_CLONED";
@@ -37,6 +38,7 @@ public struct RunData
 	private eMoveType[] _enemyMoveType;
 
 	private bool _isFirstDrawOfGame;
+	private bool _isFirstDrawOfFloor;
 	private CardData[] _cardDatas;
 
 
@@ -52,6 +54,7 @@ public struct RunData
 	public eMoveType[] EnemyMoveType { get { return _enemyMoveType; } }
 
 	public bool IsFirstDrawOfGame { get { return _isFirstDrawOfGame; } }
+	public bool IsFirstDrawOfFloor { get { return _isFirstDrawOfFloor; } }
 	public CardData[] CardDatas { get { return _cardDatas; } }
 
 	public RunData(Dungeon inDungeon)
@@ -78,6 +81,7 @@ public struct RunData
 
 		// Cards
 		_isFirstDrawOfGame = inDungeon.CardManager.IsFirstDrawOfGame;
+		_isFirstDrawOfFloor = inDungeon.CardManager.IsFirstDrawOfFloor;
 		_cardDatas = inDungeon.CardManager.GenerateCardHandData();
 	}
 
@@ -93,6 +97,7 @@ public struct RunData
 		eMoveType[] inEnemyMoveType,
 		
 		bool inIsFirstDrawOfGame,
+        bool inIsFirstDrawOfFloor,
 		CardData[] inCardDatas)
 	{
 		_health = inHealth;
@@ -106,6 +111,7 @@ public struct RunData
 		_enemyMoveType = inEnemyMoveType;
 
 		_isFirstDrawOfGame = inIsFirstDrawOfGame;
+		_isFirstDrawOfFloor = inIsFirstDrawOfFloor;
 		_cardDatas = inCardDatas;
 	}
 }
