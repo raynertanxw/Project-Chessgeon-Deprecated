@@ -289,11 +289,11 @@ public class CardManager : MonoBehaviour
 		else cardTier = eCardTier.Normal;
 
 		// Chances for movement.
-		// Movement: 70%
-		// Non Movement: 30%
+		// Movement: 80%
+		// Non Movement: 20%
 		eMoveType moveType = eMoveType.Pawn;
 		eCardType cardType = eCardType.Movement;
-		if (Random.value <= 0.7f) // Movement
+		if (Random.value <= 0.8f) // Movement
 		{
 			cardType = eCardType.Movement;
 			// Chances for move types
@@ -313,16 +313,16 @@ public class CardManager : MonoBehaviour
 		{
 			// Non-movement
 			// Non movement percentages
-			// Joker: 20%
-			// Shield: 20%
-			// Smash: 10%
-			// Clone: 20%
-			// Draw: 30%
+			// Joker: 30%
+			// Shield: 0%
+			// Smash: 25%
+			// Clone: 25%
+			// Draw: 20%
 			float cardTypeRandValue = Random.value;
-			if (cardTypeRandValue <= 0.2f) cardType = eCardType.Joker;
-			else if (cardTypeRandValue <= 0.4f) cardType = eCardType.Shield;
-			else if (cardTypeRandValue <= 0.5f) cardType = eCardType.Smash;
-			else if (cardTypeRandValue <= 0.7f) cardType = eCardType.Clone;
+			if (cardTypeRandValue <= 0.3f) cardType = eCardType.Joker;
+			//else if (cardTypeRandValue <= 0.4f) cardType = eCardType.Shield;
+			else if (cardTypeRandValue <= 0.55f) cardType = eCardType.Smash;
+			else if (cardTypeRandValue <= 0.8f) cardType = eCardType.Clone;
 			else cardType = eCardType.Draw;
 		}
 
@@ -504,7 +504,7 @@ public class CardManager : MonoBehaviour
 					{
 						case eCardTier.Normal: numDraws = 2; break;
 						case eCardTier.Silver: numDraws = 3; break;
-						case eCardTier.Gold: numDraws = 5; break;
+						case eCardTier.Gold: numDraws = 4; break;
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 
@@ -524,8 +524,8 @@ public class CardManager : MonoBehaviour
 					switch (cardData.cardTier)
 					{
 						case eCardTier.Normal: numShield = 1; break;
-						case eCardTier.Silver: numShield = 3; break;
-						case eCardTier.Gold: numShield = 5; break;
+						case eCardTier.Silver: numShield = 2; break;
+						case eCardTier.Gold: numShield = 3; break;
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 					ToggleControlBlocker(true);
