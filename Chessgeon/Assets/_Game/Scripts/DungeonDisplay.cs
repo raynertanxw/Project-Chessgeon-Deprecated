@@ -17,23 +17,11 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private RectTransform _phaseBannerBtm = null;
 	[SerializeField] private Text _phaseBannerTextTop = null;
 	[SerializeField] private Text _phaseBannerTextBtm = null;
-	[SerializeField] private RectTransform _heartsHolder = null;
+	[SerializeField] private Text _comboText = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
 	[SerializeField] private Image _nextFloorPanel = null;
 	[SerializeField] private Text _nextFloorText = null;
-
-	[Header("Meshes")]
-	[SerializeField] private Mesh _heartMesh = null;
-	[SerializeField] private Mesh _shieldMesh = null;
-
-	private const int NUM_HEARTS = 1;
-	private MeshRenderer[] _heartMeshRens = null;
-	private MeshFilter[] _heartMeshFilters = null;
-	private const int NUM_SHIELD = 1;
-	private MeshRenderer[] _shieldMeshRens = null;
-	private MeshFilter[] _shieldMeshFilters = null;
-
 
 	private void Awake()
 	{
@@ -52,37 +40,16 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_phaseBannerBtm != null, "_phaseBannerBtm is not assigned.");
 			Debug.Assert(_phaseBannerTextTop != null, "_phaseBannerTextTop is not assigned.");
 			Debug.Assert(_phaseBannerTextBtm != null, "_phaseBannerTextBtm is not assigned.");
-			Debug.Assert(_heartsHolder != null, "_heartsHolder is not assigned.");
+			Debug.Assert(_comboText != null, "_comboText is not assigned.");
 			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
 			Debug.Assert(_nextFloorPanel != null, "_nextFloorPanel is not assigned.");
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
 
-			Debug.Assert(_heartMesh != null, "_heartFullMesh is not assigned.");
-			Debug.Assert(_shieldMesh != null, "_shieldMesh is not assigned.");
-
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH)); Debug.Assert(_nextFloorPanel.enabled == true, "_nextFloorPanel is not enabled.");
-
-			_heartMeshRens = new MeshRenderer[NUM_HEARTS];
-			_heartMeshFilters = new MeshFilter[NUM_HEARTS];
-			for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
-			{
-				_heartMeshRens[iHeart] = _heartsHolder.GetChild(iHeart).GetComponent<MeshRenderer>();
-				_heartMeshFilters[iHeart] = _heartsHolder.GetChild(iHeart).GetComponent<MeshFilter>();
-			}
-
-			_shieldMeshRens = new MeshRenderer[NUM_SHIELD];
-			_shieldMeshFilters = new MeshFilter[NUM_SHIELD];
-			for (int iShield = 0; iShield < NUM_SHIELD; iShield++)
-			{
-				_shieldMeshRens[iShield] = _heartMeshRens[iShield].transform.GetChild(0).GetComponent<MeshRenderer>();
-				_shieldMeshFilters[iShield] = _heartMeshRens[iShield].transform.GetChild(0).GetComponent<MeshFilter>();
-			}
 
 			SetDarkOverlayVisible(false);
 			SetDamageFrameVisible(false);
-			SetHealtUI(0);
-			SetShieldUI(0);
 			HideNextFloorPanel(null, true);
 
 			_dungeon.OnFloorGenerated += () => { UpdateFloorText(_dungeon.FloorNum); };
@@ -91,19 +58,6 @@ public class DungeonDisplay : MonoBehaviour
 		{
 			GameObject.Destroy(this.gameObject);
 		}
-	}
-
-	private void Start()
-	{
-		ActionParallel rotateShieldsForever = new ActionParallel();
-		for (int iShield = 0; iShield < NUM_SHIELD; iShield++)
-		{
-			rotateShieldsForever.Add(new ActionRepeatForever(new RotateByAction(
-				_shieldMeshRens[iShield].transform,
-				new Vector3(0.0f, 360.0f, 0.0f),
-				7.5f)));
-		}
-		ActionHandler.RunAction(rotateShieldsForever);
 	}
 
 	private void OnDestroy()
@@ -276,38 +230,16 @@ public class DungeonDisplay : MonoBehaviour
 	}
 
 	#region HUD Update Functions
-	public static void SetHealtUI(int inHealth)
+	private void UpdateComboText(int inCombo)
 	{
-		Debug.Assert(inHealth <= NUM_HEARTS, inHealth + " is beyond the max health displayble.");
-		for (int iHeart = 0; iHeart < NUM_HEARTS; iHeart++)
-		{
-			MeshFilter curHeartFilter = _instance._heartMeshFilters[iHeart];
-			if (iHeart < inHealth)
-			{
-				curHeartFilter.mesh = _instance._heartMesh;
-			}
-			else
-			{
-				curHeartFilter.mesh = null;
-			}
-		}
+		Debug.Assert(inCombo > 0, "inCombo is out of range: " + inCombo);
+		_comboText.text = ChessgeonUtils.FormatComboString(inCombo);
 	}
 
-	public static void SetShieldUI(int inShield)
+	private void UpdateScoreText(int inScore)
 	{
-		Debug.Assert(inShield <= NUM_SHIELD, inShield + " is beyond the max shield displayable.");
-		for (int iShield = 0; iShield < NUM_SHIELD; iShield++)
-		{
-			MeshFilter curShieldFilter = _instance._shieldMeshFilters[iShield];
-			if (iShield < inShield)
-			{
-				curShieldFilter.mesh = _instance._shieldMesh;
-			}
-			else
-			{
-				curShieldFilter.mesh = null;
-			}
-		}
+		Debug.Assert(inScore > -1, "inScore is out of range: " + inScore);
+		_scoreText.text = ChessgeonUtils.FormatScoreString(inScore);
 	}
 
 	private void UpdateFloorText(int inFloorNum)

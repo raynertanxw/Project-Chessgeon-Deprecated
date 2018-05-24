@@ -75,7 +75,6 @@ public class MorphyController : MonoBehaviour
 	private void SetHealth(int inHealth)
 	{
 		_health = inHealth;
-		DungeonDisplay.SetHealtUI(inHealth);
 
 		if (_health < 1)
 		{
@@ -89,7 +88,6 @@ public class MorphyController : MonoBehaviour
 		_shield = inShield;
 		if (_shield > 0) _morphy.ToggleShieldVisibility(true, true, inOnComplete);
 		else _morphy.ToggleShieldVisibility(false, true, inOnComplete);
-		DungeonDisplay.SetShieldUI(inShield);
 	}
 
 	private void ShowPossibleMoves()
