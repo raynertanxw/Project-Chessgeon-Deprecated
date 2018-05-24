@@ -17,7 +17,7 @@ public class CardManager : MonoBehaviour
 
 	private Card[] _cards = null;
 
-	private const int MAX_CARDS = 7;
+	private const int MAX_CARDS = 4;
 	private int _numCardsInHand = -1;
 	public int NumCardsInHand { get { return _numCardsInHand; } }
 	private bool _isFirstDrawOfGame = true;
