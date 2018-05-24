@@ -52,6 +52,11 @@ public class ChessgeonBuildScript
             PlayerSettings.productName = "Chessgeon";
             PlayerSettings.SetApplicationIdentifier(buildTargetGroup, "com.tanxuewenrayner.Chessgeon");
             PlayerSettings.bundleVersion = VersionClass.BUNDLE_VERSION;
+			PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+            PlayerSettings.allowedAutorotateToLandscapeLeft = false;
+            PlayerSettings.allowedAutorotateToLandscapeRight = false;
+            PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+			PlayerSettings.allowedAutorotateToPortrait = true;
 #if UNITY_ANDROID
             // TODO: Future KeyStore stuff.
             //PlayerSettings.keystorePass = "";

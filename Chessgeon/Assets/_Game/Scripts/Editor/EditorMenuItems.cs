@@ -18,7 +18,7 @@ public class EditorMenuItems
 
 #if UNITY_ANDROID
 	[MenuItem(MENU_ITEM_PREFIX + "Build Chessgeon DEBUG", false, 101)]
-    private static void BuildChessgeonDebug() { ChessgeonBuildScript.BuildChessgeon(eBuildScheme.DEBUG); }
+	private static void BuildChessgeonDebug() { ChessgeonBuildScript.BuildChessgeon(eBuildScheme.DEBUG); }
 #elif UNITY_IOS
 	[MenuItem(MENU_ITEM_PREFIX + "Build Chessgeon DEBUG (Append)", false, 101)]
     private static void BuildChessgeonDebugAppend() { ChessgeonBuildScript.BuildChessgeon(eBuildScheme.DEBUG, true); }
@@ -27,45 +27,48 @@ public class EditorMenuItems
 #endif
 
 	[MenuItem(MENU_ITEM_PREFIX + "Build Chessgeon RELEASE", false, 110)]
-    private static void BuildChessgeonRelease() { ChessgeonBuildScript.BuildChessgeon(eBuildScheme.RELEASE); }
+	private static void BuildChessgeonRelease() { ChessgeonBuildScript.BuildChessgeon(eBuildScheme.RELEASE); }
 }
 
 
 
+#if UNITY_IOS
 [InitializeOnLoad] // NOTE: Needed to call the static consturctor.
 public static class EditorMenuCheckmarkItems
 {
     static EditorMenuCheckmarkItems()
     {
-		if (!EditorPrefs.HasKey(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY))
-		{
-			EditorPrefs.SetBool(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY, false);
-		}
-		_runIniOSSimulator = EditorPrefs.GetBool(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY);
+        if (!EditorPrefs.HasKey(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY))
+        {
+            EditorPrefs.SetBool(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY, false);
+        }
+        _runIniOSSimulator = EditorPrefs.GetBool(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY);
 
         /// Delaying until first editor tick so that the menu
         /// will be populated before setting check state, and
         /// re-apply correct action
-        EditorApplication.delayCall += () => {
+        EditorApplication.delayCall += () =>
+        {
             ToggleRunIniOSSimulator(_runIniOSSimulator);
         };
     }
 
 
 
-	private static bool _runIniOSSimulator;
+    private static bool _runIniOSSimulator;
 
-	private const string RUN_IOS_IN_SIMULATOR_MENU_CHECKMARK = EditorMenuItems.MENU_ITEM_PREFIX + "RUN iOS In Simulator";
+    private const string RUN_IOS_IN_SIMULATOR_MENU_CHECKMARK = EditorMenuItems.MENU_ITEM_PREFIX + "RUN iOS In Simulator";
 	[MenuItem(RUN_IOS_IN_SIMULATOR_MENU_CHECKMARK, false, 121)]
     private static void ToggleAction()
     {
         ToggleRunIniOSSimulator(!_runIniOSSimulator);
     }
 
-	public static void ToggleRunIniOSSimulator(bool inRunIniOSSimulator)
+    public static void ToggleRunIniOSSimulator(bool inRunIniOSSimulator)
     {
-		_runIniOSSimulator = inRunIniOSSimulator;
-		EditorPrefs.SetBool(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY, inRunIniOSSimulator);
-		UnityEditor.Menu.SetChecked(RUN_IOS_IN_SIMULATOR_MENU_CHECKMARK, inRunIniOSSimulator);
+        _runIniOSSimulator = inRunIniOSSimulator;
+        EditorPrefs.SetBool(ChessgeonBuildScript.RUN_IN_IOS_SIMULATOR_KEY, inRunIniOSSimulator);
+        UnityEditor.Menu.SetChecked(RUN_IOS_IN_SIMULATOR_MENU_CHECKMARK, inRunIniOSSimulator);
     }
 }
+#endif
