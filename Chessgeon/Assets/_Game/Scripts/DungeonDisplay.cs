@@ -27,10 +27,10 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Mesh _heartMesh = null;
 	[SerializeField] private Mesh _shieldMesh = null;
 
-	private const int NUM_HEARTS = 3;
+	private const int NUM_HEARTS = 1;
 	private MeshRenderer[] _heartMeshRens = null;
 	private MeshFilter[] _heartMeshFilters = null;
-	private const int NUM_SHIELD = 3;
+	private const int NUM_SHIELD = 1;
 	private MeshRenderer[] _shieldMeshRens = null;
 	private MeshFilter[] _shieldMeshFilters = null;
 
