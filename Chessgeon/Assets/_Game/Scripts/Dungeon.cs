@@ -17,6 +17,8 @@ public class Dungeon : MonoBehaviour
 	public CardManager CardManager { get { return _cardManager; } }
 
 	[Header("Object Pools")]
+	[SerializeField] private SmashParticlePool _smashParticlePool = null;
+	public SmashParticlePool SmashParticlePool { get { return _smashParticlePool; } }
 
 	private const int DUNGEON_MIN_X = 5;
 	private const int DUNGEON_MAX_X = 15;
@@ -54,6 +56,8 @@ public class Dungeon : MonoBehaviour
 		Debug.Assert(_enemyManager != null, "_enemyManager is not assigned.");
 		Debug.Assert(_morphyController != null, "_morphyController is not assigned.");
 		Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
+
+		Debug.Assert(_smashParticlePool != null, "_smashParticlePool is not assigned.");
 
 		_floor = new Floor(this);
 	}

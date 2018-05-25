@@ -223,7 +223,7 @@ public class Morphy : MonoBehaviour
 		ActionHandler.RunAction(attackSeq);
 	}
 
-	public void SmashAttack(Enemy[] inEnemies, Utils.GenericVoidDelegate inOnCompleteAction = null)
+	public void SmashAttack(Enemy[] inEnemies, Vector2Int[] inAllTilesInRange, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
 		float moveUpDuration = 0.4f;
 		Vector3 originPos = transform.position;
@@ -241,6 +241,12 @@ public class Morphy : MonoBehaviour
 		slamDown.OnActionFinish += () =>
 		{
 			DungeonCamera.CameraShake(35, 1.0f, 0.5f);
+
+			for (int iPos = 0; iPos < inAllTilesInRange.Length; iPos++)
+			{
+				Vector3 spawnPos = _morphyController.Dungeon.TileManager.GetTileTransformPosition(inAllTilesInRange[iPos]);
+				_morphyController.Dungeon.SmashParticlePool.SpawnInstanceAt(spawnPos);
+			}
 
 			Enemy curEnemy;
 			for (int iEnemy = 0; iEnemy < inEnemies.Length; iEnemy++)

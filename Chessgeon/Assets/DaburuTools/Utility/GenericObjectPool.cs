@@ -74,5 +74,18 @@ namespace DaburuTools
 
 			return availableInstance;
 		}
+
+		public GameObject SpawnInstanceAt(Vector3 inSpawnPos) { return SpawnInstanceAt(inSpawnPos, true); }
+		public GameObject SpawnInstanceAt(Vector3 inSpawnPos, bool inEnable)
+		{
+			GameObject instance = GetInstance();
+			if (instance == null) return instance;
+			else
+			{
+				instance.transform.position = inSpawnPos;
+				EnableObject(instance, inEnable);
+				return instance;
+			}
+		}
 	}
 }

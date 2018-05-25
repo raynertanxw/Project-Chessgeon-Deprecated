@@ -151,112 +151,113 @@ public class MorphyController : MonoBehaviour
 
 	public void Smash(eCardTier inCardTier, Utils.GenericVoidDelegate inOnComplete = null)
 	{
+		List<Vector2Int> allTilesInRange = new List<Vector2Int>();
 		List<Vector2Int> targetTiles = new List<Vector2Int>();
 
 		Vector2Int curPos;
 
-		curPos = MorphyPos + new Vector2Int(1, 1);
+		curPos = MorphyPos + new Vector2Int(1, 1); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(0, 1);
+		curPos = MorphyPos + new Vector2Int(0, 1); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(-1, 1);
+		curPos = MorphyPos + new Vector2Int(-1, 1); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(-1, 0);
+		curPos = MorphyPos + new Vector2Int(-1, 0); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(-1, -1);
+		curPos = MorphyPos + new Vector2Int(-1, -1); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(0, -1);
+		curPos = MorphyPos + new Vector2Int(0, -1); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(1, -1);
+		curPos = MorphyPos + new Vector2Int(1, -1); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-		curPos = MorphyPos + new Vector2Int(1, 0);
+		curPos = MorphyPos + new Vector2Int(1, 0); allTilesInRange.Add(curPos);
 		if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
 
 		if (inCardTier == eCardTier.Silver
 			|| inCardTier == eCardTier.Gold)
 		{
-			curPos = MorphyPos + new Vector2Int(2, 2);
+			curPos = MorphyPos + new Vector2Int(2, 2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(1, 2);
+			curPos = MorphyPos + new Vector2Int(1, 2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(0, 2);
+			curPos = MorphyPos + new Vector2Int(0, 2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-1, 2);
+			curPos = MorphyPos + new Vector2Int(-1, 2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-2, 2);
+			curPos = MorphyPos + new Vector2Int(-2, 2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-2, 1);
+			curPos = MorphyPos + new Vector2Int(-2, 1); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-2, 0);
+			curPos = MorphyPos + new Vector2Int(-2, 0); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-2, -1);
+			curPos = MorphyPos + new Vector2Int(-2, -1); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-2, -2);
+			curPos = MorphyPos + new Vector2Int(-2, -2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(-1, -2);
+			curPos = MorphyPos + new Vector2Int(-1, -2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(0, -2);
+			curPos = MorphyPos + new Vector2Int(0, -2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(1, -2);
+			curPos = MorphyPos + new Vector2Int(1, -2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(2, -2);
+			curPos = MorphyPos + new Vector2Int(2, -2); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(2, -1);
+			curPos = MorphyPos + new Vector2Int(2, -1); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(2, 0);
+			curPos = MorphyPos + new Vector2Int(2, 0); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-			curPos = MorphyPos + new Vector2Int(2, 1);
+			curPos = MorphyPos + new Vector2Int(2, 1); allTilesInRange.Add(curPos);
 			if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
 
 			if (inCardTier == eCardTier.Gold)
 			{
-				curPos = MorphyPos + new Vector2Int(3, 3);
+				curPos = MorphyPos + new Vector2Int(3, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(2, 3);
+				curPos = MorphyPos + new Vector2Int(2, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(1, 3);
+				curPos = MorphyPos + new Vector2Int(1, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(0, 3);
+				curPos = MorphyPos + new Vector2Int(0, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-1, 3);
+				curPos = MorphyPos + new Vector2Int(-1, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-2, 3);
+				curPos = MorphyPos + new Vector2Int(-2, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, 3);
+				curPos = MorphyPos + new Vector2Int(-3, 3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, 2);
+				curPos = MorphyPos + new Vector2Int(-3, 2); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, 1);
+				curPos = MorphyPos + new Vector2Int(-3, 1); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, 0);
+				curPos = MorphyPos + new Vector2Int(-3, 0); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, -1);
+				curPos = MorphyPos + new Vector2Int(-3, -1); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, -2);
+				curPos = MorphyPos + new Vector2Int(-3, -2); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-3, -3);
+				curPos = MorphyPos + new Vector2Int(-3, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-2, -3);
+				curPos = MorphyPos + new Vector2Int(-2, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(-1, -3);
+				curPos = MorphyPos + new Vector2Int(-1, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(0, -3);
+				curPos = MorphyPos + new Vector2Int(0, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(1, -3);
+				curPos = MorphyPos + new Vector2Int(1, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(2, -3);
+				curPos = MorphyPos + new Vector2Int(2, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(3, -3);
+				curPos = MorphyPos + new Vector2Int(3, -3); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(3, -2);
+				curPos = MorphyPos + new Vector2Int(3, -2); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(3, -1);
+				curPos = MorphyPos + new Vector2Int(3, -1); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(3, 0);
+				curPos = MorphyPos + new Vector2Int(3, 0); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(3, 1);
+				curPos = MorphyPos + new Vector2Int(3, 1); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
-				curPos = MorphyPos + new Vector2Int(3, 2);
+				curPos = MorphyPos + new Vector2Int(3, 2); allTilesInRange.Add(curPos);
 				if (Dungeon.CurrentFloor.IsTileOfState(curPos, Floor.eTileState.Enemy)) targetTiles.Add(curPos);
 			}
 		}
@@ -268,7 +269,7 @@ public class MorphyController : MonoBehaviour
 			Debug.Assert(enemies[iTarget] != null);
 		}
 
-		_morphy.SmashAttack(enemies, inOnComplete);
+		_morphy.SmashAttack(enemies, allTilesInRange.ToArray(), inOnComplete);
 	}
 
 	public void TakeDamage(int inDamage)
