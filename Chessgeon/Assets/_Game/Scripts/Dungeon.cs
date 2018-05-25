@@ -336,6 +336,7 @@ public class Dungeon : MonoBehaviour
 					else if (_dungeonFSM.Dungeon.CardManager.IsFirstDrawOfFloor)
 					{
 						_dungeonFSM.Dungeon.CardManager.HasDoneFirstDrawOfFloor();
+                        if (_dungeonFSM.Dungeon.CardManager.ShouldSkipDraw) _dungeonFSM.Dungeon.CardManager.HasSkippedDraw(); // NOTE: If reloaded from prev run.
                         _dungeonFSM.Dungeon.CardManager.DrawCard(1, OnJobComplete);
 					}
                     else if (_dungeonFSM.Dungeon.CardManager.ShouldSkipDraw)
