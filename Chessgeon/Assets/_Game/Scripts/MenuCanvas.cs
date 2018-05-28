@@ -7,10 +7,8 @@ using DaburuTools;
 public class MenuCanvas : MonoBehaviour
 {
 	[SerializeField] private Menu _menu = null;
-	[SerializeField] private Camera _menuUICamera = null;
 
 	[Header("Main Menu UI")]
-	[SerializeField] private GameObject _continueBtnObject = null;
 	[SerializeField] private Button _continueBtn = null;
 	[SerializeField] private Button _newGameBtn = null;
 	[SerializeField] private Button _leaderboardBtn = null;
@@ -39,9 +37,7 @@ public class MenuCanvas : MonoBehaviour
 	void Awake()
 	{
 		Debug.Assert(_menu != null, "_menu is not assigned.");
-		Debug.Assert(_menuUICamera != null, "_menuUICamera is not assigned.");
 
-		Debug.Assert(_continueBtnObject != null, "_continueBtnObject is not assigned.");
 		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
 		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
 		Debug.Assert(_leaderboardBtn != null, "_leaderboardBtn is not assigned.");
@@ -82,7 +78,7 @@ public class MenuCanvas : MonoBehaviour
 
 		_isVisible = inIsVisible;
 		gameObject.SetActive(_isVisible);
-		_menuUICamera.enabled = _isVisible;
+		_menu.gameObject.SetActive(_isVisible);
 	}
 
 	public void PopupInformation(string inTitleText, string inInfoText)
@@ -112,7 +108,7 @@ public class MenuCanvas : MonoBehaviour
 
 	public void CheckBtnAvailability()
 	{
-		_continueBtnObject.SetActive(GameData.HasPreviousRunData);
+		_continueBtn.gameObject.SetActive(GameData.HasPreviousRunData);
 	}
 
 	public void UpdateGemText()
