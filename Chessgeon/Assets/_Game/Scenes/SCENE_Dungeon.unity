@@ -4736,6 +4736,7 @@ GameObject:
   - component: {fileID: 1049800761}
   - component: {fileID: 1049800763}
   - component: {fileID: 1049800762}
+  - component: {fileID: 1049800764}
   m_Layer: 5
   m_Name: Game Over Panel
   m_TagString: Untagged
@@ -4799,6 +4800,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1049800760}
+--- !u!225 &1049800764
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1049800760}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1069007441
 GameObject:
   m_ObjectHideFlags: 0
@@ -4914,9 +4926,7 @@ MonoBehaviour:
   _gameOverText: {fileID: 199797976}
   _scoreText: {fileID: 2083927323}
   _floorText: {fileID: 1123575586}
-  _gameOverPanelMeshRen: {fileID: 0}
-  _startOverBtnMeshRen: {fileID: 0}
-  _exitBtnMeshRen: {fileID: 0}
+  _gameOverCanvasGrp: {fileID: 1049800764}
 --- !u!1 &1110518303
 GameObject:
   m_ObjectHideFlags: 0
@@ -7003,18 +7013,18 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1502191702}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 70}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.31145832, y: 0.31145832, z: 0.31145832}
   m_Children:
   - {fileID: 1523680074}
   - {fileID: 286948804}
   m_Father: {fileID: 1831512401}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1080, y: 1920}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 138, y: 0}
+  m_SizeDelta: {x: 886.1539, y: 1920.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1502191704
 MonoBehaviour:

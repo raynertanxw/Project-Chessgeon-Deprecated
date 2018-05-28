@@ -20,11 +20,7 @@ public class GameOverCanvas : MonoBehaviour
 	[SerializeField] private Text _gameOverText = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
-
-	[Header("Mesh Renderers")]
-	[SerializeField] private MeshRenderer _gameOverPanelMeshRen = null;
-	[SerializeField] private MeshRenderer _startOverBtnMeshRen = null;
-	[SerializeField] private MeshRenderer _exitBtnMeshRen = null;
+	[SerializeField] private CanvasGroup _gameOverCanvasGrp = null;
 
 	void Awake()
 	{
@@ -45,10 +41,7 @@ public class GameOverCanvas : MonoBehaviour
 			Debug.Assert(_gameOverText != null, "_gameOverText is not assigned.");
 			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
-
-			Debug.Assert(_gameOverPanelMeshRen != null, "_gameOverPanelMeshRen is not assigned.");
-			Debug.Assert(_startOverBtnMeshRen != null, "_startOverBtnMeshRen is not assigned.");
-			Debug.Assert(_exitBtnMeshRen != null, "_exitBtnMeshRen is not assigned.");
+			Debug.Assert(_gameOverCanvasGrp != null, "_gameOverCanvasGrp is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 
@@ -82,11 +75,9 @@ public class GameOverCanvas : MonoBehaviour
 		_instance._scoreText.enabled = inEnabled;
 		_instance._floorText.enabled = inEnabled;
 
-		_instance._gameOverPanelMeshRen.enabled = inEnabled;
-		_instance._startOverBtnMeshRen.enabled = inEnabled;
-		_instance._exitBtnMeshRen.enabled = inEnabled;
-
-		_instance._gameOverPanelMeshRen.gameObject.SetActive(inEnabled);
+		_instance._gameOverCanvasGrp.interactable = inEnabled;
+		_instance._gameOverCanvasGrp.blocksRaycasts = inEnabled;
+		_instance._gameOverCanvasGrp.alpha = inEnabled ? 1.0f : 0.0f;
 	}
 
 	public static void SetGameOverValues(int inScore, int inFloor)
