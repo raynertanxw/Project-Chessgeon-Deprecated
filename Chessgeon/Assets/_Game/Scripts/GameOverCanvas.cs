@@ -43,8 +43,6 @@ public class GameOverCanvas : MonoBehaviour
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
 			Debug.Assert(_gameOverCanvasGrp != null, "_gameOverCanvasGrp is not assigned.");
 
-			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
-
 			EnableGameOverPanel(false);
 
 			_startOverBtn.onClick.AddListener(StartOver);

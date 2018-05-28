@@ -46,8 +46,6 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_nextFloorPanel != null, "_nextFloorPanel is not assigned.");
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
 
-			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH)); Debug.Assert(_nextFloorPanel.enabled == true, "_nextFloorPanel is not enabled.");
-
 			SetDarkOverlayVisible(false);
 			SetDamageFrameVisible(false);
 			HideNextFloorPanel(null, true);

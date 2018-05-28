@@ -29,7 +29,6 @@ public class DungeonPopup : MonoBehaviour
 			Debug.Assert(_popupCanvasGrp != null, "_popupCanvasGrp is not assigned.");
 			Debug.Assert(_popupText != null, "_popupText is not assigned.");
 
-			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 			_popupCanvasGrp.alpha = 0.0f;
 		}
 		else if (_instance != this)
