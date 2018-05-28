@@ -19,8 +19,6 @@ public class BoardScroller : MonoBehaviour
 		if (_instance == null)
 		{
 			_instance = this;
-
-			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 		}
 		else if (_instance != this)
 		{
