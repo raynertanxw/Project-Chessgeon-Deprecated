@@ -68,9 +68,9 @@ public class Card : MonoBehaviour
 	private void Awake()
 	{
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
-		_cardFrontImage = transform.GetChild(0).GetComponent<Image>();
-		_cardBackImage = transform.GetChild(1).GetComponent<Image>();
-		_clonedIconImage = transform.GetChild(0).GetChild(0).GetComponent<Image>();
+		_cardBackImage = transform.GetChild(0).GetComponent<Image>();
+		_cardFrontImage = transform.GetChild(1).GetComponent<Image>();
+		_clonedIconImage = transform.GetChild(1).GetChild(0).GetComponent<Image>();
 		_cardRaycastTargetImage = _cardFrontImage;
 		_cardManager = transform.parent.GetComponent<CardManager>();
 		SetEnabled(true);
