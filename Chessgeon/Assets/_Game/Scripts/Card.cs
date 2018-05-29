@@ -176,7 +176,7 @@ public class Card : MonoBehaviour
 	public void AnimateDrawCard(float inDelay = 0.0f, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		_isAnimatingCardDraw = true;
-		_cardRectTransform.localPosition = new Vector3(7.0f, 7.0f, -HOLDING_CARD_Z_OFFSET);
+		_cardRectTransform.localPosition = new Vector3(700.0f, 700.0f, -HOLDING_CARD_Z_OFFSET);
 		_cardRectTransform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
 
 		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos + Vector3.forward * -HOLDING_CARD_Z_OFFSET, 0.6f, Utils.CurveInverseExponential);
