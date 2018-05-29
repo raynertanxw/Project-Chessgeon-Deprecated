@@ -10,7 +10,7 @@ public class GameOverCanvas : MonoBehaviour
 	private static GameOverCanvas _instance = null;
 
 	[SerializeField] private Dungeon _dungeon = null;
-	[SerializeField] private Menu _menu = null;
+	[SerializeField] private MenuCanvas _menu = null;
 
 	[Header("UI Components")]
 	[SerializeField] private Button _startOverBtn = null;

@@ -6,7 +6,7 @@ using DaburuTools;
 
 public class MenuCanvas : MonoBehaviour
 {
-	[SerializeField] private Menu _menu = null;
+	[SerializeField] private Dungeon _dungeon = null;
 
 	[Header("Main Menu UI")]
 	[SerializeField] private Button _continueBtn = null;
@@ -36,7 +36,7 @@ public class MenuCanvas : MonoBehaviour
 
 	void Awake()
 	{
-		Debug.Assert(_menu != null, "_menu is not assigned.");
+		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
 		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
@@ -59,8 +59,12 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_confirmationConfirmBtn != null, "_confirmationConfirmBtn is not assigned.");
 		Debug.Assert(_confirmationCancelBtn != null, "_confirmationCancelBtn is not assigned.");
 
-		_continueBtn.onClick.AddListener(_menu.ContinueGame);
-		_newGameBtn.onClick.AddListener(_menu.TryStartNewGame);
+#if UNITY_EDITOR
+		if (!GameData.HasStartedLoadingData) GameData.TryLoadAllData();
+#endif
+
+		_continueBtn.onClick.AddListener(ContinueGame);
+		_newGameBtn.onClick.AddListener(TryStartNewGame);
 
 		_informationDismissBtn.onClick.AddListener(DismissInformationPanel);
 		_confirmationCancelBtn.onClick.AddListener(DismissConfirmationPanel);
@@ -72,13 +76,13 @@ public class MenuCanvas : MonoBehaviour
 		DismissConfirmationPanel();
 	}
 
-	public void SetVisible(bool inIsVisible)
+	private void SetVisible(bool inIsVisible)
 	{
 		if (_isVisible == inIsVisible) return;
 
 		_isVisible = inIsVisible;
 		gameObject.SetActive(_isVisible);
-		_menu.gameObject.SetActive(_isVisible);
+		gameObject.SetActive(_isVisible);
 	}
 
 	public void PopupInformation(string inTitleText, string inInfoText)
@@ -89,7 +93,7 @@ public class MenuCanvas : MonoBehaviour
 		_informationPanelObject.SetActive(true);
 	}
 
-	public void PromptConfirmation(string inTitleText, string inInfoText, Utils.GenericVoidDelegate inOnConfirm, string confirmBtnText = "CONFIRM", string cancelBtnText = "CANCEL")
+	private void PromptConfirmation(string inTitleText, string inInfoText, Utils.GenericVoidDelegate inOnConfirm, string confirmBtnText = "CONFIRM", string cancelBtnText = "CANCEL")
 	{
 		_confirmationTitleText.text = inTitleText;
 		_confirmationInfoText.text = inInfoText;
@@ -124,5 +128,39 @@ public class MenuCanvas : MonoBehaviour
 	private void DismissConfirmationPanel()
 	{
 		_confirmationPanelObject.SetActive(false);
+	}
+
+	private void TryStartNewGame()
+	{
+		if (GameData.HasPreviousRunData)
+		{
+			PromptConfirmation("NEW GAME?",
+				"Starting a new game will result in loss of current progress.\n\nAre you sure ?",
+				StartNewGame);
+		}
+		else
+		{
+			StartNewGame();
+		}
+	}
+
+	private void StartNewGame()
+	{
+		GameData.DeletePreviousRunData();
+		_dungeon.ResetAndStartGame();
+		SetVisible(false);
+	}
+
+	private void ContinueGame()
+	{
+		_dungeon.StartGameFromPrevRun(GameData.PrevRunData);
+		SetVisible(false);
+	}
+
+	public void ReturnToMainMenu()
+	{
+		CheckBtnAvailability();
+		UpdateGemText();
+		SetVisible(true);
 	}
 }

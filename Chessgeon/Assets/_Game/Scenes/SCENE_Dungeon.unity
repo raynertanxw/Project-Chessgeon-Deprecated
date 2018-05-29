@@ -4342,7 +4342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dungeon: {fileID: 1426320895}
-  _menu: {fileID: 1385113401}
+  _menu: {fileID: 1798507103}
   _startOverBtn: {fileID: 1676504034}
   _exitBtn: {fileID: 1256323818}
   _startOverBtnText: {fileID: 1296897944}
@@ -5560,49 +5560,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1373847745}
   m_Mesh: {fileID: 4300000, guid: 33539d5bb21e00846b045188c14f3ca7, type: 3}
---- !u!1 &1385113400
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1385113402}
-  - component: {fileID: 1385113401}
-  m_Layer: 0
-  m_Name: Menu
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1385113401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1385113400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4acf593386164032871992ee63aa3be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dungeon: {fileID: 1426320895}
-  _menuCanvas: {fileID: 1798507103}
---- !u!4 &1385113402
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1385113400}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1798507102}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1390578405
 GameObject:
   m_ObjectHideFlags: 0
@@ -7879,8 +7836,8 @@ RectTransform:
   - {fileID: 1780026710}
   - {fileID: 834029752}
   - {fileID: 532105812}
-  m_Father: {fileID: 1385113402}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -7898,8 +7855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e665b3230109345688406d86c37ba5de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _menu: {fileID: 1385113401}
-  _canvas: {fileID: 1798507101}
+  _dungeon: {fileID: 1426320895}
   _continueBtn: {fileID: 629455762}
   _newGameBtn: {fileID: 1236155702}
   _leaderboardBtn: {fileID: 62237375}
