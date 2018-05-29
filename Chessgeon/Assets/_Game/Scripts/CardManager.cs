@@ -9,8 +9,7 @@ public class CardManager : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 	[SerializeField] private Image _blockingImage = null;
 	[SerializeField] private Image _controlBlocker = null;
-	[SerializeField] private Transform _cardUseThresholdPoint = null;
-	[SerializeField] private Camera _UICam = null;
+	[SerializeField] private RectTransform _cardUseThresholdPoint = null;
 
 	[Header("Card Texture")]
 	[SerializeField] private Texture[] _cardTextures = null;
@@ -41,7 +40,6 @@ public class CardManager : MonoBehaviour
 		Debug.Assert(_blockingImage != null, "_blockingImage is not assigned.");
 		Debug.Assert(_controlBlocker != null, "_controlBlocker is not assigned.");
 		Debug.Assert(_cardUseThresholdPoint != null, "_cardUseThresholdPoint is not assigned.");
-		Debug.Assert(_UICam != null, "_UICam is not assigned.");
 
 		_cards = new Card[MAX_CARDS];
 		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
@@ -63,7 +61,7 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
-		CardUseYThreshold = _UICam.WorldToScreenPoint(_cardUseThresholdPoint.position).y; // NOTE: Must be after awake so canvas can scale properly.
+		CardUseYThreshold = _cardUseThresholdPoint.position.y;
 		ToggleControlBlocker(true);
 		HideAllCards();
 	}

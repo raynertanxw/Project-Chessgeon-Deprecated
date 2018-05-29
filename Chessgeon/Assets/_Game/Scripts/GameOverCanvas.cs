@@ -29,7 +29,6 @@ public class GameOverCanvas : MonoBehaviour
 			_instance = this;
 
             Debug.Assert(gameObject.GetComponent<GraphicRaycaster>() != null, "There is a GraphicRaycaster component on Dungeon Display Canvas. Remove it.");
-            Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 			Debug.Assert(_menu != null, "_menu is not assigned.");

@@ -13,8 +13,6 @@ public class DungeonCardDrawer : MonoBehaviour
 	[SerializeField] private CardManager _cardManager = null;
 
 	[Header("Canvas UI Elements")]
-	[SerializeField] private RectTransform _cardDrawerRectTransform = null;
-	[SerializeField] private RectTransform _endTurnBtnMesh = null;
 	[SerializeField] private Button _endTurnBtn = null;
 
 	private void Awake()
@@ -24,13 +22,10 @@ public class DungeonCardDrawer : MonoBehaviour
 			_instance = this;
 
 			Debug.Assert(gameObject.GetComponent<GraphicRaycaster>() != null, "There is a GraphicRaycaster component on Dungeon Display Canvas. Remove it.");
-			Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 			Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
 
-			Debug.Assert(_cardDrawerRectTransform != null, "_cardDrawer is not assigned.");
-			Debug.Assert(_endTurnBtnMesh != null, "_endTurnBtnMesh is not assigned.");
 			Debug.Assert(_endTurnBtn != null, "_endTurnBtn is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));

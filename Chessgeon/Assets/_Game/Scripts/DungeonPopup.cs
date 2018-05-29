@@ -23,7 +23,6 @@ public class DungeonPopup : MonoBehaviour
 			_instance = this;
 
 			Debug.Assert(gameObject.GetComponent<GraphicRaycaster>() == null, "There is a GraphicRaycaster component on Dungeon Display Canvas. Remove it.");
-			Debug.Assert(gameObject.GetComponent<Canvas>().worldCamera != null, "There is no assigned RenderCamera for DungeonDisplay Canavs.");
 
 			Debug.Assert(_popupPanel != null, "_popupPanel is not assigned.");
 			Debug.Assert(_popupCanvasGrp != null, "_popupCanvasGrp is not assigned.");

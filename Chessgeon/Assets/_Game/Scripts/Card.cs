@@ -53,7 +53,7 @@ public class Card : MonoBehaviour
 	private const float HOLDING_CARD_Z_OFFSET = 5.0f;
 	private const float DRAGGING_LERP_SPEED = 20.0f;
 	private const float SNAPPING_BACK_LERP_SPEED = 30.0f;
-	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(25.0f, 12.5f);
+	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(5.0f, 2.5f); // TODO: Scale this by screen size.
 	private const float TILT_INTERTIA_DRAG = 5.0f; 
 	private const float MAX_TILT = 35.0f;
 	private const float MAX_TILT_DELTA = 5.0f;
@@ -141,7 +141,7 @@ public class Card : MonoBehaviour
 	public void EventTriggerOnDrag(BaseEventData data)
 	{
 		PointerEventData ptrEventData = (PointerEventData)data;
-		_desiredCardWorldPos = ptrEventData.pressEventCamera.ScreenToWorldPoint(ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
+		_desiredCardWorldPos = ((Vector3)ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
 		_desiredCardWorldPos.z = _cardRectTransform.position.z;
 
 	    Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
