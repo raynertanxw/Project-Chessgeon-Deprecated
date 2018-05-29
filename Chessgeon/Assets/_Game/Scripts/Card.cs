@@ -51,7 +51,6 @@ public class Card : MonoBehaviour
 	private Vector2 _prevFrameLocalPos;
 	private Vector2 _tiltIntertia;
 
-	private const float HOLDING_CARD_Z_OFFSET = 5.0f;
 	private const float DRAGGING_LERP_SPEED = 20.0f;
 	private const float SNAPPING_BACK_LERP_SPEED = 30.0f;
 	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(5.0f, 2.5f); // TODO: Scale this by screen size.
@@ -72,7 +71,7 @@ public class Card : MonoBehaviour
 		_cardFrontImage = transform.GetChild(1).GetComponent<Image>();
 		_clonedIconImage = transform.GetChild(1).GetChild(0).GetComponent<Image>();
 		_cardRaycastTargetImage = _cardFrontImage;
-		_cardManager = transform.parent.GetComponent<CardManager>();
+		_cardManager = transform.parent.parent.GetComponent<CardManager>();
 		SetEnabled(true);
 	}
 
@@ -113,7 +112,7 @@ public class Card : MonoBehaviour
 	public void EventTriggerOnPointerDown(BaseEventData data)
 	{
 		_isDragging = true;
-		_cardRectTransform.localPosition += Vector3.forward * -HOLDING_CARD_Z_OFFSET;
+		_cardRectTransform.SetAsLastSibling();
 
 		_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
 		_desiredCardLocalPos = _cardRectTransform.localPosition;
@@ -176,10 +175,10 @@ public class Card : MonoBehaviour
 	public void AnimateDrawCard(float inDelay = 0.0f, DTJob.OnCompleteCallback inOnComplete = null)
 	{
 		_isAnimatingCardDraw = true;
-		_cardRectTransform.localPosition = new Vector3(700.0f, 700.0f, -HOLDING_CARD_Z_OFFSET);
+		_cardRectTransform.localPosition = new Vector3(700.0f, 700.0f, 0.0f);
 		_cardRectTransform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
 
-		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos + Vector3.forward * -HOLDING_CARD_Z_OFFSET, 0.6f, Utils.CurveInverseExponential);
+		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos, 0.6f, Utils.CurveInverseExponential);
 		LocalRotateToAction rotateCard = new LocalRotateToAction(_cardRectTransform, Vector3.zero, 0.6f, Utils.CurveSmoothStep);
 		ActionSequence revealCard = new ActionSequence(moveToHand, rotateCard);
 		revealCard.OnActionFinish += () =>

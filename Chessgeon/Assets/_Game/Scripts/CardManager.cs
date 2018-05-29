@@ -48,7 +48,7 @@ public class CardManager : MonoBehaviour
 		_cards = new Card[MAX_CARDS];
 		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
 		{
-			_cards[iCard] = transform.Find("Card " + (iCard + 1)).GetComponent<Card>();
+			_cards[iCard] = transform.Find("Cards").Find("Card " + (iCard + 1)).GetComponent<Card>();
 			_cards[iCard].SetCardIndex(iCard);
 			_cards[iCard].OnCardExecute += TryExecuteAndDiscardCard;
 		}
