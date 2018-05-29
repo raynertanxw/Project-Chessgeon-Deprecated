@@ -182,6 +182,22 @@ public class Card : MonoBehaviour
 		LocalMoveToAction moveToHand = new LocalMoveToAction(_cardRectTransform, _originLocalPos, 0.6f, Utils.CurveInverseExponential);
 		LocalRotateToAction rotateCard = new LocalRotateToAction(_cardRectTransform, Vector3.zero, 0.6f, Utils.CurveSmoothStep);
 		ActionSequence revealCard = new ActionSequence(moveToHand, rotateCard);
+		revealCard.OnActionStart += () =>
+		{
+			_cardBackImage.enabled = true;
+			_cardFrontImage.enabled = false;
+			_clonedIconImage.enabled = false;
+		};
+		revealCard.OnActionUpdate += () =>
+		{
+			if (!_cardBackImage.enabled) return;
+			else if (Mathf.Abs(_cardRectTransform.localEulerAngles.y) < 90.0f)
+			{
+				_cardBackImage.enabled = false;
+				_cardFrontImage.enabled = true;
+				if (CardData.isCloned) _clonedIconImage.enabled = true;
+			}
+		};
 		revealCard.OnActionFinish += () =>
 		{
 			_isAnimatingCardDraw = false;
