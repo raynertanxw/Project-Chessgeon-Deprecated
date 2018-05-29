@@ -136,7 +136,7 @@ public class CardManager : MonoBehaviour
 		int spriteIndex = ((int)inCardType * 3);
 		if (inCardType == eCardType.Movement)
 		{
-			spriteIndex += (int)inCardTier * (int)eCardType.Movement + (int)inCardMoveType;
+			spriteIndex += (int)inCardMoveType * 3 + (int)inCardTier;
 		}
 		else
 		{
