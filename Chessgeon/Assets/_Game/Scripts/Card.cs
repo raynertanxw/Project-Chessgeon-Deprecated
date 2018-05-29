@@ -53,13 +53,13 @@ public class Card : MonoBehaviour
 
 	private const float DRAGGING_LERP_SPEED = 20.0f;
 	private const float SNAPPING_BACK_LERP_SPEED = 30.0f;
-	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(5.0f, 2.5f); // TODO: Scale this by screen size.
-	private const float TILT_INTERTIA_DRAG = 5.0f; 
+	private readonly Vector2 TILT_INTERTIA_FACTOR = new Vector2(0.25f * Screen.width / 1080.0f, 0.25f * Screen.height / 1920.0f);
+	private readonly Vector2 TILT_INTERTIA_DRAG = new Vector2(5.0f * Screen.width / 1080.0f, 5.0f * Screen.height / 1920.0f); 
 	private const float MAX_TILT = 35.0f;
 	private const float MAX_TILT_DELTA = 5.0f;
 	private readonly Vector3 DRAG_SCALE = new Vector3(2.5f, 2.5f, 1.0f);
 	private const float SCALE_LERP_SPEED = 20.0f;
-	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 250.0f, 0.0f);
+	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 250.0f * Screen.height / 1920.0f, 0.0f);
 
 	public delegate void CardExecutionAction(int inCardIndex);
 	public CardExecutionAction OnCardExecute = null;
@@ -105,7 +105,8 @@ public class Card : MonoBehaviour
 			}
 
             _cardRectTransform.localRotation = Quaternion.Euler(_tiltIntertia.y, _tiltIntertia.x, 0.0f);
-			_tiltIntertia = Vector2.Lerp(_tiltIntertia, Vector2.zero, Time.deltaTime * TILT_INTERTIA_DRAG);
+			_tiltIntertia.x = Mathf.Lerp(_tiltIntertia.x, 0.0f, Time.deltaTime * TILT_INTERTIA_DRAG.x);
+			_tiltIntertia.y = Mathf.Lerp(_tiltIntertia.y, 0.0f, Time.deltaTime * TILT_INTERTIA_DRAG.y);
 		}
 	}
 
@@ -150,6 +151,7 @@ public class Card : MonoBehaviour
 		tiltIntertiaDelta = Vector2.ClampMagnitude(tiltIntertiaDelta, MAX_TILT_DELTA);
         _tiltIntertia += tiltIntertiaDelta;
         _tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
+		Debug.Log(_tiltIntertia);
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
 	}
 
