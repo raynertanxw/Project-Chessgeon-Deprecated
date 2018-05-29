@@ -11,8 +11,11 @@ public class CardManager : MonoBehaviour
 	[SerializeField] private Image _controlBlocker = null;
 	[SerializeField] private RectTransform _cardUseThresholdPoint = null;
 
-	[Header("Card Texture")]
-	[SerializeField] private Texture[] _cardTextures = null;
+	[Header("Card Back Sprites")]
+	[SerializeField] private Sprite[] _cardBackSprites = null;
+
+	[Header("Card Front Sprites")]
+	[SerializeField] private Sprite[] _cardFrontSprites = null;
 
 	private Card[] _cards = null;
 
@@ -36,7 +39,8 @@ public class CardManager : MonoBehaviour
 	private void Awake()
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
-		Debug.Assert(_cardTextures.Length == (3 * 5) + (3 * 5), "There is a mismatch in number of textures and number of cards.");
+		Debug.Assert(_cardBackSprites.Length == 3, "There is a mistmatch in number of card back sprites.");
+		Debug.Assert(_cardFrontSprites.Length == (3 * 5) + (3 * 4), "There is a mismatch in number of card front sprites.");
 		Debug.Assert(_blockingImage != null, "_blockingImage is not assigned.");
 		Debug.Assert(_controlBlocker != null, "_controlBlocker is not assigned.");
 		Debug.Assert(_cardUseThresholdPoint != null, "_cardUseThresholdPoint is not assigned.");
@@ -122,19 +126,24 @@ public class CardManager : MonoBehaviour
 		return cardDatas;
 	}
 
-	public Texture GetCardTexture(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)
+	public Sprite GetCardBackSprite(eCardTier inCardTier)
 	{
-		int texIndex = ((int)inCardType * 3);
+		return _cardBackSprites[(int)inCardTier];
+	}
+	
+	public Sprite GetCardFrontSprite(eCardTier inCardTier, eCardType inCardType, eMoveType inCardMoveType)
+	{
+		int spriteIndex = ((int)inCardType * 3);
 		if (inCardType == eCardType.Movement)
 		{
-			texIndex += (int)inCardTier * 5 + (int)inCardMoveType;
+			spriteIndex += (int)inCardTier * (int)eCardType.Movement + (int)inCardMoveType;
 		}
 		else
 		{
-			texIndex += (int)inCardTier;
+			spriteIndex += (int)inCardTier;
 		}
 
-		return _cardTextures[texIndex];
+		return _cardFrontSprites[spriteIndex];
 	}
 
 	public void ToggleControlBlocker(bool inBlocked)
@@ -516,31 +525,31 @@ public class CardManager : MonoBehaviour
 					};
 					break;
 				}
-				case eCardType.Shield:
-				{
-					int numShield = -1;
-					switch (cardData.cardTier)
-					{
-						case eCardTier.Normal: numShield = 1; break;
-						case eCardTier.Silver: numShield = 2; break;
-						case eCardTier.Gold: numShield = 3; break;
-						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-					}
-					ToggleControlBlocker(true);
-					postExecuteCardAnimActions += () =>
-						{
-							float focusDuration = 0.6f;
-							if (DungeonCamera.LastRequestedTileToFocus == _dungeon.MorphyController.MorphyPos) focusDuration = 0.01f;
-							DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, focusDuration, () =>
-							{
-								_dungeon.MorphyController.AwardShield(numShield, () =>
-								{
-									ToggleControlBlocker(false);
-								});
-							});
-						};
-					break;
-				}
+				//case eCardType.Shield:
+				//{
+				//	int numShield = -1;
+				//	switch (cardData.cardTier)
+				//	{
+				//		case eCardTier.Normal: numShield = 1; break;
+				//		case eCardTier.Silver: numShield = 2; break;
+				//		case eCardTier.Gold: numShield = 3; break;
+				//		default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
+				//	}
+				//	ToggleControlBlocker(true);
+				//	postExecuteCardAnimActions += () =>
+				//		{
+				//			float focusDuration = 0.6f;
+				//			if (DungeonCamera.LastRequestedTileToFocus == _dungeon.MorphyController.MorphyPos) focusDuration = 0.01f;
+				//			DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, focusDuration, () =>
+				//			{
+				//				_dungeon.MorphyController.AwardShield(numShield, () =>
+				//				{
+				//					ToggleControlBlocker(false);
+				//				});
+				//			});
+				//		};
+				//	break;
+				//}
 				case eCardType.Movement:
 				{
 					ToggleControlBlocker(true);
