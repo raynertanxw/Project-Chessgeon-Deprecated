@@ -151,7 +151,6 @@ public class Card : MonoBehaviour
 		tiltIntertiaDelta = Vector2.ClampMagnitude(tiltIntertiaDelta, MAX_TILT_DELTA);
         _tiltIntertia += tiltIntertiaDelta;
         _tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
-		Debug.Log(_tiltIntertia);
 		_prevFrameLocalPos = _cardRectTransform.localPosition;
 	}
 
