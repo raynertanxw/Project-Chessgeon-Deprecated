@@ -10,6 +10,7 @@ public class TileManager : MonoBehaviour
 	[SerializeField] private GameObject _prefabDungeonTile = null;
 	[SerializeField] private GameObject _prefabSelectableTile = null;
 	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private GameObject _boardScrollerImage = null;
 	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private const float TILE_WIDTH = 1.0f;
@@ -31,6 +32,7 @@ public class TileManager : MonoBehaviour
 		Debug.Assert(_prefabDungeonTile != null, "_prefabDungeonTile is not assigned.");
 		Debug.Assert(_prefabSelectableTile != null, "_prefabSelectableTile is not assigned.");
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
+		Debug.Assert(_boardScrollerImage != null, "_boardScrollerImage is not assigned.");
 
 		_dungeonTiles = new DungeonTile[_dungeon.MaxX, _dungeon.MaxY];
 		for (int x = 0; x < _dungeonTiles.GetLength(0); x++)
@@ -78,7 +80,8 @@ public class TileManager : MonoBehaviour
 			{
 				for (int iHit = 0; iHit < results.Count; iHit++)
 				{
-					if (results[iHit].gameObject.layer == Constants.LAYER_UI)
+					if (results[iHit].gameObject.layer == Constants.LAYER_UI
+						&& results[iHit].gameObject != _boardScrollerImage)
 					{
 						blocked = true;
 						break;

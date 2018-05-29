@@ -3366,6 +3366,7 @@ MonoBehaviour:
   _prefabSelectableTile: {fileID: 1221138819492650, guid: 83cd114983efaa849bbfc544e1e84f89,
     type: 2}
   _dungeon: {fileID: 1426320895}
+  _boardScrollerImage: {fileID: 56672355}
 --- !u!1 &988222087
 GameObject:
   m_ObjectHideFlags: 0
