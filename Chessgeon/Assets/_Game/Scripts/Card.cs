@@ -59,7 +59,7 @@ public class Card : MonoBehaviour
 	private const float MAX_TILT_DELTA = 5.0f;
 	private readonly Vector3 DRAG_SCALE = new Vector3(2.5f, 2.5f, 1.0f);
 	private const float SCALE_LERP_SPEED = 20.0f;
-	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 2.5f, 0.0f);
+	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 250.0f, 0.0f);
 
 	public delegate void CardExecutionAction(int inCardIndex);
 	public CardExecutionAction OnCardExecute = null;
