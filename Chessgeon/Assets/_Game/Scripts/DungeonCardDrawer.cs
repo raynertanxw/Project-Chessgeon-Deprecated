@@ -82,13 +82,25 @@ public class DungeonCardDrawer : MonoBehaviour
 
 	public static void SetEndTurnBtnForPlayerPhase()
 	{
-		_instance._endTurnBtnImage.color = _instance._endTurnColor;
-		_instance._endTurnBtnText.text = "END TURN";
+		RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+		rotateDown.OnActionFinish += () =>
+		{
+			_instance._endTurnBtnImage.color = _instance._endTurnColor;
+			_instance._endTurnBtnText.text = "END TURN";
+		};
+		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+		ActionHandler.RunAction(new ActionSequence(rotateDown, rotateBack));
 	}
 
 	public static void SetEndTurnBtnForEnemyPhase()
 	{
-		_instance._endTurnBtnImage.color = _instance._enemyTurnColor;
-        _instance._endTurnBtnText.text = "ENEMY TURN";
+		RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+        rotateDown.OnActionFinish += () =>
+        {
+			_instance._endTurnBtnImage.color = _instance._enemyTurnColor;
+            _instance._endTurnBtnText.text = "ENEMY TURN";
+        };
+		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+        ActionHandler.RunAction(new ActionSequence(rotateDown, rotateBack));
 	}
 }
