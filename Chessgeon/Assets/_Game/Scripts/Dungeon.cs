@@ -328,6 +328,7 @@ public class Dungeon : MonoBehaviour
 			public override void OnEnterState()
 			{
 				_dungeonFSM._dungeon._isPlayersTurn = true;
+				DungeonCardDrawer.SetEndTurnBtnForPlayerPhase();
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
 				DTJob turnDrawJob = new DTJob((OnJobComplete) =>
@@ -375,6 +376,7 @@ public class Dungeon : MonoBehaviour
 			{
 				// TODO: Any cleanup needed?
 				_dungeonFSM._dungeon._isPlayersTurn = false;
+				DungeonCardDrawer.SetEndTurnBtnForEnemyPhase();
 				_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(true);
 			}
 

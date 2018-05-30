@@ -14,6 +14,12 @@ public class DungeonCardDrawer : MonoBehaviour
 
 	[Header("Canvas UI Elements")]
 	[SerializeField] private Button _endTurnBtn = null;
+	[SerializeField] private Image _endTurnBtnImage = null;
+	[SerializeField] private Text _endTurnBtnText = null;
+
+	[Header("End Turn Btn Settings")]
+	[SerializeField] private Color _endTurnColor;
+	[SerializeField] private Color _enemyTurnColor;
 
 	private void Awake()
 	{
@@ -27,6 +33,8 @@ public class DungeonCardDrawer : MonoBehaviour
 			Debug.Assert(_cardManager != null, "_cardManager is not assigned.");
 
 			Debug.Assert(_endTurnBtn != null, "_endTurnBtn is not assigned.");
+			Debug.Assert(_endTurnBtnImage != null, "_endTurnBtnImg is not assigned.");
+			Debug.Assert(_endTurnBtnText != null, "_endTurnBtnText is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
 			_endTurnBtn.onClick.AddListener(() => { TryInvokeOnPlayerEndTurn(); });
@@ -70,5 +78,17 @@ public class DungeonCardDrawer : MonoBehaviour
 	{
 		_instance._endTurnBtn.interactable = true;
 		_instance._endTurnBlockedReason = string.Empty;
+	}
+
+	public static void SetEndTurnBtnForPlayerPhase()
+	{
+		_instance._endTurnBtnImage.color = _instance._endTurnColor;
+		_instance._endTurnBtnText.text = "END TURN";
+	}
+
+	public static void SetEndTurnBtnForEnemyPhase()
+	{
+		_instance._endTurnBtnImage.color = _instance._enemyTurnColor;
+        _instance._endTurnBtnText.text = "ENEMY TURN";
 	}
 }
