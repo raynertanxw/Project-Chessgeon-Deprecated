@@ -19,7 +19,13 @@ public class DungeonCardDrawer : MonoBehaviour
 
 	[Header("End Turn Btn Settings")]
 	[SerializeField] private Color _endTurnColor;
-	[SerializeField] private Color _enemyTurnColor;
+    [SerializeField] private Color _enemyTurnColor;
+	[Space]
+	[Header("End Turn Btn Color Block")]
+	[SerializeField] private ColorBlock _endTurnColorBlock;
+	[Space]
+	[Header("Enemy Turn Btn Color Block")]
+	[SerializeField] private ColorBlock _enemyTurnColorBlock;
 
 	private void Awake()
 	{
@@ -82,25 +88,27 @@ public class DungeonCardDrawer : MonoBehaviour
 
 	public static void SetEndTurnBtnForPlayerPhase()
 	{
-		RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+		RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
 		rotateDown.OnActionFinish += () =>
 		{
+			_instance._endTurnBtn.colors = _instance._endTurnColorBlock;
 			_instance._endTurnBtnImage.color = _instance._endTurnColor;
 			_instance._endTurnBtnText.text = "END TURN";
 		};
-		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
 		ActionHandler.RunAction(new ActionSequence(rotateDown, rotateBack));
 	}
 
 	public static void SetEndTurnBtnForEnemyPhase()
 	{
-		RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+		RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
         rotateDown.OnActionFinish += () =>
         {
+			_instance._endTurnBtn.colors = _instance._enemyTurnColorBlock;
 			_instance._endTurnBtnImage.color = _instance._enemyTurnColor;
             _instance._endTurnBtnText.text = "ENEMY TURN";
         };
-		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.3f, Utils.CurveSmoothStep);
+		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
         ActionHandler.RunAction(new ActionSequence(rotateDown, rotateBack));
 	}
 }
