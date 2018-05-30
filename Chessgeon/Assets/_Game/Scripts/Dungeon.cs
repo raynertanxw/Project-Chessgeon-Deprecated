@@ -361,14 +361,19 @@ public class Dungeon : MonoBehaviour
 					OnJobComplete();
 				}, turnDrawJob);
 
+				DTJob enableEndTurnBtnJob = new DTJob((OnJobComplete) =>
+				{
+					_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false);
+					DungeonCardDrawer.EnableEndTurnBtn();
+					if (OnJobComplete != null) OnJobComplete();
+				}, saveDataJob);
+
 				DTJob focusOnPlayerJob = new DTJob((OnJobComplete) =>
 				{
 					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete);
 				}, playPhaseAnimJob);
 
-				DTJobList startPlayerPhase = new DTJobList(() =>
-				{ _dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false); DungeonCardDrawer.EnableEndTurnBtn(); },
-				turnDrawJob, focusOnPlayerJob, saveDataJob);
+				DTJobList startPlayerPhase = new DTJobList(null, turnDrawJob, focusOnPlayerJob, saveDataJob, enableEndTurnBtnJob);
 				startPlayerPhase.ExecuteAllJobs();
 			}
 
