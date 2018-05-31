@@ -22,6 +22,22 @@ public class Enemy : MonoBehaviour
 	public eMoveType Type { get { return _type; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
+	public enum eTurnAction { Move, Attack, Nothing }
+	public struct EnemyTurnAction
+	{
+		public Enemy Enemy { get; private set; }
+		public eTurnAction TurnAction { get; private set; }
+		public Vector2Int TargetPos { get; private set; }
+		public Utils.GenericVoidDelegate OnComplete { get; private set; }
+
+		public EnemyTurnAction(Enemy inEnemy, eTurnAction inTurnAction, Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnComplete)
+		{
+			Enemy = inEnemy;
+			TurnAction = inTurnAction;
+			TargetPos = inTargetPos;
+			OnComplete = inOnComplete;
+		}
+	}
 
 	private void Awake()
 	{
@@ -122,7 +138,7 @@ public class Enemy : MonoBehaviour
 		// TODO: Reset the health and all that stuff.
 	}
 
-	public void ExecuteTurn(Floor inCurrentFloor, Utils.GenericVoidDelegate inOnComplete)
+	public EnemyTurnAction ProcessTurn(Floor inCurrentFloor, Utils.GenericVoidDelegate inOnTurnExecuted, Utils.GenericVoidDelegate inOnProcessed)
 	{
 		Node morphyNode = inCurrentFloor.Nodes[inCurrentFloor.MorphyPos.x, inCurrentFloor.MorphyPos.y];
 		LinkedList<Node> pathToMorphy = AStarManager.FindPath(
@@ -130,12 +146,13 @@ public class Enemy : MonoBehaviour
 			morphyNode,
 			inCurrentFloor,
 			Type);
+		EnemyTurnAction turnAction;
 		if (pathToMorphy == null) // No path to morphy.
 		{
 			Vector2Int[] possibleMoves = inCurrentFloor.GridStratergyForMoveType(Type).CalcPossibleMoves(Pos, GridStratergy.eMoveEntity.Enemy);
 			if (possibleMoves.Length == 0)
 			{
-				inOnComplete();
+				turnAction = new EnemyTurnAction(this, eTurnAction.Nothing, new Vector2Int(-1, -1), inOnTurnExecuted);
 			}
 			else
 			{
@@ -155,15 +172,16 @@ public class Enemy : MonoBehaviour
 					}
 				}
 
+				// NOTE: This is for pawn which is not able to path cause of the diagonal movement.
 				Vector2Int targetPos = possibleMoves[closestMoveIndex];
 				if (targetPos == inCurrentFloor.MorphyPos)
 				{
-					AttackMorphy(targetPos, inOnComplete);
+					turnAction = new EnemyTurnAction(this, eTurnAction.Attack, targetPos, inOnTurnExecuted);
 				}
 				else
 				{
 					inCurrentFloor.MoveEnemy(Pos, targetPos);
-					MoveTo(targetPos, inOnComplete);
+					turnAction = new EnemyTurnAction(this, eTurnAction.Move, targetPos, inOnTurnExecuted);
 				}
 			}
 		}
@@ -176,22 +194,52 @@ public class Enemy : MonoBehaviour
 				if (Type == eMoveType.Pawn)
 				{
 					// NOTE: Just do nothing cause there isn't anything it can do except move furthur away.
-					inOnComplete();
+					turnAction = new EnemyTurnAction(this, eTurnAction.Nothing, new Vector2Int(-1, -1), inOnTurnExecuted);
 				}
 				else
 				{
-					AttackMorphy(nextPos, inOnComplete);
+					turnAction = new EnemyTurnAction(this, eTurnAction.Attack, nextPos, inOnTurnExecuted);
 				}
 			}
 			else
 			{
 				inCurrentFloor.MoveEnemy(Pos, nextPos);
-				MoveTo(nextPos, inOnComplete);
+				turnAction = new EnemyTurnAction(this, eTurnAction.Move, nextPos, inOnTurnExecuted);
 			}
 		}
+
+		if (inOnProcessed != null) inOnProcessed();
+		return turnAction;
 	}
 
-	private void MoveTo(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
+	public void ExecuteTurnAction(EnemyTurnAction inTurnAction)
+	{
+		switch (inTurnAction.TurnAction)
+		{
+			case eTurnAction.Move:
+				{
+					AnimateMoveTo(inTurnAction.TargetPos, inTurnAction.OnComplete);
+					break;
+				}
+			case eTurnAction.Attack:
+				{
+					AttackMorphy(inTurnAction.TargetPos, inTurnAction.OnComplete);
+					break;
+				}
+			case eTurnAction.Nothing:
+				{
+					if (inTurnAction.OnComplete != null) inTurnAction.OnComplete();
+					break;
+				}
+			default:
+				{
+					Debug.LogError(inTurnAction.TurnAction.ToString() + " has not been implemented in ExecuteTurnAction.");
+					break;
+				}
+		}
+	}
+    
+    private void AnimateMoveTo(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
 		_pos = inTargetPos;
 		Vector3 targetTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);

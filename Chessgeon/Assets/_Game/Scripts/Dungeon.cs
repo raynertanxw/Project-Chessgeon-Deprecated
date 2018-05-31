@@ -395,6 +395,7 @@ public class Dungeon : MonoBehaviour
 			public DungeonStateEnemyPhase(DungeonFSM inDungeonFSM)
 			{
 				_dungeonFSM = inDungeonFSM;
+				_enemyTurnActions = new List<Enemy.EnemyTurnAction>();
 			}
 
 			public override void OnEnterState()
@@ -402,8 +403,9 @@ public class Dungeon : MonoBehaviour
 				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn,
 					() =>
 					{
-						_readyToProcessNextEnemy = true;
-					});
+                        _readyToExecuteNextEnemyTurnAction = true;
+                    });
+				_readyToProcessNextEnemy = true;
 				_enemiesAlive = _dungeonFSM._dungeon.EnemyManager.GetArrayOfAliveEnemies();
 			}
 
@@ -413,11 +415,15 @@ public class Dungeon : MonoBehaviour
 				_enemiesAlive = null;
 				_currentEnemyIndex = -1;
 				_readyToProcessNextEnemy = false;
+				_enemyTurnActions.Clear();
 			}
 
 			Enemy[] _enemiesAlive = null;
 			int _currentEnemyIndex = -1;
-			bool _readyToProcessNextEnemy = false;
+            bool _readyToProcessNextEnemy = false;
+
+            List<Enemy.EnemyTurnAction> _enemyTurnActions = null;
+			bool _readyToExecuteNextEnemyTurnAction = false;
 			public override void ExecuteState()
 			{
 				if (_readyToProcessNextEnemy)
@@ -426,27 +432,66 @@ public class Dungeon : MonoBehaviour
 					_currentEnemyIndex++;
 					if (_currentEnemyIndex == _enemiesAlive.Length)
 					{
-						_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+                        // Finished Processing all the enemies.
 					}
 					else
 					{
-						_enemiesAlive[_currentEnemyIndex].ExecuteTurn(_dungeonFSM._dungeon.CurrentFloor, OnFinishProcessingEnemy);
+						Enemy.EnemyTurnAction calculatedAction = _enemiesAlive[_currentEnemyIndex].ProcessTurn(_dungeonFSM._dungeon.CurrentFloor, OnFinishEnemyTurnAction, OnFinishProcessingEnemy);
+						if (calculatedAction.TurnAction != Enemy.eTurnAction.Nothing)
+						{
+							_enemyTurnActions.Add(calculatedAction);
+						}
+					}
+				}
+				else if (_readyToExecuteNextEnemyTurnAction)
+				{
+					_readyToExecuteNextEnemyTurnAction = false;
+					if (_enemyTurnActions.Count > 0)
+					{
+						bool moveTurnFound = false;
+						for (int i = 0; i < _enemyTurnActions.Count; i++)
+						{
+							Enemy.EnemyTurnAction curTurnAction = _enemyTurnActions[i];
+							if (curTurnAction.TurnAction == Enemy.eTurnAction.Move)
+							{
+								moveTurnFound = true;
+								curTurnAction.Enemy.ExecuteTurnAction(curTurnAction);
+								_enemyTurnActions.RemoveAt(i);
+								break;
+							}
+						}
+
+						if (!moveTurnFound) // NOTE: Left with attacking moves.
+						{
+							Enemy.EnemyTurnAction curTurnAction = _enemyTurnActions[0];
+							Debug.Assert(curTurnAction.TurnAction == Enemy.eTurnAction.Attack, "No enemy move turn found but first index is also not attack type.");
+							curTurnAction.Enemy.ExecuteTurnAction(curTurnAction);
+						}
+					}
+					else
+					{
+						_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
 					}
 				}
 			}
 
 			private void OnFinishProcessingEnemy()
 			{
+			    _readyToProcessNextEnemy = true;
+			}
+
+			private void OnFinishEnemyTurnAction()
+			{
 				// TODO: If the player is killed, immediately transition to the GameOverState.
-				if (_dungeonFSM.Dungeon.MorphyController.IsDead)
-				{
-					_readyToProcessNextEnemy = false;
-					// NOTE: Do nothing. Player is dead so just wait for new game where this whole FSM will be recreated.
-				}
-				else
-				{
-					_readyToProcessNextEnemy = true;
-				}
+                if (_dungeonFSM.Dungeon.MorphyController.IsDead)
+                {
+					_readyToExecuteNextEnemyTurnAction = false;
+                    // NOTE: Do nothing. Player is dead so just wait for new game where this whole FSM will be recreated.
+                }
+                else
+                {
+					_readyToExecuteNextEnemyTurnAction = true;
+                }
 			}
 		}
 		#endregion
