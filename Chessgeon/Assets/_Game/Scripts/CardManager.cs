@@ -479,6 +479,7 @@ public class CardManager : MonoBehaviour
 						DungeonCardDrawer.DisableEndTurnBtn("Select a card to clone");
 						postExecuteCardAnimActions += () =>
 						{
+							DungeonPopup.PopSidePopup("Select a card to clone it.");
 							_isCloneMode = true;
 							_numToClone = numClones + 1; // NOTE: 1 is to replace the copy itself.
 						};

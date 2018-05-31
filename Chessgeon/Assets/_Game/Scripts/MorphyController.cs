@@ -105,7 +105,7 @@ public class MorphyController : MonoBehaviour
 		{
 			_numMovesLeft = 0;
 			TransformBackToMorphy();
-			DungeonPopup.PopText("No Possible " + _morphy.CurrentType.ToString() + " Moves");
+			DungeonPopup.PopMiddlePopup("No Possible " + _morphy.CurrentType.ToString() + " Moves");
 			Debug.LogWarning("No Possible " + _morphy.CurrentType.ToString() + " Moves");
 		}
 	}
@@ -295,6 +295,6 @@ public class MorphyController : MonoBehaviour
 		int newShield = Mathf.Min(_shield + inShield, MAX_SHIELD);
 		SetShield(newShield, inOnComplete);
 
-		if (newShield == MAX_SHIELD) DungeonPopup.PopText("Shields at MAX!");
+		if (newShield == MAX_SHIELD) DungeonPopup.PopMiddlePopup("Shields at MAX!");
 	}
 }

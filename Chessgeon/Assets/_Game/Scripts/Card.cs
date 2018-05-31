@@ -253,7 +253,7 @@ public class Card : MonoBehaviour
 	public void ReturnCardAndUnexecute(string inReturnReason)
 	{
 		SetEnabled(true);
-		DungeonPopup.PopText(inReturnReason);
+		DungeonPopup.PopMiddlePopup(inReturnReason);
 		Debug.LogWarning("Card Returned: " + inReturnReason);
 	}
 

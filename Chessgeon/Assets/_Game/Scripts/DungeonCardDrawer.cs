@@ -65,7 +65,7 @@ public class DungeonCardDrawer : MonoBehaviour
 		if (!_endTurnBtn.interactable)
 		{
 			// TODO: Isn't this kind of redundant???
-			DungeonPopup.PopText(_endTurnBlockedReason);
+			DungeonPopup.PopMiddlePopup(_endTurnBlockedReason);
 		}
 		else
 		{
