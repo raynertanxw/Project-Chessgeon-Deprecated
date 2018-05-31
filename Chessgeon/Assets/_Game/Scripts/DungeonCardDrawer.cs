@@ -20,12 +20,16 @@ public class DungeonCardDrawer : MonoBehaviour
 	[Header("End Turn Btn Settings")]
 	[SerializeField] private Color _endTurnColor;
     [SerializeField] private Color _enemyTurnColor;
+	[SerializeField] private Color _loadingColor;
 	[Space]
 	[Header("End Turn Btn Color Block")]
 	[SerializeField] private ColorBlock _endTurnColorBlock;
 	[Space]
 	[Header("Enemy Turn Btn Color Block")]
 	[SerializeField] private ColorBlock _enemyTurnColorBlock;
+	[Space]
+	[Header("Loading Color Block")]
+	[SerializeField] private ColorBlock _loadingColorBlock;
 
 	private void Awake()
 	{
@@ -110,5 +114,27 @@ public class DungeonCardDrawer : MonoBehaviour
         };
 		RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
         ActionHandler.RunAction(new ActionSequence(rotateDown, rotateBack));
+	}
+
+	public static void SetEndTurnBtnForLoading(bool inIsAnimated = true)
+	{
+		if (inIsAnimated)
+		{
+			RotateByAction rotateDown = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(-90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
+            rotateDown.OnActionFinish += () =>
+            {
+				_instance._endTurnBtn.colors = _instance._loadingColorBlock;
+                _instance._endTurnBtnImage.color = _instance._loadingColor;
+                _instance._endTurnBtnText.text = "LOADING...";
+            };
+            RotateByAction rotateBack = new RotateByAction(_instance._endTurnBtn.transform, new Vector3(90.0f, 0.0f, 0.0f), 0.15f, Utils.CurveSmoothStep);
+            ActionHandler.RunAction(new ActionSequence(rotateDown, rotateBack));
+		}
+		else
+		{
+			_instance._endTurnBtn.colors = _instance._loadingColorBlock;
+			_instance._endTurnBtnImage.color = _instance._loadingColor;
+			_instance._endTurnBtnText.text = "LOADING...";
+		}
 	}
 }

@@ -90,6 +90,7 @@ public class Dungeon : MonoBehaviour
 	public void ResetAndStartGame()
 	{
 		// TODO: Reset all of the UI?
+		DungeonCardDrawer.SetEndTurnBtnForLoading(false);
 		_morphyController.ResetForNewGame();
 		_enemyManager.ResetForNewGame();
 		_cardManager.ResetForNewGame();
@@ -380,8 +381,9 @@ public class Dungeon : MonoBehaviour
 			public override void ExitState()
 			{
 				// TODO: Any cleanup needed?
-				_dungeonFSM._dungeon._isPlayersTurn = false;
-				DungeonCardDrawer.SetEndTurnBtnForEnemyPhase();
+				_dungeonFSM.Dungeon._isPlayersTurn = false;
+				if (_dungeonFSM.Dungeon.IsFloorCleared) DungeonCardDrawer.SetEndTurnBtnForLoading();
+				else DungeonCardDrawer.SetEndTurnBtnForEnemyPhase();
 				_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(true);
 			}
 
