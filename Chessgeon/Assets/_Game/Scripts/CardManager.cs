@@ -321,7 +321,6 @@ public class CardManager : MonoBehaviour
 			// Non-movement
 			// Non movement percentages
 			// Joker: 30%
-			// Shield: 0%
 			// Smash: 25%
 			// Clone: 25%
 			// Draw: 20%
