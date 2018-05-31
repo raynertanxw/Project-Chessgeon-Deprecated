@@ -21,9 +21,9 @@ public class Dungeon : MonoBehaviour
 	public SmashParticlePool SmashParticlePool { get { return _smashParticlePool; } }
 
 	private const int DUNGEON_MIN_X = 5;
-	private const int DUNGEON_MAX_X = 15;
+	private const int DUNGEON_MAX_X = 10;
 	private const int DUNGEON_MIN_Y = 5;
-	private const int DUNGEON_MAX_Y = 15;
+	private const int DUNGEON_MAX_Y = 10;
 	private const int DUNGEON_MAX_ENEMIES = 50;
 	public int MinX { get { return DUNGEON_MIN_X; } }
 	public int MaxX { get { return DUNGEON_MAX_X; } }
