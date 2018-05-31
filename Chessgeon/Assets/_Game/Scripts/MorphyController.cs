@@ -121,7 +121,8 @@ public class MorphyController : MonoBehaviour
 		{
 			onFinishMove = () =>
 			{
-				ShowPossibleMoves();
+				if (_dungeon.EnemyManager.CheckIfFloorCleared()) _numMovesLeft = 0;
+				else ShowPossibleMoves();
 			};
 		}
 		else
