@@ -71,6 +71,19 @@ public class EnemyManager : MonoBehaviour
 		return enemiesAlive.ToArray();
 	}
 
+	public bool CheckIfFloorCleared()
+	{
+		if (GetArrayOfAliveEnemies().Length < 1)
+        {
+            DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+	}
+
 	public void ResetForNewGame()
 	{
 		RemoveAllEnemies();

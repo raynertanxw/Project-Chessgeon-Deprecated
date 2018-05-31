@@ -111,15 +111,13 @@ public class Enemy : MonoBehaviour
 		// TODO: Points and stuff.
 		_meshRenderer.enabled = false;
 
-		_enemyManager.Dungeon.CardManager.DrawCard(1, CheckIfFloorCleared);
-	}
-
-	private void CheckIfFloorCleared()
-	{
-		if (_enemyManager.GetArrayOfAliveEnemies().Length < 1)
+		DTJob.OnCompleteCallback onComplete = null;
+		if (_enemyManager.CheckIfFloorCleared())
 		{
-			_enemyManager.Dungeon.ClearFloor();
+			onComplete = _enemyManager.Dungeon.ClearFloor;
+			//DungeonCardDrawer.SetEndTurnBtnForLoading();
 		}
+		_enemyManager.Dungeon.CardManager.DrawCard(1, onComplete);
 	}
 
 	public void Remove()
