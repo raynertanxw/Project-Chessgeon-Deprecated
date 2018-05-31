@@ -2373,7 +2373,7 @@ GameObject:
   - component: {fileID: 569987907}
   - component: {fileID: 569987906}
   m_Layer: 5
-  m_Name: Card Face Image
+  m_Name: Card Front Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2577,7 +2577,7 @@ GameObject:
   - component: {fileID: 601294590}
   - component: {fileID: 601294589}
   m_Layer: 5
-  m_Name: Card Face Image
+  m_Name: Card Front Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4933,7 +4933,7 @@ GameObject:
   - component: {fileID: 1315634821}
   - component: {fileID: 1315634820}
   m_Layer: 5
-  m_Name: Card Face Image
+  m_Name: Card Front Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5174,7 +5174,7 @@ GameObject:
   - component: {fileID: 1390578408}
   - component: {fileID: 1390578407}
   m_Layer: 5
-  m_Name: Card Face Image
+  m_Name: Card Front Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

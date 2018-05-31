@@ -112,46 +112,55 @@ public class Card : MonoBehaviour
 
 	public void EventTriggerOnPointerDown(BaseEventData data)
 	{
-		_isDragging = true;
-		_cardRectTransform.SetAsLastSibling();
+		if (!_isAnimatingCardExecute)
+		{
+			_isDragging = true;
+			_cardRectTransform.SetAsLastSibling();
 
-		_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
-		_desiredCardLocalPos = _cardRectTransform.localPosition;
-		_tiltIntertia = Vector2.zero;
-		_prevFrameLocalPos = _cardRectTransform.localPosition;
-		_lerpSpeed = DRAGGING_LERP_SPEED;
+			_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
+			_desiredCardLocalPos = _cardRectTransform.localPosition;
+			_tiltIntertia = Vector2.zero;
+			_prevFrameLocalPos = _cardRectTransform.localPosition;
+			_lerpSpeed = DRAGGING_LERP_SPEED;
+		}
 	}
 
 	public void EventTriggerOnPointerUp(BaseEventData data)
 	{
-		_isDragging = false;
-		Vector3 originZ = _cardRectTransform.localPosition;
-		originZ.z = _originZ;
-		_cardRectTransform.localPosition = originZ;
-
-		_desiredCardLocalPos = _originLocalPos;
-		_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
-
-		PointerEventData ptrEventData = (PointerEventData)data;
-		if (ptrEventData.position.y > _cardManager.CardUseYThreshold
-			&& !_isAnimatingCardExecute) // NOTE: Prevents double execution from clicking while execute anim is running.
+		if (_isDragging)
 		{
-			if (OnCardExecute != null) OnCardExecute(_cardIndex);
+			_isDragging = false;
+			Vector3 originZ = _cardRectTransform.localPosition;
+			originZ.z = _originZ;
+			_cardRectTransform.localPosition = originZ;
+
+			_desiredCardLocalPos = _originLocalPos;
+			_lerpSpeed = SNAPPING_BACK_LERP_SPEED;
+
+			PointerEventData ptrEventData = (PointerEventData)data;
+			if (ptrEventData.position.y > _cardManager.CardUseYThreshold
+				&& !_isAnimatingCardExecute) // NOTE: Prevents double execution from clicking while execute anim is running.
+			{
+				if (OnCardExecute != null) OnCardExecute(_cardIndex);
+			}
 		}
 	}
 
 	public void EventTriggerOnDrag(BaseEventData data)
 	{
-		PointerEventData ptrEventData = (PointerEventData)data;
-		_desiredCardWorldPos = ((Vector3)ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
-		_desiredCardWorldPos.z = _cardRectTransform.position.z;
+		if (_isDragging)
+		{
+			PointerEventData ptrEventData = (PointerEventData)data;
+			_desiredCardWorldPos = ((Vector3)ptrEventData.position) + DRAG_HOLDING_POINT_OFFSET;
+			_desiredCardWorldPos.z = _cardRectTransform.position.z;
 
-	    Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
-	    tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
-		tiltIntertiaDelta = Vector2.ClampMagnitude(tiltIntertiaDelta, MAX_TILT_DELTA);
-        _tiltIntertia += tiltIntertiaDelta;
-        _tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
-		_prevFrameLocalPos = _cardRectTransform.localPosition;
+			Vector2 tiltIntertiaDelta = _prevFrameLocalPos - (Vector2)_cardRectTransform.localPosition;
+			tiltIntertiaDelta.Scale(TILT_INTERTIA_FACTOR);
+			tiltIntertiaDelta = Vector2.ClampMagnitude(tiltIntertiaDelta, MAX_TILT_DELTA);
+			_tiltIntertia += tiltIntertiaDelta;
+			_tiltIntertia = Vector2.ClampMagnitude(_tiltIntertia, MAX_TILT);
+			_prevFrameLocalPos = _cardRectTransform.localPosition;
+		}
 	}
 
 	public void SetCard(eCardTier inCardTier, eCardType inCardType, bool inIsCloned = false, eMoveType inMoveType = eMoveType.Pawn)
