@@ -30,6 +30,11 @@ public class CardManager : MonoBehaviour
     public bool ShouldSkipDraw { get { return _shouldSkipDraw; } }
 	private int _numCardsUsedInTurn = -1;
 
+    // RandomPools
+	private RandomExt.RandomPool _cardTierRandomPool = null;
+	private RandomExt.RandomPool _cardMoveTypeRandomPool = null;
+	private RandomExt.RandomPool _nonMovementCardTypeRandomPool = null;
+
 	// TODO: Statistics
 	private int _statTotalCardsDrawn = -1;
 	public int StatTotalCardsDrawn { get { return _statTotalCardsDrawn; } }
@@ -61,6 +66,27 @@ public class CardManager : MonoBehaviour
 			_isFirstDrawOfFloor = true;
 			ToggleControlBlocker(true);
 		};
+
+		// Set up RandomPools.
+		_cardTierRandomPool = new RandomExt.RandomPool();
+		_cardTierRandomPool.AddEntry((int)eCardTier.Normal, 80);
+		_cardTierRandomPool.AddEntry((int)eCardTier.Silver, 15);
+		_cardTierRandomPool.AddEntry((int)eCardTier.Gold, 5);
+
+		// Chances for move types
+		_cardMoveTypeRandomPool = new RandomExt.RandomPool();
+		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Pawn, 30);
+		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Rook, 20);
+		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Bishop, 20);
+		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Knight, 15);
+		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.King, 15);
+
+        // Chances for non movement card types
+		_nonMovementCardTypeRandomPool = new RandomExt.RandomPool();
+		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Joker, 30);
+		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Smash, 25);
+		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Clone, 25);
+		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Draw, 20);
     }
 
     private void Start()
@@ -285,51 +311,19 @@ public class CardManager : MonoBehaviour
 
 	private CardData GenerateRandomCardData()
 	{
-		// Chances for card tier.
-		// Normal: 80%
-		// Silver: 15%
-		// Gold  : 5%
-		eCardTier cardTier = eCardTier.Normal;
-		float cardTierRandValue = Random.value;
-		if (cardTierRandValue < 0.05f) cardTier = eCardTier.Gold;
-		else if (cardTierRandValue < 0.2f) cardTier = eCardTier.Silver;
-		else cardTier = eCardTier.Normal;
-
-		// Chances for movement.
-		// Movement: 80%
-		// Non Movement: 20%
-		eMoveType moveType = eMoveType.Pawn;
-		eCardType cardType = eCardType.Movement;
-		if (Random.value <= 0.8f) // Movement
+		eCardTier cardTier = (eCardTier)_cardTierRandomPool.GetRandomEntry();
+		eMoveType moveType;
+		eCardType cardType;
+		bool isMovementCardType = RandomExt.WeightedRandomBoolean(80, 20);
+		if (isMovementCardType) // Movement
 		{
 			cardType = eCardType.Movement;
-			// Chances for move types
-			// Pawn: 30%
-			// Rook: 20%
-			// Bishop: 20%
-			// Knight: 15%
-			// King: 15%
-			float moveTypeRandValue = Random.value;
-			if (moveTypeRandValue <= 0.3f) moveType = eMoveType.Pawn;
-			else if (moveTypeRandValue <= 0.5f) moveType = eMoveType.Rook;
-			else if (moveTypeRandValue <= 0.7f) moveType = eMoveType.Bishop;
-			else if (moveTypeRandValue <= 0.85f) moveType = eMoveType.Knight;
-			else moveType = eMoveType.King;
+			moveType = (eMoveType)_cardMoveTypeRandomPool.GetRandomEntry();
 		}
 		else
 		{
-			// Non-movement
-			// Non movement percentages
-			// Joker: 30%
-			// Smash: 25%
-			// Clone: 25%
-			// Draw: 20%
-			float cardTypeRandValue = Random.value;
-			if (cardTypeRandValue <= 0.3f) cardType = eCardType.Joker;
-			//else if (cardTypeRandValue <= 0.4f) cardType = eCardType.Shield;
-			else if (cardTypeRandValue <= 0.55f) cardType = eCardType.Smash;
-			else if (cardTypeRandValue <= 0.8f) cardType = eCardType.Clone;
-			else cardType = eCardType.Draw;
+			cardType = (eCardType)_nonMovementCardTypeRandomPool.GetRandomEntry();
+			moveType = eMoveType.Pawn;
 		}
 
 		return new CardData(cardTier, cardType, false, moveType);
