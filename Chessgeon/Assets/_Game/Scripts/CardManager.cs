@@ -316,32 +316,48 @@ public class CardManager : MonoBehaviour
 		eCardTier cardTier = (eCardTier)_cardTierRandomPool.GetRandomEntry();
 		eMoveType moveType;
 		eCardType cardType;
+
+		int numPawnCards = 0;
+        int numDrawCards = 0;
+        int numCloneCards = 0;
+        for (int iCard = 0; iCard < activeCards.Length; iCard++)
+        {
+            CardData curCardData = activeCards[iCard];
+            if (curCardData.cardType == eCardType.Movement
+                && curCardData.cardMoveType == eMoveType.Pawn)
+            {
+                numPawnCards++;
+            }
+            else if (curCardData.cardType == eCardType.Draw)
+            {
+                numDrawCards++;
+            }
+            else if (curCardData.cardType == eCardType.Clone)
+            {
+                numCloneCards++;
+            }
+        }
+
 		bool isMovementCardType = RandomExt.WeightedRandomBoolean(80, 20);
 		if (isMovementCardType) // Movement
 		{
 			cardType = eCardType.Movement;
 
-			int numPawnCards = 0;
-			for (int iCard = 0; iCard < activeCards.Length; iCard++)
-			{
-				CardData curCardData = activeCards[iCard];
-				if (curCardData.cardType == eCardType.Movement
-				    && curCardData.cardMoveType == eMoveType.Pawn)
-				{
-					numPawnCards++;
-				}
-			}
-
 			if (numPawnCards > 1) _cardMoveTypeRandomPool.ChangeWeight((int)eMoveType.Pawn, 0);
 			else if (numPawnCards == 1) _cardMoveTypeRandomPool.ChangeWeight((int)eMoveType.Pawn, 10);
 
 			moveType = (eMoveType)_cardMoveTypeRandomPool.GetRandomEntry();
-
 			_cardMoveTypeRandomPool.ResetAllWeightsToInitial();
 		}
 		else
 		{
+			if (numDrawCards > 0) _nonMovementCardTypeRandomPool.ChangeWeight((int)eCardType.Draw, 0);
+
+			if (numCloneCards > 0) _nonMovementCardTypeRandomPool.ChangeWeight((int)eCardType.Clone, 0);
+
 			cardType = (eCardType)_nonMovementCardTypeRandomPool.GetRandomEntry();
+			_nonMovementCardTypeRandomPool.ResetAllWeightsToInitial();
+
 			moveType = eMoveType.Pawn;
 		}
 
