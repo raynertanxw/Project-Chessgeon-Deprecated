@@ -61,7 +61,7 @@ namespace DaburuTools
 					}
 				}
 
-				Debug.Assert(index > 0, "Could not find entry in RandomPool of value: " + inValue);
+				Debug.Assert(index > -1, "Could not find entry in RandomPool of value: " + inValue);
 
 				int originalProbabilityWeight = _entryList[index].ProbabilityWeight;
 				_sumOfWeights -= originalProbabilityWeight;
