@@ -31,11 +31,13 @@ namespace DaburuTools
 			}
 			
 			private List<Entry> _entryList = null;
+			private Dictionary<int, int> _initialWeights = null;
 			private int _sumOfWeights = 0;
             
 			public RandomPool()
 			{
 				_entryList = new List<Entry>();
+				_initialWeights = new Dictionary<int, int>();
 			}
 
 			public void AddEntry(int inValue, int inProbabilityWeight)
@@ -47,6 +49,7 @@ namespace DaburuTools
 
 				_entryList.Add(new Entry(inValue, inProbabilityWeight));
 				_sumOfWeights += inProbabilityWeight;
+				_initialWeights.Add(inValue, inProbabilityWeight);
 			}
 
 			public void ChangeWeight(int inValue, int inNewProbabilityWeight)
@@ -67,6 +70,15 @@ namespace DaburuTools
 				_sumOfWeights -= originalProbabilityWeight;
 				_entryList[index] = new Entry(inValue, inNewProbabilityWeight);
                 _sumOfWeights += inNewProbabilityWeight;
+			}
+
+			public void ResetAllWeightsToInitial()
+			{
+				for (int iEntry = 0; iEntry < _entryList.Count; iEntry++)
+				{
+					int value = _entryList[iEntry].Value;
+					_entryList[iEntry] = new Entry(value, _initialWeights[value]);
+				}
 			}
 
 			public int GetRandomEntry()

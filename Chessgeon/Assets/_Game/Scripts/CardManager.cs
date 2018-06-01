@@ -41,9 +41,6 @@ public class CardManager : MonoBehaviour
 
 	public float CardUseYThreshold { get; private set; }
 
-	// Card Rates
-	private const int PAWN_WEIGHT = 30;
-
 	private void Awake()
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
@@ -78,7 +75,7 @@ public class CardManager : MonoBehaviour
 
 		// Chances for move types
 		_cardMoveTypeRandomPool = new RandomExt.RandomPool();
-		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Pawn, PAWN_WEIGHT);
+		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Pawn, 30);
 		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Rook, 20);
 		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Bishop, 20);
 		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Knight, 15);
@@ -336,11 +333,11 @@ public class CardManager : MonoBehaviour
 			}
 
 			if (numPawnCards > 1) _cardMoveTypeRandomPool.ChangeWeight((int)eMoveType.Pawn, 0);
-			else if (numPawnCards == 1) _cardMoveTypeRandomPool.ChangeWeight((int)eMoveType.Pawn, PAWN_WEIGHT / 2);
+			else if (numPawnCards == 1) _cardMoveTypeRandomPool.ChangeWeight((int)eMoveType.Pawn, 10);
 
 			moveType = (eMoveType)_cardMoveTypeRandomPool.GetRandomEntry();
 
-			if (numPawnCards > 0) _cardMoveTypeRandomPool.ChangeWeight((int)eMoveType.Pawn, PAWN_WEIGHT);
+			_cardMoveTypeRandomPool.ResetAllWeightsToInitial();
 		}
 		else
 		{
