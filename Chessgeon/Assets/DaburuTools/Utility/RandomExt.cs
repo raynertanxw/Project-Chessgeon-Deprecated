@@ -74,10 +74,12 @@ namespace DaburuTools
 
 			public void ResetAllWeightsToInitial()
 			{
+				_sumOfWeights = 0;
 				for (int iEntry = 0; iEntry < _entryList.Count; iEntry++)
 				{
 					int value = _entryList[iEntry].Value;
 					_entryList[iEntry] = new Entry(value, _initialWeights[value]);
+					_sumOfWeights += _initialWeights[value];
 				}
 			}
 
