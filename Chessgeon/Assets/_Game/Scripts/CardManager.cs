@@ -469,10 +469,9 @@ public class CardManager : MonoBehaviour
 							ToggleControlBlocker(false);
 						},
 						true);
+					_isCloneMode = false;
+					_numToClone = -1;
 				});
-
-				_isCloneMode = false;
-				_numToClone = -1;
 			}
 		}
 		#region NormalExecutionMode
