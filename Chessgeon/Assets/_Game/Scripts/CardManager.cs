@@ -125,7 +125,7 @@ public class CardManager : MonoBehaviour
 		_statTotalCardsDrawn = 0; // TODO: Save and load this stat.
 		HideAllCards();
 
-		DrawCard(null, false, inPrevRunData.CardDatas);
+		ClearAndSetHand(null, inPrevRunData.CardDatas);
 	}
 
 	public void HasSkippedDraw()
@@ -178,68 +178,95 @@ public class CardManager : MonoBehaviour
 		_controlBlocker.raycastTarget = inBlocked;
 	}
 
+	private const float CARD_ANIM_INTERNAL = 0.2f;
 	public void DrawCard(int inNumCardsDrawn, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
 	{
-		CardData[] cardDatas = new CardData[inNumCardsDrawn];
 		for (int iCard = 0; iCard < inNumCardsDrawn; iCard++)
 		{
-			cardDatas[iCard] = GenerateRandomCardData();
-		}
-		DrawCard(inOnComplete, inIsAnimated, cardDatas);
-	}
-	public void DrawCard(DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true, params CardData[] inCardDatas)
-	{
-		bool needReorg = ReorganiseCards(() => { DrawCard(inOnComplete, inIsAnimated, inCardDatas); });
-
-		if (!needReorg)
-		{
-			int numCardsDrawn = inCardDatas.Length;
-			int cardLimit = Mathf.Min(_numCardsInHand + numCardsDrawn, MAX_CARDS);
-			int cardsDrawn = 0;
-
-			if (inIsAnimated)
+			CardData cardData = GenerateRandomCardData();
+			if ((iCard + 1) == inNumCardsDrawn
+				|| (_numCardsInHand + 1) == MAX_CARDS)
 			{
-				const float CARD_ANIM_INTERVAL = 0.2f;
-				for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
-				{
-					Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
-					SetCardActive(iCard, true);
-					_cards[iCard].SetCard(inCardDatas[cardsDrawn]);
-					if ((iCard + 1) == cardLimit)
-					{
-						_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL, inOnComplete);
-					}
-					else
-					{
-						_cards[iCard].AnimateDrawCard(cardsDrawn * CARD_ANIM_INTERVAL);
-					}
-					cardsDrawn++;
-					_numCardsInHand++;
-					_statTotalCardsDrawn++;
-				}
+				DrawCard(cardData, inOnComplete, inIsAnimated, (1 + iCard) * CARD_ANIM_INTERNAL);
+				break;
 			}
 			else
 			{
-				for (int iCard = _numCardsInHand; iCard < cardLimit; iCard++)
-				{
-					Debug.Assert(!_cards[iCard].IsEnabled, "Card " + iCard + " is already enabled! Should not be drawn.");
-					SetCardActive(iCard, true);
-					_cards[iCard].SetCard(inCardDatas[cardsDrawn]);
-					if ((iCard + 1) == cardLimit)
-					{
-						if (inOnComplete != null) inOnComplete();
-					}
-					cardsDrawn++;
-					_numCardsInHand++;
-					_statTotalCardsDrawn++;
-				}
+				DrawCard(cardData, null, inIsAnimated, (1 + iCard) * CARD_ANIM_INTERNAL);
 			}
+		}
+	}
+	public void CloneCard(int inNumToClone, CardData inCloneData, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
+	{
+		for (int iCard = 0; iCard < inNumToClone; iCard++)
+		{
+			if ((iCard + 1) == inNumToClone
+				|| (_numCardsInHand + 1) == MAX_CARDS)
+			{
+				DrawCard(inCloneData, inOnComplete, inIsAnimated, (1 + iCard) * CARD_ANIM_INTERNAL);
+				break;
+			}
+			else
+			{
+				DrawCard(inCloneData, null, inIsAnimated, (1 + iCard) * CARD_ANIM_INTERNAL);
+			}
+		}
+	}
+	public void DrawCard(CardData inCardData, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true, float inCardAnimInterval = CARD_ANIM_INTERNAL)
+	{
+		bool needReorg = ReorganiseCards(() => { DrawCard(inCardData, inOnComplete, inIsAnimated, inCardAnimInterval); });
 
-			// NOTE: If didn't draw card, then just run inOnComplete.
-			if (cardsDrawn == 0 && inOnComplete != null) inOnComplete();
+		if (!needReorg)
+		{
+			if (_numCardsInHand < MAX_CARDS)
+			{
+				int curCardIndex = _numCardsInHand;
+				Debug.Assert(!_cards[curCardIndex].IsEnabled, "Card " + curCardIndex + " is already enabled! Should not be drawn.");
+
+				SetCardActive(curCardIndex, true);
+				_cards[curCardIndex].SetCard(inCardData);
+				_numCardsInHand++;
+				_statTotalCardsDrawn++;
+
+				if (inIsAnimated)
+				{
+					_cards[curCardIndex].AnimateDrawCard(inCardAnimInterval, inOnComplete);
+				}
+				else
+				{
+					if (inOnComplete != null) inOnComplete();
+				}
+
+				_isFirstDrawOfGame = false;
+			}
+			else
+			{
+				// NOTE: If didn't draw card, then just run inOnComplete.
+				if (inOnComplete != null) inOnComplete();
+			}
+		}
+	}
+
+	public void ClearAndSetHand(DTJob.OnCompleteCallback inOnComplete = null, params CardData[] inCardDatas)
+	{
+		int numCardsDrawn = inCardDatas.Length;
+		Debug.Assert(numCardsDrawn <= MAX_CARDS, "Trying to set more cards than max cards in hand.");
+		int cardLimit = Mathf.Min(_numCardsInHand + numCardsDrawn, MAX_CARDS);
+
+		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
+		{
+			SetCardActive(iCard, false);
+		}
+		_numCardsInHand = 0;
+
+		for (int iCard = 0; iCard < cardLimit; iCard++)
+		{
+			SetCardActive(iCard, true);
+			_cards[iCard].SetCard(inCardDatas[iCard]);
+			_numCardsInHand++;
 		}
 
-		_isFirstDrawOfGame = false;
+		if (inOnComplete != null) inOnComplete();
 	}
 
 	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
@@ -426,30 +453,26 @@ public class CardManager : MonoBehaviour
 			}
 			else
 			{
-				CardData newClonedData = cardData;
-				newClonedData.isCloned = true;
+				CardData clonesData = cardData;
+				clonesData.isCloned = true;
 
-				CardData[] cloneCardDatas = new CardData[_numToClone];
-				for (int iClone = 0; iClone < _numToClone; iClone++)
-				{
-					cloneCardDatas[iClone] = newClonedData;
-				}
-
-				_isCloneMode = false;
-				_numToClone = -1;
 				ToggleControlBlocker(true);
 
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{
 					DungeonCardDrawer.EnableEndTurnBtn();
-					DrawCard(() =>
-					{
-						ToggleControlBlocker(false);
-					},
-					true,
-					cloneCardDatas);
+					CloneCard(
+						_numToClone,
+						clonesData,
+						() => {
+							ToggleControlBlocker(false);
+						},
+						true);
 				});
+
+				_isCloneMode = false;
+				_numToClone = -1;
 			}
 		}
 		#region NormalExecutionMode
