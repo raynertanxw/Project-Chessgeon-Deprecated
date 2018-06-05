@@ -29,11 +29,11 @@ public class Card : MonoBehaviour
 	private CardData _cardData;
 	public CardData CardData { get { return _cardData; } }
 
+	private Canvas _cardCanvas = null;
 	private RectTransform _cardRectTransform = null;
 	private Image _cardFrontImage = null;
 	private Image _cardBackImage = null;
 	private Image _clonedIconImage = null;
-	private Image _cardRaycastTargetImage = null;
 	private CardManager _cardManager = null;
 	private int _cardIndex = -1;
 	public int CardIndex { get { return _cardIndex; } }
@@ -66,11 +66,11 @@ public class Card : MonoBehaviour
 
 	private void Awake()
 	{
+		_cardCanvas = gameObject.GetComponent<Canvas>();
 		_cardRectTransform = gameObject.GetComponent<RectTransform>();
 		_cardBackImage = transform.GetChild(0).GetComponent<Image>();
 		_cardFrontImage = transform.GetChild(1).GetComponent<Image>();
 		_clonedIconImage = transform.GetChild(1).GetChild(0).GetComponent<Image>();
-		_cardRaycastTargetImage = _cardFrontImage;
 		_cardManager = transform.parent.parent.GetComponent<CardManager>();
 		SetEnabled(true);
 	}
@@ -269,9 +269,7 @@ public class Card : MonoBehaviour
 	public void SetEnabled(bool inIsEnabled)
 	{
 		_isEnabled = inIsEnabled;
-		_cardFrontImage.enabled = inIsEnabled;
-		_cardBackImage.enabled = inIsEnabled;
-		_cardRaycastTargetImage.raycastTarget = inIsEnabled;
+		_cardCanvas.enabled = inIsEnabled;
 
 		if (inIsEnabled && CardData.isCloned)
 		{
