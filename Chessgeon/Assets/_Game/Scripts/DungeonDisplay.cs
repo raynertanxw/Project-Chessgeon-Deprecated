@@ -10,8 +10,11 @@ public class DungeonDisplay : MonoBehaviour
 
 	[SerializeField] private Dungeon _dungeon = null;
 
-	[Header("Canvas UI Elements")]
+	[Header("Damage Canvas")]
+	[SerializeField] private Canvas _damageCanvas = null;
 	[SerializeField] private Image _damageFrame = null;
+
+	[Header("Phase Animation Canvas")]
 	[SerializeField] private Image _darkOverlay = null;
 	[SerializeField] private RectTransform _phaseBannerTop = null;
 	[SerializeField] private RectTransform _phaseBannerBtm = null;
@@ -36,7 +39,9 @@ public class DungeonDisplay : MonoBehaviour
 
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
+			Debug.Assert(_damageCanvas != null, "_damageCanvas is not assigned.");
 			Debug.Assert(_damageFrame != null, "_damageFrame is not assigned.");
+
 			Debug.Assert(_darkOverlay != null, "_darkOverlay is not assigned.");
 			Debug.Assert(_phaseBannerTop != null, "_phaseBannerTop is not assigned.");
 			Debug.Assert(_phaseBannerBtm != null, "_phaseBannerBtm is not assigned.");
@@ -88,7 +93,7 @@ public class DungeonDisplay : MonoBehaviour
 
 	private void SetDamageFrameVisible(bool inIsVisible)
 	{
-		_damageFrame.enabled = inIsVisible;
+		_damageCanvas.enabled = inIsVisible;
 	}
 
 	private void SetDamageFrameAlpha(float inAlpha)
