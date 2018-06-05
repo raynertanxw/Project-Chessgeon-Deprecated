@@ -112,9 +112,10 @@ public class Enemy : MonoBehaviour
 		_meshRenderer.enabled = false;
 
 		DTJob.OnCompleteCallback onComplete = null;
-		if (_enemyManager.CheckIfFloorCleared())
+		if (_enemyManager.Dungeon.CheckClearFloorConditions())
 		{
-			onComplete = _enemyManager.Dungeon.ClearFloor;
+			DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
+			onComplete = () => { _enemyManager.Dungeon.TryClearFloor(); };
 			//DungeonCardDrawer.SetEndTurnBtnForLoading();
 		}
 		_enemyManager.Dungeon.CardManager.DrawCard(1, onComplete);

@@ -10,6 +10,7 @@ public class MorphyController : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 	public Dungeon Dungeon { get { return _dungeon; } }
 	public Vector2Int MorphyPos { get { return _morphy.Pos; } }
+	public Vector2Int TargetPos { get; private set; }
 
 	private Morphy _morphy = null;
 
@@ -69,7 +70,7 @@ public class MorphyController : MonoBehaviour
 		_morphy.TransformBackToMorphy();
 		_dungeon.TileManager.HideAllSelectableTiles();
 		_dungeon.CardManager.ToggleControlBlocker(false);
-		if (_dungeon.EnemyManager.CheckIfFloorCleared()) DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
+		if (_dungeon.CheckClearFloorConditions()) DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
 		else DungeonCardDrawer.EnableEndTurnBtn();
 	}
 
@@ -114,6 +115,7 @@ public class MorphyController : MonoBehaviour
 	private void MoveTo(Vector2Int inTargetPos)
 	{
 		Debug.Assert(_dungeon.CurrentFloor.IsValidMorphyMove(inTargetPos), inTargetPos + " is not a valid Morphy move!");
+		TargetPos = inTargetPos;
 
 		_numMovesLeft--;
 		Utils.GenericVoidDelegate onFinishMove;
@@ -121,7 +123,11 @@ public class MorphyController : MonoBehaviour
 		{
 			onFinishMove = () =>
 			{
-				if (_dungeon.EnemyManager.CheckIfFloorCleared()) _numMovesLeft = 0;
+				if (_dungeon.CheckClearFloorConditions())
+				{
+					DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
+					_numMovesLeft = 0;
+				}
 				else ShowPossibleMoves();
 			};
 		}
@@ -133,9 +139,9 @@ public class MorphyController : MonoBehaviour
 			};
 		}
 
-		if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs))
+		if (_dungeon.TryClearFloor())
 		{
-			_dungeon.ClearFloor();
+			Debug.Assert(_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Stairs), "Floor cleared but inTargetPos is not stairs.");
 		}
 		else if (_dungeon.CurrentFloor.IsTileOfState(inTargetPos, Floor.eTileState.Enemy))
 		{

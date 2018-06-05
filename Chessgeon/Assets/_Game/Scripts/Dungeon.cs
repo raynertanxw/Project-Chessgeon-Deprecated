@@ -31,8 +31,8 @@ public class Dungeon : MonoBehaviour
 	public int MaxY { get { return DUNGEON_MAX_Y; } }
 	public int MaxNumEnemies { get { return DUNGEON_MAX_ENEMIES; } }
 
-	private bool _isFloorCleared = false;
-	public bool IsFloorCleared { get { return _isFloorCleared; } }
+	private bool _floorCleared = false;
+	public bool FloorCleared { get { return _floorCleared; } }
 	private bool _hasGameStarted = false;
 	public bool HasGameStarted { get { return _hasGameStarted; } }
 	private bool _isPlayersTurn = false;
@@ -80,7 +80,7 @@ public class Dungeon : MonoBehaviour
 	private void GenerateNewFloor()
 	{
 		// Do resetting.
-		_isFloorCleared = false;
+		_floorCleared = false;
 
 		_floor.GenerateAndSetupNewFloor(DUNGEON_MIN_X, DUNGEON_MAX_X, DUNGEON_MIN_Y, DUNGEON_MAX_Y, _floorNum);
 
@@ -96,7 +96,7 @@ public class Dungeon : MonoBehaviour
 		_cardManager.ResetForNewGame();
 
 		_floorNum = 1;
-		_isFloorCleared = false;
+		_floorCleared = false;
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
@@ -113,7 +113,7 @@ public class Dungeon : MonoBehaviour
 		_cardManager.ResetFromPrevRunData(inPrevRunData);
 
 		_floorNum = inPrevRunData.FloorNum;
-		_isFloorCleared = false;
+		_floorCleared = false;
 
 		_hasGameStarted = true;
 		_isPlayersTurn = false;
@@ -150,10 +150,36 @@ public class Dungeon : MonoBehaviour
 		Debug.Log("Game Saved!");
 	}
 
-	public void ClearFloor()
+	public bool CheckClearFloorConditions()
 	{
-		_isFloorCleared = true;
-		if (OnFloorCleared != null) OnFloorCleared();
+		// Check if Morphy is at floor.
+		if (CurrentFloor.IsTileOfState(MorphyController.TargetPos, Floor.eTileState.Stairs))
+		{
+			return true;
+		}
+
+		// Check is all enemies are killed.
+		if (EnemyManager.GetArrayOfAliveEnemies().Length < 1)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public bool TryClearFloor()
+	{
+		bool conditionsMet = CheckClearFloorConditions();
+		if (conditionsMet)
+		{
+			_floorCleared = true;
+            if (OnFloorCleared != null) OnFloorCleared();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public void ProgressToNextFloor(DTJob.OnCompleteCallback inOnComplete = null)
@@ -382,14 +408,14 @@ public class Dungeon : MonoBehaviour
 			{
 				// TODO: Any cleanup needed?
 				_dungeonFSM.Dungeon._isPlayersTurn = false;
-				if (_dungeonFSM.Dungeon.IsFloorCleared) DungeonCardDrawer.SetEndTurnBtnForLoading();
+				if (_dungeonFSM.Dungeon.FloorCleared) DungeonCardDrawer.SetEndTurnBtnForLoading();
 				else DungeonCardDrawer.SetEndTurnBtnForEnemyPhase();
 				_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(true);
 			}
 
 			public override void ExecuteState()
 			{
-				if (_dungeonFSM.Dungeon.IsFloorCleared) _dungeonFSM.ChangeState(eDungeonState.EndFloor);
+				if (_dungeonFSM.Dungeon.FloorCleared) _dungeonFSM.ChangeState(eDungeonState.EndFloor);
 			}
 		}
 		private class DungeonStateEnemyPhase : DungeonState

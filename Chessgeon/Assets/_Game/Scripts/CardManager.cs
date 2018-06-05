@@ -565,7 +565,8 @@ public class CardManager : MonoBehaviour
 						_dungeon.MorphyController.Smash(cardData.cardTier, () =>
 						{
 							ToggleControlBlocker(false);
-							DungeonCardDrawer.EnableEndTurnBtn();
+							if (_dungeon.CheckClearFloorConditions()) DungeonCardDrawer.DisableEndTurnBtn("CheckClearFloorCondition is true");
+							else DungeonCardDrawer.EnableEndTurnBtn();
 						});
 					};
 					break;
