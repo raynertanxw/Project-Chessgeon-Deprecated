@@ -15,11 +15,14 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Image _damageFrame = null;
 
 	[Header("Phase Animation Canvas")]
+	[SerializeField] private Canvas _phaseAnimCanvas = null;
 	[SerializeField] private Image _darkOverlay = null;
 	[SerializeField] private RectTransform _phaseBannerTop = null;
 	[SerializeField] private RectTransform _phaseBannerBtm = null;
 	[SerializeField] private Text _phaseBannerTextTop = null;
 	[SerializeField] private Text _phaseBannerTextBtm = null;
+
+	[Header("HUD")]
 	[SerializeField] private Text _comboText = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
@@ -42,6 +45,7 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_damageCanvas != null, "_damageCanvas is not assigned.");
 			Debug.Assert(_damageFrame != null, "_damageFrame is not assigned.");
 
+			Debug.Assert(_phaseAnimCanvas != null, "_phaseAnimCanvas is not assigned.");
 			Debug.Assert(_darkOverlay != null, "_darkOverlay is not assigned.");
 			Debug.Assert(_phaseBannerTop != null, "_phaseBannerTop is not assigned.");
 			Debug.Assert(_phaseBannerBtm != null, "_phaseBannerBtm is not assigned.");
@@ -56,7 +60,7 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
 			Debug.Assert(!_nextFloorCanvasGrp.interactable, "_nextFloorCanvasGrp has no interactable elements. Should not be interactable");
 
-			SetDarkOverlayVisible(false);
+			SetPhaseAnimCanvasVisible(false);
 			SetDamageFrameVisible(false);
 			HideNextFloorPanel(null, true);
 
@@ -76,9 +80,9 @@ public class DungeonDisplay : MonoBehaviour
 		}
 	}
 
-	private void SetDarkOverlayVisible(bool inIsVisible)
+	private void SetPhaseAnimCanvasVisible(bool inIsVisible)
 	{
-		_darkOverlay.enabled = inIsVisible;
+		_phaseAnimCanvas.enabled = inIsVisible;
 	}
 
 	private void SetDarkOverlayAlpha(float inAlpha)
@@ -143,8 +147,8 @@ public class DungeonDisplay : MonoBehaviour
 		{
 			_instance._phaseAnimPlaying = true;
 
+			_instance.SetPhaseAnimCanvasVisible(true);
 			_instance.SetDarkOverlayAlpha(0.0f);
-			_instance.SetDarkOverlayVisible(true);
 
 			if (inIsPlayersTurn)
 			{
@@ -176,7 +180,7 @@ public class DungeonDisplay : MonoBehaviour
 
 			ActionSequence rotInOutSeq = new ActionSequence(rotateIn, rotInOutDelay, rotateOut);
 			rotInOutSeq.OnActionFinish += () => {
-				_instance.SetDarkOverlayVisible(false);
+				_instance.SetPhaseAnimCanvasVisible(false);
 				_instance._phaseAnimPlaying = false;
 			};
 
