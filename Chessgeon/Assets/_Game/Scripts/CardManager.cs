@@ -196,21 +196,11 @@ public class CardManager : MonoBehaviour
 			}
 		}
 	}
-	public void CloneCard(int inNumToClone, CardData inCloneData, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
+	public void CloneCard(eCardTier inTierToClone, CardData inCloneData, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
 	{
-		for (int iCard = 0; iCard < inNumToClone; iCard++)
-		{
-			if ((iCard + 1) == inNumToClone
-				|| (_numCardsInHand + 1) == MAX_CARDS)
-			{
-				DrawCard(inCloneData, inOnComplete, inIsAnimated, (1 + iCard) * CARD_ANIM_INTERNAL);
-				break;
-			}
-			else
-			{
-				DrawCard(inCloneData, null, inIsAnimated, (1 + iCard) * CARD_ANIM_INTERNAL);
-			}
-		}
+        DrawCard(inCloneData, null, inIsAnimated, CARD_ANIM_INTERNAL);
+		if ((int)inCloneData.cardTier < (int)inTierToClone) inCloneData.cardTier = inTierToClone;
+		DrawCard(inCloneData, inOnComplete, inIsAnimated, 2 * CARD_ANIM_INTERNAL);
 	}
 	public void DrawCard(CardData inCardData, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true, float inCardAnimInterval = CARD_ANIM_INTERNAL)
 	{
@@ -431,7 +421,7 @@ public class CardManager : MonoBehaviour
 	}
 
 	private bool _isCloneMode = false;
-	private int _numToClone = -1;
+	private eCardTier _tierToClone = eCardTier.Normal;
 	private void TryExecuteAndDiscardCard(int inCardIndex)
 	{
 		Card card = _cards[inCardIndex];
@@ -463,14 +453,14 @@ public class CardManager : MonoBehaviour
 				{
 					DungeonCardDrawer.EnableEndTurnBtn();
 					CloneCard(
-						_numToClone,
+						_tierToClone,
 						clonesData,
 						() => {
 							ToggleControlBlocker(false);
 						},
 						true);
 					_isCloneMode = false;
-					_numToClone = -1;
+					_tierToClone = eCardTier.Normal;
 				});
 			}
 		}
@@ -532,21 +522,13 @@ public class CardManager : MonoBehaviour
 
 					if (hasCloneableCards)
 					{
-						int numClones = -1;
-						switch (cardData.cardTier)
-						{
-							case eCardTier.Normal: numClones = 1; break;
-							case eCardTier.Silver: numClones = 2; break;
-							case eCardTier.Gold: numClones = 3; break;
-							default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-						}
+						_tierToClone = cardData.cardTier;
 
 						DungeonCardDrawer.DisableEndTurnBtn("Select a card to clone");
 						postExecuteCardAnimActions += () =>
 						{
 							DungeonPopup.PopSidePopup("Select a card to clone it.");
 							_isCloneMode = true;
-							_numToClone = numClones + 1; // NOTE: 1 is to replace the copy itself.
 						};
 					}
 					else // NOTE: Return the card.
