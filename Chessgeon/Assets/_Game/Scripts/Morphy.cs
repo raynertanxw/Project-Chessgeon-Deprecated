@@ -12,6 +12,7 @@ public class Morphy : MonoBehaviour
 	[SerializeField] private Mesh _meshPieceKnight = null;
 	[SerializeField] private Mesh _meshPieceKing = null;
 
+	[SerializeField] private MorphParticle _morphParticle = null;
 	[SerializeField] private MeshRenderer _shieldMeshRen = null;
 
 	private bool _isInitialised = false;
@@ -37,6 +38,7 @@ public class Morphy : MonoBehaviour
 		Debug.Assert(_meshPieceKnight != null, "_meshPieceKnight is not assigned.");
 		Debug.Assert(_meshPieceKing != null, "_meshPieceKing is not assigned.");
 
+		Debug.Assert(_morphParticle != null, "_morphParticle is not assigned.");
 		Debug.Assert(_shieldMeshRen != null, "_shieldMeshRen is not assigned.");
 
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
@@ -118,6 +120,11 @@ public class Morphy : MonoBehaviour
 		_isInMorphyForm = true;
 		_meshRenderer.material.SetColor("_Color", Color.green);
 		_meshFilter.mesh = _meshMorphy;
+	}
+
+	public void PlayMorphAnimation()
+	{
+		_morphParticle.PlayMorphEffect();
 	}
 
 	public void Hide()

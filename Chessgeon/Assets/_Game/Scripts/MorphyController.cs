@@ -61,6 +61,7 @@ public class MorphyController : MonoBehaviour
 	{
 		_numMovesLeft = inNumMoves;
 		_morphy.SetType(inType);
+		_morphy.PlayMorphAnimation();
 
 		ShowPossibleMoves();
 	}
@@ -68,6 +69,7 @@ public class MorphyController : MonoBehaviour
 	private void TransformBackToMorphy()
 	{
 		_morphy.TransformBackToMorphy();
+		_morphy.PlayMorphAnimation();
 		_dungeon.TileManager.HideAllSelectableTiles();
 		_dungeon.CardManager.ToggleControlBlocker(false);
 		if (_dungeon.CheckClearFloorConditions()) DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
