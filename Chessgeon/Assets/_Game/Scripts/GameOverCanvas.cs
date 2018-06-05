@@ -13,14 +13,11 @@ public class GameOverCanvas : MonoBehaviour
 	[SerializeField] private MenuCanvas _menu = null;
 
 	[Header("UI Components")]
+	[SerializeField] private Canvas _gameOverCanvas = null;
 	[SerializeField] private Button _startOverBtn = null;
 	[SerializeField] private Button _exitBtn = null;
-	[SerializeField] private Text _startOverBtnText = null;
-	[SerializeField] private Text _exitBtnText = null;
-	[SerializeField] private Text _gameOverText = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
-	[SerializeField] private CanvasGroup _gameOverCanvasGrp = null;
 
 	void Awake()
 	{
@@ -33,14 +30,11 @@ public class GameOverCanvas : MonoBehaviour
 			Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 			Debug.Assert(_menu != null, "_menu is not assigned.");
 
+			Debug.Assert(_gameOverCanvas != null, "_gameOverCanvas is not assigned.");
             Debug.Assert(_startOverBtn != null, "_startOverBtn is not assigned.");
             Debug.Assert(_exitBtn != null, "_exitBtn is not assigned.");
-			Debug.Assert(_startOverBtnText != null, "_startOverBtnText is not assigned.");
-			Debug.Assert(_exitBtnText != null, "_exitBtnText is not assigned.");
-			Debug.Assert(_gameOverText != null, "_gameOverText is not assigned.");
 			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
-			Debug.Assert(_gameOverCanvasGrp != null, "_gameOverCanvasGrp is not assigned.");
 
 			EnableGameOverPanel(false);
 
@@ -63,18 +57,7 @@ public class GameOverCanvas : MonoBehaviour
 
 	public static void EnableGameOverPanel(bool inEnabled)
 	{
-		_instance._startOverBtn.interactable = inEnabled;
-		_instance._exitBtn.interactable = inEnabled;
-		_instance._startOverBtnText.enabled = inEnabled;
-		_instance._exitBtnText.enabled = inEnabled;
-
-		_instance._gameOverText.enabled = inEnabled;
-		_instance._scoreText.enabled = inEnabled;
-		_instance._floorText.enabled = inEnabled;
-
-		_instance._gameOverCanvasGrp.interactable = inEnabled;
-		_instance._gameOverCanvasGrp.blocksRaycasts = inEnabled;
-		_instance._gameOverCanvasGrp.alpha = inEnabled ? 1.0f : 0.0f;
+		_instance._gameOverCanvas.enabled = inEnabled;
 	}
 
 	public static void SetGameOverValues(int inScore, int inFloor)

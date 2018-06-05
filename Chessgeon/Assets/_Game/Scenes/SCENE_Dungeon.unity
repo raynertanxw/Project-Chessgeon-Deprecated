@@ -4080,7 +4080,6 @@ GameObject:
   - component: {fileID: 1049800761}
   - component: {fileID: 1049800763}
   - component: {fileID: 1049800762}
-  - component: {fileID: 1049800764}
   m_Layer: 5
   m_Name: Game Over Panel
   m_TagString: Untagged
@@ -4144,17 +4143,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1049800760}
---- !u!225 &1049800764
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1049800760}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1069007441
 GameObject:
   m_ObjectHideFlags: 0
@@ -4263,14 +4251,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dungeon: {fileID: 1426320895}
   _menu: {fileID: 1798507103}
+  _gameOverCanvas: {fileID: 1069007445}
   _startOverBtn: {fileID: 1676504034}
   _exitBtn: {fileID: 1256323818}
-  _startOverBtnText: {fileID: 1296897944}
-  _exitBtnText: {fileID: 1495990764}
-  _gameOverText: {fileID: 199797976}
   _scoreText: {fileID: 2083927323}
   _floorText: {fileID: 1123575586}
-  _gameOverCanvasGrp: {fileID: 1049800764}
 --- !u!1 &1096115958
 GameObject:
   m_ObjectHideFlags: 0
@@ -4994,7 +4979,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1256323819}
   m_OnClick:
     m_PersistentCalls:
@@ -6991,7 +6976,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 1676504035}
   m_OnClick:
     m_PersistentCalls:
