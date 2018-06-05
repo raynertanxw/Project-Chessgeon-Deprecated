@@ -60,6 +60,8 @@ public class Card : MonoBehaviour
 	private readonly Vector3 DRAG_SCALE = new Vector3(2.5f, 2.5f, 1.0f);
 	private const float SCALE_LERP_SPEED = 20.0f;
 	private readonly Vector3 DRAG_HOLDING_POINT_OFFSET = new Vector3(0.0f, 250.0f * Screen.height / 1920.0f, 0.0f);
+	private const int CARD_CANVAS_NORMAL_SORT_ORDER = 3;
+	private const int CARD_CANVAS_DRAGGING_SORT_ORDER = 4;
 
 	public delegate void CardExecutionAction(int inCardIndex);
 	public CardExecutionAction OnCardExecute = null;
@@ -72,6 +74,10 @@ public class Card : MonoBehaviour
 		_cardFrontImage = transform.GetChild(1).GetComponent<Image>();
 		_clonedIconImage = transform.GetChild(1).GetChild(0).GetComponent<Image>();
 		_cardManager = transform.parent.parent.GetComponent<CardManager>();
+
+		Debug.Assert(_cardCanvas.overrideSorting, "Card Canvas should override sorting");
+		_cardCanvas.sortingOrder = CARD_CANVAS_NORMAL_SORT_ORDER;
+
 		SetEnabled(true);
 	}
 
@@ -115,7 +121,7 @@ public class Card : MonoBehaviour
 		if (!_isAnimatingCardExecute)
 		{
 			_isDragging = true;
-			_cardRectTransform.SetAsLastSibling();
+			_cardCanvas.sortingOrder = CARD_CANVAS_DRAGGING_SORT_ORDER;
 
 			_desiredCardWorldPos = _cardRectTransform.position + DRAG_HOLDING_POINT_OFFSET;
 			_desiredCardLocalPos = _cardRectTransform.localPosition;
@@ -130,6 +136,8 @@ public class Card : MonoBehaviour
 		if (_isDragging)
 		{
 			_isDragging = false;
+			_cardCanvas.sortingOrder = CARD_CANVAS_NORMAL_SORT_ORDER;
+
 			Vector3 originZ = _cardRectTransform.localPosition;
 			originZ.z = _originZ;
 			_cardRectTransform.localPosition = originZ;
