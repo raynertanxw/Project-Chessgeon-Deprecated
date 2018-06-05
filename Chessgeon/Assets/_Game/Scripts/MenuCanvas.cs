@@ -24,7 +24,7 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Button _informationDismissBtn = null;
 
 	[Header("Confirmation Panel")]
-	[SerializeField] private GameObject _confirmationPanelObject = null;
+	[SerializeField] private Canvas _confirmationPanelCanvas = null;
 	[SerializeField] private Text _confirmationTitleText = null;
 	[SerializeField] private Text _confirmationInfoText = null;
 	[SerializeField] private Text _confirmationConfirmBtnText = null;
@@ -51,7 +51,7 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_informationInfoText != null, "_informationInfoText is not assigned.");
 		Debug.Assert(_informationDismissBtn != null, "_informationDismissBtn is not assigned.");
 
-		Debug.Assert(_confirmationPanelObject != null, "_confirmationPanelObject is not assigned.");
+		Debug.Assert(_confirmationPanelCanvas != null, "_confirmationPanelCanvas is not assigned.");
 		Debug.Assert(_confirmationTitleText != null, "_confirmationTitleText is not assigned.");
 		Debug.Assert(_confirmationInfoText != null, "_confirmationInfoText is not assigned.");
 		Debug.Assert(_confirmationConfirmBtnText != null, "_confirmationConfirmBtnText is not assigned.");
@@ -107,7 +107,7 @@ public class MenuCanvas : MonoBehaviour
 			DismissConfirmationPanel();
 		});
 
-		_confirmationPanelObject.SetActive(true);
+		_confirmationPanelCanvas.enabled = true;
 	}
 
 	public void CheckBtnAvailability()
@@ -127,7 +127,7 @@ public class MenuCanvas : MonoBehaviour
 
 	private void DismissConfirmationPanel()
 	{
-		_confirmationPanelObject.SetActive(false);
+		_confirmationPanelCanvas.enabled = false;
 	}
 
 	private void TryStartNewGame()
