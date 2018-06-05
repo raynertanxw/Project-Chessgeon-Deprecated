@@ -58,7 +58,6 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_nextFloorCanvas != null, "_nextFloorCanvas is not assigned.");
 			Debug.Assert(_nextFloorCanvasGrp != null, "_nextFloorCanvasGrp is not assigned.");
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
-			Debug.Assert(!_nextFloorCanvasGrp.interactable, "_nextFloorCanvasGrp has no interactable elements. Should not be interactable");
 
 			SetPhaseAnimCanvasVisible(false);
 			SetDamageFrameVisible(false);
@@ -211,7 +210,6 @@ public class DungeonDisplay : MonoBehaviour
 		const float FADE_IN_DURATION = 1.5f;
 		_instance._nextFloorText.text = ChessgeonUtils.FormatFloorString(inFloorNum);
 		_instance._nextFloorCanvasGrp.alpha = 0.0f;
-		_instance._nextFloorCanvasGrp.blocksRaycasts = true;
 		_instance._nextFloorCanvas.enabled = true;
 		CanvasGroupAlphaToAction fadeInCanvas = new CanvasGroupAlphaToAction(_instance._nextFloorCanvasGrp, 1.0f, FADE_IN_DURATION);
 
@@ -223,7 +221,6 @@ public class DungeonDisplay : MonoBehaviour
 		if (inImmediate)
 		{
 			_instance._nextFloorCanvasGrp.alpha = 0.0f;
-			_instance._nextFloorCanvasGrp.blocksRaycasts = false;
 			_instance._nextFloorCanvas.enabled = false;
 
 			if (inOnComplete != null) inOnComplete();
@@ -237,7 +234,6 @@ public class DungeonDisplay : MonoBehaviour
 			fadeOutCanvas.OnActionFinish += () =>
 			{
 				_instance._nextFloorCanvasGrp.alpha = 0.0f;
-				_instance._nextFloorCanvasGrp.blocksRaycasts = false;
 				_instance._nextFloorCanvas.enabled = false;
 			};
 
