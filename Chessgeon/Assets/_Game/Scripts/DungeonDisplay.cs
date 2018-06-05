@@ -20,7 +20,10 @@ public class DungeonDisplay : MonoBehaviour
 	[SerializeField] private Text _comboText = null;
 	[SerializeField] private Text _scoreText = null;
 	[SerializeField] private Text _floorText = null;
-	[SerializeField] private Image _nextFloorPanel = null;
+
+	[Header("Next Floor Canvas")]
+	[SerializeField] private Canvas _nextFloorCanvas = null;
+	[SerializeField] private CanvasGroup _nextFloorCanvasGrp = null;
 	[SerializeField] private Text _nextFloorText = null;
 
 	private void Awake()
@@ -42,8 +45,11 @@ public class DungeonDisplay : MonoBehaviour
 			Debug.Assert(_comboText != null, "_comboText is not assigned.");
 			Debug.Assert(_scoreText != null, "_scoreText is not assigned.");
 			Debug.Assert(_floorText != null, "_floorText is not assigned.");
-			Debug.Assert(_nextFloorPanel != null, "_nextFloorPanel is not assigned.");
+
+			Debug.Assert(_nextFloorCanvas != null, "_nextFloorCanvas is not assigned.");
+			Debug.Assert(_nextFloorCanvasGrp != null, "_nextFloorCanvasGrp is not assigned.");
 			Debug.Assert(_nextFloorText != null, "_nextFloorText is not assigned.");
+			Debug.Assert(!_nextFloorCanvasGrp.interactable, "_nextFloorCanvasGrp has no interactable elements. Should not be interactable");
 
 			SetDarkOverlayVisible(false);
 			SetDamageFrameVisible(false);
@@ -195,34 +201,39 @@ public class DungeonDisplay : MonoBehaviour
 	{
 		const float FADE_IN_DURATION = 1.5f;
 		_instance._nextFloorText.text = ChessgeonUtils.FormatFloorString(inFloorNum);
-		ImageAlphaToAction fadeInPanel = new ImageAlphaToAction(_instance._nextFloorPanel, 1.0f, FADE_IN_DURATION);
-		TextAlphaToAction fadeInText = new TextAlphaToAction(_instance._nextFloorText, 1.0f, FADE_IN_DURATION);
+		_instance._nextFloorCanvasGrp.alpha = 0.0f;
+		_instance._nextFloorCanvasGrp.blocksRaycasts = true;
+		_instance._nextFloorCanvas.enabled = true;
+		CanvasGroupAlphaToAction fadeInCanvas = new CanvasGroupAlphaToAction(_instance._nextFloorCanvasGrp, 1.0f, FADE_IN_DURATION);
 
-		ActionParallel fadeInNextFloorPanel = new ActionParallel(fadeInPanel, fadeInText);
-		if (inOnComplete != null) fadeInNextFloorPanel.OnActionFinish += () => { inOnComplete(); };
-		ActionHandler.RunAction(fadeInNextFloorPanel);
+		if (inOnComplete != null) fadeInCanvas.OnActionFinish += () => { inOnComplete(); };
+		ActionHandler.RunAction(fadeInCanvas);
 	}
 	public static void HideNextFloorPanel(DTJob.OnCompleteCallback inOnComplete = null, bool inImmediate = false)
 	{
 		if (inImmediate)
 		{
-			Color col = _instance._nextFloorPanel.color;
-			col.a = 0.0f;
-			_instance._nextFloorPanel.color = col;
-			col = _instance._nextFloorText.color;
-			col.a = 0.0f;
-			_instance._nextFloorText.color = col;
+			_instance._nextFloorCanvasGrp.alpha = 0.0f;
+			_instance._nextFloorCanvasGrp.blocksRaycasts = false;
+			_instance._nextFloorCanvas.enabled = false;
+
 			if (inOnComplete != null) inOnComplete();
 		}
 		else
 		{
 			const float FADE_OUT_DURATION = 0.75f;
-			ImageAlphaToAction fadeOutPanel = new ImageAlphaToAction(_instance._nextFloorPanel, 0.0f, FADE_OUT_DURATION);
-			TextAlphaToAction fadeOutText = new TextAlphaToAction(_instance._nextFloorText, 0.0f, FADE_OUT_DURATION);
+			
+			_instance._nextFloorCanvasGrp.alpha = 1.0f;
+			CanvasGroupAlphaToAction fadeOutCanvas = new CanvasGroupAlphaToAction(_instance._nextFloorCanvasGrp, 0.0f, FADE_OUT_DURATION);
+			fadeOutCanvas.OnActionFinish += () =>
+			{
+				_instance._nextFloorCanvasGrp.alpha = 0.0f;
+				_instance._nextFloorCanvasGrp.blocksRaycasts = false;
+				_instance._nextFloorCanvas.enabled = false;
+			};
 
-			ActionParallel fadeOutNextFloorPanel = new ActionParallel(fadeOutPanel, fadeOutText);
-			if (inOnComplete != null) fadeOutNextFloorPanel.OnActionFinish += () => { inOnComplete(); };
-			ActionHandler.RunAction(fadeOutNextFloorPanel);
+			if (inOnComplete != null) fadeOutCanvas.OnActionFinish += () => { inOnComplete(); };
+			ActionHandler.RunAction(fadeOutCanvas);
 		}
 	}
 
