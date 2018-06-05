@@ -7106,6 +7106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dungeon: {fileID: 1426320895}
+  _menuMainCanvas: {fileID: 1798507101}
   _continueBtn: {fileID: 629455762}
   _newGameBtn: {fileID: 1236155702}
   _leaderboardBtn: {fileID: 62237375}

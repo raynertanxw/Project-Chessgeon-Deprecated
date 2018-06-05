@@ -9,6 +9,7 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Dungeon _dungeon = null;
 
 	[Header("Main Menu UI")]
+	[SerializeField] private Canvas _menuMainCanvas = null;
 	[SerializeField] private Button _continueBtn = null;
 	[SerializeField] private Button _newGameBtn = null;
 	[SerializeField] private Button _leaderboardBtn = null;
@@ -38,6 +39,7 @@ public class MenuCanvas : MonoBehaviour
 	{
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
+		Debug.Assert(_menuMainCanvas != null, "_menuMainCanvas is not assigned.");
 		Debug.Assert(_continueBtn != null, "_continueBtn is not assigned.");
 		Debug.Assert(_newGameBtn != null, "_newGameBtn is not assigned.");
 		Debug.Assert(_leaderboardBtn != null, "_leaderboardBtn is not assigned.");
@@ -81,8 +83,7 @@ public class MenuCanvas : MonoBehaviour
 		if (_isVisible == inIsVisible) return;
 
 		_isVisible = inIsVisible;
-		gameObject.SetActive(_isVisible);
-		gameObject.SetActive(_isVisible);
+		_menuMainCanvas.enabled = inIsVisible;
 	}
 
 	public void PopupInformation(string inTitleText, string inInfoText)
