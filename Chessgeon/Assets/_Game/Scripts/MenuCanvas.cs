@@ -18,7 +18,7 @@ public class MenuCanvas : MonoBehaviour
 	[SerializeField] private Text _gemText = null;
 
 	[Header("Information Panel")]
-	[SerializeField] private GameObject _informationPanelObject = null;
+	[SerializeField] private Canvas _informationPanelCanvas = null;
 	[SerializeField] private Text _informationTitleText = null;
 	[SerializeField] private Text _informationInfoText = null;
 	[SerializeField] private Button _informationDismissBtn = null;
@@ -46,7 +46,7 @@ public class MenuCanvas : MonoBehaviour
 		Debug.Assert(_infoBtn != null, "_infoBtn is not assigned.");
 		Debug.Assert(_gemText != null, "_gemText is not assigned.");
 
-		Debug.Assert(_informationPanelObject != null, "_informationPanelObject is not assigned.");
+		Debug.Assert(_informationPanelCanvas != null, "_informationPanelCanvas is not assigned.");
 		Debug.Assert(_informationTitleText != null, "_informationTitleText is not assigned.");
 		Debug.Assert(_informationInfoText != null, "_informationInfoText is not assigned.");
 		Debug.Assert(_informationDismissBtn != null, "_informationDismissBtn is not assigned.");
@@ -90,7 +90,7 @@ public class MenuCanvas : MonoBehaviour
 		_informationTitleText.text = inTitleText;
 		_informationInfoText.text = inInfoText;
 
-		_informationPanelObject.SetActive(true);
+		_informationPanelCanvas.enabled = true;
 	}
 
 	private void PromptConfirmation(string inTitleText, string inInfoText, Utils.GenericVoidDelegate inOnConfirm, string confirmBtnText = "CONFIRM", string cancelBtnText = "CANCEL")
@@ -122,7 +122,7 @@ public class MenuCanvas : MonoBehaviour
 
 	private void DismissInformationPanel()
 	{
-		_informationPanelObject.SetActive(false);
+		_informationPanelCanvas.enabled = false;
 	}
 
 	private void DismissConfirmationPanel()
