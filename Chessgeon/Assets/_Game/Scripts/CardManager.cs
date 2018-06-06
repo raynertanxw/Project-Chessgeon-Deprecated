@@ -337,6 +337,7 @@ public class CardManager : MonoBehaviour
 		int numPawnCards = 0;
         int numDrawCards = 0;
         int numCloneCards = 0;
+		int numCardsThatAreClones = 0;
         for (int iCard = 0; iCard < activeCards.Length; iCard++)
         {
             CardData curCardData = activeCards[iCard];
@@ -353,6 +354,11 @@ public class CardManager : MonoBehaviour
             {
                 numCloneCards++;
             }
+
+			if (curCardData.isCloned)
+			{
+				numCardsThatAreClones++;
+			}
         }
 
 		bool isMovementCardType = RandomExt.WeightedRandomBoolean(80, 20);
@@ -366,11 +372,12 @@ public class CardManager : MonoBehaviour
 			moveType = (eMoveType)_cardMoveTypeRandomPool.GetRandomEntry();
 			_cardMoveTypeRandomPool.ResetAllWeightsToInitial();
 		}
-		else
+		else // Non movement.
 		{
 			if (numDrawCards > 0) _nonMovementCardTypeRandomPool.ChangeWeight((int)eCardType.Draw, 0);
 
-			if (numCloneCards > 0) _nonMovementCardTypeRandomPool.ChangeWeight((int)eCardType.Clone, 0);
+			if (numCloneCards > 0
+				|| numCardsThatAreClones > 0) _nonMovementCardTypeRandomPool.ChangeWeight((int)eCardType.Clone, 0);
 
 			cardType = (eCardType)_nonMovementCardTypeRandomPool.GetRandomEntry();
 			_nonMovementCardTypeRandomPool.ResetAllWeightsToInitial();
