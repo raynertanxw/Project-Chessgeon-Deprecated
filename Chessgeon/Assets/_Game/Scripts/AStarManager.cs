@@ -36,7 +36,7 @@ public class AStarManager
 		openBHList.Clear();
 		openBHList.Insert(_startNode);
 		_startNode.nodePathCost = 0.0f;
-		_startNode.totalCost = gridStratergy.HeuristicEstimatedCost(_startNode, _goalNode);// + _startNode.nodePathCost;
+		_startNode.totalCost = gridStratergy.HeuristicEstimatedCost(_startNode, _goalNode, _startNode);// + _startNode.nodePathCost;
 
 		closedList.Clear();
 		Node curNode = null;
@@ -67,7 +67,7 @@ public class AStarManager
 					float totalPathCost = curNode.nodePathCost + cost;
 
 					//Estimated cost for neighbour node to the goal
-					float neighbourNodeEstCost = gridStratergy.HeuristicEstimatedCost(curNeighbourNode, _goalNode);
+					float neighbourNodeEstCost = gridStratergy.HeuristicEstimatedCost(curNeighbourNode, _goalNode, _startNode);
 
 					if (openBHList.Contains(curNeighbourNode)) // Calculated before?
 					{

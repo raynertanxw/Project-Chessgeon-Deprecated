@@ -42,7 +42,7 @@ public class GridStratergyKnight : GridStratergy
 		AssignNeighbour(_node.PosX - 2, _node.PosY - 1, _node, eMoveType.Knight);
 	}
 
-	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
+	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode, Node _startNode)
 	{
 		return Mathf.Abs(_curNode.PosX - _goalNode.PosX)
 			+ Mathf.Abs(_curNode.PosY - _goalNode.PosY);

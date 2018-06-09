@@ -463,8 +463,7 @@ public class Dungeon : MonoBehaviour
 					else
 					{
 						_enemiesAlive[_currentEnemyIndex].ProcessTurn(_dungeonFSM._dungeon.CurrentFloor, OnFinishProcessingEnemy);
-#if CHESSGEON_RELEASE
-#else
+#if UNITY_EDITOR
 						_dungeonFSM.Dungeon.DebugEnemy = _enemiesAlive[_currentEnemyIndex];
 #endif
 					}
@@ -489,13 +488,11 @@ public class Dungeon : MonoBehaviour
 	}
 #endregion
 
-#if CHESSGEON_RELEASE
-#else
+#if UNITY_EDITOR
 #region AStarDebug
 	private LinkedList<Node> _debugPath = null;
-	private eMoveType _debugMoveType = eMoveType.Knight;
+	//private eMoveType _debugMoveType = eMoveType.Knight;
 	public Enemy DebugEnemy = null;
-	private Enemy FailedEnemy = null;
 	private void OnDrawGizmos()
 	{
 		if (!_hasGameStarted)
@@ -551,7 +548,6 @@ public class Dungeon : MonoBehaviour
 			if (_debugPath == null) needRecalc = true;
 			else if (((Node)_debugPath.First.Value).PosX != DebugEnemy.Pos.x ||
 				((Node)_debugPath.First.Value).PosY != DebugEnemy.Pos.y) needRecalc = true;
-			//if (DebugEnemy == FailedEnemy) needRecalc = false;
 				
 			if (needRecalc)
 			{
@@ -559,10 +555,6 @@ public class Dungeon : MonoBehaviour
 					CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
 					CurrentFloor,
 					DebugEnemy.Type);
-			}
-			if (_debugPath == null)
-			{
-				FailedEnemy = DebugEnemy;
 			}
 		}
 

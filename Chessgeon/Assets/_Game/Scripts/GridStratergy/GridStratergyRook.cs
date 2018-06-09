@@ -25,7 +25,7 @@ public class GridStratergyRook : GridStratergy
 		AssignNeighbour(_node.PosX + 1, _node.PosY, _node, eMoveType.Rook);
 	}
 
-	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
+	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode, Node _startNode)
 	{
 		return Mathf.Abs(_curNode.PosX - _goalNode.PosX)
 			+ Mathf.Abs(_curNode.PosY - _goalNode.PosY);

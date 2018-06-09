@@ -150,7 +150,8 @@ public class Enemy : MonoBehaviour
 					Vector2Int curMove = possibleMoves[iMove];
 					GridStratergy gridStratergy = inCurrentFloor.GridStratergy[(int)Type];
 					Node targetPosNode = inCurrentFloor.Nodes[curMove.x, curMove.y];
-					int curHeuristic = gridStratergy.HeuristicEstimatedCost(targetPosNode, morphyNode);
+					Node startPosNode = inCurrentFloor.Nodes[Pos.x, Pos.y];
+					int curHeuristic = gridStratergy.HeuristicEstimatedCost(targetPosNode, morphyNode, startPosNode);
 					if (curHeuristic < closestHeuristic)
 					{
 						closestMoveIndex = iMove;
@@ -172,12 +173,13 @@ public class Enemy : MonoBehaviour
 		}
 		else
 		{
-			if (Type == eMoveType.Rook)
+			if (Type == eMoveType.Rook ||
+				Type == eMoveType.Bishop)
 			{
 				LinkedListNode<Node> nextLLNode = pathToMorphy.First.Next;
 				Node nextNode = (Node)nextLLNode.Value;
 				Vector2Int nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
-				Vector2Int rookDiff = nextPos - Pos;
+				Vector2Int directionDiff = nextPos - Pos;
 
 				Vector2Int oldPos = nextPos;
 				while (true)
@@ -194,7 +196,7 @@ public class Enemy : MonoBehaviour
 						nextNode = (Node)nextLLNode.Value;
 						nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
 
-						if ((nextPos - oldPos) != rookDiff) // NOTE: Change in direction.
+						if ((nextPos - oldPos) != directionDiff) // NOTE: Change in direction.
 						{
 							MoveTo(oldPos, inCurrentFloor, inOnTurnExecuted);
 							break;

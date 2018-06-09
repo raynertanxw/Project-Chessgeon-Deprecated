@@ -25,12 +25,15 @@ public class GridStratergyBishop : GridStratergy
 		AssignNeighbour(_node.PosX - 1, _node.PosY - 1, _node, eMoveType.Bishop);
 	}
 
-	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
+	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode, Node _startNode)
 	{
-		int diffX = Mathf.Abs(_curNode.PosX - _goalNode.PosX);
-		int diffY = Mathf.Abs(_curNode.PosY - _goalNode.PosY);
-		// We add 1 more if < 4 neighbours because if direct to center, tend to have less turns? (thoery).
-		return ((2 * Mathf.Abs(diffX - diffY)) + _curNode.neighbours.Length < 4 ? 1 : 0);
+		int goalDiffX = Mathf.Abs(_curNode.PosX - _goalNode.PosX);
+		int goalDiffY = Mathf.Abs(_curNode.PosY - _goalNode.PosY);
+
+		int startDiffX = Mathf.Abs(_curNode.PosX - _startNode.PosX);
+		int startDiffY = Mathf.Abs(_curNode.PosY - _startNode.PosY);
+
+		return (Mathf.Abs(goalDiffX - goalDiffY) + Mathf.Abs(startDiffX - startDiffY));
 
 		// NOTE: Old code. Doesn't encourage less turns.
 		//return Mathf.Abs(_curNode.PosX - _goalNode.PosX)
@@ -52,34 +55,113 @@ public class GridStratergyBishop : GridStratergy
 
 		if (inMoveEntity == eMoveEntity.Enemy)
 		{
-			// TODO: Add in direction until hit obstacle. See below?
+			Vector2Int potentialPos;
+
+			// Top Right
+			potentialPos = inPos;
+			while (true)
 			{
-				Vector2Int upLeft = inPos;
-				upLeft.y += 1;
-				upLeft.x += -1;
-				if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(upLeft)) possibleMoves.Add(upLeft);
+				potentialPos.x += 1;
+				potentialPos.y += 1;
+				if (_floor.IsValidEnemyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Morphy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
 			}
 
+			// Bottom Right
+			potentialPos = inPos;
+			while (true)
 			{
-				Vector2Int upRight = inPos;
-				upRight.y += 1;
-				upRight.x += 1;
-				if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(upRight)) possibleMoves.Add(upRight);
+				potentialPos.x += 1;
+				potentialPos.y -= 1;
+				if (_floor.IsValidEnemyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Morphy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
 			}
 
+			// Top Left
+			potentialPos = inPos;
+			while (true)
 			{
-				Vector2Int downLeft = inPos;
-				downLeft.y += -1;
-				downLeft.x += -1;
-				if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(downLeft)) possibleMoves.Add(downLeft);
+				potentialPos.x -= 1;
+				potentialPos.y += 1;
+				if (_floor.IsValidEnemyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Morphy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
 			}
 
+			// Bottom Left
+			potentialPos = inPos;
+			while (true)
 			{
-				Vector2Int downRight = inPos;
-				downRight.y += -1;
-				downRight.x += 1;
-				if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(downRight)) possibleMoves.Add(downRight);
+				potentialPos.x -= 1;
+				potentialPos.y -= 1;
+				if (_floor.IsValidEnemyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Morphy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
 			}
+
+
+			// NOTE: Old code.
+			//{
+			//	Vector2Int upLeft = inPos;
+			//	upLeft.y += 1;
+			//	upLeft.x += -1;
+			//	if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(upLeft)) possibleMoves.Add(upLeft);
+			//}
+
+			//{
+			//	Vector2Int upRight = inPos;
+			//	upRight.y += 1;
+			//	upRight.x += 1;
+			//	if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(upRight)) possibleMoves.Add(upRight);
+			//}
+
+			//{
+			//	Vector2Int downLeft = inPos;
+			//	downLeft.y += -1;
+			//	downLeft.x += -1;
+			//	if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(downLeft)) possibleMoves.Add(downLeft);
+			//}
+
+			//{
+			//	Vector2Int downRight = inPos;
+			//	downRight.y += -1;
+			//	downRight.x += 1;
+			//	if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(downRight)) possibleMoves.Add(downRight);
+			//}
 		}
 		else if (inMoveEntity == eMoveEntity.Morphy)
 		{

@@ -21,7 +21,7 @@ public class GridStratergyPawn : GridStratergy
 		AssignNeighbour(_node.PosX, _node.PosY - 1, _node, eMoveType.Pawn);
 	}
 
-	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
+	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode, Node _startNode)
 	{
 		return Mathf.Abs(_curNode.PosY - _goalNode.PosY);
 	}

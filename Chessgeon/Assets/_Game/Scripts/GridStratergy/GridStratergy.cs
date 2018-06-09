@@ -9,7 +9,7 @@ public abstract class GridStratergy
 	protected Floor _floor;
 
 	public abstract void GetNSetNodeNeighbours(Node _node);
-	public abstract int HeuristicEstimatedCost(Node _curNode, Node _goalNode);
+	public abstract int HeuristicEstimatedCost(Node _curNode, Node _goalNode, Node _startNode);
 	public abstract int NeighbourPathCost(Node _curNode, Node _neighbourNode);
 	public enum eMoveEntity { Morphy, Enemy }
 	public abstract Vector2Int[] CalcPossibleMoves(Vector2Int inPos, eMoveEntity inMoveEntity);
