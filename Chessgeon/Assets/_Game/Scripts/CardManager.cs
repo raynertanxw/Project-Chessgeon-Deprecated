@@ -107,11 +107,11 @@ public class CardManager : MonoBehaviour
 		}
 		bool isControlBlockerEnabled =
 			(!_dungeon.IsPlayersTurn ||
-			_dungeon.FloorCleared ||
 			_isCardInUse ||
 			_isAnimatingReog ||
 			areAnyCardsAnimating ||
 			_dungeon.IsPlayerTurnStartAnimPlaying ||
+			_dungeon.FloorCleared ||
 			_dungeon.CheckClearFloorConditions());
 
 		if (_controlBlocker.raycastTarget != isControlBlockerEnabled) _controlBlocker.raycastTarget = isControlBlockerEnabled;
