@@ -111,14 +111,7 @@ public class Enemy : MonoBehaviour
 		// TODO: Points and stuff.
 		_meshRenderer.enabled = false;
 
-		DTJob.OnCompleteCallback onComplete = null;
-		if (_enemyManager.Dungeon.CheckClearFloorConditions())
-		{
-			DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
-			onComplete = () => { _enemyManager.Dungeon.TryClearFloor(); };
-			//DungeonCardDrawer.SetEndTurnBtnForLoading();
-		}
-		_enemyManager.Dungeon.CardManager.DrawCard(1, onComplete);
+		_enemyManager.Dungeon.CardManager.DrawCard(1, () => { _enemyManager.Dungeon.TryClearFloor(); });
 	}
 
 	public void Remove()

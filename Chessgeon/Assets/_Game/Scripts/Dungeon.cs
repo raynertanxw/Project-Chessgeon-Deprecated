@@ -125,7 +125,7 @@ public class Dungeon : MonoBehaviour
 		_dungeonFSM.SetToStartFloorState();
 	}
 
-	public void PlayerEndTurn()
+	public void EndPlayerTurn()
 	{
 		if (OnEndPlayerTurn != null) OnEndPlayerTurn();
 	}
@@ -393,7 +393,6 @@ public class Dungeon : MonoBehaviour
 
 				DTJob enableEndTurnBtnJob = new DTJob((OnJobComplete) =>
 				{
-					DungeonCardDrawer.EnableEndTurnBtn();
 					_dungeonFSM._dungeon._isPlayerTurnStartAnimPlaying = false;
 					if (OnJobComplete != null) OnJobComplete();
 				}, saveDataJob);

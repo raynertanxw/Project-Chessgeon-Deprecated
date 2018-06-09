@@ -80,12 +80,14 @@ public class CardManager : MonoBehaviour
 		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.Knight, 15);
 		_cardMoveTypeRandomPool.AddEntry((int)eMoveType.King, 15);
 
-        // Chances for non movement card types
+		// Chances for non movement card types
 		_nonMovementCardTypeRandomPool = new RandomExt.RandomPool();
 		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Joker, 30);
 		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Smash, 25);
 		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Clone, 25);
 		_nonMovementCardTypeRandomPool.AddEntry((int)eCardType.Draw, 20);
+
+		_dungeon.OnFloorCleared += () => { _isCardInUse = false; };
     }
 
     private void Start()
@@ -447,12 +449,14 @@ public class CardManager : MonoBehaviour
 	}
 
 	private bool _isCardInUse = false;
+	public bool IsCardInUse { get { return _isCardInUse; } }
 	public void SignalCardUsed()
 	{
 		Debug.Assert(_isCardInUse, "Trying to signal card used when _isCardInUse is false!");
 		_isCardInUse = false;
 	}
 	private bool _isCloneMode = false;
+	public bool IsCloneMode { get { return _isCloneMode; } }
 	private eCardTier _tierToClone = eCardTier.Normal;
 	private void TryExecuteAndDiscardCard(int inCardIndex)
 	{
@@ -484,7 +488,6 @@ public class CardManager : MonoBehaviour
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
 				{
-					DungeonCardDrawer.EnableEndTurnBtn();
 					CloneCard(
 						_tierToClone,
 						clonesData,
@@ -507,7 +510,6 @@ public class CardManager : MonoBehaviour
 			{
 				case eCardType.Joker:
 				{
-					DungeonCardDrawer.DisableEndTurnBtn("Finish all movements first");
                     int numMoves = -1;
                     eMoveType moveType = eMoveType.Pawn;
                     switch (cardData.cardTier)
@@ -556,7 +558,6 @@ public class CardManager : MonoBehaviour
 					{
 						_tierToClone = cardData.cardTier;
 
-						DungeonCardDrawer.DisableEndTurnBtn("Select a card to clone");
 						postExecuteCardAnimActions += () =>
 						{
 							DungeonPopup.PopSidePopup("Select a card to clone it.");
@@ -574,14 +575,11 @@ public class CardManager : MonoBehaviour
 				}
 				case eCardType.Smash:
 				{
-					DungeonCardDrawer.DisableEndTurnBtn("Wait for Smash animation to finish!");
 					postExecuteCardAnimActions += () =>
 					{
 						_dungeon.MorphyController.Smash(cardData.cardTier, () =>
 						{
 							_isCardInUse = false;
-							if (_dungeon.CheckClearFloorConditions()) DungeonCardDrawer.DisableEndTurnBtn("CheckClearFloorCondition is true");
-							else DungeonCardDrawer.EnableEndTurnBtn();
 						});
 					};
 					break;
@@ -597,18 +595,15 @@ public class CardManager : MonoBehaviour
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 
-					DungeonCardDrawer.DisableEndTurnBtn("Wait for draw card animation");
                     postExecuteCardAnimActions += () => { DrawCard(numDraws, () => 
 						{
 							_isCardInUse = false;
-							DungeonCardDrawer.EnableEndTurnBtn();
 						});
 					};
 					break;
 				}
 				case eCardType.Movement:
 				{
-					DungeonCardDrawer.DisableEndTurnBtn("Finish all movements first");
 					int numMoves = -1;
 					switch (cardData.cardTier)
 					{

@@ -47,7 +47,7 @@ public class DungeonCardDrawer : MonoBehaviour
 			Debug.Assert(_endTurnBtnText != null, "_endTurnBtnText is not assigned.");
 
 			gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(Constants.DESIGN_WIDTH, Utils.GetDesignHeightFromDesignWidth(Constants.DESIGN_WIDTH));
-			_endTurnBtn.onClick.AddListener(() => { TryInvokeOnPlayerEndTurn(); });
+			_endTurnBtn.onClick.AddListener(_dungeon.EndPlayerTurn);
 		}
 		else if (_instance != this)
 		{
@@ -63,31 +63,18 @@ public class DungeonCardDrawer : MonoBehaviour
 		}
 	}
 
-	string _endTurnBlockedReason = string.Empty;
-	private void TryInvokeOnPlayerEndTurn()
+	private void Update()
 	{
-		if (!_endTurnBtn.interactable)
-		{
-			// TODO: Isn't this kind of redundant???
-			DungeonPopup.PopMiddlePopup(_endTurnBlockedReason);
-		}
-		else
-		{
-			DisableEndTurnBtn("Enemy Phase in Progress!");
-			_dungeon.OnEndPlayerTurn();
-		}
-	}
+		bool cannotEndTurn =
+			(!_dungeon.IsPlayersTurn ||
+			_cardManager.IsCardInUse ||
+			_cardManager.IsCloneMode ||
+			_dungeon.IsPlayerTurnStartAnimPlaying ||
+			_dungeon.FloorCleared ||
+			_dungeon.CheckClearFloorConditions());
+		bool canEndTurn = !cannotEndTurn;
 
-	public static void DisableEndTurnBtn(string inBlockReason)
-	{
-		_instance._endTurnBtn.interactable = false;
-		_instance._endTurnBlockedReason = inBlockReason;
-	}
-
-	public static void EnableEndTurnBtn()
-	{
-		_instance._endTurnBtn.interactable = true;
-		_instance._endTurnBlockedReason = string.Empty;
+		if (_endTurnBtn.interactable != canEndTurn) _endTurnBtn.interactable = canEndTurn;
 	}
 
 	public static void SetEndTurnBtnForPlayerPhase()

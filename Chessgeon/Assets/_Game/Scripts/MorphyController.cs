@@ -72,8 +72,6 @@ public class MorphyController : MonoBehaviour
 		_morphy.PlayMorphAnimation();
 		_dungeon.TileManager.HideAllSelectableTiles();
 		_dungeon.CardManager.SignalCardUsed();
-		if (_dungeon.CheckClearFloorConditions()) DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
-		else DungeonCardDrawer.EnableEndTurnBtn();
 	}
 
 	private void SetHealth(int inHealth)
@@ -127,7 +125,6 @@ public class MorphyController : MonoBehaviour
 			{
 				if (_dungeon.CheckClearFloorConditions())
 				{
-					DungeonCardDrawer.DisableEndTurnBtn("Floor cleared: All enemies on floor defeated.");
 					_numMovesLeft = 0;
 				}
 				else ShowPossibleMoves();
