@@ -13,6 +13,7 @@ public class LoadingScreen : MonoBehaviour
 	void Awake()
 	{
 		Application.targetFrameRate = 60;
+		Input.multiTouchEnabled = false;
 
 		Debug.Assert(_loadingScreenAudioListener != null, "_loadingScreenAudioListener is not assigned.");
         Debug.Assert(_loadingBarFill != null, "_loadingBarFill is not assigned.");
