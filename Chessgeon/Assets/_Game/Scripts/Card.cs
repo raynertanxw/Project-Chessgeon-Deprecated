@@ -66,6 +66,17 @@ public class Card : MonoBehaviour
 	public delegate void CardExecutionAction(int inCardIndex);
 	public CardExecutionAction OnCardExecute = null;
 
+	public bool IsAnimating
+	{
+		get
+		{
+			return
+				_isAnimatingCardDraw ||
+				_isAnimatingCardExecute ||
+				_isAnimatingMoveToOtherCardPos;
+		}
+	}
+
 	private void Awake()
 	{
 		_cardCanvas = gameObject.GetComponent<Canvas>();
@@ -95,9 +106,7 @@ public class Card : MonoBehaviour
 
 	private void Update()
 	{
-		if (!_isAnimatingCardDraw &&
-			!_isAnimatingMoveToOtherCardPos &&
-			!_isAnimatingCardExecute)
+		if (!IsAnimating)
 		{
 			if (_isDragging)
 			{

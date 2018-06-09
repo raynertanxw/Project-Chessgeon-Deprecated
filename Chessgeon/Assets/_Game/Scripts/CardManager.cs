@@ -64,7 +64,6 @@ public class CardManager : MonoBehaviour
 		_dungeon.OnEndPlayerTurn += OnPlayerEndTurn;
 		_dungeon.OnFloorCleared += () => {
 			_isFirstDrawOfFloor = true;
-			ToggleControlBlocker(true);
 		};
 
 		// Set up RandomPools.
@@ -92,8 +91,29 @@ public class CardManager : MonoBehaviour
     private void Start()
     {
 		CardUseYThreshold = _cardUseThresholdPoint.position.y;
-		ToggleControlBlocker(true);
 		HideAllCards();
+	}
+
+	private void Update()
+	{
+		bool areAnyCardsAnimating = false;
+		for (int iCard = 0; iCard < MAX_CARDS; iCard++)
+		{
+			if (_cards[iCard].IsAnimating)
+			{
+				areAnyCardsAnimating = true;
+				break;
+			}
+		}
+		bool isControlBlockerEnabled =
+			(!_dungeon.IsPlayersTurn ||
+			_dungeon.FloorCleared ||
+			_isCardInUse ||
+			_isAnimatingReog ||
+			areAnyCardsAnimating ||
+			_dungeon.CheckClearFloorConditions());
+
+		if (_controlBlocker.raycastTarget != isControlBlockerEnabled) _controlBlocker.raycastTarget = isControlBlockerEnabled;
 	}
 
 	private void HideAllCards()
@@ -170,12 +190,6 @@ public class CardManager : MonoBehaviour
 		}
 
 		return _cardFrontSprites[spriteIndex];
-	}
-
-	public void ToggleControlBlocker(bool inBlocked)
-	{
-		Debug.Log("BLOCKED: " + inBlocked);
-		_controlBlocker.raycastTarget = inBlocked;
 	}
 
 	private const float CARD_ANIM_INTERNAL = 0.2f;
@@ -259,6 +273,7 @@ public class CardManager : MonoBehaviour
 		if (inOnComplete != null) inOnComplete();
 	}
 
+	private bool _isAnimatingReog = false;
 	private bool ReorganiseCards(DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimated = true)
 	{
 		const float REORG_ANIM_DURATION = 0.6f;
@@ -304,12 +319,15 @@ public class CardManager : MonoBehaviour
 		{
 			if (inIsAnimated)
 			{
-				if (inOnComplete != null)
+				_isAnimatingReog = true;
+
+				DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
+				delayedExecution.OnActionFinish += () =>
 				{
-					DelayAction delayedExecution = new DelayAction(REORG_ANIM_DURATION);
-					delayedExecution.OnActionFinish += () => { inOnComplete(); };
-					ActionHandler.RunAction(delayedExecution);
-				}
+					_isAnimatingReog = false;
+					if (inOnComplete != null) inOnComplete();
+				};
+				ActionHandler.RunAction(delayedExecution);
 			}
 			else
 			{
@@ -427,12 +445,20 @@ public class CardManager : MonoBehaviour
 		_numCardsUsedInTurn = 0;
 	}
 
+	private bool _isCardInUse = false;
+	public void SignalCardUsed()
+	{
+		Debug.Assert(_isCardInUse, "Trying to signal card used when _isCardInUse is false!");
+		_isCardInUse = false;
+	}
 	private bool _isCloneMode = false;
 	private eCardTier _tierToClone = eCardTier.Normal;
 	private void TryExecuteAndDiscardCard(int inCardIndex)
 	{
+		Debug.Assert(!_isCardInUse, "Trying to use card when _isCardinUse is already true!");
 		Card card = _cards[inCardIndex];
 		CardData cardData = card.CardData;
+		_isCardInUse = true;
 
 		if (_isCloneMode)
 		{
@@ -446,14 +472,13 @@ public class CardManager : MonoBehaviour
 
 			if (cloneIsCardRejected)
 			{
+				_isCardInUse = false;
 				card.ReturnCardAndUnexecute(cloneRejectReasonStr);
 			}
 			else
 			{
 				CardData clonesData = cardData;
 				clonesData.isCloned = true;
-
-				ToggleControlBlocker(true);
 
 				_numCardsInHand--;
 				_cards[inCardIndex].AnimateCardExecuteAndDisable(() =>
@@ -463,7 +488,7 @@ public class CardManager : MonoBehaviour
 						_tierToClone,
 						clonesData,
 						() => {
-							ToggleControlBlocker(false);
+							_isCardInUse = false;
 						},
 						true);
 					_isCloneMode = false;
@@ -481,7 +506,6 @@ public class CardManager : MonoBehaviour
 			{
 				case eCardType.Joker:
 				{
-					ToggleControlBlocker(true);
 					DungeonCardDrawer.DisableEndTurnBtn("Finish all movements first");
                     int numMoves = -1;
                     eMoveType moveType = eMoveType.Pawn;
@@ -536,24 +560,25 @@ public class CardManager : MonoBehaviour
 						{
 							DungeonPopup.PopSidePopup("Select a card to clone it.");
 							_isCloneMode = true;
+							_isCardInUse = false;
 						};
 					}
 					else // NOTE: Return the card.
 					{
 						isCardRejected = true;
+						_isCardInUse = false;
 						rejectReasonStr = "No Cloneable Cards";
 					}
 	                break;
 				}
 				case eCardType.Smash:
 				{
-					ToggleControlBlocker(true);
 					DungeonCardDrawer.DisableEndTurnBtn("Wait for Smash animation to finish!");
 					postExecuteCardAnimActions += () =>
 					{
 						_dungeon.MorphyController.Smash(cardData.cardTier, () =>
 						{
-							ToggleControlBlocker(false);
+							_isCardInUse = false;
 							if (_dungeon.CheckClearFloorConditions()) DungeonCardDrawer.DisableEndTurnBtn("CheckClearFloorCondition is true");
 							else DungeonCardDrawer.EnableEndTurnBtn();
 						});
@@ -571,44 +596,17 @@ public class CardManager : MonoBehaviour
 						default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
 					}
 
-					ToggleControlBlocker(true);
 					DungeonCardDrawer.DisableEndTurnBtn("Wait for draw card animation");
                     postExecuteCardAnimActions += () => { DrawCard(numDraws, () => 
 						{
-							ToggleControlBlocker(false);
+							_isCardInUse = false;
 							DungeonCardDrawer.EnableEndTurnBtn();
 						});
 					};
 					break;
 				}
-				//case eCardType.Shield:
-				//{
-				//	int numShield = -1;
-				//	switch (cardData.cardTier)
-				//	{
-				//		case eCardTier.Normal: numShield = 1; break;
-				//		case eCardTier.Silver: numShield = 2; break;
-				//		case eCardTier.Gold: numShield = 3; break;
-				//		default: Debug.LogError("case: " + cardData.cardTier.ToString() + " has not been handled."); break;
-				//	}
-				//	ToggleControlBlocker(true);
-				//	postExecuteCardAnimActions += () =>
-				//		{
-				//			float focusDuration = 0.6f;
-				//			if (DungeonCamera.LastRequestedTileToFocus == _dungeon.MorphyController.MorphyPos) focusDuration = 0.01f;
-				//			DungeonCamera.FocusCameraToTile(_dungeon.MorphyController.MorphyPos, focusDuration, () =>
-				//			{
-				//				_dungeon.MorphyController.AwardShield(numShield, () =>
-				//				{
-				//					ToggleControlBlocker(false);
-				//				});
-				//			});
-				//		};
-				//	break;
-				//}
 				case eCardType.Movement:
 				{
-					ToggleControlBlocker(true);
 					DungeonCardDrawer.DisableEndTurnBtn("Finish all movements first");
 					int numMoves = -1;
 					switch (cardData.cardTier)
@@ -631,6 +629,7 @@ public class CardManager : MonoBehaviour
 
 			if (isCardRejected)
 			{
+				_isCardInUse = false;
 				card.ReturnCardAndUnexecute(rejectReasonStr);
 			}
 			else

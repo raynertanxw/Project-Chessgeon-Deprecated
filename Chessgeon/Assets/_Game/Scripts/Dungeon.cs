@@ -390,7 +390,6 @@ public class Dungeon : MonoBehaviour
 
 				DTJob enableEndTurnBtnJob = new DTJob((OnJobComplete) =>
 				{
-					_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(false);
 					DungeonCardDrawer.EnableEndTurnBtn();
 					if (OnJobComplete != null) OnJobComplete();
 				}, saveDataJob);
@@ -410,7 +409,6 @@ public class Dungeon : MonoBehaviour
 				_dungeonFSM.Dungeon._isPlayersTurn = false;
 				if (_dungeonFSM.Dungeon.FloorCleared) DungeonCardDrawer.SetEndTurnBtnForLoading();
 				else DungeonCardDrawer.SetEndTurnBtnForEnemyPhase();
-				_dungeonFSM.Dungeon.CardManager.ToggleControlBlocker(true);
 			}
 
 			public override void ExecuteState()
