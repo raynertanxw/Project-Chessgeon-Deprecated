@@ -161,7 +161,7 @@ public class Dungeon : MonoBehaviour
 		}
 
 		// Check is all enemies are killed.
-		if (EnemyManager.GetArrayOfAliveEnemies().Length < 1)
+		if (EnemyManager.NumEnemiesAlive < 1)
 		{
 			return true;
 		}

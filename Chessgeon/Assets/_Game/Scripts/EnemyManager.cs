@@ -9,6 +9,8 @@ public class EnemyManager : MonoBehaviour
 	public Dungeon Dungeon { get { return _dungeon; } }
 
 	private Enemy[] _enemies = null;
+	private int _numEnemiesAlive = 0;
+	public int NumEnemiesAlive { get { return _numEnemiesAlive; } }
 
 	private void Awake()
 	{
@@ -69,6 +71,15 @@ public class EnemyManager : MonoBehaviour
 		}
 
 		return enemiesAlive.ToArray();
+	}
+
+	public void UpdateAliveCount(bool inAlive)
+	{
+		if (inAlive) _numEnemiesAlive++;
+		else  _numEnemiesAlive--;
+
+		Debug.Assert(_numEnemiesAlive <= _dungeon.MaxNumEnemies, "_numEnemiesAlive is more than the maxnimum number of enemies!");
+		Debug.Assert(_numEnemiesAlive > -1, "_numEnemiesAlive is less than 0!");
 	}
 
 	public void ResetForNewGame()

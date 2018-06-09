@@ -16,8 +16,8 @@ public class Enemy : MonoBehaviour
 	private EnemyManager _enemyManager = null;
 
 	private bool _isInitialised = false;
-	private bool _isAlive = false;
-	public bool IsAlive { get { return _isAlive; } }
+	private bool _isAliveOnlyForGetter = false;
+	public bool IsAlive { get { return _isAliveOnlyForGetter; } }
 	private eMoveType _type = eMoveType.Pawn;
 	public eMoveType Type { get { return _type; } }
 	private Vector2Int _pos;
@@ -49,6 +49,7 @@ public class Enemy : MonoBehaviour
 
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		_isAliveOnlyForGetter = false;
 
 		Debug.Assert(_isInitialised == false, "_isInitialised is true. Did you try to call Awake() twice, or after Initialise()?");
 	}
@@ -63,6 +64,15 @@ public class Enemy : MonoBehaviour
 		{
 			_enemyManager = inEnemyManager;
 			// TODO: Next time all the set up for particle systems and such? If any and all, needing to turn them off, etc.
+		}
+	}
+
+	private void SetIsAlive(bool inIsAlive)
+	{
+		if (inIsAlive != _isAliveOnlyForGetter)
+		{
+			_isAliveOnlyForGetter = inIsAlive;
+			_enemyManager.UpdateAliveCount(inIsAlive);
 		}
 	}
 
@@ -107,7 +117,7 @@ public class Enemy : MonoBehaviour
 
 	public void Kill()
 	{
-		_isAlive = false;
+		SetIsAlive(false);
 		// TODO: Points and stuff.
 		_meshRenderer.enabled = false;
 
@@ -116,13 +126,13 @@ public class Enemy : MonoBehaviour
 
 	public void Remove()
 	{
-		_isAlive = false;
+		SetIsAlive(false);
 		_meshRenderer.enabled = false;
 	}
 
 	public void SpawnAt(Vector2Int inSpawnPos)
 	{
-		_isAlive = true;
+		SetIsAlive(true);
 		_pos = inSpawnPos;
 		transform.position = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);
 		_meshRenderer.enabled = true;
