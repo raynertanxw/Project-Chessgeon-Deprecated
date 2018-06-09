@@ -37,6 +37,8 @@ public class Dungeon : MonoBehaviour
 	public bool HasGameStarted { get { return _hasGameStarted; } }
 	private bool _isPlayersTurn = false;
 	public bool IsPlayersTurn { get { return _isPlayersTurn; } }
+	private bool _isPlayerTurnStartAnimPlaying = false;
+	public bool IsPlayerTurnStartAnimPlaying { get { return _isPlayerTurnStartAnimPlaying; } }
 
 	private int _floorNum = -1;
 	private Floor _floor = null;
@@ -355,6 +357,7 @@ public class Dungeon : MonoBehaviour
 			public override void OnEnterState()
 			{
 				_dungeonFSM._dungeon._isPlayersTurn = true;
+				_dungeonFSM._dungeon._isPlayerTurnStartAnimPlaying = true;
 				DungeonCardDrawer.SetEndTurnBtnForPlayerPhase();
 				DTJob playPhaseAnimJob = new DTJob((OnJobComplete) => {
 					DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn, OnJobComplete); });
@@ -391,6 +394,7 @@ public class Dungeon : MonoBehaviour
 				DTJob enableEndTurnBtnJob = new DTJob((OnJobComplete) =>
 				{
 					DungeonCardDrawer.EnableEndTurnBtn();
+					_dungeonFSM._dungeon._isPlayerTurnStartAnimPlaying = false;
 					if (OnJobComplete != null) OnJobComplete();
 				}, saveDataJob);
 
@@ -399,6 +403,7 @@ public class Dungeon : MonoBehaviour
 					DungeonCamera.FocusCameraToTile(_dungeonFSM.Dungeon.MorphyController.MorphyPos, 1.0f, OnJobComplete);
 				}, playPhaseAnimJob);
 
+				// NOTE: The on all jobs complete for this one seems to lag??? So we don't use it.
 				DTJobList startPlayerPhase = new DTJobList(null, turnDrawJob, focusOnPlayerJob, saveDataJob, enableEndTurnBtnJob);
 				startPlayerPhase.ExecuteAllJobs();
 			}
