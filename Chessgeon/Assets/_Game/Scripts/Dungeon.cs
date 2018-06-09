@@ -142,7 +142,8 @@ public class Dungeon : MonoBehaviour
 		GameOverCanvas.EnableGameOverPanel(true);
 
 		// TODO: Save scores and stuff delete save data cause there is no more game to continue.
-		// Which will also prevent them from cheating.
+		// TODO: Process game over stats and saving etc.
+		GameData.DeletePreviousRunData();
 	}
 
 	public void SaveGame()
