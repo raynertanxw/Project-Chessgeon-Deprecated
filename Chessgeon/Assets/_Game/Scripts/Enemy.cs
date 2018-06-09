@@ -22,22 +22,6 @@ public class Enemy : MonoBehaviour
 	public eMoveType Type { get { return _type; } }
 	private Vector2Int _pos;
 	public Vector2Int Pos { get { return _pos; } }
-	public enum eTurnAction { Move, Attack, Nothing }
-	public struct EnemyTurnAction
-	{
-		public Enemy Enemy { get; private set; }
-		public eTurnAction TurnAction { get; private set; }
-		public Vector2Int TargetPos { get; private set; }
-		public Utils.GenericVoidDelegate OnComplete { get; private set; }
-
-		public EnemyTurnAction(Enemy inEnemy, eTurnAction inTurnAction, Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnComplete)
-		{
-			Enemy = inEnemy;
-			TurnAction = inTurnAction;
-			TargetPos = inTargetPos;
-			OnComplete = inOnComplete;
-		}
-	}
 
 	private void Awake()
 	{
@@ -140,7 +124,7 @@ public class Enemy : MonoBehaviour
 		// TODO: Reset the health and all that stuff.
 	}
 
-	public EnemyTurnAction ProcessTurn(Floor inCurrentFloor, Utils.GenericVoidDelegate inOnTurnExecuted, Utils.GenericVoidDelegate inOnProcessed)
+	public void ProcessTurn(Floor inCurrentFloor, Utils.GenericVoidDelegate inOnTurnExecuted)
 	{
 		Node morphyNode = inCurrentFloor.Nodes[inCurrentFloor.MorphyPos.x, inCurrentFloor.MorphyPos.y];
 		LinkedList<Node> pathToMorphy = AStarManager.FindPath(
@@ -148,13 +132,13 @@ public class Enemy : MonoBehaviour
 			morphyNode,
 			inCurrentFloor,
 			Type);
-		EnemyTurnAction turnAction;
+
 		if (pathToMorphy == null) // No path to morphy.
 		{
 			Vector2Int[] possibleMoves = inCurrentFloor.GridStratergyForMoveType(Type).CalcPossibleMoves(Pos, GridStratergy.eMoveEntity.Enemy);
 			if (possibleMoves.Length == 0)
 			{
-				turnAction = new EnemyTurnAction(this, eTurnAction.Nothing, new Vector2Int(-1, -1), inOnTurnExecuted);
+				// Do nothing.
 			}
 			else
 			{
@@ -178,78 +162,87 @@ public class Enemy : MonoBehaviour
 				Vector2Int targetPos = possibleMoves[closestMoveIndex];
 				if (targetPos == inCurrentFloor.MorphyPos)
 				{
-					turnAction = new EnemyTurnAction(this, eTurnAction.Attack, targetPos, inOnTurnExecuted);
+					AttackMorphy(targetPos, inOnTurnExecuted);
 				}
 				else
 				{
-					inCurrentFloor.MoveEnemy(Pos, targetPos);
-					turnAction = new EnemyTurnAction(this, eTurnAction.Move, targetPos, inOnTurnExecuted);
+					MoveTo(targetPos, inCurrentFloor, inOnTurnExecuted);
 				}
 			}
 		}
 		else
 		{
-			Node nextNode = (Node)pathToMorphy.First.Next.Value;
-			Vector2Int nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
-			if (nextPos == inCurrentFloor.MorphyPos)
+			if (Type == eMoveType.Rook)
 			{
-				if (Type == eMoveType.Pawn)
+				LinkedListNode<Node> nextLLNode = pathToMorphy.First.Next;
+				Node nextNode = (Node)nextLLNode.Value;
+				Vector2Int nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
+				Vector2Int rookDiff = nextPos - Pos;
+
+				Vector2Int oldPos = nextPos;
+				while (true)
 				{
-					// NOTE: Just do nothing cause there isn't anything it can do except move furthur away.
-					turnAction = new EnemyTurnAction(this, eTurnAction.Nothing, new Vector2Int(-1, -1), inOnTurnExecuted);
-				}
-				else
-				{
-					turnAction = new EnemyTurnAction(this, eTurnAction.Attack, nextPos, inOnTurnExecuted);
+					if (nextPos == inCurrentFloor.MorphyPos)
+					{
+						// TODO: Can pass here the move to pos before attacking. Just pass in the old Pos.
+						AttackMorphy(nextPos, inOnTurnExecuted);
+						break;
+					}
+					else
+					{
+						nextLLNode = nextLLNode.Next;
+						nextNode = (Node)nextLLNode.Value;
+						nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
+
+						if ((nextPos - oldPos) != rookDiff) // NOTE: Change in direction.
+						{
+							MoveTo(oldPos, inCurrentFloor, inOnTurnExecuted);
+							break;
+						}
+						else
+						{
+							// NOTE: Continue until change in direction.
+							oldPos = nextPos;
+						}
+					}
 				}
 			}
 			else
 			{
-				inCurrentFloor.MoveEnemy(Pos, nextPos);
-				turnAction = new EnemyTurnAction(this, eTurnAction.Move, nextPos, inOnTurnExecuted);
+				Node nextNode = (Node)pathToMorphy.First.Next.Value;
+				Vector2Int nextPos = new Vector2Int(nextNode.PosX, nextNode.PosY);
+				if (nextPos == inCurrentFloor.MorphyPos)
+				{
+					if (Type == eMoveType.Pawn)
+					{
+						// NOTE: Just do nothing cause there isn't anything it can do except move furthur away.
+					}
+					else
+					{
+						AttackMorphy(nextPos, inOnTurnExecuted);
+					}
+				}
+				else
+				{
+					MoveTo(nextPos, inCurrentFloor, inOnTurnExecuted);
+				}
 			}
 		}
-
-		if (inOnProcessed != null) inOnProcessed();
-		return turnAction;
 	}
 
-	public void ExecuteTurnAction(EnemyTurnAction inTurnAction)
+    private void MoveTo(Vector2Int inTargetPos, Floor inCurrentFloor, Utils.GenericVoidDelegate inOnCompleteAction = null)
 	{
-		switch (inTurnAction.TurnAction)
-		{
-			case eTurnAction.Move:
-				{
-					AnimateMoveTo(inTurnAction.TargetPos, inTurnAction.OnComplete);
-					break;
-				}
-			case eTurnAction.Attack:
-				{
-					AttackMorphy(inTurnAction.TargetPos, inTurnAction.OnComplete);
-					break;
-				}
-			case eTurnAction.Nothing:
-				{
-					if (inTurnAction.OnComplete != null) inTurnAction.OnComplete();
-					break;
-				}
-			default:
-				{
-					Debug.LogError(inTurnAction.TurnAction.ToString() + " has not been implemented in ExecuteTurnAction.");
-					break;
-				}
-		}
-	}
-    
-    private void AnimateMoveTo(Vector2Int inTargetPos, Utils.GenericVoidDelegate inOnCompleteAction = null)
-	{
-		_pos = inTargetPos;
-		Vector3 targetTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(Pos);
+		Vector3 targetTransformPos = _enemyManager.Dungeon.TileManager.GetTileTransformPosition(inTargetPos);
 		float moveDuration = 0.6f;
 		MoveToAction moveToTarget = new MoveToAction(this.transform, targetTransformPos, moveDuration, Utils.CurveSmoothStep);
 		ActionAfterDelay moveAfterDelay = new ActionAfterDelay(moveToTarget, 0.1f);
 		moveAfterDelay.OnActionStart += () => { DungeonCamera.FocusCameraToTile(inTargetPos, moveDuration); };
 		if (inOnCompleteAction != null) moveAfterDelay.OnActionFinish += inOnCompleteAction;
+		moveAfterDelay.OnActionFinish += () =>
+		{
+			inCurrentFloor.MoveEnemy(Pos, inTargetPos);
+			_pos = inTargetPos;
+		};
 		ActionHandler.RunAction(moveAfterDelay);
 	}
 

@@ -426,7 +426,6 @@ public class Dungeon : MonoBehaviour
 			public DungeonStateEnemyPhase(DungeonFSM inDungeonFSM)
 			{
 				_dungeonFSM = inDungeonFSM;
-				_enemyTurnActions = new List<Enemy.EnemyTurnAction>();
 			}
 
 			public override void OnEnterState()
@@ -434,9 +433,8 @@ public class Dungeon : MonoBehaviour
 				DungeonDisplay.PlayPhaseAnimation(_dungeonFSM._dungeon.IsPlayersTurn,
 					() =>
 					{
-                        _readyToExecuteNextEnemyTurnAction = true;
+                        _readyToProcessNextEnemy = true;
                     });
-				_readyToProcessNextEnemy = true;
 				_enemiesAlive = _dungeonFSM._dungeon.EnemyManager.GetArrayOfAliveEnemies();
 			}
 
@@ -445,16 +443,12 @@ public class Dungeon : MonoBehaviour
 				// TODO: Any cleanup needed?
 				_enemiesAlive = null;
 				_currentEnemyIndex = -1;
-				_readyToProcessNextEnemy = false;
-				_enemyTurnActions.Clear();
 			}
 
 			Enemy[] _enemiesAlive = null;
 			int _currentEnemyIndex = -1;
-            bool _readyToProcessNextEnemy = false;
 
-            List<Enemy.EnemyTurnAction> _enemyTurnActions = null;
-			bool _readyToExecuteNextEnemyTurnAction = false;
+			bool _readyToProcessNextEnemy = false;
 			public override void ExecuteState()
 			{
 				if (_readyToProcessNextEnemy)
@@ -464,76 +458,44 @@ public class Dungeon : MonoBehaviour
 					if (_currentEnemyIndex == _enemiesAlive.Length)
 					{
                         // Finished Processing all the enemies.
-					}
-					else
-					{
-						Enemy.EnemyTurnAction calculatedAction = _enemiesAlive[_currentEnemyIndex].ProcessTurn(_dungeonFSM._dungeon.CurrentFloor, OnFinishEnemyTurnAction, OnFinishProcessingEnemy);
-						if (calculatedAction.TurnAction != Enemy.eTurnAction.Nothing)
-						{
-							_enemyTurnActions.Add(calculatedAction);
-						}
-					}
-				}
-				else if (_readyToExecuteNextEnemyTurnAction)
-				{
-					_readyToExecuteNextEnemyTurnAction = false;
-					if (_enemyTurnActions.Count > 0)
-					{
-						bool moveTurnFound = false;
-						for (int i = 0; i < _enemyTurnActions.Count; i++)
-						{
-							Enemy.EnemyTurnAction curTurnAction = _enemyTurnActions[i];
-							if (curTurnAction.TurnAction == Enemy.eTurnAction.Move)
-							{
-								moveTurnFound = true;
-								curTurnAction.Enemy.ExecuteTurnAction(curTurnAction);
-								_enemyTurnActions.RemoveAt(i);
-								break;
-							}
-						}
-
-						if (!moveTurnFound) // NOTE: Left with attacking moves.
-						{
-							Enemy.EnemyTurnAction curTurnAction = _enemyTurnActions[0];
-							Debug.Assert(curTurnAction.TurnAction == Enemy.eTurnAction.Attack, "No enemy move turn found but first index is also not attack type.");
-							curTurnAction.Enemy.ExecuteTurnAction(curTurnAction);
-						}
-					}
-					else
-					{
 						_dungeonFSM.ChangeState(eDungeonState.PlayerPhase);
+					}
+					else
+					{
+						_enemiesAlive[_currentEnemyIndex].ProcessTurn(_dungeonFSM._dungeon.CurrentFloor, OnFinishProcessingEnemy);
+#if CHESSGEON_RELEASE
+#else
+						_dungeonFSM.Dungeon.DebugEnemy = _enemiesAlive[_currentEnemyIndex];
+#endif
 					}
 				}
 			}
 
 			private void OnFinishProcessingEnemy()
 			{
-			    _readyToProcessNextEnemy = true;
-			}
-
-			private void OnFinishEnemyTurnAction()
-			{
 				// TODO: If the player is killed, immediately transition to the GameOverState.
                 if (_dungeonFSM.Dungeon.MorphyController.IsDead)
                 {
-					_readyToExecuteNextEnemyTurnAction = false;
                     // NOTE: Do nothing. Player is dead so just wait for new game where this whole FSM will be recreated.
+					_readyToProcessNextEnemy = false;
                 }
                 else
                 {
-					_readyToExecuteNextEnemyTurnAction = true;
+					_readyToProcessNextEnemy = true;
                 }
 			}
 		}
-		#endregion
+#endregion
 	}
-	#endregion
+#endregion
 
 #if CHESSGEON_RELEASE
 #else
-	#region AStarDebug
+#region AStarDebug
 	private LinkedList<Node> _debugPath = null;
 	private eMoveType _debugMoveType = eMoveType.Knight;
+	public Enemy DebugEnemy = null;
+	private Enemy FailedEnemy = null;
 	private void OnDrawGizmos()
 	{
 		if (!_hasGameStarted)
@@ -584,6 +546,26 @@ public class Dungeon : MonoBehaviour
 			}
 		}
 
+		if (DebugEnemy != null)
+		{
+			if (_debugPath == null) needRecalc = true;
+			else if (((Node)_debugPath.First.Value).PosX != DebugEnemy.Pos.x ||
+				((Node)_debugPath.First.Value).PosY != DebugEnemy.Pos.y) needRecalc = true;
+			if (DebugEnemy == FailedEnemy) needRecalc = false;
+				
+			if (needRecalc)
+			{
+				_debugPath = AStarManager.FindPath(CurrentFloor.Nodes[DebugEnemy.Pos.x, DebugEnemy.Pos.y],
+					CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
+					CurrentFloor,
+					DebugEnemy.Type);
+			}
+			if (_debugPath == null)
+			{
+				FailedEnemy = DebugEnemy;
+			}
+		}
+
 		if (_debugPath != null)
 		{
 			for (LinkedListNode<Node> j = _debugPath.First; j.Next != null; j = j.Next)
@@ -597,6 +579,6 @@ public class Dungeon : MonoBehaviour
 			}
 		}
 	}
-	#endregion
+#endregion
 #endif
 }
