@@ -15,14 +15,29 @@ public class GridStratergyRook : GridStratergy
 	{
 		_node.neighbours[(int)eMoveType.Rook] = new LinkedList<Node>();
 
-		// Up
-		AssignNeighbour(_node.PosX, _node.PosY + 1, _node, eMoveType.Rook);
-		// Down
-		AssignNeighbour(_node.PosX, _node.PosY - 1, _node, eMoveType.Rook);
-		// Left
-		AssignNeighbour(_node.PosX - 1, _node.PosY, _node, eMoveType.Rook);
-		// Right
-		AssignNeighbour(_node.PosX + 1, _node.PosY, _node, eMoveType.Rook);
+		// Left and Right
+		for (int x = 0; x < _sizeX; x++)
+		{
+			if (x == _node.PosX) continue;
+			AssignNeighbour(x, _node.PosY, _node, eMoveType.Rook);
+		}
+
+		// Up and Down
+		for (int y = 0; y < _sizeY; y++)
+		{
+			if (y == _node.PosY) continue;
+			AssignNeighbour(_node.PosX, y, _node, eMoveType.Rook);
+		}
+
+		// NOTE: Old code where enemy can only move up down left right.
+		//// Up
+		//AssignNeighbour(_node.PosX, _node.PosY + 1, _node, eMoveType.Rook);
+		//// Down
+		//AssignNeighbour(_node.PosX, _node.PosY - 1, _node, eMoveType.Rook);
+		//// Left
+		//AssignNeighbour(_node.PosX - 1, _node.PosY, _node, eMoveType.Rook);
+		//// Right
+		//AssignNeighbour(_node.PosX + 1, _node.PosY, _node, eMoveType.Rook);
 	}
 
 	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
@@ -33,40 +48,114 @@ public class GridStratergyRook : GridStratergy
 
 	public override int NeighbourPathCost(Node _curNode, Node _neighbourNode)
 	{
-		return Mathf.Abs(_curNode.PosX - _neighbourNode.PosX)
-			+ Mathf.Abs(_curNode.PosY - _neighbourNode.PosY);
+		return 1;
+
+		// NOTE: Old code where enemy can only move up down left right.
+		//return Mathf.Abs(_curNode.PosX - _neighbourNode.PosX)
+		//	+ Mathf.Abs(_curNode.PosY - _neighbourNode.PosY);
 	}
 
 	public override Vector2Int[] CalcPossibleMoves(Vector2Int inPos, eMoveEntity inMoveEntity)
 	{
 		List<Vector2Int> possibleMoves = new List<Vector2Int>();
 
+		if (inMoveEntity == eMoveEntity.Enemy)
 		{
-			Vector2Int up = inPos;
-			up.y += 1;
-			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(up)) possibleMoves.Add(up);
-			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(up)) possibleMoves.Add(up);
-		}
+			{
+				Vector2Int up = inPos;
+				up.y += 1;
+				if (_floor.IsValidEnemyMove(up)) possibleMoves.Add(up);
+			}
 
-		{
-			Vector2Int down = inPos;
-			down.y += -1;
-			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(down)) possibleMoves.Add(down);
-			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(down)) possibleMoves.Add(down);
-		}
+			{
+				Vector2Int down = inPos;
+				down.y += -1;
+				if (_floor.IsValidEnemyMove(down)) possibleMoves.Add(down);
+			}
 
-		{
-			Vector2Int left = inPos;
-			left.x += -1;
-			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(left)) possibleMoves.Add(left);
-			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(left)) possibleMoves.Add(left);
-		}
+			{
+				Vector2Int left = inPos;
+				left.x += -1;
+				if (_floor.IsValidEnemyMove(left)) possibleMoves.Add(left);
+			}
 
+			{
+				Vector2Int right = inPos;
+				right.x += 1;
+				if (_floor.IsValidEnemyMove(right)) possibleMoves.Add(right);
+			}
+		}
+		else if (inMoveEntity == eMoveEntity.Morphy)
 		{
-			Vector2Int right = inPos;
-			right.x += 1;
-			if (inMoveEntity == eMoveEntity.Morphy && _floor.IsValidMorphyMove(right)) possibleMoves.Add(right);
-			else if (inMoveEntity == eMoveEntity.Enemy && _floor.IsValidEnemyMove(right)) possibleMoves.Add(right);
+			Vector2Int potentialPos;
+
+			// Up
+			potentialPos = inPos;
+			while (true)
+			{
+				potentialPos.y += 1;
+				if (_floor.IsValidMorphyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
+			}
+
+			// Down
+			potentialPos = inPos;
+			while (true)
+			{
+				potentialPos.y -= 1;
+				if (_floor.IsValidMorphyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
+			}
+
+			// Left
+			potentialPos = inPos;
+			while (true)
+			{
+				potentialPos.x -= 1;
+				if (_floor.IsValidMorphyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
+			}
+
+			// Right
+			potentialPos = inPos;
+			while (true)
+			{
+				potentialPos.x += 1;
+				if (_floor.IsValidMorphyMove(potentialPos))
+				{
+					possibleMoves.Add(potentialPos);
+					if (_floor.IsTileOfState(potentialPos, Floor.eTileState.Enemy) ||
+						_floor.IsTileOfState(potentialPos, Floor.eTileState.Stairs))
+					{
+						break;
+					}
+				}
+				else { break; }
+			}
 		}
 
 		return possibleMoves.ToArray();

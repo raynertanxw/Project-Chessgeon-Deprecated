@@ -24,7 +24,7 @@ public class TileManager : MonoBehaviour
 	public float OriginY { get { return ORIGIN_Y; } }
 
 	private DungeonTile[,] _dungeonTiles = null;
-	private SelectableTile[] _selectableTiles = null;
+	private List<SelectableTile> _selectableTiles = null;
     private Dictionary<int, SelectableTile> _selectableTileDict = null;
 
 	private void Awake()
@@ -48,22 +48,29 @@ public class TileManager : MonoBehaviour
 			}
 		}
 
-		_selectableTiles = new SelectableTile[8];
+		_selectableTiles = new List<SelectableTile>();
         _selectableTileDict = new Dictionary<int, SelectableTile>();
-		for (int iSelectable = 0; iSelectable < _selectableTiles.Length; iSelectable++)
+		for (int iSelectable = 0; iSelectable < (Dungeon.MaxX + Dungeon.MaxY); iSelectable++)
 		{
-			SelectableTile newSelectableTile = GameObject.Instantiate(_prefabSelectableTile).GetComponent<SelectableTile>();
-			newSelectableTile.transform.SetParent(this.transform);
-			newSelectableTile.Initialise(this);
-
-			_selectableTiles[iSelectable] = newSelectableTile;
-            _selectableTileDict.Add(newSelectableTile.gameObject.GetInstanceID(), newSelectableTile);
+			CreateNewSelectableTile();
 		}
 
 		HideAllTiles();
 	}
 
-    RaycastHit _hitInfo;
+	private SelectableTile CreateNewSelectableTile()
+	{
+		SelectableTile newSelectableTile = GameObject.Instantiate(_prefabSelectableTile).GetComponent<SelectableTile>();
+		newSelectableTile.transform.SetParent(this.transform);
+		newSelectableTile.Initialise(this);
+
+		_selectableTiles.Add(newSelectableTile);
+		_selectableTileDict.Add(newSelectableTile.gameObject.GetInstanceID(), newSelectableTile);
+
+		return newSelectableTile;
+	}
+
+	RaycastHit _hitInfo;
     Ray _ray;
     private void Update()
     {
@@ -118,7 +125,7 @@ public class TileManager : MonoBehaviour
 
 	public void HideAllSelectableTiles()
 	{
-		for (int iSelectable = 0; iSelectable < _selectableTiles.Length; iSelectable++)
+		for (int iSelectable = 0; iSelectable < _selectableTiles.Count; iSelectable++)
 		{
 			_selectableTiles[iSelectable].Hide();
 		}
@@ -161,7 +168,14 @@ public class TileManager : MonoBehaviour
 
 		for (int iMove = 0; iMove < inPossibleMoves.Length; iMove++)
 		{
-			_selectableTiles[iMove].SetAt(inPossibleMoves[iMove], inTileSelectedAction);
+			if (iMove < _selectableTiles.Count)
+			{
+				_selectableTiles[iMove].SetAt(inPossibleMoves[iMove], inTileSelectedAction);
+			}
+			else
+			{
+				CreateNewSelectableTile().SetAt(inPossibleMoves[iMove], inTileSelectedAction);
+			}
 		}
 	}
 }
