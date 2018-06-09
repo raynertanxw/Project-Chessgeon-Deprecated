@@ -521,37 +521,37 @@ public class Dungeon : MonoBehaviour
 		}
 
 		bool needRecalc = false;
-		if (_debugPath == null) needRecalc = true;
-		if (needRecalc)
-		{
-			Enemy firstEnemy = null;
-			for (int x = 0; x < CurrentFloor.Size.x; x++)
-			{
-				for (int y = 0; y < CurrentFloor.Size.y; y++)
-				{
-					if (CurrentFloor.IsTileOfState(x, y, Floor.eTileState.Enemy))
-					{
-						firstEnemy = CurrentFloor.GetEnemyAt(x, y);
-						break;
-					}
-				}
-				if (firstEnemy != null) break;
-			}
-			if (firstEnemy != null)
-			{
-				_debugPath = AStarManager.FindPath(CurrentFloor.Nodes[firstEnemy.Pos.x, firstEnemy.Pos.y],
-					CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
-					CurrentFloor,
-					_debugMoveType);
-			}
-		}
+		//if (_debugPath == null) needRecalc = true;
+		//if (needRecalc)
+		//{
+		//	Enemy firstEnemy = null;
+		//	for (int x = 0; x < CurrentFloor.Size.x; x++)
+		//	{
+		//		for (int y = 0; y < CurrentFloor.Size.y; y++)
+		//		{
+		//			if (CurrentFloor.IsTileOfState(x, y, Floor.eTileState.Enemy))
+		//			{
+		//				firstEnemy = CurrentFloor.GetEnemyAt(x, y);
+		//				break;
+		//			}
+		//		}
+		//		if (firstEnemy != null) break;
+		//	}
+		//	if (firstEnemy != null)
+		//	{
+		//		_debugPath = AStarManager.FindPath(CurrentFloor.Nodes[firstEnemy.Pos.x, firstEnemy.Pos.y],
+		//			CurrentFloor.Nodes[CurrentFloor.MorphyPos.x, CurrentFloor.MorphyPos.y],
+		//			CurrentFloor,
+		//			_debugMoveType);
+		//	}
+		//}
 
 		if (DebugEnemy != null)
 		{
 			if (_debugPath == null) needRecalc = true;
 			else if (((Node)_debugPath.First.Value).PosX != DebugEnemy.Pos.x ||
 				((Node)_debugPath.First.Value).PosY != DebugEnemy.Pos.y) needRecalc = true;
-			if (DebugEnemy == FailedEnemy) needRecalc = false;
+			//if (DebugEnemy == FailedEnemy) needRecalc = false;
 				
 			if (needRecalc)
 			{

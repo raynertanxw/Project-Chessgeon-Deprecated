@@ -27,8 +27,14 @@ public class GridStratergyBishop : GridStratergy
 
 	public override int HeuristicEstimatedCost(Node _curNode, Node _goalNode)
 	{
-		return Mathf.Abs(_curNode.PosX - _goalNode.PosX)
-			+ Mathf.Abs(_curNode.PosY - _goalNode.PosY);
+		int diffX = Mathf.Abs(_curNode.PosX - _goalNode.PosX);
+		int diffY = Mathf.Abs(_curNode.PosY - _goalNode.PosY);
+		// We add 1 more if < 4 neighbours because if direct to center, tend to have less turns? (thoery).
+		return ((2 * Mathf.Abs(diffX - diffY)) + _curNode.neighbours.Length < 4 ? 1 : 0);
+
+		// NOTE: Old code. Doesn't encourage less turns.
+		//return Mathf.Abs(_curNode.PosX - _goalNode.PosX)
+		//	+ Mathf.Abs(_curNode.PosY - _goalNode.PosY);
 	}
 
 	public override int NeighbourPathCost(Node _curNode, Node _neighbourNode)
@@ -46,6 +52,7 @@ public class GridStratergyBishop : GridStratergy
 
 		if (inMoveEntity == eMoveEntity.Enemy)
 		{
+			// TODO: Add in direction until hit obstacle. See below?
 			{
 				Vector2Int upLeft = inPos;
 				upLeft.y += 1;
