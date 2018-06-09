@@ -78,7 +78,7 @@ public class MenuCanvas : MonoBehaviour
 		DismissConfirmationPanel();
 	}
 
-	private void SetVisible(bool inIsVisible)
+	public void SetVisible(bool inIsVisible)
 	{
 		if (_isVisible == inIsVisible) return;
 
