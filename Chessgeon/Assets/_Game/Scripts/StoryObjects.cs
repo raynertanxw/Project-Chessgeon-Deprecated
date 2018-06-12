@@ -60,6 +60,18 @@ public class StoryObjects : MonoBehaviour
 		_storyMorphy.PlayMorphAnimation();
 	}
 
+	public void MorphMorphy(eMoveType inMoveType)
+	{
+		_storyMorphy.SetType(inMoveType);
+		_storyMorphy.PlayMorphAnimation();
+	}
+
+	public void TransformMorphyBack()
+	{
+		_storyMorphy.TransformBackToMorphy();
+		_storyMorphy.PlayMorphAnimation();
+	}
+
 	public void SetActive(bool inIsActive)
 	{
 		if (inIsActive && !_isSetUp) SetUpStory();

@@ -109,14 +109,59 @@ public class StoryController : MonoBehaviour
 		_storyCanvas.SetContinueVisible(true);
         while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
+		_storyCanvas.HideTextPanel();
 
 
+		yield return new WaitForSeconds(1.0f);
+		_storyCanvas.ShowTextPanel("TODO:\nSPAWN IN QUEEN");
+		_shouldContinueStory = false;
+		_storyObjects.FocusCameraTo(1.5f, 1.5f, 2.0f, () => { _shouldContinueStory = true; });
+		while (!_shouldContinueStory) { yield return null; }
 		// TODO: Spawn in queen.
+		yield return new WaitForSeconds(0.5f);
+		_storyCanvas.ShowTextPanel("This is Morphy's Queen");
+        _storyCanvas.SetContinueText("Continue");
+		_storyCanvas.SetContinueVisible(true);
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
 
-		// "This is Morphy's Queen"
+		_storyCanvas.ShowTextPanel("Morphy loves his Queen");
+        _storyCanvas.SetContinueText("Continue");
+		_storyCanvas.SetContinueVisible(true);
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
 
-		// "Morphy loves his Queen"
+		_storyCanvas.ShowTextPanel("He uses his powers to protect her.");
+        _storyCanvas.SetContinueText("Continue");
+		_storyCanvas.SetContinueVisible(true);
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
+		_storyCanvas.HideTextPanel();
 
+		yield return new WaitForSeconds(0.5f);
+		_storyObjects.MorphMorphy(eMoveType.Pawn);
+		yield return new WaitForSeconds(0.5f);
+		_storyObjects.MorphMorphy(eMoveType.Rook);
+		yield return new WaitForSeconds(0.5f);
+		_storyObjects.MorphMorphy(eMoveType.Bishop);
+		yield return new WaitForSeconds(0.5f);
+		_storyObjects.MorphMorphy(eMoveType.Knight);
+		yield return new WaitForSeconds(0.5f);
+		_storyObjects.MorphMorphy(eMoveType.King);
+
+		yield return new WaitForSeconds(1.5f);
+		_storyObjects.TransformMorphyBack();
+		yield return new WaitForSeconds(1.0f);
+
+		_storyCanvas.ShowTextPanel("One day...");
+		yield return new WaitForSeconds(1.0f);
+		_storyCanvas.HideTextPanel();
+
+		yield return new WaitForSeconds(1.0f);
 		// "One day..."
 
 		// fly in evil purple orb.
