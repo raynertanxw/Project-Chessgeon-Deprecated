@@ -11093,7 +11093,6 @@ MonoBehaviour:
   _meshPieceKnight: {fileID: 4300000, guid: 6c84511b969d0e84eb187504e6d7ce30, type: 3}
   _meshPieceKing: {fileID: 4300000, guid: 3f7991990a3402f4690013ba553c5a53, type: 3}
   _morphParticle: {fileID: 1233706546}
-  _shieldMeshRen: {fileID: 0}
 --- !u!1 &1305349994
 GameObject:
   m_ObjectHideFlags: 0

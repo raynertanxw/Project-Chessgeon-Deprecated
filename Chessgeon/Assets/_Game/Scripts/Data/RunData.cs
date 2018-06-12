@@ -7,7 +7,6 @@ public struct RunData
 	public const string FILENAME = "PrevRunData";
 
 	public const string HEALTH_KEY = "HEALTH";
-	public const string SHIELD_KEY = "SHIELD";
 
 	public const string FLOOR_NUM_KEY = "FLOOR_NUM";
 	public const string FLOOR_SIZE_KEY = "FLOOR_SIZE";
@@ -27,7 +26,6 @@ public struct RunData
 
 
 	private int _health;
-	private int _shield;
 	// TODO: Score.
 
 	private int _floorNum;
@@ -44,7 +42,6 @@ public struct RunData
 
 
 	public int Health { get { return _health; } }
-	public int Shield { get { return _shield; } }
 
 	public int FloorNum { get { return _floorNum; } }
 	public Vector2Int FloorSize { get { return _floorSize; } }
@@ -60,7 +57,6 @@ public struct RunData
 	public RunData(Dungeon inDungeon)
 	{
 		_health = inDungeon.MorphyController.Health;
-		_shield = inDungeon.MorphyController.Shield;
 
 		// Floor
 		_floorNum = inDungeon.CurrentFloor.FloorNum;
@@ -87,7 +83,6 @@ public struct RunData
 
 	public RunData(
 		int inHealth,
-		int inShield,
 
 		int inFloorNum,
 		Vector2Int inSize,
@@ -101,7 +96,6 @@ public struct RunData
 		CardData[] inCardDatas)
 	{
 		_health = inHealth;
-		_shield = inShield;
 
 		_floorNum = inFloorNum;
 		_floorSize = inSize;

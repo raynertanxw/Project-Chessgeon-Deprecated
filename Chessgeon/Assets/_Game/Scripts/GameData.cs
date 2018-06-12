@@ -72,7 +72,6 @@ public static class GameData
 		using (ES2Writer writer = ES2Writer.Create(RunData.FILENAME))
 		{
 			writer.Write(inPrevRunData.Health, RunData.HEALTH_KEY);
-			writer.Write(inPrevRunData.Shield, RunData.SHIELD_KEY);
 
 			// Floor
 			writer.Write(inPrevRunData.FloorNum, RunData.FLOOR_NUM_KEY);
@@ -163,7 +162,6 @@ public static class GameData
 			// Constructing the previous RunData
 			_prevRunData = new RunData(
 				TryLoad<int>(prevRunData, RunData.HEALTH_KEY),
-				TryLoad<int>(prevRunData, RunData.SHIELD_KEY),
 
 				TryLoad<int>(prevRunData, RunData.FLOOR_NUM_KEY),
 				size,
