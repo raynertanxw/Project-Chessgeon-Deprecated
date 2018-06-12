@@ -46,9 +46,9 @@ public class DungeonTile : MonoBehaviour
 
 			transform.rotation = Quaternion.identity;
 			transform.position = new Vector3( // Note: Y "pos" is used for Z cause it is flat down.
-				_tileManager.OriginX + _tileManager.TileHalfWidth + (_indexX * _tileManager.TileWidth),
+                _tileManager.OriginX + TileManager.TileHalfWidth + (_indexX * TileManager.TileWidth),
 				0.0f,
-				_tileManager.OriginY + _tileManager.TileHalfWidth + (_indexY * _tileManager.TileWidth));
+                _tileManager.OriginY + TileManager.TileHalfWidth + (_indexY * TileManager.TileWidth));
 		}
 	}
 

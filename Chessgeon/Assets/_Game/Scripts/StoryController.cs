@@ -8,24 +8,14 @@ public class StoryController : MonoBehaviour
 
 	[SerializeField] private StoryCanvas _storyCanvas = null;
 	[SerializeField] private MenuCanvas _menuCanvas = null;
-
-	[Header("Non-UI Story Objects")]
-	[SerializeField] private GameObject _nonUIStoryParentObject = null;
-
-    [Header("Other Managers")]
-    [SerializeField] private TileManager _tileManager = null;
-	[SerializeField] private Dungeon _dungeon = null;
+	[SerializeField] private StoryObjects _storyObjects = null;
 
 	private void Awake()
 	{
 		Debug.Assert(_storyCanvas != null, "_storyCanvas is not assigned.");
 		Debug.Assert(_menuCanvas != null, "_menuCanvas it not assigned.");
+		Debug.Assert(_storyObjects != null, "_storyObjects is not assigned.");
 
-		Debug.Assert(_nonUIStoryParentObject != null, "_nonUIStoryParentObject.");
-
-		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
-        Debug.Assert(_tileManager != null, "_tileManager is not assigned.");
-	
 		if (PlayerPrefs.HasKey(STORY_INTRO_VIEWED_KEY))
         {
             DismissStory();
@@ -42,7 +32,7 @@ public class StoryController : MonoBehaviour
 		_menuCanvas.SetVisible(false);
 
 		_storyCanvas.SetupStoryCamFeed();
-		_nonUIStoryParentObject.SetActive(true);
+		_storyObjects.SetActive(true);
 
 		StartCoroutine(StoryCoroutine());
 	}
@@ -54,7 +44,7 @@ public class StoryController : MonoBehaviour
 		_menuCanvas.SetVisible(true);
 
 		_storyCanvas.ReleaseRenderTexture();
-		_nonUIStoryParentObject.SetActive(false);
+		_storyObjects.SetActive(false);
 	}
 
 	public void ContinueStory()
@@ -68,6 +58,7 @@ public class StoryController : MonoBehaviour
 		_shouldContinueStory = false;
 		_storyCanvas.SetContinueVisible(false);
 		_storyCanvas.HideTextPanel();
+		// TODO: Set camera start position.
 
 		yield return new WaitForSeconds(1.0f);
 		_storyCanvas.ShowTextPanel("This...\nis Morphy.");

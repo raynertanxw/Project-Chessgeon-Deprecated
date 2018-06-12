@@ -1575,6 +1575,34 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &261134638
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 261134639}
+  m_Layer: 0
+  m_Name: Tiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &261134639
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 261134638}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1722267320}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &286948803
 GameObject:
   m_ObjectHideFlags: 0
@@ -10983,6 +11011,7 @@ GameObject:
   - component: {fileID: 1301143985}
   - component: {fileID: 1301143987}
   - component: {fileID: 1301143986}
+  - component: {fileID: 1301143988}
   m_Layer: 0
   m_Name: Story Morphy
   m_TagString: Untagged
@@ -10997,7 +11026,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1301143984}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: 5}
+  m_LocalPosition: {x: 2.5, y: 0, z: 6.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1233706545}
@@ -11046,6 +11075,25 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1301143984}
   m_Mesh: {fileID: 4300000, guid: 4a2c387a55bee504ba7d9a309fb6506e, type: 3}
+--- !u!114 &1301143988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1301143984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f7a3d72cb6c6ff4e873772046a39949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshMorphy: {fileID: 4300000, guid: 4a2c387a55bee504ba7d9a309fb6506e, type: 3}
+  _meshPiecePawn: {fileID: 4300000, guid: 453e22ae0db9f4a44bc84c13c7a5d425, type: 3}
+  _meshPieceRook: {fileID: 4300000, guid: 4bee2b03ae3a1cd4ca2da63941539f37, type: 3}
+  _meshPieceBishop: {fileID: 4300000, guid: fa5a89d5273091b408a4f10550e2fd4f, type: 3}
+  _meshPieceKnight: {fileID: 4300000, guid: 6c84511b969d0e84eb187504e6d7ce30, type: 3}
+  _meshPieceKing: {fileID: 4300000, guid: 3f7991990a3402f4690013ba553c5a53, type: 3}
+  _morphParticle: {fileID: 1233706546}
+  _shieldMeshRen: {fileID: 0}
 --- !u!1 &1305349994
 GameObject:
   m_ObjectHideFlags: 0
@@ -13346,6 +13394,7 @@ Transform:
   m_Children:
   - {fileID: 12725986}
   - {fileID: 1301143985}
+  - {fileID: 261134639}
   m_Father: {fileID: 2142037645}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13360,6 +13409,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c27972302e3c243ec8c436ac87c9ffce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _storyCam: {fileID: 12725987}
+  _storyMorphy: {fileID: 1301143988}
+  _dungeon: {fileID: 1426320895}
+  _storyTileParent: {fileID: 261134639}
+  _prefabStoryTile: {fileID: 1221138819492650, guid: aeadc94a38f1a4709ac919ddedbeb338,
+    type: 2}
 --- !u!1 &1743727289
 GameObject:
   m_ObjectHideFlags: 0
@@ -14584,7 +14639,7 @@ Canvas:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2007963699}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 0
   m_Camera: {fileID: 0}
@@ -15064,8 +15119,6 @@ MonoBehaviour:
   _storyCanvas: {fileID: 2007963705}
   _menuCanvas: {fileID: 1798507103}
   _storyObjects: {fileID: 1722267321}
-  _tileManager: {fileID: 974361323}
-  _dungeon: {fileID: 1426320895}
 --- !u!1 &2146081505
 GameObject:
   m_ObjectHideFlags: 0

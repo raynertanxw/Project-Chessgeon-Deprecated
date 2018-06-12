@@ -18,8 +18,8 @@ public class TileManager : MonoBehaviour
 	private const float ORIGIN_X = 0.0f;
 	private const float ORIGIN_Y = 0.0f;
 	
-	public float TileWidth { get { return TILE_WIDTH; } }
-	public float TileHalfWidth { get { return TILE_HALF_WIDTH; } }
+	public static float TileWidth { get { return TILE_WIDTH; } }
+	public static float TileHalfWidth { get { return TILE_HALF_WIDTH; } }
 	public float OriginX { get { return ORIGIN_X; } }
 	public float OriginY { get { return ORIGIN_Y; } }
 
@@ -134,18 +134,14 @@ public class TileManager : MonoBehaviour
 	public void SetUpFloorTerrain()
 	{
 		Debug.Log("Setting up Floor Terrain of size: (" + _dungeon.CurrentFloor.Size.x + ", " + _dungeon.CurrentFloor.Size.y + ")");
-		SetUpFloorTerrain(_dungeon.CurrentFloor);
-	}
 
-	public void SetUpFloorTerrain(Floor inFloor)
-	{
         // Hide ALL tiles.
         HideAllTiles();
 
         // Set all others as basic tiles.
-        for (int y = 0; y < (inFloor.Size.y); y++)
+		for (int y = 0; y < (_dungeon.CurrentFloor.Size.y); y++)
         {
-            for (int x = 0; x < (inFloor.Size.x); x++)
+			for (int x = 0; x < (_dungeon.CurrentFloor.Size.x); x++)
             {
                 _dungeonTiles[x, y].SetType(DungeonTile.eType.Basic);
                 _dungeonTiles[x, y].SetVisible(true);
@@ -153,7 +149,7 @@ public class TileManager : MonoBehaviour
         }
 
         // Set the stairs tile.
-        _dungeonTiles[inFloor.StairsPos.x, inFloor.StairsPos.y].SetType(DungeonTile.eType.Stairs);
+		_dungeonTiles[_dungeon.CurrentFloor.StairsPos.x, _dungeon.CurrentFloor.StairsPos.y].SetType(DungeonTile.eType.Stairs);
 
         // TODO: Obstalces (if any)
 

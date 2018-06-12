@@ -39,7 +39,7 @@ public class Morphy : MonoBehaviour
 		Debug.Assert(_meshPieceKing != null, "_meshPieceKing is not assigned.");
 
 		Debug.Assert(_morphParticle != null, "_morphParticle is not assigned.");
-		Debug.Assert(_shieldMeshRen != null, "_shieldMeshRen is not assigned.");
+		//Debug.Assert(_shieldMeshRen != null, "_shieldMeshRen is not assigned.");
 
 		_meshFilter = gameObject.GetComponent<MeshFilter>();
 		_meshRenderer = gameObject.GetComponent<MeshRenderer>();
