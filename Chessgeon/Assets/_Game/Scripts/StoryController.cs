@@ -45,6 +45,8 @@ public class StoryController : MonoBehaviour
 
 		_storyCanvas.ReleaseRenderTexture();
 		_storyObjects.SetActive(false);
+
+		PlayerPrefs.SetInt(STORY_INTRO_VIEWED_KEY, 1);
 	}
 
 	public void ContinueStory()
@@ -109,9 +111,48 @@ public class StoryController : MonoBehaviour
 		_shouldContinueStory = false;
 
 
+		// TODO: Spawn in queen.
+
+		// "This is Morphy's Queen"
+
+		// "Morphy loves his Queen"
+
+		// "One day..."
+
+		// fly in evil purple orb.
+
+		// "Morphy's Queen got possessed!"
+
+		// purple orb hit Queen and possess.
+		// Morphy do a little shock hop.
+
+		// "Oh no!"
+
+		// " \">:(\" "
+
+		// "Morphy tries to save his Queen!"
+
+		// Queen and Morphy move to end of board.
+		// Queen simply fades into the distance...
+
+		// "But he couldn't save her...
+
+		// " \" :( \" "
+		// " \" :"( \" "
+		// " \" :""""""""( \" "
+		// Camera shake???
+
+		// Stairs nearby pops into existence. (Make sure got some particle effects).
+		
+		// "Oh? What's this!"
+
+		// Morphy move to stairs.
+
+		// "And so, begin's Morphy's pursuit"
+		// "Through the...\n Chessgeons!"
 
 
-
+		_storyCanvas.ShowTextPanel("IN DEVELOPMENT");
 		_storyCanvas.SetContinueText("Let's Begin!");
 		while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
