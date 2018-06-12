@@ -82,6 +82,8 @@ public class StoryController : MonoBehaviour
         while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
 		_storyCanvas.SetContinueVisible(false);
+		_storyCanvas.HideTextPanel();
+		yield return new WaitForSeconds(0.5f);
 
 		_storyCanvas.ShowTextPanel("Say \"Hi Morphy!\"");
 		yield return new WaitForSeconds(0.5f);
@@ -90,7 +92,9 @@ public class StoryController : MonoBehaviour
         while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
 		_storyCanvas.SetContinueVisible(false);
+		_storyCanvas.HideTextPanel();
 
+		yield return new WaitForSeconds(1.0f);
 		_storyCanvas.ShowTextPanel("\"...\"");
 		yield return new WaitForSeconds(1.5f);
         _storyCanvas.SetContinueText("...");
@@ -113,11 +117,12 @@ public class StoryController : MonoBehaviour
 		_storyCanvas.HideTextPanel();
 
 
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(0.5f);
 		_storyCanvas.ShowTextPanel("TODO:\nSPAWN IN QUEEN");
 		_shouldContinueStory = false;
 		_storyObjects.FocusCameraTo(1.5f, 1.5f, 2.0f, () => { _shouldContinueStory = true; });
 		while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
 		// TODO: Spawn in queen.
 		yield return new WaitForSeconds(0.5f);
 		_storyCanvas.ShowTextPanel("This is Morphy's Queen");
@@ -134,7 +139,7 @@ public class StoryController : MonoBehaviour
 		_shouldContinueStory = false;
 		_storyCanvas.SetContinueVisible(false);
 
-		_storyCanvas.ShowTextPanel("He uses his powers to protect her.");
+		_storyCanvas.ShowTextPanel("He uses his\npowers to\nprotect her.");
         _storyCanvas.SetContinueText("Continue");
 		_storyCanvas.SetContinueVisible(true);
         while (!_shouldContinueStory) { yield return null; }
@@ -199,6 +204,7 @@ public class StoryController : MonoBehaviour
 
 		_storyCanvas.ShowTextPanel("IN DEVELOPMENT");
 		_storyCanvas.SetContinueText("Let's Begin!");
+		_storyCanvas.SetContinueVisible(true);
 		while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
 		DismissStory();

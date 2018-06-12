@@ -52,7 +52,7 @@ public class StoryCanvas : MonoBehaviour
 
 	public void ReleaseRenderTexture()
 	{
-		if (_storyRenTex.IsCreated()) _storyRenTex.Release();
+		if (_storyRenTex != null && _storyRenTex.IsCreated()) _storyRenTex.Release();
 	}
 
 	public void SetVisible(bool inIsVisible)

@@ -11,6 +11,10 @@ public class SettingsCanvas : MonoBehaviour
 	[SerializeField] private Canvas _settingCanvas = null;
 	[SerializeField] private Button _closeBtn = null;
 	[SerializeField] private Button _resetTutorialBtn = null;
+	[SerializeField] private Button _watchStoryAgainBtn = null;
+
+	[Header("Others")]
+	[SerializeField] private StoryController _storyCtrl = null;
 
 	private void Awake()
 	{
@@ -19,11 +23,15 @@ public class SettingsCanvas : MonoBehaviour
 		Debug.Assert(_settingCanvas != null, "_settingCanvas is not assigned.");
 		Debug.Assert(_closeBtn != null, "_closeBtn is not assigned.");
 		Debug.Assert(_resetTutorialBtn != null, "_resetTutorialBtn is not assigned.");
+		Debug.Assert(_watchStoryAgainBtn != null, "_watchStoryAgainBtn is not assigned");
+
+		Debug.Assert(_storyCtrl != null, "_storyCtrl is not assigned.");
 
 		_settingsBtn.onClick.AddListener(() => { SetSettingCanvasVisible(true); });
 
 		_closeBtn.onClick.AddListener(() => { SetSettingCanvasVisible(false); });
 		_resetTutorialBtn.onClick.AddListener(ResetTutorial);
+		_watchStoryAgainBtn.onClick.AddListener(WatchStoryAgain);
 
 		SetSettingCanvasVisible(false);
 	}
@@ -37,5 +45,10 @@ public class SettingsCanvas : MonoBehaviour
 	{
 		// TODO: Implement this.
 		Debug.Log("Reset Tutorial");
+	}
+
+	private void WatchStoryAgain()
+	{
+		_storyCtrl.PlayStory();
 	}
 }
