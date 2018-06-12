@@ -39,8 +39,8 @@ public class StoryController : MonoBehaviour
 
 	private void DismissStory()
 	{
-		// TODO: Call start showing menu canvas.
 		_storyCanvas.SetVisible(false);
+		// TODO: Call start showing menu canvas.
 		_menuCanvas.SetVisible(true);
 
 		_storyCanvas.ReleaseRenderTexture();
@@ -58,31 +58,59 @@ public class StoryController : MonoBehaviour
 		_shouldContinueStory = false;
 		_storyCanvas.SetContinueVisible(false);
 		_storyCanvas.HideTextPanel();
+		_storyObjects.FocusCameraTo(-4.5f, -13.5f, 0.0f, null, false);
 		// TODO: Set camera start position.
 
 		yield return new WaitForSeconds(1.0f);
-		_storyCanvas.ShowTextPanel("This...\nis Morphy.");
-
+		_storyCanvas.ShowTextPanel("Hi there!");
+		yield return new WaitForSeconds(2.0f);
+		_storyCanvas.HideTextPanel();
+		_shouldContinueStory = false;
+		_storyObjects.FocusCameraTo(0.5f, 0.5f, 2.0f, () => { _shouldContinueStory = true; });
+		while (!_shouldContinueStory) { yield return null; }
+		
+		yield return new WaitForSeconds(0.5f);
+		_storyObjects.SpawnInMorphy(2.5f, 4.5f);
 		yield return new WaitForSeconds(1.5f);
-		_storyCanvas.SetContinueVisible(true);
+		_storyCanvas.ShowTextPanel("This...\nis Morphy.");
+		yield return new WaitForSeconds(1.5f);
+
 		_storyCanvas.SetContinueText("Continue");
+		_storyCanvas.SetContinueVisible(true);
         while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
 
 		_storyCanvas.ShowTextPanel("Say \"Hi Morphy!\"");
+		yield return new WaitForSeconds(0.5f);
         _storyCanvas.SetContinueText("Hi Morphy!");
+		_storyCanvas.SetContinueVisible(true);
         while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
 
 		_storyCanvas.ShowTextPanel("\"...\"");
+		yield return new WaitForSeconds(1.5f);
         _storyCanvas.SetContinueText("...");
+		_storyCanvas.SetContinueVisible(true);
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
+		_storyCanvas.HideTextPanel();
+
+		yield return new WaitForSeconds(1.5f);
+		_storyCanvas.ShowTextPanel("Sorry,\n");
+		yield return new WaitForSeconds(1.0f);
+		_storyCanvas.ShowTextPanel("Sorry,\nHe's a bit shy");
+		yield return new WaitForSeconds(1.0f);
+        _storyCanvas.SetContinueText("No Worries!");
+		_storyCanvas.SetContinueVisible(true);
         while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
 
-		_storyCanvas.ShowTextPanel("Sorry,\nHe's a bit shy");
-        _storyCanvas.SetContinueText("No Worries!");
-        while (!_shouldContinueStory) { yield return null; }
-		_shouldContinueStory = false;
+
+
+
 
 		_storyCanvas.SetContinueText("Let's Begin!");
 		while (!_shouldContinueStory) { yield return null; }

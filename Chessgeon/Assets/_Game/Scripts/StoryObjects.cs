@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaburuTools;
 
 public class StoryObjects : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class StoryObjects : MonoBehaviour
 		if (!_isSetUp)
 		{
 			GenerateTiles();
+			_storyMorphy.gameObject.SetActive(false);
 		}
 	}
 
@@ -47,9 +49,46 @@ public class StoryObjects : MonoBehaviour
         }
 	}
 
+	public void SpawnInMorphy(float inX, float inY)
+	{
+		_storyMorphy.gameObject.SetActive(true);
+		_storyMorphy.transform.position = new Vector3(
+			inX,
+			_storyMorphy.transform.position.y,
+			inY);
+		_storyMorphy.TransformBackToMorphy();
+		_storyMorphy.PlayMorphAnimation();
+	}
+
 	public void SetActive(bool inIsActive)
 	{
 		if (inIsActive && !_isSetUp) SetUpStory();
 		gameObject.SetActive(inIsActive);
+	}
+
+	public void FocusCameraTo(float inX, float inZ, float inDuration, DTJob.OnCompleteCallback inOnComplete = null, bool inIsAnimted = true)
+	{
+		Vector3 targetPos = new Vector3(
+			inX,
+			_storyCam.transform.position.y,
+			inZ);
+
+		if (inIsAnimted)
+		{
+			MoveToAction moveToFocus = new MoveToAction(_storyCam.transform, targetPos, inDuration, Utils.CurveSmoothStep);
+			if (inOnComplete != null) moveToFocus.OnActionFinish += () => { inOnComplete(); };
+			ActionHandler.RunAction(moveToFocus);
+		}
+		else
+		{
+			_storyCam.transform.position = targetPos;
+		}
+	}
+
+	public void CameraShake(int inNumShakes, float inIntensity, float inDuration)
+	{
+		ShakeAction camShake = new ShakeAction(_storyCam.transform, inNumShakes, inIntensity, Utils.CurveInverseLinear);
+		camShake.SetShakeByDuration(inDuration, inNumShakes);
+		ActionHandler.RunAction(camShake);
 	}
 }
