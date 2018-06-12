@@ -18,15 +18,18 @@ public class StoryController : MonoBehaviour
 		Debug.Assert(_menuCanvas != null, "_menuCanvas it not assigned.");
 
 		Debug.Assert(_nonUIStoryParentObject != null, "_nonUIStoryParentObject.");
+	}
 
+	private void Start()
+	{
 		if (PlayerPrefs.HasKey(STORY_INTRO_VIEWED_KEY))
-		{
-			DismissStory();
-		}
-		else
-		{
-			PlayStory();
-		}
+        {
+            DismissStory();
+        }
+        else
+        {
+            PlayStory();
+        }
 	}
 
 	public void PlayStory()
