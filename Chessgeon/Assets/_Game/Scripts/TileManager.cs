@@ -134,26 +134,30 @@ public class TileManager : MonoBehaviour
 	public void SetUpFloorTerrain()
 	{
 		Debug.Log("Setting up Floor Terrain of size: (" + _dungeon.CurrentFloor.Size.x + ", " + _dungeon.CurrentFloor.Size.y + ")");
+		SetUpFloorTerrain(_dungeon.CurrentFloor);
+	}
 
-		// Hide ALL tiles.
-		HideAllTiles();
+	public void SetUpFloorTerrain(Floor inFloor)
+	{
+        // Hide ALL tiles.
+        HideAllTiles();
 
-		// Set all others as basic tiles.
-		for (int y = 0; y < (_dungeon.CurrentFloor.Size.y); y++)
-		{
-			for (int x = 0; x < (_dungeon.CurrentFloor.Size.x); x++)
-			{
-				_dungeonTiles[x, y].SetType(DungeonTile.eType.Basic);
-				_dungeonTiles[x, y].SetVisible(true);
-			}
-		}
+        // Set all others as basic tiles.
+        for (int y = 0; y < (inFloor.Size.y); y++)
+        {
+            for (int x = 0; x < (inFloor.Size.x); x++)
+            {
+                _dungeonTiles[x, y].SetType(DungeonTile.eType.Basic);
+                _dungeonTiles[x, y].SetVisible(true);
+            }
+        }
 
-		// Set the stairs tile.
-		_dungeonTiles[_dungeon.CurrentFloor.StairsPos.x, _dungeon.CurrentFloor.StairsPos.y].SetType(DungeonTile.eType.Stairs);
+        // Set the stairs tile.
+        _dungeonTiles[inFloor.StairsPos.x, inFloor.StairsPos.y].SetType(DungeonTile.eType.Stairs);
 
-		// TODO: Obstalces (if any)
+        // TODO: Obstalces (if any)
 
-		// TODO: Special tiles (if any)
+        // TODO: Special tiles (if any)
 	}
 
 	public Vector3 GetTileTransformPosition(Vector2Int inPos) { return GetTileTransformPosition(inPos.x, inPos.y); }

@@ -12,16 +12,20 @@ public class StoryController : MonoBehaviour
 	[Header("Non-UI Story Objects")]
 	[SerializeField] private GameObject _nonUIStoryParentObject = null;
 
+    [Header("Other Managers")]
+    [SerializeField] private TileManager _tileManager = null;
+	[SerializeField] private Dungeon _dungeon = null;
+
 	private void Awake()
 	{
 		Debug.Assert(_storyCanvas != null, "_storyCanvas is not assigned.");
 		Debug.Assert(_menuCanvas != null, "_menuCanvas it not assigned.");
 
 		Debug.Assert(_nonUIStoryParentObject != null, "_nonUIStoryParentObject.");
-	}
 
-	private void Start()
-	{
+		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
+        Debug.Assert(_tileManager != null, "_tileManager is not assigned.");
+	
 		if (PlayerPrefs.HasKey(STORY_INTRO_VIEWED_KEY))
         {
             DismissStory();
@@ -39,9 +43,11 @@ public class StoryController : MonoBehaviour
 
 		_storyCanvas.SetupStoryCamFeed();
 		_nonUIStoryParentObject.SetActive(true);
+
+		StartCoroutine(StoryCoroutine());
 	}
 
-	public void DismissStory()
+	private void DismissStory()
 	{
 		// TODO: Call start showing menu canvas.
 		_storyCanvas.SetVisible(false);
@@ -53,8 +59,43 @@ public class StoryController : MonoBehaviour
 
 	public void ContinueStory()
 	{
-		// TODO: Do blocking and all if not yet done.
-		// NOTE: For now just dismiss.
+		_shouldContinueStory = true;
+	}
+
+	private bool _shouldContinueStory = false;
+	private IEnumerator StoryCoroutine()
+	{
+		_shouldContinueStory = false;
+		_storyCanvas.SetContinueVisible(false);
+		_storyCanvas.HideTextPanel();
+
+		yield return new WaitForSeconds(1.0f);
+		_storyCanvas.ShowTextPanel("This...\nis Morphy.");
+
+		yield return new WaitForSeconds(1.5f);
+		_storyCanvas.SetContinueVisible(true);
+		_storyCanvas.SetContinueText("Continue");
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+
+		_storyCanvas.ShowTextPanel("Say \"Hi Morphy!\"");
+        _storyCanvas.SetContinueText("Hi Morphy!");
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+
+		_storyCanvas.ShowTextPanel("\"...\"");
+        _storyCanvas.SetContinueText("...");
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+
+		_storyCanvas.ShowTextPanel("Sorry,\nHe's a bit shy");
+        _storyCanvas.SetContinueText("No Worries!");
+        while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
+
+		_storyCanvas.SetContinueText("Let's Begin!");
+		while (!_shouldContinueStory) { yield return null; }
+		_shouldContinueStory = false;
 		DismissStory();
 	}
 }
