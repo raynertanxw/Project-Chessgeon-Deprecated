@@ -7,6 +7,7 @@ public class StoryObjects : MonoBehaviour
 {
 	[SerializeField] private Camera _storyCam = null;
 	[SerializeField] private Morphy _storyMorphy = null;
+	[SerializeField] private Queen _storyQueen = null;
 
 	[Header("Other Managers")]
 	[SerializeField] private Dungeon _dungeon = null;
@@ -19,6 +20,7 @@ public class StoryObjects : MonoBehaviour
 	{
 		Debug.Assert(_storyCam != null, "_storyCam is not assigned.");
 		Debug.Assert(_storyMorphy != null, "_storyMorphy is not assigned.");
+		Debug.Assert(_storyQueen != null, "_storyQueen is not assigned.");
 
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
@@ -33,6 +35,7 @@ public class StoryObjects : MonoBehaviour
 		{
 			GenerateTiles();
 			_storyMorphy.gameObject.SetActive(false);
+			_storyQueen.gameObject.SetActive(false);
 		}
 	}
 
@@ -70,6 +73,16 @@ public class StoryObjects : MonoBehaviour
 	{
 		_storyMorphy.TransformBackToMorphy();
 		_storyMorphy.PlayMorphAnimation();
+	}
+
+	public void SpawnInQueen(float inX, float inY)
+	{
+		_storyQueen.gameObject.SetActive(true);
+		_storyQueen.transform.position = new Vector3(
+			inX,
+			_storyQueen.transform.position.y,
+			inY);
+		_storyQueen.PlayMorphAnimation();
 	}
 
 	public void SetActive(bool inIsActive)

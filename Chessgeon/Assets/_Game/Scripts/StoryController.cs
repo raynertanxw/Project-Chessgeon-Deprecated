@@ -118,12 +118,11 @@ public class StoryController : MonoBehaviour
 
 
 		yield return new WaitForSeconds(0.5f);
-		_storyCanvas.ShowTextPanel("TODO:\nSPAWN IN QUEEN");
 		_shouldContinueStory = false;
 		_storyObjects.FocusCameraTo(1.5f, 1.5f, 2.0f, () => { _shouldContinueStory = true; });
 		while (!_shouldContinueStory) { yield return null; }
 		_shouldContinueStory = false;
-		// TODO: Spawn in queen.
+		_storyObjects.SpawnInQueen(4.5f, 6.5f);
 		yield return new WaitForSeconds(0.5f);
 		_storyCanvas.ShowTextPanel("This is Morphy's Queen");
         _storyCanvas.SetContinueText("Continue");
