@@ -8,6 +8,7 @@ public class StoryObjects : MonoBehaviour
 	[SerializeField] private Camera _storyCam = null;
 	[SerializeField] private Morphy _storyMorphy = null;
 	[SerializeField] private Queen _storyQueen = null;
+	[SerializeField] private EvilPurpleOrb _evilPurpleOrb = null;
 
 	[Header("Other Managers")]
 	[SerializeField] private Dungeon _dungeon = null;
@@ -16,11 +17,16 @@ public class StoryObjects : MonoBehaviour
 	[SerializeField] private Transform _storyTileParent = null;
 	[SerializeField] private GameObject _prefabStoryTile = null;
 
+	public Transform MorphyTransform { get { return _storyMorphy.transform; } }
+	public Transform QueenTransform { get { return _storyQueen.transform; } }
+	public Transform EvilPurpleOrbTransform { get { return _evilPurpleOrb.transform; } }
+
 	private void Awake()
 	{
 		Debug.Assert(_storyCam != null, "_storyCam is not assigned.");
 		Debug.Assert(_storyMorphy != null, "_storyMorphy is not assigned.");
 		Debug.Assert(_storyQueen != null, "_storyQueen is not assigned.");
+		Debug.Assert(_evilPurpleOrb != null, "_evilPurpleOrb is not assigned.");
 
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
@@ -78,11 +84,33 @@ public class StoryObjects : MonoBehaviour
 	public void SpawnInQueen(float inX, float inY)
 	{
 		_storyQueen.gameObject.SetActive(true);
+		_storyQueen.SetAlpha(1.0f);
 		_storyQueen.transform.position = new Vector3(
 			inX,
 			_storyQueen.transform.position.y,
 			inY);
 		_storyQueen.PlayMorphAnimation();
+	}
+
+	public void SetQueenAlpha(float inAlpha)
+	{
+		_storyQueen.SetAlpha(inAlpha);
+	}
+
+	public void SpawnInEvilPurpleOrb(float inX, float inY)
+	{
+		_evilPurpleOrb.SetVisible(true);
+		_evilPurpleOrb.transform.position = new Vector3(
+			inX,
+			_evilPurpleOrb.transform.position.y,
+			inY
+		);
+		_evilPurpleOrb.StartParticleEffect();
+	}
+
+	public void StopEvilPurpleOrb()
+	{
+		_evilPurpleOrb.StopParticleEffect();
 	}
 
 	public void SetActive(bool inIsActive)

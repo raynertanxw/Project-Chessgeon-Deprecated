@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DaburuTools;
 
 public class StoryController : MonoBehaviour
 {
@@ -166,25 +167,72 @@ public class StoryController : MonoBehaviour
 		_storyCanvas.HideTextPanel();
 
 		yield return new WaitForSeconds(1.0f);
-		// "One day..."
+		_storyObjects.SpawnInEvilPurpleOrb(3.5f, 1.5f);
+        yield return new WaitForSeconds(2.0f);
+		_shouldContinueStory = false;
+        MoveToAction moveEvilPurpleOrbToQueen = new MoveToAction(
+            _storyObjects.EvilPurpleOrbTransform,
+            _storyObjects.QueenTransform.position,
+            0.75f,
+            Utils.CurveSmoothStep);
+		moveEvilPurpleOrbToQueen.OnActionFinish += ContinueStory;
+		_storyCanvas.ShowTextPanel("Morphy's Queen got\npossessed!!!");
+        ActionHandler.RunAction(moveEvilPurpleOrbToQueen);
+        while (!_shouldContinueStory) { yield return null; }
+		_storyCanvas.HideTextPanel();
 
-		// fly in evil purple orb.
+		_storyObjects.CameraShake(50, 1.0f, 0.75f);
+        yield return new WaitForSeconds(0.7f);
+		_shouldContinueStory = false;
+		Vector3 morphyPos = _storyObjects.MorphyTransform.position;
+		MoveToAction hopUp = new MoveToAction(_storyObjects.MorphyTransform, morphyPos + (Vector3.up * 2.0f), 0.15f, Utils.CurveInverseExponential);
+		DelayAction hopDelay = new DelayAction(0.25f);
+		// TODO: Shake morphy a little here during the delay.
+		MoveToAction hopDown = new MoveToAction(_storyObjects.MorphyTransform, morphyPos, 0.15f, Utils.CurveInverseExponential);
+		ActionSequence hopSeq = new ActionSequence(hopUp, hopDelay, hopDown);
+		hopSeq.OnActionFinish += ContinueStory;
+		ActionHandler.RunAction(hopSeq);
 
-		// "Morphy's Queen got possessed!"
+		while (!_shouldContinueStory) { yield return null; }
+        _storyCanvas.ShowTextPanel("Oh no!");
+		yield return new WaitForSeconds(0.5f);
+		_storyCanvas.HideTextPanel();
 
-		// purple orb hit Queen and possess.
-		// Morphy do a little shock hop.
+		yield return new WaitForSeconds(0.5f);
+		_storyCanvas.ShowTextPanel("\">:(\"");
 
-		// "Oh no!"
+		yield return new WaitForSeconds(1.0f);
+		_storyCanvas.HideTextPanel();
 
-		// " \">:(\" "
+		yield return new WaitForSeconds(0.5f);
+		Vector3 displacement = new Vector3(7.0f, 0.0f, 0.0f);
+		MoveByAction moveMorphy = new MoveByAction(_storyObjects.MorphyTransform, displacement, 3.0f, Utils.CurveSmoothStep);
+		MoveByAction moveQueen = new MoveByAction(_storyObjects.QueenTransform, displacement, 3.0f, Utils.CurveSmoothStep);
+		MoveByAction moveEvilPurpleOrb = new MoveByAction(_storyObjects.EvilPurpleOrbTransform, displacement, 3.0f, Utils.CurveSmoothStep);
+		ActionParallel moveAll = new ActionParallel(moveMorphy, moveQueen, moveEvilPurpleOrb);
+		_shouldContinueStory = false;
+		moveAll.OnActionFinish += ContinueStory;
+		ActionHandler.RunAction(moveAll);
+		_storyObjects.FocusCameraTo(8.5f, 1.5f, 3.0f);
 
-		// "Morphy tries to save his Queen!"
+		yield return new WaitForSeconds(0.5f);
+		_storyCanvas.ShowTextPanel("Morphy tries to save his Queen!");
+		yield return new WaitForSeconds(1.5f);
+		_storyCanvas.HideTextPanel();
+		while (!_shouldContinueStory) { yield return null; }
 
-		// Queen and Morphy move to end of board.
-		// Queen simply fades into the distance...
-
-		// "But he couldn't save her...
+		float alpha = 1.0f;
+		const float fadeSpeed = 0.75f;
+		while (alpha > 0.0f)
+		{
+			alpha -= fadeSpeed * Time.deltaTime;
+			_storyObjects.SetQueenAlpha(alpha);
+			yield return null;
+		}
+		_storyObjects.StopEvilPurpleOrb();
+		_storyCanvas.ShowTextPanel("But he couldn't save her...");
+		yield return new WaitForSeconds(1.0f);
+		_storyCanvas.HideTextPanel();
 
 		// " \" :( \" "
 		// " \" :"( \" "
@@ -201,6 +249,8 @@ public class StoryController : MonoBehaviour
 		// "Through the...\n Chessgeons!"
 
 
+
+		yield return new WaitForSeconds(10.0f);
 		_storyCanvas.ShowTextPanel("IN DEVELOPMENT");
 		_storyCanvas.SetContinueText("Let's Begin!");
 		_storyCanvas.SetContinueVisible(true);
