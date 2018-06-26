@@ -195,7 +195,7 @@ public class StoryController : MonoBehaviour
 
 		while (!_shouldContinueStory) { yield return null; }
         _storyCanvas.ShowTextPanel("Oh no!");
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(1.0f);
 		_storyCanvas.HideTextPanel();
 
 		yield return new WaitForSeconds(0.5f);
@@ -234,6 +234,20 @@ public class StoryController : MonoBehaviour
 		yield return new WaitForSeconds(1.0f);
 		_storyCanvas.HideTextPanel();
 
+		yield return new WaitForSeconds(0.5f);
+		_storyCanvas.ShowTextPanel("\":(\"");
+        yield return new WaitForSeconds(1.0f);
+        _storyCanvas.HideTextPanel();
+
+		yield return new WaitForSeconds(0.5f);
+        _storyCanvas.ShowTextPanel("\":\"(\"");
+        yield return new WaitForSeconds(1.0f);
+		_storyCanvas.HideTextPanel();
+
+		yield return new WaitForSeconds(0.5f);
+        _storyCanvas.ShowTextPanel("\":\"\"\"\"\"\"\"\"(\"");
+        yield return new WaitForSeconds(1.0f);
+        _storyCanvas.HideTextPanel();
 		// " \" :( \" "
 		// " \" :"( \" "
 		// " \" :""""""""( \" "
