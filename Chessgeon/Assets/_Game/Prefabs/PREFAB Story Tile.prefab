@@ -96,3 +96,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _meshRen: {fileID: 23048988816288482}
+  _meshFilter: {fileID: 33175152822675588}

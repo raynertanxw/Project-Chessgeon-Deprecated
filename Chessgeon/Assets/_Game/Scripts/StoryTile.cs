@@ -5,12 +5,14 @@ using UnityEngine;
 public class StoryTile : MonoBehaviour
 {
 	[SerializeField] private MeshRenderer _meshRen = null;
+	[SerializeField] private MeshFilter _meshFilter = null;
 
 	private Vector2Int _pos = new Vector2Int(-1, -1);
 
 	private void Awake()
 	{
-		Debug.Assert(_meshRen != null, "_meshDungeonTile is not assigned.");
+		Debug.Assert(_meshRen != null, "_meshRen is not assigned.");
+		Debug.Assert(_meshFilter != null, "_meshFilter is not assigned.");
 	}
 
 	public void SetIndex(int inPosX, int inPosY)
@@ -26,5 +28,15 @@ public class StoryTile : MonoBehaviour
 
 		if (Floor.IsTileWhite(inPosX, inPosY)) _meshRen.material.SetColor("_Color", Color.white);
 		else _meshRen.material.SetColor("_Color", Color.black);
+	}
+
+	public void ChangeMesh(Mesh inMesh)
+	{
+		_meshFilter.mesh = inMesh;
+	}
+
+	public void ChangeColor(Color inColor)
+	{
+		_meshRen.material.SetColor("_Color", inColor);
 	}
 }

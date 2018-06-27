@@ -9,6 +9,7 @@ public class StoryObjects : MonoBehaviour
 	[SerializeField] private Morphy _storyMorphy = null;
 	[SerializeField] private Queen _storyQueen = null;
 	[SerializeField] private EvilPurpleOrb _evilPurpleOrb = null;
+	[SerializeField] private SmashParticle _smashParticle = null;
 
 	[Header("Other Managers")]
 	[SerializeField] private Dungeon _dungeon = null;
@@ -16,10 +17,13 @@ public class StoryObjects : MonoBehaviour
 	[Header("Tiles")]
 	[SerializeField] private Transform _storyTileParent = null;
 	[SerializeField] private GameObject _prefabStoryTile = null;
+	[SerializeField] private Mesh _stairMesh = null;
 
 	public Transform MorphyTransform { get { return _storyMorphy.transform; } }
 	public Transform QueenTransform { get { return _storyQueen.transform; } }
 	public Transform EvilPurpleOrbTransform { get { return _evilPurpleOrb.transform; } }
+
+	private StoryTile[,] _storyTiles = null;
 
 	private void Awake()
 	{
@@ -27,11 +31,13 @@ public class StoryObjects : MonoBehaviour
 		Debug.Assert(_storyMorphy != null, "_storyMorphy is not assigned.");
 		Debug.Assert(_storyQueen != null, "_storyQueen is not assigned.");
 		Debug.Assert(_evilPurpleOrb != null, "_evilPurpleOrb is not assigned.");
+		Debug.Assert(_smashParticle != null, "_smashParticle is not assigned.");
 
 		Debug.Assert(_dungeon != null, "_dungeon is not assigned.");
 
 		Debug.Assert(_storyTileParent != null, "_storyTileParent is not assigned.");
 		Debug.Assert(_prefabStoryTile != null, "_prefabStoryTile is not assigned.");
+		Debug.Assert(_stairMesh != null, "_stairMesh is not assigned.");
 	}
 
 	private bool _isSetUp = false;
@@ -47,6 +53,7 @@ public class StoryObjects : MonoBehaviour
 
 	private void GenerateTiles()
 	{
+		_storyTiles = new StoryTile[_dungeon.MaxX, _dungeon.MaxY];
 		for (int x = 0; x < _dungeon.MaxX; x++)
         {
 			for (int y = 0; y < _dungeon.MaxY; y++)
@@ -54,8 +61,21 @@ public class StoryObjects : MonoBehaviour
 				StoryTile newStoryTile = GameObject.Instantiate(_prefabStoryTile).GetComponent<StoryTile>();
 				newStoryTile.transform.SetParent(_storyTileParent);
 				newStoryTile.SetIndex(x, y);
+				_storyTiles[x, y] = newStoryTile;
             }
         }
+	}
+
+	public void ChangeTileToStairs(int inX, int inY)
+	{
+		Debug.Assert(inX >= 0 && inX < _dungeon.MaxX, "inX is out of range.");
+		Debug.Assert(inY >= 0 && inY < _dungeon.MaxY, "inY is out of range.");
+
+		StoryTile stairTile = _storyTiles[inX, inY];
+		stairTile.ChangeMesh(_stairMesh);
+		stairTile.ChangeColor(new Color(0.5f, 0.5f, 0.5f));
+		_smashParticle.transform.position = stairTile.transform.position;
+		_smashParticle.PlaySmashEffect();
 	}
 
 	public void SpawnInMorphy(float inX, float inY)

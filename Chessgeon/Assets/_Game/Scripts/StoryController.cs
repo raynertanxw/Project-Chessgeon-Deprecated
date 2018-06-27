@@ -41,7 +41,7 @@ public class StoryController : MonoBehaviour
 	private void DismissStory()
 	{
 		_storyCanvas.SetVisible(false);
-		// TODO: Call start showing menu canvas.
+		// TODO: Call start showing menu canvas animation.
 		_menuCanvas.SetVisible(true);
 
 		_storyCanvas.ReleaseRenderTexture();
@@ -179,17 +179,17 @@ public class StoryController : MonoBehaviour
 		_storyCanvas.ShowTextPanel("Morphy's Queen got\npossessed!!!");
         ActionHandler.RunAction(moveEvilPurpleOrbToQueen);
         while (!_shouldContinueStory) { yield return null; }
-		_storyCanvas.HideTextPanel();
 
-		_storyObjects.CameraShake(50, 1.0f, 0.75f);
+        _storyObjects.CameraShake(50, 1.0f, 0.75f);
         yield return new WaitForSeconds(0.7f);
+		_storyCanvas.HideTextPanel();
 		_shouldContinueStory = false;
 		Vector3 morphyPos = _storyObjects.MorphyTransform.position;
 		MoveToAction hopUp = new MoveToAction(_storyObjects.MorphyTransform, morphyPos + (Vector3.up * 2.0f), 0.15f, Utils.CurveInverseExponential);
-		DelayAction hopDelay = new DelayAction(0.25f);
-		// TODO: Shake morphy a little here during the delay.
-		MoveToAction hopDown = new MoveToAction(_storyObjects.MorphyTransform, morphyPos, 0.15f, Utils.CurveInverseExponential);
-		ActionSequence hopSeq = new ActionSequence(hopUp, hopDelay, hopDown);
+		ShakeAction shakeMorphy = new ShakeAction(_storyObjects.MorphyTransform, 25, 0.1f);
+		shakeMorphy.SetShakeByDuration(0.35f, 40);
+		MoveToAction hopDown = new MoveToAction(_storyObjects.MorphyTransform, morphyPos, 0.10f, Utils.CurveInverseExponential);
+		ActionSequence hopSeq = new ActionSequence(hopUp, shakeMorphy, hopDown);
 		hopSeq.OnActionFinish += ContinueStory;
 		ActionHandler.RunAction(hopSeq);
 
@@ -231,41 +231,44 @@ public class StoryController : MonoBehaviour
 		}
 		_storyObjects.StopEvilPurpleOrb();
 		_storyCanvas.ShowTextPanel("But he couldn't save her...");
-		yield return new WaitForSeconds(1.0f);
+		yield return new WaitForSeconds(2.0f);
 		_storyCanvas.HideTextPanel();
 
 		yield return new WaitForSeconds(0.5f);
 		_storyCanvas.ShowTextPanel("\":(\"");
         yield return new WaitForSeconds(1.0f);
+        _storyCanvas.ShowTextPanel("\":'(\"");
+        yield return new WaitForSeconds(1.0f);
+        _storyCanvas.ShowTextPanel("\":''''''''''''(\"");
+        yield return new WaitForSeconds(1.0f);
         _storyCanvas.HideTextPanel();
 
 		yield return new WaitForSeconds(0.5f);
-        _storyCanvas.ShowTextPanel("\":\"(\"");
-        yield return new WaitForSeconds(1.0f);
-		_storyCanvas.HideTextPanel();
+		_storyObjects.CameraShake(50, 0.5f, 1.5f);
+
+		yield return new WaitForSeconds(1.6f);
+		_storyObjects.ChangeTileToStairs(9, 7);
 
 		yield return new WaitForSeconds(0.5f);
-        _storyCanvas.ShowTextPanel("\":\"\"\"\"\"\"\"\"(\"");
-        yield return new WaitForSeconds(1.0f);
-        _storyCanvas.HideTextPanel();
-		// " \" :( \" "
-		// " \" :"( \" "
-		// " \" :""""""""( \" "
-		// Camera shake???
+        _storyCanvas.ShowTextPanel("Oh? What's this!");
+		yield return new WaitForSeconds(1.0f);
 
-		// Stairs nearby pops into existence. (Make sure got some particle effects).
-		
-		// "Oh? What's this!"
+		_shouldContinueStory = false;
+		MoveToAction moveMorphyToStairs = new MoveToAction(
+			_storyObjects.MorphyTransform,
+			_storyObjects.MorphyTransform.position + new Vector3(0.0f, 0.0f, 2.0f),
+            2.0f,
+			Utils.CurveSmoothStep);
+		moveMorphyToStairs.OnActionFinish += ContinueStory;
+		ActionHandler.RunAction(moveMorphyToStairs);
+		while (!_shouldContinueStory) { yield return null; }
 
-		// Morphy move to stairs.
+		_storyCanvas.ShowTextPanel("And so begins\nMorphy's pursuit");
+		yield return new WaitForSeconds(2.5f);
+		_storyCanvas.ShowTextPanel("Through the...\nChessgeons!");
 
-		// "And so, begin's Morphy's pursuit"
-		// "Through the...\n Chessgeons!"
-
-
-
-		yield return new WaitForSeconds(10.0f);
-		_storyCanvas.ShowTextPanel("IN DEVELOPMENT");
+		yield return new WaitForSeconds(1.0f);
+		_shouldContinueStory = false;
 		_storyCanvas.SetContinueText("Let's Begin!");
 		_storyCanvas.SetContinueVisible(true);
 		while (!_shouldContinueStory) { yield return null; }
